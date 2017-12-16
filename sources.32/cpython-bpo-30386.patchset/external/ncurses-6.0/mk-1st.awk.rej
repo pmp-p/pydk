@@ -1,0 +1,11 @@
+--- mk-1st.awk	Mon Oct 24 14:25:54 2016 +0200
++++ mk-1st.awk	Mon Oct 24 14:27:10 2016 +0200
+@@ -173,7 +173,7 @@
+ 		printf "\t$(MK_SHARED_LIB) $(%s_OBJS) $(%s) $(LDFLAGS)\n", objs, shlib_list
+ 	}
+ function sharedlinks(directory) {
+-		if ( ShlibVer != "auto" && ShlibVer != "cygdll" && ShlibVer != "msysdll" && ShlibVer != "mingw" ) {
++		if ( ShlibVer != "auto" && ShlibVer != "cygdll" && ShlibVer != "msysdll" && ShlibVer != "mingw" && DoLinks != "no") {
+ 			printf "\tcd %s && (", directory
+ 			if ( DoLinks == "reverse" ) {
+ 				if ( ShlibVer == "rel" ) {

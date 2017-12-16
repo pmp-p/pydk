@@ -1,0 +1,14 @@
+--- host/Objects/obmalloc.c	2017-11-25 18:48:48.000000000 +0100
++++ armv7a/Objects/obmalloc.c	2017-11-26 20:56:14.391343237 +0100
+@@ -2,6 +2,11 @@
+ 
+ #include <stdbool.h>
+ 
++//PMPP API<21
++#if __ANDROID_API__ < 21
++    extern void *mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset);
++#endif
++//PMPP API<21
+ 
+ /* Defined in tracemalloc.c */
+ extern void _PyMem_DumpTraceback(int fd, const void *ptr);

@@ -1,0 +1,1 @@
+../ncurses/build.priv.h

@@ -1,0 +1,19 @@
+--- host/Modules/_localemodule.c	2017-11-25 18:48:48.000000000 +0100
++++ armv7a/Modules/_localemodule.c	2017-11-26 20:54:53.975341319 +0100
+@@ -143,7 +143,15 @@
+         return NULL;
+ 
+     /* if LC_NUMERIC is different in the C library, use saved value */
+-    l = localeconv();
++//PMPP API<21
++#if __ANDROID_API__ < 21
++    /* Don't even try on Android's broken locale.h. */
++    goto failed;
++#else
++     /* if LC_NUMERIC is different in the C library, use saved value */
++     l = localeconv(); //PATCHED
++#endif
++//PMPP API<21
+ 
+     /* hopefully, the localeconv result survives the C library calls
+        involved herein */

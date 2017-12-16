@@ -1,0 +1,15 @@
+--- host/Modules/mmapmodule.c	2017-11-25 18:48:48.000000000 +0100
++++ armv7a/Modules/mmapmodule.c	2017-11-27 01:08:29.219704268 +0100
+@@ -79,6 +79,12 @@
+ #  define MAP_ANONYMOUS MAP_ANON
+ #endif
+ 
++//PMPP API<21
++#if __ANDROID_API__ < 21
++    extern void *mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset);
++#endif
++//PMPP API<21
++
+ typedef enum
+ {
+     ACCESS_DEFAULT,

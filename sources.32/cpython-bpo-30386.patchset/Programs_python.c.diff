@@ -1,0 +1,60 @@
+--- host/Programs/python.c	2017-11-25 18:48:48.000000000 +0100
++++ armv7a/Programs/python.c	2017-11-27 03:35:01.467914002 +0100
+@@ -24,7 +24,12 @@
+     /* We need a second copy, as Python might modify the first one. */
+     wchar_t **argv_copy2;
+     int i, status;
++
++//PMPP API<21
++#if __ANDROID_API__ > 19
+     char *oldloc;
++#endif
++//PMPP API<21
+ 
+     _PyInitError err = _PyRuntime_Initialize();
+     if (_Py_INIT_FAILED(err)) {
+@@ -56,14 +61,19 @@
+     fedisableexcept(FE_OVERFLOW);
+ #endif
+ 
++//PMPP API<21
++#if __ANDROID_API__ > 19
+     oldloc = _PyMem_RawStrdup(setlocale(LC_ALL, NULL));
+     if (!oldloc) {
+         fprintf(stderr, "out of memory\n");
+         return 1;
+     }
+-
+     /* Reconfigure the locale to the default for this process */
+     _Py_SetLocaleFromEnv(LC_ALL);
++#endif
++//PMPP API<21
++
++
+ 
+     /* The legacy C locale assumes ASCII as the default text encoding, which
+      * causes problems not only for the CPython runtime, but also other
+@@ -83,7 +93,11 @@
+     for (i = 0; i < argc; i++) {
+         argv_copy[i] = Py_DecodeLocale(argv[i], NULL);
+         if (!argv_copy[i]) {
++//PMPP API<21
++#if __ANDROID_API__ > 19
+             PyMem_RawFree(oldloc);
++#endif
++//PMPP API<21
+             fprintf(stderr, "Fatal Python error: "
+                             "unable to decode the command line argument #%i\n",
+                             i + 1);
+@@ -93,8 +107,11 @@
+     }
+     argv_copy2[argc] = argv_copy[argc] = NULL;
+ 
++//PMPP API<21
++#if __ANDROID_API__ > 19
+     setlocale(LC_ALL, oldloc);
+     PyMem_RawFree(oldloc);
++#endif
+ 
+     status = Py_Main(argc, argv_copy);
+ 
