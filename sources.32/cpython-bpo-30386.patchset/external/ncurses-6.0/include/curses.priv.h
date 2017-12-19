@@ -1,1 +1,0 @@
-../ncurses/curses.priv.h
