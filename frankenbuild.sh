@@ -1,11 +1,16 @@
 #!/bin/bash
-reset
+
+#==============================================================================
+
+# changing those is totally untested feel free to test and report ...
 
 NDK_VER=14
 export BITS=32
 
 
+#==============================================================================
 
+reset
 
 ORIGIN=$(dirname $(realpath "$0") )
 
@@ -207,16 +212,42 @@ export PYTHONDONTWRITEBYTECODE=1
 #say hi
 echo SDK=$SDK Toolchain ${BITS} ${TOOLCHAIN}
 if [ -f $SDK/built.${BITS}.env ]
-then
+then    
     . "$SDK/build.${BITS}.env"
     . "$SDK/built.${BITS}.env"
-    export debian_chroot="DROID$BITS"
-    env |grep ^PDK_
-    cd "$SDK/build.${BITS}"
+    . "$SDK/build.${BITS}.functions"   
 else
     echo "build env $SDK/build.${BITS}.env not configured yet"
 fi
 END
+
+
+if [ -f $SDK/build.${BITS}.env ]
+then
+    echo "
+    Previous build parameters found, preserving  :
+    
+    $SDK/build.${BITS}.env
+    ${ORIGIN}/build.${BITS}.functions
+    $SDK/built.${BITS}.env
+    
+"
+    
+else
+    echo "Copying default build parameters : $SDK/build.${BITS}.env"
+    #echo "export PDK_PATCHELF=${TOOLCHAIN}/bin/patchelf" > $SDK/built.${BITS}.env
+    
+    mkdir -p $SDK/build.${BITS}
+    
+    cp -vf ${ORIGIN}/build.${BITS}.env $SDK/
+    ln ${ORIGIN}/build.${BITS}.functions $SDK/
+        
+    ln ${ORIGIN}/sources.${BITS}/*.build $SDK/build.${BITS}/
+    cp -aR ${ORIGIN}/sources.${BITS}/*.patchset $SDK/build.${BITS}/
+
+    #activate the platform
+    touch $SDK/built.${BITS}.env
+fi
 
 
 . $SDK_ROOT/sdk.env
@@ -242,6 +273,7 @@ found patchelf tool : ${UROOT}/bin/patchelf
         then
             mkdir -p ${UROOT}/bin/
             cp -vf src/patchelf ${TOOLCHAIN}/bin/
+            register_pdk PDK_PATCHELF ${TOOLCHAIN}/bin/patchelf
             break
         else
             echo " =============== error ================== "
@@ -262,16 +294,6 @@ cp -vf static/qemu-* $UR/bin/
 
 mkdir -p $SDK/build.${BITS}
 
-if [ -f $SDK/build.${BITS}.env ]
-then
-    echo "previous build parameters found, preserving $SDK/build.${BITS}.env"
-else
-    echo "Copying default build parameters : $SDK/build.${BITS}.env"
-    echo "export PDK_PATCHELF=${TOOLCHAIN}/bin/patchelf" > $SDK/built.${BITS}.env
-    cp -vf ${ORIGIN}/build.${BITS}.env $SDK/
-    ln ${ORIGIN}/sources.${BITS}/*.build $SDK/build.${BITS}/
-    cp -aR ${ORIGIN}/sources.${BITS}/*.patchset $SDK/build.${BITS}/
-fi
 
 echo "
 
@@ -280,7 +302,7 @@ $SDK/build.${BITS}.env was created, you can now use:
 
 . $SDK_ROOT/sdk.env
 
- before running build.{$BITS}/*.build scripts
+Before running build.${BITS}/*.build scripts
 
  "
 

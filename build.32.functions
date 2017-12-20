@@ -1,0 +1,42 @@
+#!/bin/bash
+
+#==================== put your favorites functions there ===============================
+
+
+function wait_or_break
+{
+    echo -n  "
+ <press enter to retry, or ctrl+c to exit>
+
+
+
+> "
+    read
+    clear
+}
+
+function register_pdk
+{
+    if echo $1 | grep -q PDK_ 
+    then
+        echo export $1="$2"
+        touch $SDK/built.${BITS}.env
+        grep -v $1 $SDK/built.${BITS}.env > $SDK/built.new
+        echo export $1="$2" >> $SDK/built.new
+        mv -v $SDK/built.${BITS}.env $SDK/built.${BITS}.bak
+        sort $SDK/built.new | uniq >  $SDK/built.${BITS}.env
+        rm -vf $SDK/built.new
+        echo "  * Package $1 added to sdk.env, you may want to reload"    
+    else
+        echo "usage: register_pdk PDK_key value"
+    fi    
+}
+
+
+export debian_chroot="DROID$BITS"
+env |grep PDK_
+
+cd $SDK/build.${BITS}
+
+
+

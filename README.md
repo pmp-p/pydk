@@ -23,5 +23,9 @@ bash ./frankenbuild.sh /data/data 192.168.0.xxx*
 *The ip addr is for targeting an adb networked device such as an h3droid board no IP means use classic adb over usb.
 
 
-After install you can parse . /data/data/sdk.env to enter the build zone ( behaves like a virtualenv your prompt will change )
-In there you'll find various .build file which are recipes to download / patch / build some software for your presets.
+After installalation you can parse . /data/data/sdk.env to enter the build zone. 
+
+It  behaves like a virtualenv your prompt will reflect that fact.
+
+In the build folder you'll find various .build files which are recipes to download / patch / build some software for your presets.
+
