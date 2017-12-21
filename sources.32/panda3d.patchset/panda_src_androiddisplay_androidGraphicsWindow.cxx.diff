@@ -1,0 +1,171 @@
+--- panda3d/panda/src/androiddisplay/androidGraphicsWindow.cxx	2017-12-16 21:05:57.000000000 +0100
++++ panda3d.android/panda/src/androiddisplay/androidGraphicsWindow.cxx	2017-12-15 08:52:35.835802690 +0100
+@@ -29,6 +29,13 @@
+ #include <android/window.h>
+ #include <android/log.h>
+ 
++
++#define LOG_TAG "AndroidGraphicsWindow"
++#define LOG_INFO(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
++#define LOG_ERROR(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
++
++static EGLNativeWindowType awindow = NULL;
++
+ extern IMPORT_CLASS struct android_app* panda_android_app;
+ 
+ TypeHandle AndroidGraphicsWindow::_type_handle;
+@@ -178,6 +185,7 @@
+ process_events() {
+   GraphicsWindow::process_events();
+ 
++#ifdef APK
+   // Read all pending events.
+   int looper_id;
+   int events;
+@@ -190,6 +198,8 @@
+       source->process(_app, source);
+     }
+   }
++#endif
++
+ }
+ 
+ /**
+@@ -272,6 +282,7 @@
+     }
+   }
+ 
++  #if APP
+   // Register the callbacks
+   assert(_app != NULL);
+   _app->userData = this;
+@@ -288,11 +299,29 @@
+     return false;
+   }
+ 
+-  // Set some other properties.
++    // Set some other properties.
+   _properties.set_origin(0, 0);
+   _properties.set_cursor_hidden(true);
+   _properties.set_undecorated(true);
+ 
++
++#else
++    char* senv;
++    senv= getenv("PANDA_NATIVE_WINDOW");
++    sscanf( senv, "%p", &awindow );
++    LOG_INFO(" >>>>> window pointer %p found <<<<< ", awindow);
++
++    senv= getenv("PANDA_NATIVE_SURFACE");
++    sscanf( senv, "%p", &_egl_surface );
++    LOG_INFO(" >>>>> surface pointer %p found <<<<< ", _egl_surface);
++
++    if (_egl_surface == EGL_NO_SURFACE) {
++        androiddisplay_cat.error() << "NO EGL Surface pointer\n";
++        return false;
++    }
++
++#endif
++
+   if (!androidgsg->get_fb_properties().verify_hardware_software
+       (_fb_properties, androidgsg->get_gl_renderer())) {
+     close_window();
+@@ -303,6 +332,8 @@
+ 
+   androiddisplay_cat.error() << "open_window done\n";
+ 
++    create_surface();
++
+   return true;
+ }
+ 
+@@ -311,6 +342,8 @@
+  */
+ void AndroidGraphicsWindow::
+ destroy_surface() {
++
++#if APP
+   if (_egl_surface != EGL_NO_SURFACE) {
+     if (!eglDestroySurface(_egl_display, _egl_surface)) {
+       androiddisplay_cat.error() << "Failed to destroy surface: "
+@@ -318,6 +351,7 @@
+     }
+     _egl_surface = EGL_NO_SURFACE;
+   }
++#endif
+ 
+   // Destroy the current context.
+   if (_gsg != (GraphicsStateGuardian *)NULL) {
+@@ -332,6 +366,35 @@
+  */
+ bool AndroidGraphicsWindow::
+ create_surface() {
++#ifndef APP
++    LOG_INFO("362: create_surface");
++    AndroidGraphicsStateGuardian *androidgsg;
++    DCAST_INTO_R(androidgsg, _gsg, false);
++
++    ANativeWindow_setBuffersGeometry(awindow, 0, 0, androidgsg->_format);
++/*
++  // Create the EGL surface.
++  _egl_surface = eglCreateWindowSurface(_egl_display, androidgsg->_fbconfig, awindow, NULL);
++  if (eglGetError() != EGL_SUCCESS) {
++    androiddisplay_cat.error()
++      << "Failed to create window surface.\n";
++    return false;
++  }
++*/
++    char* senv;
++    EGLContext context = EGL_NO_CONTEXT;
++    senv= getenv("PANDA_NATIVE_CONTEXT");
++    sscanf( senv, "%p", &context );
++    LOG_INFO(" >>>>> context pointer %p found <<<<< ", context);
++
++    androidgsg->_context = context;
++
++    // Switch to our newly created context.
++    if (!eglMakeCurrent(_egl_display, _egl_surface, _egl_surface, androidgsg->_context)) {
++        androiddisplay_cat.error() << "Failed to call eglMakeCurrent: " << get_egl_error_string(eglGetError()) << "\n";
++    }
++
++#else
+   AndroidGraphicsStateGuardian *androidgsg;
+   DCAST_INTO_R(androidgsg, _gsg, false);
+ 
+@@ -379,7 +442,7 @@
+     close_window();
+     return false;
+   }
+-
++#endif
+   return true;
+ }
+ 
+@@ -427,15 +490,13 @@
+       system_changed_properties(properties);
+       break;
+     case APP_CMD_WINDOW_RESIZED:
+-      properties.set_size(ANativeWindow_getWidth(_app->window),
+-                          ANativeWindow_getHeight(_app->window));
++      properties.set_size(ANativeWindow_getWidth(_app->window), ANativeWindow_getHeight(_app->window));
+       break;
+     case APP_CMD_WINDOW_REDRAW_NEEDED:
+       break;
+     case APP_CMD_CONTENT_RECT_CHANGED:
+       properties.set_origin(_app->contentRect.left, _app->contentRect.top);
+-      properties.set_size(_app->contentRect.right - _app->contentRect.left,
+-                          _app->contentRect.bottom - _app->contentRect.top);
++      properties.set_size(_app->contentRect.right - _app->contentRect.left,  _app->contentRect.bottom - _app->contentRect.top);
+       system_changed_properties(properties);
+       break;
+     case APP_CMD_GAINED_FOCUS:
+@@ -501,8 +562,7 @@
+   ButtonHandle button = map_button(keycode);
+ 
+   if (button == ButtonHandle::none()) {
+-    androiddisplay_cat.warning()
+-      << "Unknown keycode: " << keycode << "\n";
++    androiddisplay_cat.warning() << "Unknown keycode: " << keycode << "\n";
+     return 0;
+   }
+ 

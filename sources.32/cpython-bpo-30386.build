@@ -71,21 +71,8 @@ else
 	then
 		echo Building HOST + TARGET cpython${PYVER}${PYMODE} from $ORIGIN/Android
 		
-		if [ -f "$ORIGIN/PDK_PATCHED" ]
-		then
-		    echo Patches already applied
-		else
-		    cd $ORIGIN
-		    for patch in $(find $ORIGIN.patchset/*.diff)
-		    do
-		        echo -n "
-    Applying patch : $patch   "
-		        patch -p1 < $patch
-		        echo
-		    done
-		    touch PDK_PATCHED
-		fi
-		
+        patch_me
+        		
 		cd $ORIGIN/Android
 		
 		if ./makesetup $DEV_PATHS $OPT_COMMON $OPT_ANDROID

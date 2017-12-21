@@ -1,0 +1,56 @@
+--- panda3d/makepanda/makepanda.py	2017-12-16 21:05:57.000000000 +0100
++++ panda3d.android/makepanda/makepanda.py	2017-12-14 01:15:16.735685651 +0100
+@@ -1262,9 +1262,13 @@
+             cmd += ' -I%s/include' % (SDK["ANDROID_STL"])
+             cmd += ' -I%s/libs/%s/include' % (SDK["ANDROID_STL"], SDK["ANDROID_ABI"])
+             cmd += ' -ffunction-sections -funwind-tables'
+-            if arch == 'armv7a':
++            if arch in ['armv7a','armv7']:
+                 cmd += ' -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5E__ -D__ARM_ARCH_5TE__'
+-                cmd += ' -fstack-protector -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16'
++                if not os.environ.get('NDK_GCC').count('clang'):
++                    cmd += ' -fPIC -Wno-multichar -funwind-tables -fstack-protector -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16'
++                else:                
++                    cmd += ' -fPIC -Wno-multichar -funwind-tables -fstack-protector '
++
+             elif arch == 'arm':
+                 cmd += ' -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5E__ -D__ARM_ARCH_5TE__'
+                 cmd += ' -fstack-protector -march=armv5te -mtune=xscale -msoft-float'
+@@ -1279,7 +1283,8 @@
+             if optlevel >= 3:
+                 cmd += " -fomit-frame-pointer"
+                 if arch.startswith('arm'):
+-                    cmd += ' -finline-limit=64 -mthumb'
++                    if not os.environ.get('NDK_GCC').count('clang'):
++                        cmd += ' -finline-limit=64 -mthumb'
+                 elif arch == 'mips':
+                     cmd += ' -funswitch-loops -finline-limit=300'
+             else:
+@@ -1288,9 +1293,10 @@
+                     cmd += ' -marm'
+ 
+             # Enable SIMD instructions if requested
+-            if arch.startswith('arm') and PkgSkip("NEON") == 0:
+-                cmd += ' -mfpu=neon'
+-
++            if not os.environ.get('NDK_GCC').count('clang'):
++                if arch.startswith('arm') and PkgSkip("NEON") == 0:
++                    cmd += ' -mfpu=neon'
++                    
+         else:
+             cmd += " -pthread"
+ 
+@@ -1731,10 +1737,10 @@
+                     cmd += " -arch %s" % arch
+ 
+         elif GetTarget() == 'android':
+-            cmd += " -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now"
+-            if GetTargetArch() == 'armv7a':
++            cmd += " -fPIC -Wno-multichar -funwind-tables -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now"
++            if GetTargetArch() in ['armv7','armv7a']:
+                 cmd += " -march=armv7-a -Wl,--fix-cortex-a8"
+-            cmd += ' -lc -lm'
++            cmd += ' -lc -lm -lpython%s%s' %  ( os.getenv('PYDOT') , os.getenv('PYMODE'), )
+         else:
+             cmd += " -pthread"
+ 

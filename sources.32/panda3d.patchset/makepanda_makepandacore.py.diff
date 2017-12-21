@@ -1,0 +1,120 @@
+--- panda3d/makepanda/makepandacore.py	2017-12-16 21:05:57.000000000 +0100
++++ panda3d.android/makepanda/makepandacore.py	2017-12-13 02:07:39.879382013 +0100
+@@ -350,7 +350,7 @@
+ 
+         # Determine the prefix for our gcc tools, eg. arm-linux-androideabi-gcc
+         global ANDROID_ABI
+-        if arch == 'armv7a':
++        if arch == 'armv7':
+             ANDROID_ABI = 'armeabi-v7a'
+             TOOLCHAIN_PREFIX = 'arm-linux-androideabi-'
+         elif arch == 'arm':
+@@ -363,7 +363,7 @@
+             ANDROID_ABI = 'mips'
+             TOOLCHAIN_PREFIX = 'mipsel-linux-android-'
+         else:
+-            exit('Android architecture must be arm, armv7a, x86 or mips')
++            exit('Android architecture must be arm, armv7, x86 or mips')
+ 
+     elif target == 'linux':
+         if arch is not None:
+@@ -415,14 +415,21 @@
+ def GetCC():
+     if TARGET == 'darwin' or TARGET == 'freebsd':
+         return os.environ.get('CC', TOOLCHAIN_PREFIX + 'clang')
+-    else:
+-        return os.environ.get('CC', TOOLCHAIN_PREFIX + 'gcc')
++
++    if TARGET == 'android':
++        if os.environ.get('NDK_GCC','').count('clang'):
++            return os.environ.get('NDK_GCC')
++
++    return os.environ.get('CC', TOOLCHAIN_PREFIX + 'gcc')
+ 
+ def GetCXX():
+     if TARGET == 'darwin' or TARGET == 'freebsd':
+         return os.environ.get('CXX', TOOLCHAIN_PREFIX + 'clang++')
+-    else:
+-        return os.environ.get('CXX', TOOLCHAIN_PREFIX + 'g++')
++
++    if TARGET == 'android':
++        if os.environ.get('NDK_GCC','').count('clang'):
++            return '%s++' % os.environ.get('NDK_GCC')
++    return os.environ.get('CXX', TOOLCHAIN_PREFIX + 'g++')
+ 
+ def GetStrip():
+     # Hack
+@@ -1710,6 +1717,7 @@
+ 
+         if not have_pkg:
+             if custom_loc:
++                print(incdirs)
+                 print("%sERROR:%s Could not locate thirdparty package %s in specified directory, aborting build" % (GetColor("red"), GetColor(), pkg.lower()))
+                 exit()
+             elif pkg in PkgListGet():
+@@ -2008,6 +2016,11 @@
+         else:
+             py_libs = glob.glob(tp_python + "/lib/libpython[0-9].[0-9].so")
+ 
++        if GetTarget() == 'android':
++            py_libs = glob.glob(tp_python + "/lib/libpython[0-9].[0-9]dm.so")
++            py_libs.extend( glob.glob(tp_python + "/lib/libpython[0-9].[0-9]m.so") )
++            
++
+         if len(py_libs) == 0:
+             py_libs = glob.glob(tp_python + "/lib/libpython[0-9].[0-9].a")
+ 
+@@ -2059,6 +2072,8 @@
+         # We need a version of Python we can run.
+         SDK["PYTHONEXEC"] = sys.executable
+         host_version = "python" + sysconfig.get_python_version() + abiflags
++        if GetTarget() == 'android':
++            host_version = host_version.replace('d','').replace('m','')
+         if SDK["PYTHONVERSION"] != host_version:
+             exit("Host Python version (%s) must be the same as target Python version (%s)!" % (host_version, SDK["PYTHONVERSION"]))
+ 
+@@ -2340,19 +2355,20 @@
+         return
+ 
+     # Determine the NDK installation directory.
+-    if 'NDK_ROOT' not in os.environ:
+-        exit('NDK_ROOT must be set when compiling for Android!')
++    if 'ANDROID_NDK_ROOT' not in os.environ:
++        exit('ANDROID_NDK_ROOT must be set when compiling for Android!')
+ 
+-    ndk_root = os.environ["NDK_ROOT"]
++    ndk_root = os.environ["ANDROID_NDK_ROOT"]
+     if not os.path.isdir(ndk_root):
+-        exit("Cannot find %s.  Please install Android NDK and set NDK_ROOT." % (ndk_root))
++        exit("Cannot find %s.  Please install Android NDK and set ANDROID_NDK_ROOT." % (ndk_root))
+ 
+     SDK["ANDROID_NDK"] = ndk_root
+ 
+     # Determine the toolchain location.
+-    gcc_ver = '4.8'
++    gcc_ver = os.environ.get('NDK_CVER','4.9')
++    print("ANDROID: Using NDK_CVER %s" % gcc_ver )
+     arch = GetTargetArch()
+-    if arch == 'armv7a' or arch == 'arm':
++    if arch in ['armv7a','armv7','arm']:
+         arch = 'arm'
+         toolchain = 'arm-linux-androideabi-' + gcc_ver
+     elif arch == 'x86':
+@@ -2366,7 +2382,7 @@
+     SDK["ANDROID_ABI"] = abi
+ 
+     # Determine the sysroot directory.
+-    SDK["SYSROOT"] = os.path.join(ndk_root, 'platforms', 'android-9', 'arch-%s' % (arch))
++    SDK["SYSROOT"] = os.path.join(ndk_root, 'platforms', 'android-19', 'arch-%s' % (arch))
+     #IncDirectory("ALWAYS", os.path.join(SDK["SYSROOT"], 'usr', 'include'))
+ 
+     stdlibc = os.path.join(ndk_root, 'sources', 'cxx-stl', 'gnu-libstdc++', gcc_ver)
+@@ -2756,6 +2772,8 @@
+                 exit('Not found: %s' % (prebuilt_dir))
+ 
+         # Then, add it to the PATH.
++        print("ANDROID : toolchain path",os.path.join(prebuilt_dir, 'bin') )
++        #toolchains/llvm/prebuilt/linux-x86_64/bin
+         AddToPathEnv("PATH", os.path.join(prebuilt_dir, 'bin'))
+ 
+     # If we're cross-compiling, no point in putting our output dirs on the path.

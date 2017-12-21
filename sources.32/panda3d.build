@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 ZIP=panda3d-master
 SRC=panda3d
 
@@ -9,8 +8,16 @@ OPT_ANDROID="--arch $ANDROID_ARCH --target android --no-pview --no-pandatool --u
 
 GHZIP=https://github.com/panda3d/panda3d/archive/master.zip
 
+
 #==============================================================================
+
 reset
+
+
+. $SDK/build.${BITS}.functions
+
+#==============================================================================
+# Get code source from checksummed archive or online.
 
 ORIGIN=$(dirname $(realpath "$0") )
 cd $SDK/build.${BITS}
@@ -38,8 +45,16 @@ done
 
 [ -d $ZIP ] && mv -v $ZIP $SRC
 
+#==================================================================================
+
 export ORIGIN=$ORIGIN/$SRC
+
 cd $ORIGIN
+
+patch_me
+
+#reparse just in case python was built without reloading env
+. $SDK/built.${BITS}.env
 
 if $PDK_PYTHON -V | grep -q 3.7
 then
@@ -135,23 +150,26 @@ else
     echo "FATAL: Can't find static host cpython $PDK_PYTHON"
 fi
 
-echo "Installing to $DEV_TARGET"
+echo "Installing to $DEV_APPDIR"
 cd ${ROOT}
 
-mkdir -p "$DEV_TARGET/lib-${ANDROID_ARCH}/"
-mkdir -p "$DEV_TARGET/usr/lib-${ANDROID_ARCH}/panda3d/"
+mkdir -p "$DEV_APPDIR/lib-${ANDROID_ARCH}/"
+mkdir -p "$DEV_APPDIR/usr/lib-${ANDROID_ARCH}/panda3d/"
 
 if [ -f panda3d/built/lib/libpython3.7m.so ]
 then 
-    mv -vf panda3d/built/lib/libpython3.7m.so "$DEV_TARGET/lib-${ANDROID_ARCH}/"
+    mv -vf panda3d/built/lib/libpython3.7m.so "$DEV_APPDIR/lib-${ANDROID_ARCH}/"
 fi
 
-PY_PANDA3D="$DEV_APPDIR/usr/lib/python${PYDOT}/site-packages/panda3d"
-mkdir -p $PY_PANDA3D
+export PDK_PANDA3D=$DEV_APPDIR/usr/lib-$ANDROID_ARCH/panda3d
 
-if touch $PY_PANDA3D/__init__.py
+export PDK_PYPANDA3D="$DEV_APPDIR/usr/lib/python${PYDOT}/site-packages/panda3d"
+
+mkdir -p $PDK_PYPANDA3D
+
+if touch $PDK_PYPANDA3D/__init__.py
 then
-    cat > $PY_PANDA3D/__init__.py <<END
+    cat > $PDK_PYPANDA3D/__init__.py <<END
 import sys
 from ctypes import CDLL
 LIBS = """
@@ -193,31 +211,33 @@ END
 
     if [ -d panda3d/built/libs ]
     then
-        # first move python lib
+        # first move python libs and clean SONAME
         for pylib in $(find panda3d/built/libs/*/*cpython*.so)
         do
-            mv -vf $pylib $PY_PANDA3D/$(basename $pylib|cut -f1 -d.).so
+            mv -vf $pylib $PDK_PYPANDA3D/$(basename $pylib|cut -f1 -d.).so
         done
         
         # then panda
         for pandalib in $(find panda3d/built/libs/*/lib*.so)
         do
-            mv -vf $pandalib $DEV_TARGET/usr/lib-$ANDROID_ARCH/panda3d/
+            mv -vf $pandalib $DEV_APPDIR/usr/lib-$ANDROID_ARCH/panda3d/
         done
         rmdir panda3d/built/libs/* panda3d/built/libs
     fi
             
     echo "
     
-    Installed in $DEV_APPDIR via $DEV_TARGET
+    Panda3d $ANDROID_ARCH port installed in [$DEV_APPDIR] 
+    See gradle sample project to link both python and panda3d in your apk
+    
+    Python support libs : $PDK_PYPANDA3D
+    C++ support libs : $PDK_PANDA3D
     
 "   
 
 else
-    echo "PY_PANDA3D: wrong target path '$PY_PANDA3D'"
+    echo "PDK_PYPANDA3D: wrong target path '$PDK_PYPANDA3D'"
 fi   
-
-
 
 
 
