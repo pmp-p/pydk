@@ -151,7 +151,6 @@ else
 fi
 
 echo "Installing to $DEV_APPDIR"
-cd ${ROOT}
 
 mkdir -p "$DEV_APPDIR/lib-${ANDROID_ARCH}/"
 mkdir -p "$DEV_APPDIR/usr/lib-${ANDROID_ARCH}/panda3d/"
@@ -167,7 +166,13 @@ export PDK_PYPANDA3D="$DEV_APPDIR/usr/lib/python${PYDOT}/site-packages/panda3d"
 
 mkdir -p $PDK_PYPANDA3D
 
-if touch $PDK_PYPANDA3D/__init__.py
+touch $PDK_PYPANDA3D/__init__.py
+
+echo "
+    * installing python package in $PDK_PYPANDA3D/__init__.py
+    "
+
+if [ -f $PDK_PYPANDA3D/__init__.py ]
 then
     cat > $PDK_PYPANDA3D/__init__.py <<END
 import sys
@@ -208,21 +213,29 @@ for lpass in (3,2,1):
         except Exception as e:
             print(lpass,dll,e,file=sys.stderr)
 END
-
-    if [ -d panda3d/built/libs ]
+    pwd
+    if [ -d built/libs ]
     then
         # first move python libs and clean SONAME
-        for pylib in $(find panda3d/built/libs/*/*cpython*.so)
+        echo "
+    * installing python support libs
+    "
+        for pylib in $(find built/libs/*/*.cpython-*.so)
         do
-            mv -vf $pylib $PDK_PYPANDA3D/$(basename $pylib|cut -f1 -d.).so
+            mv -vf $pylib $PDK_PYPANDA3D/
+            #$(basename $pylib|cut -f1 -d.).so
         done
-        
+
+
         # then panda
-        for pandalib in $(find panda3d/built/libs/*/lib*.so)
+        echo "
+    * installing panda c++ support libs
+    "
+        for pandalib in $(find built/libs/*/lib*.so)
         do
             mv -vf $pandalib $DEV_APPDIR/usr/lib-$ANDROID_ARCH/panda3d/
         done
-        rmdir panda3d/built/libs/* panda3d/built/libs
+        rmdir built/libs/* panda3d/built/libs
     fi
             
     echo "

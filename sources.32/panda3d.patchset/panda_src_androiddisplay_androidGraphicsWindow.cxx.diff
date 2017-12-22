@@ -1,5 +1,5 @@
 --- panda3d/panda/src/androiddisplay/androidGraphicsWindow.cxx	2017-12-16 21:05:57.000000000 +0100
-+++ panda3d.android/panda/src/androiddisplay/androidGraphicsWindow.cxx	2017-12-15 08:52:35.835802690 +0100
++++ panda3d.android/panda/src/androiddisplay/androidGraphicsWindow.cxx	2017-12-21 14:58:32.844738542 +0100
 @@ -29,6 +29,13 @@
  #include <android/window.h>
  #include <android/log.h>

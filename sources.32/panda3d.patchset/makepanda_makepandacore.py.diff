@@ -1,5 +1,5 @@
 --- panda3d/makepanda/makepandacore.py	2017-12-16 21:05:57.000000000 +0100
-+++ panda3d.android/makepanda/makepandacore.py	2017-12-13 02:07:39.879382013 +0100
++++ panda3d.android/makepanda/makepandacore.py	2017-12-22 01:58:48.118824746 +0100
 @@ -350,7 +350,7 @@
  
          # Determine the prefix for our gcc tools, eg. arm-linux-androideabi-gcc
@@ -118,3 +118,14 @@
          AddToPathEnv("PATH", os.path.join(prebuilt_dir, 'bin'))
  
      # If we're cross-compiling, no point in putting our output dirs on the path.
+@@ -3088,6 +3106,10 @@
+     ORIG_EXT[x] = v
+ 
+ def GetExtensionSuffix():
++    # android is cross compiled do not use host python info
++    if GetTarget() == "android":
++        return ".cpython-%s%s.so" % ( os.getenv('PYVER','37') , os.getenv('PYMODE','m') )
++    
+     if sys.version_info >= (3, 0):
+         suffix = sysconfig.get_config_var('EXT_SUFFIX')
+         if suffix:

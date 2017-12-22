@@ -1,5 +1,5 @@
 --- panda3d/makepanda/makepanda.py	2017-12-16 21:05:57.000000000 +0100
-+++ panda3d.android/makepanda/makepanda.py	2017-12-14 01:15:16.735685651 +0100
++++ panda3d.android/makepanda/makepanda.py	2017-12-21 19:10:56.619473198 +0100
 @@ -1262,9 +1262,13 @@
              cmd += ' -I%s/include' % (SDK["ANDROID_STL"])
              cmd += ' -I%s/libs/%s/include' % (SDK["ANDROID_STL"], SDK["ANDROID_ABI"])
@@ -40,7 +40,15 @@
          else:
              cmd += " -pthread"
  
-@@ -1731,10 +1737,10 @@
+@@ -1709,6 +1715,7 @@
+             else:
+                 cmd = cxx + ' -shared'
+                 if "MODULE" not in opts or GetTarget() == 'android':
++                    print(" ============= %s =============== " % os.path.basename(dll) )
+                     cmd += " -Wl,-soname=" + os.path.basename(dll)
+                 cmd += ' -o ' + dll + ' -L' + GetOutputDir() + '/lib -L' + GetOutputDir() + '/tmp'
+ 
+@@ -1731,10 +1738,10 @@
                      cmd += " -arch %s" % arch
  
          elif GetTarget() == 'android':
