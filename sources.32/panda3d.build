@@ -1,12 +1,15 @@
 #!/bin/bash
 
+GHZIP=https://github.com/panda3d/panda3d/archive/master.zip
 ZIP=panda3d-master
+
+GHZIP=https://github.com/panda3d/panda3d/archive/input-overhaul.zip
+ZIP=panda3d-input-overhaul
+
+OPT_COMMON="--no-eigen --use-gles --use-gles2 --use-zlib --threads 4"
+OPT_ANDROID="--arch $ANDROID_ARCH --target android --no-pview --no-pandatool --use-neon --no-sse2"
 SRC=panda3d
 
-OPT_COMMON="--no-eigen --use-gles --use-gles2 --use-zlib"
-OPT_ANDROID="--arch $ANDROID_ARCH --target android --no-pview --no-pandatool --use-neon --no-sse2"
-
-GHZIP=https://github.com/panda3d/panda3d/archive/master.zip
 
 
 #==============================================================================
@@ -27,21 +30,26 @@ echo "Working in $ORIGIN for $SRC"
 while true
 do
     [ -d $SRC ] && break
-    
+
     cd $ARCHIVES
-    
+
     if md5sum -c $ARCHIVES/$SRC.zip.md5
     then
         echo "Archive $ARCHIVES/$SRC.zip.md5 validated"
-        cd $ORIGIN && unzip $ARCHIVES/$SRC.zip | pv -w 60 -p -l -s 4134 >/dev/null && break    
+        cd $ORIGIN && unzip $ARCHIVES/$SRC.zip | pv -w 60 -p -l -s 4134 >/dev/null && break
     else
         echo "Downloading $GHZIP"
-        wget $GHZIP -O$SRC.zip
-        cd $ORIGIN &&  unzip $ARCHIVES/$SRC.zip | pv -w 60  -p -l -s 4134 >/dev/null && break
+        if wget $GHZIP -O$SRC.zip
+        then
+            md5sum $ARCHIVES/$SRC.zip > $ARCHIVES/$SRC.zip.md5
+            cd $ORIGIN &&  unzip $ARCHIVES/$SRC.zip | pv -w 60  -p -l -s 4134 >/dev/null && break
+        else
+            echo "failure downloading $GHZIP"
+        fi
     fi
     echo "$SRC.zip corrupted ?"
     wait_or_break
-done    
+done
 
 [ -d $ZIP ] && mv -v $ZIP $SRC
 
@@ -60,7 +68,7 @@ if $PDK_PYTHON -V | grep -q 3.7
 then
     echo "Will use python 3.7 :  $PDK_PYTHON"
 else
-    echo "This script is for cpython 3.7 only" 
+    echo "This script is for cpython 3.7 only"
     read
     exit
 fi
@@ -69,9 +77,9 @@ fi
 if echo $ANDROID_API|grep -q 19
 then
     echo "#FIXME: readline/sqlite won't fix : WITH_LIBRARIES==$WITH_LIBRARIES =>  "
-    export WITH_LIBRARIES="libffi,openssl,ncurses"    
+    export WITH_LIBRARIES="libffi,openssl,ncurses"
     echo "using instead : WITH_LIBRARIES=$WITH_LIBRARIES"
-fi    
+fi
 
 echo "#FIXME: panda3d not clang ready"
 export NDK_GCC="gcc"
@@ -83,7 +91,7 @@ read
 
 
 
-if [ -f $PDK_PYTHON ] 
+if [ -f $PDK_PYTHON ]
 then
 
 #    echo "sudo apt-get install build-essential checkinstall pkg-config python-dev libpng-dev libjpeg-dev libtiff-dev zlib1g-dev libssl-dev libx11-dev libgl1-mesa-dev libxrandr-dev # libxxf86dga-dev libxcursor-dev bison flex libfreetype6-dev libvorbis-dev libeigen3-dev libopenal-dev libode-dev libbullet-dev nvidia-cg-toolkit libgtk2.0-dev libgles2-mesa-dev"
@@ -91,16 +99,16 @@ then
 
 
     cd ${ORIGIN}
-    
+
     echo "
-	    * cleaning up thirdparties
+        * cleaning up thirdparties
     "
-   
+
 
     rm -rf thirdparty
 
     echo "
-	    * Entering $(pwd)
+        * Entering $(pwd)
     "
     mkdir -p thirdparty/android-libs-${ANDROID_ARCH}
 
@@ -126,7 +134,7 @@ then
     "
     else
 
-        $PDK_PYTHON makepanda/makepanda.py --everything --threads 2 $OPT_COMMON $TP_PYTHON
+        $PDK_PYTHON makepanda/makepanda.py --everything $OPT_COMMON $TP_PYTHON
         mv built host
     fi
 
@@ -144,9 +152,15 @@ then
     ln -sf ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE} ${TP}/python${PYVER}/include/python${PYDOT}
 
     cmd="$PDK_PYTHON makepanda/makepanda.py $OPT_COMMON $OPT_ANDROID $TP_PYTHON"
-    echo $cmd
+    cat > $ORIGIN.rebuild.sh <<END
+#!/bin/bash
+. $SDK/sdk.env
+cd $ORIGIN
+$cmd
+END
+    chmod +x $ORIGIN.rebuild.sh
     $cmd
-else 
+else
     echo "FATAL: Can't find static host cpython $PDK_PYTHON"
 fi
 
@@ -156,7 +170,7 @@ mkdir -p "$DEV_APPDIR/lib-${ANDROID_ARCH}/"
 mkdir -p "$DEV_APPDIR/usr/lib-${ANDROID_ARCH}/panda3d/"
 
 if [ -f panda3d/built/lib/libpython3.7m.so ]
-then 
+then
     mv -vf panda3d/built/lib/libpython3.7m.so "$DEV_APPDIR/lib-${ANDROID_ARCH}/"
 fi
 
@@ -237,20 +251,20 @@ END
         done
         rmdir built/libs/* panda3d/built/libs
     fi
-            
+
     echo "
-    
-    Panda3d $ANDROID_ARCH port installed in [$DEV_APPDIR] 
+
+    Panda3d $ANDROID_ARCH port installed in [$DEV_APPDIR]
     See gradle sample project to link both python and panda3d in your apk
-    
+
     Python support libs : $PDK_PYPANDA3D
     C++ support libs : $PDK_PANDA3D
-    
-"   
+
+"
 
 else
     echo "PDK_PYPANDA3D: wrong target path '$PDK_PYPANDA3D'"
-fi   
+fi
 
 
 

@@ -1,0 +1,30 @@
+--- panda3d.host/panda/src/device/p3device_composite1.cxx	2017-12-16 21:05:57.000000000 +0100
++++ panda3d/panda/src/device/p3device_composite1.cxx	2018-01-10 14:37:35.000000000 +0100
+@@ -1,3 +1,15 @@
++#ifdef ANDROID
++    #include <linux/input.h>
++    #define EV_CNT (EV_MAX+1)
++    #define KEY_CNT (KEY_MAX+1)
++    #define ABS_CNT (ABS_MAX+1)
++    #define FF_CNT (FF_MAX+1)
++    #define BTN_TRIGGER_HAPPY1 0x2c0
++    #define BTN_TRIGGER_HAPPY2 0x2c1
++    #define BTN_TRIGGER_HAPPY3 0x2c2
++    #define BTN_TRIGGER_HAPPY4 0x2c3
++    extern int inotify_init1(int);
++#endif
+ 
+ #include "clientAnalogDevice.cxx"
+ #include "clientBase.cxx"
+@@ -5,4 +17,10 @@
+ #include "clientDevice.cxx"
+ #include "clientDialDevice.cxx"
+ #include "clientTrackerDevice.cxx"
+-
++#include "evdevInputDevice.cxx"
++#include "inputDevice.cxx"
++#include "inputDeviceManager.cxx"
++#include "inputDeviceNode.cxx"
++#include "inputDeviceSet.cxx"
++#include "ioKitInputDevice.cxx"
++#include "linuxJoystickDevice.cxx"

@@ -4,9 +4,12 @@
 
 # changing those is totally untested feel free to test and report ...
 
-NDK_VER=14
-export BITS=32
 
+export NDK_VER=14
+export BITS=32
+export ANDROID_API=19
+
+NDK=android-ndk-r14b
 
 #==============================================================================
 
@@ -49,7 +52,6 @@ echo "
 
 
 SDK=$SDK_ROOT
-NDK=android-ndk-r14b
 UROOT=$SDK/u.root
 UR=$SDK_ROOT/u.r
 
@@ -129,14 +131,15 @@ echo "
 
 while true
 do
-    if [ -d $ANDROID_SDK_ROOT/sources/android-19 ]
+    if [ -d $ANDROID_SDK_ROOT/sources/android-${ANDROID_API} ]
     then
         echo "
-    found android sdk/api-19 : $ANDROID_SDK_ROOT
+    found android sdk/api-${ANDROID_API} : $ANDROID_SDK_ROOT
 "
         break
     else
-        echo "Please install Android SDK with API-19 in [$ANDROID_SDK_ROOT], probably use android studio to do that ...
+        echo "Please install Android SDK with API android-${ANDROID_API} in [$ANDROID_SDK_ROOT],
+        maybe use android studio to do that ...
         or symlink your existing SDK installation eg 'ln -s /opt/android/sdk $ANDROID_SDK_ROOT'
 "
         wait_or_break
@@ -196,6 +199,7 @@ export ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT
 export NDK=$ANDROID_NDK_ROOT
 export ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT
 export ANDROID_HOME=$ANDROID_SDK_ROOT
+export ANDROID_TARGET=android-$ANDROID_API
 
 #make patchelf/bash/ndk/gcc and toolchain available
 export TOOLCHAIN=$TOOLCHAIN
@@ -204,18 +208,21 @@ export CLANG=${TOOLCHAIN}/bin/clang
 export CL_PP=${TOOLCHAIN}/clang++
 export PATH=$SDK/android/bin:${ANDROID_NDK_ROOT}:$PATH
 
+#extra
+export SDKMAN_DIR="$SDK_ROOT/android/sdkman"
+
 #tweaks
 export PYTHONDONTWRITEBYTECODE=1
-
 
 
 #say hi
 echo SDK=$SDK Toolchain ${BITS} ${TOOLCHAIN}
 if [ -f $SDK/built.${BITS}.env ]
-then    
-    . "$SDK/build.${BITS}.env"
-    . "$SDK/built.${BITS}.env"
-    . "$SDK/build.${BITS}.functions"   
+then
+    source "$SDK/build.${BITS}.env"
+    source "$SDK/built.${BITS}.env"
+    source "$SDK/build.${BITS}.functions"
+    source $SDKMAN_DIR/bin/sdkman-init.sh
 else
     echo "build env $SDK/build.${BITS}.env not configured yet"
 fi
@@ -226,22 +233,22 @@ if [ -f $SDK/build.${BITS}.env ]
 then
     echo "
     Previous build parameters found, preserving  :
-    
+
     $SDK/build.${BITS}.env
     ${ORIGIN}/build.${BITS}.functions
     $SDK/built.${BITS}.env
-    
+
 "
-    
+
 else
     echo "Copying default build parameters : $SDK/build.${BITS}.env"
     #echo "export PDK_PATCHELF=${TOOLCHAIN}/bin/patchelf" > $SDK/built.${BITS}.env
-    
+
     mkdir -p $SDK/build.${BITS}
-    
+
     cp -vf ${ORIGIN}/build.${BITS}.env $SDK/
     ln ${ORIGIN}/build.${BITS}.functions $SDK/
-        
+
     ln ${ORIGIN}/sources.${BITS}/*.build $SDK/build.${BITS}/
     cp -aR ${ORIGIN}/sources.${BITS}/*.patchset $SDK/build.${BITS}/
 
@@ -252,10 +259,17 @@ fi
 
 . $SDK_ROOT/sdk.env
 
-echo "installing armv7a-none-linux-android toolchain  in $TOOLCHAIN"
+echo "
+    * installing armv7a-none-linux-android toolchain  in $TOOLCHAIN
+"
 $NDK/build/tools/make_standalone_toolchain.py \
- --arch arm --api 19 --stl=gnustl --force --install-dir $TOOLCHAIN
+ --arch arm --api $ANDROID_API --stl=gnustl --force --install-dir $TOOLCHAIN
 
+
+echo "
+    * installing sdkman
+curl -s https://get.sdkman.io | bash
+"
 
 
 while true
@@ -283,6 +297,7 @@ found patchelf tool : ${UROOT}/bin/patchelf
     fi
 done
 
+#patchelf --set-interpreter /data/data/u.r/arm-32.so u.r/bin/evtest
 
 #installing frankenloader
 cd $ORIGIN/frankenstax/qemu-wrapper.$BITS

@@ -18,33 +18,33 @@ echo "Working in $ORIGIN for $SRC"
 while true
 do
     [ -d $SRC ] && break
-    
+
     cd $ARCHIVES
-    
+
     if md5sum -c $ARCHIVES/cpython-bpo-30386.zip.md5
     then
         echo "Archive $ARCHIVES/cpython-bpo-30386.zip.md5 validated"
-        cd $ORIGIN && unzip $ARCHIVES/$SRC.zip | pv -w 60 -p -l -s 4134 >/dev/null && break    
+        cd $ORIGIN && unzip $ARCHIVES/$SRC.zip | pv -w 60 -p -l -s 4134 >/dev/null && break
     else
         wget $BPO -o cpython-bpo-30386.zip
         cd $ORIGIN &&  unzip $ARCHIVES/$SRC.zip | pv -w 60  -p -l -s 4134 >/dev/null && break
     fi
     echo "$SRC.zip corrupted ?"
     wait_or_break
-done    
+done
 
 export ORIGIN=$ORIGIN/$SRC
 cd $ORIGIN
 
 pwd
-    
+
 
 if echo $ANDROID_API|grep -q 19
 then
     echo "#FIXME: readline/sqlite won't fix : WITH_LIBRARIES==$WITH_LIBRARIES =>  "
-    export WITH_LIBRARIES="libffi,openssl,ncurses"    
+    export WITH_LIBRARIES="libffi,openssl,ncurses"
     echo "using instead : WITH_LIBRARIES=$WITH_LIBRARIES"
-fi    
+fi
 
 echo "#FIXME: panda3d not clang ready"
 export NDK_GCC="gcc"
@@ -65,59 +65,59 @@ if [ -f $PDK_APYTHON ]
 then
     echo "
     * found TARGET $A_PYTHON - skipping HOST + TARGET build
-"    
+"
 else
-	if mkdir -p ${DEV_APPDIR}
-	then
-		echo Building HOST + TARGET cpython${PYVER}${PYMODE} from $ORIGIN/Android
-		
+    if mkdir -p ${DEV_APPDIR}
+    then
+        echo Building HOST + TARGET cpython${PYVER}${PYMODE} from $ORIGIN/Android
+
         patch_me
-        		
-		cd $ORIGIN/Android
-		
-		if ./makesetup $DEV_PATHS $OPT_COMMON $OPT_ANDROID
-		then
-		
-			#will fail on ncurses as first pass 
-            >$ORIGIN.log 
+
+        cd $ORIGIN/Android
+
+        if ./makesetup $DEV_PATHS $OPT_COMMON $OPT_ANDROID
+        then
+
+            #will fail on ncurses as first pass
+            >$ORIGIN.log
             echo "to view log : tail -f $ORIGIN.log"
-			make 2>> $ORIGIN.log | pv -w 60 -p -l -s 2000 >>$ORIGIN.log 
-			if [ -f $PDK_APYTHON ]
-			then
-			    echo "
-			    
-	    Great built on first pass - you lucky owner of the perfect build env, do not dare to update it !
-	    
-	    "
-			else
-			    echo "
-    
-        Build failed, that was expected because i tell you so
-        
-        Loggile is $ORIGIN.log
-        
+            make 2>> $ORIGIN.log | pv -w 60 -p -l -s 2000 >>$ORIGIN.log
+            if [ -f $PDK_APYTHON ]
+            then
+                echo "
+
+        Great built on first pass - you lucky owner of the perfect build env, do not dare to update it !
+
         "
-        		cp -vf $ORIGIN.patchset/external/ncurses-6.0.mint.tar.gz ${ORIGIN}/Android/build/external-libraries/ncurses-6.0.tar.gz        		
-    			echo "Stuff fixed ... maybe,  press <enter>"			
-    			read
-                echo "to view log : tail -f $ORIGIN.log"    			
-			    make 2>&1  | pv -w 60 -p -l -s 6300 >$ORIGIN.log 
-			fi
-			#make install 			
-		fi
-	fi
+            else
+                echo "
+
+        Build failed, that was expected because i tell you so
+
+        Loggile is $ORIGIN.log
+
+        "
+                cp -vf $ORIGIN.patchset/external/ncurses-6.0.mint.tar.gz ${ORIGIN}/Android/build/external-libraries/ncurses-6.0.tar.gz
+                echo "Stuff fixed ... maybe,  press <enter>"
+                read
+                echo "to view log : tail -f $ORIGIN.log"
+                make 2>&1  | pv -w 60 -p -l -s 6300 >$ORIGIN.log
+            fi
+            #make install
+        fi
+    fi
 fi
 
 
 cd ${ROOT}
 
 
-if [ -f $PDK_APYTHON ] 
+if [ -f $PDK_APYTHON ]
 then
     mkdir -p ${DEV_APPDIR}/usr/bin/ ${DEV_APPDIR}/lib-armv7/
-    
-	cp -vf ${ORIGIN}/Android/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}/python ${DEV_APPDIR}/usr/bin/python3.7
-	cp -vf ${ORIGIN}/Android/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}/libpython3.*.so ${DEV_APPDIR}/lib-armv7/
+
+    cp -vf ${ORIGIN}/Android/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}/python ${DEV_APPDIR}/usr/bin/python3.7
+    cp -vf ${ORIGIN}/Android/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}/libpython3.*.so ${DEV_APPDIR}/lib-armv7/
 
     register_pdk PDK_PYTHON $PDK_PYTHON
     register_pdk PDK_APYTHON $PDK_APYTHON
@@ -125,8 +125,8 @@ else
     echo "I have failed to build $ORIGIN, <press enter to read $ORIGIN.log>"
     echo "================================================================="
     cat $ORIGIN.log | more
-    echo "================================================================="    
-    
+    echo "================================================================="
+
 fi
 
 

@@ -23,9 +23,15 @@ bash ./frankenbuild.sh /data/data 192.168.0.xxx*
 *The ip addr is for targeting an adb networked device such as an h3droid board no IP means use classic adb over usb.
 
 
-After installalation you can parse . /data/data/sdk.env to enter the build zone. 
+After installation, running  .  /data/data/sdk.env  will enter the build zone. 
 
-It  behaves like a virtualenv your prompt will reflect that fact.
+It  behaves like a virtualenv : your prompt will reflect that fact.
 
 In the build folder you'll find various .build files which are recipes to download / patch / build some software for your presets.
+
+
+The onboard sdk is a really elf loader / qemu trick around debian jessie and ndk to make setuptools and pip work, so i did not push files.
+
+
+If you need more info or have use for onboard sdk contact me via #H3Droid on freenode irc.
 

@@ -50,6 +50,18 @@ Applying patch : $patch   "
 	fi
 }
 
+if adb devices -l 2>/dev/null|grep -v ^L|grep -v ^$|wc -l|grep -q 0
+then
+    echo No android device found
+    if echo $ADB_NET | grep -q 192
+    then
+        echo "trying to connect $ADB_NET via network"
+        adb disconnect $ADB_NET
+        adb connect $ADB_NET
+    else
+        echo "No USB device found"
+    fi
+fi
 
 export debian_chroot="DROID$BITS"
 env |grep PDK_
