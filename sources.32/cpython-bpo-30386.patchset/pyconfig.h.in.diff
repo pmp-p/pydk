@@ -1,0 +1,11 @@
+--- cpython-bpo-30386/pyconfig.h.in	2017-12-10 15:07:21.000000000 +0100
++++ cpython-bpo-30386.api19/pyconfig.h.in	2018-01-22 15:57:31.000000000 +0100
+@@ -81,7 +81,7 @@
+ 
+ /* Define if mbstowcs(NULL, "text", 0) does not return the number of wide
+    chars that would be converted. */
+-#undef HAVE_BROKEN_MBSTOWCS
++#define HAVE_BROKEN_MBSTOWCS 1
+ 
+ /* Define if nice() returns success/failure instead of the new priority. */
+ #undef HAVE_BROKEN_NICE

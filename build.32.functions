@@ -2,7 +2,6 @@
 
 #==================== put your favorites functions there ===============================
 
-
 function wait_or_break
 {
     echo -n  "
@@ -15,9 +14,47 @@ function wait_or_break
     clear
 }
 
+function set_source_tree
+{
+    cd $ORIGIN
+
+    echo "
+Setting source tree in [$ORIGIN] for [$SRC]"
+
+    while true
+    do
+        [ -d $SRC ] && break
+
+        cd $ARCHIVES
+
+        ARCHIVE="${ARCHIVES}/${SRC}.zip"
+
+        if md5sum -c ${ARCHIVE}.md5 2>/dev/null
+        then
+            echo "  * Archive $ARCHIVE.md5 validated"
+            cd $ORIGIN && unzip $ARCHIVE | pv -w 60 -p -l -s 4134 >/dev/null && break
+        else
+            echo "  * Storing source code from [$GHZIP] in cache [$ARCHIVE]"
+            wget $GHZIP -O$ARCHIVE
+            cd $ORIGIN
+            if unzip $ARCHIVE | pv -w 60  -p -l -s 4134 >/dev/null
+            then
+                md5sum $ARCHIVE > $ARCHIVE.md5
+                break
+            fi
+        fi
+        echo "is $SRC.zip corrupted ?"
+        wait_or_break
+    done
+
+    export ORIGIN=$ORIGIN/$SRC
+    cd $ORIGIN
+}
+
+
 function register_pdk
 {
-    if echo $1 | grep -q PDK_ 
+    if echo $1 | grep -q PDK_
     then
         echo export $1="$2"
         touch $SDK/built.${BITS}.env
@@ -26,28 +63,47 @@ function register_pdk
         mv -v $SDK/built.${BITS}.env $SDK/built.${BITS}.bak
         sort $SDK/built.new | uniq >  $SDK/built.${BITS}.env
         rm -vf $SDK/built.new
-        echo "  * Package $1 added to sdk.env, you may want to reload"    
+        echo "  * Package $1 added to sdk.env, you may want to reload"
     else
         echo "usage: register_pdk PDK_key value"
-    fi    
+    fi
 }
 
 function patch_me
 {
-	if [ -f "$ORIGIN/PDK_PATCHED" ]
-	then
-	    echo Patches already applied
-	else
-	    cd $ORIGIN
-	    for patch in $(find $ORIGIN.patchset/*.diff)
-	    do
-	        echo -n "
-Applying patch : $patch   "
-	        patch -p1 < $patch
-	        echo
-	    done
-	    touch PDK_PATCHED
-	fi
+    echo "
+Patching source tree if required"
+
+    if [ -f "$ORIGIN/PDK_PATCHED" ]
+    then
+        echo "  * All Patches already applied"
+    else
+        cd $ORIGIN
+
+        if [ -f $ORIGIN.patchset/overlay.tar.bz2 ]
+        then
+            echo "  * Applying overlay [$ORIGIN.patchset/overlay.tar.bz2]"
+            echo -n "     Overwritten files : "
+            /bin/tar xvpjf $ORIGIN.patchset/overlay.tar.bz2 | wc -l
+        else
+            echo "  * no overlay [$ORIGIN.patchset/overlay.tar.bz2] found to apply"
+        fi
+
+        if find $ORIGIN.patchset/ |grep -q diff$
+        then
+            for patch in $(find $ORIGIN.patchset/*.diff)
+            do
+                echo -n "
+    Applying patch : $patch   "
+                patch -p1 < $patch
+                echo
+            done
+        else
+            echo "  * no patch to apply"
+        fi
+
+        touch PDK_PATCHED
+    fi
 }
 
 if adb devices -l 2>/dev/null|grep -v ^L|grep -v ^$|wc -l|grep -q 0
@@ -55,7 +111,7 @@ then
     echo No android device found
     if echo $ADB_NET | grep -q 192
     then
-        echo "trying to connect $ADB_NET via network"
+        echo "Trying to connect $ADB_NET via network"
         adb disconnect $ADB_NET
         adb connect $ADB_NET
     else

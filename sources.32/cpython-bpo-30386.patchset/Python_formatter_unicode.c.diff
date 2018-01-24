@@ -1,5 +1,5 @@
---- host/Python/formatter_unicode.c	2017-11-25 18:48:48.000000000 +0100
-+++ armv7a/Python/formatter_unicode.c	2017-11-26 21:18:27.775375044 +0100
+--- cpython-bpo-30386/Python/formatter_unicode.c	2017-12-10 15:07:21.000000000 +0100
++++ cpython-bpo-30386.api19/Python/formatter_unicode.c	2018-01-21 19:11:30.000000000 +0100
 @@ -704,7 +704,9 @@
  {
      switch (type) {

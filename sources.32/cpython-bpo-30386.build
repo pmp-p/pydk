@@ -4,40 +4,14 @@
 SRC=cpython-bpo-30386
 OPT_COMMON="--with-computed-gotos --with-system-ffi --enable-shared"
 OPT_ANDROID="--without-ensurepip --with-c-locale-coercion --disable-ipv6"
-BPO=https://github.com/xdegaye/cpython/archive/bpo-30386.zip
+GHZIP=https://github.com/xdegaye/cpython/archive/bpo-30386.zip
 
 #==============================================================================
 ORIGIN=$(dirname $(realpath "$0") )
 
 . $SDK/build.${BITS}.functions
 
-cd $ORIGIN
-
-echo "Working in $ORIGIN for $SRC"
-
-while true
-do
-    [ -d $SRC ] && break
-
-    cd $ARCHIVES
-
-    if md5sum -c $ARCHIVES/cpython-bpo-30386.zip.md5
-    then
-        echo "Archive $ARCHIVES/cpython-bpo-30386.zip.md5 validated"
-        cd $ORIGIN && unzip $ARCHIVES/$SRC.zip | pv -w 60 -p -l -s 4134 >/dev/null && break
-    else
-        wget $BPO -o cpython-bpo-30386.zip
-        cd $ORIGIN &&  unzip $ARCHIVES/$SRC.zip | pv -w 60  -p -l -s 4134 >/dev/null && break
-    fi
-    echo "$SRC.zip corrupted ?"
-    wait_or_break
-done
-
-export ORIGIN=$ORIGIN/$SRC
-cd $ORIGIN
-
-pwd
-
+set_source_tree
 
 if echo $ANDROID_API|grep -q 19
 then
@@ -46,12 +20,7 @@ then
     echo "using instead : WITH_LIBRARIES=$WITH_LIBRARIES"
 fi
 
-echo "#FIXME: panda3d not clang ready"
 export NDK_GCC="gcc"
-
-echo "<enter> to continue"
-read
-
 
 ROOT=$(pwd)
 
@@ -61,10 +30,16 @@ export DEV_PATHS DEV_TARGET PYVER PYDOT PYMODE OPT_COMMON OPT_ANDROID
 export PDK_PYTHON=${ORIGIN}/Android/build/python-native/python
 export PDK_APYTHON=${ORIGIN}/Android/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}/python
 
+if echo "$@"|grep -q rebuild
+then
+    echo "CLEANING UP"
+    rm -vf $PDK_APYTHON ${ORIGIN}/Android/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}/libpython3.*.so
+fi
+
 if [ -f $PDK_APYTHON ]
 then
     echo "
-    * found TARGET $A_PYTHON - skipping HOST + TARGET build
+    * found TARGET $PDK_APYTHON - skipping HOST + TARGET build
 "
 else
     if mkdir -p ${DEV_APPDIR}
@@ -72,6 +47,9 @@ else
         echo Building HOST + TARGET cpython${PYVER}${PYMODE} from $ORIGIN/Android
 
         patch_me
+
+        echo "press <enter> to start build process"
+        read
 
         cd $ORIGIN/Android
 
@@ -108,16 +86,25 @@ else
     fi
 fi
 
-
 cd ${ROOT}
-
 
 if [ -f $PDK_APYTHON ]
 then
-    mkdir -p ${DEV_APPDIR}/usr/bin/ ${DEV_APPDIR}/lib-armv7/
+    dyn_load=${DEV_APPDIR}/usr/lib/python3.7/lib-dynload
 
-    cp -vf ${ORIGIN}/Android/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}/python ${DEV_APPDIR}/usr/bin/python3.7
-    cp -vf ${ORIGIN}/Android/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}/libpython3.*.so ${DEV_APPDIR}/lib-armv7/
+    mkdir -p ${DEV_APPDIR}/usr/bin/ ${DEV_APPDIR}/lib-armv7/ $dyn_load
+
+    build_dir=${ORIGIN}/Android/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}
+
+    echo "lib-dynload path is $dyn_load"
+
+    cp -vf ${build_dir}/build/lib.linux-arm-3.7/_sysconfigdata_m_linux_.py $dyn_load
+    echo -n "Copying builtins modules, count :"
+    cp -fv  ${build_dir}/build/lib.linux-arm-3.7/*.so $dyn_load | wc -l
+
+
+    cp -vf ${build_dir}/python ${DEV_APPDIR}/usr/bin/python3.7
+    cp -vf ${build_dir}/libpython3.*.so ${DEV_APPDIR}/lib-armv7/
 
     register_pdk PDK_PYTHON $PDK_PYTHON
     register_pdk PDK_APYTHON $PDK_APYTHON

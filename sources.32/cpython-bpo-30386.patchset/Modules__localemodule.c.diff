@@ -1,5 +1,5 @@
---- host/Modules/_localemodule.c	2017-11-25 18:48:48.000000000 +0100
-+++ armv7a/Modules/_localemodule.c	2017-11-26 20:54:53.975341319 +0100
+--- cpython-bpo-30386/Modules/_localemodule.c	2017-12-10 15:07:21.000000000 +0100
++++ cpython-bpo-30386.api19/Modules/_localemodule.c	2018-01-21 19:11:30.000000000 +0100
 @@ -143,7 +143,15 @@
          return NULL;
  

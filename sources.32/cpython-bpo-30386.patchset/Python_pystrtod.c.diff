@@ -1,5 +1,5 @@
---- host/Python/pystrtod.c	2017-11-25 18:48:48.000000000 +0100
-+++ armv7a/Python/pystrtod.c	2017-11-26 20:56:41.767343890 +0100
+--- cpython-bpo-30386/Python/pystrtod.c	2017-12-10 15:07:21.000000000 +0100
++++ cpython-bpo-30386.api19/Python/pystrtod.c	2018-01-21 19:11:30.000000000 +0100
 @@ -176,9 +176,14 @@
      assert(nptr != NULL);
  

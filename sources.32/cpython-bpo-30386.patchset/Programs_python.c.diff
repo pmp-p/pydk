@@ -1,5 +1,5 @@
---- host/Programs/python.c	2017-11-25 18:48:48.000000000 +0100
-+++ armv7a/Programs/python.c	2017-11-27 03:35:01.467914002 +0100
+--- cpython-bpo-30386/Programs/python.c	2017-12-10 15:07:21.000000000 +0100
++++ cpython-bpo-30386.api19/Programs/python.c	2018-01-21 19:11:30.000000000 +0100
 @@ -24,7 +24,12 @@
      /* We need a second copy, as Python might modify the first one. */
      wchar_t **argv_copy2;
@@ -13,7 +13,7 @@
  
      _PyInitError err = _PyRuntime_Initialize();
      if (_Py_INIT_FAILED(err)) {
-@@ -56,14 +61,19 @@
+@@ -53,14 +58,19 @@
      fedisableexcept(FE_OVERFLOW);
  #endif
  
@@ -34,7 +34,7 @@
  
      /* The legacy C locale assumes ASCII as the default text encoding, which
       * causes problems not only for the CPython runtime, but also other
-@@ -83,7 +93,11 @@
+@@ -80,7 +90,11 @@
      for (i = 0; i < argc; i++) {
          argv_copy[i] = Py_DecodeLocale(argv[i], NULL);
          if (!argv_copy[i]) {
@@ -46,7 +46,7 @@
              fprintf(stderr, "Fatal Python error: "
                              "unable to decode the command line argument #%i\n",
                              i + 1);
-@@ -93,8 +107,11 @@
+@@ -90,8 +104,11 @@
      }
      argv_copy2[argc] = argv_copy[argc] = NULL;
  
