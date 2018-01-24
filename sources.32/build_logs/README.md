@@ -24,3 +24,11 @@
                   ^
 2 errors generated.
 ```
+
+fix
+```
+#if __ANDROID_API__ < 21
+    #define SIGRTMIN 32
+    #define SIGRTMAX _NSIG
+#endif
+```
