@@ -1,0 +1,19 @@
+--- host/Python/pystrtod.c	2017-11-25 18:48:48.000000000 +0100
++++ armv7a/Python/pystrtod.c	2017-11-26 20:56:41.767343890 +0100
+@@ -176,9 +176,14 @@
+     assert(nptr != NULL);
+ 
+     fail_pos = NULL;
+-
+-    locale_data = localeconv();
++//PMPP API<21
++#if __ANDROID_API__ < 21
++    decimal_point = ".";
++#else
++    locale_data = localeconv(); //PATCHED
+     decimal_point = locale_data->decimal_point;
++#endif
++//PMPP API<21
+     decimal_point_len = strlen(decimal_point);
+ 
+     assert(decimal_point_len != 0);

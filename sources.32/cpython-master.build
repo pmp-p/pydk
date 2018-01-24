@@ -1,0 +1,119 @@
+#!/bin/bash
+
+
+SRC=cpython-master
+OPT_COMMON="--with-computed-gotos --with-system-ffi --enable-shared"
+OPT_ANDROID="--without-ensurepip --with-c-locale-coercion --disable-ipv6"
+GHZIP=https://github.com/python/cpython/archive/master.zip
+#==============================================================================
+ORIGIN=$(dirname $(realpath "$0") )
+
+. $SDK/build.${BITS}.functions
+
+set_source_tree
+
+pwd
+
+if echo $ANDROID_API|grep -q 19
+then
+    echo -n "#FIXME API-19 : readline/sqlite won't fix : WITH_LIBRARIES==$WITH_LIBRARIES changed to  "
+    export WITH_LIBRARIES="libffi"
+    echo "WITH_LIBRARIES=$WITH_LIBRARIES"
+fi
+
+export NDK_GCC="gcc"
+
+echo "<enter> to continue"
+read
+
+
+ROOT=$(pwd)
+
+PYTHONDONTWRITEBYTECODE=1
+
+export DEV_PATHS DEV_TARGET PYVER PYDOT PYMODE OPT_COMMON OPT_ANDROID PYTHONDONTWRITEBYTECODE
+
+export PDK_PYTHON=${ORIGIN}/Android/build/python-native/python
+export PDK_APYTHON=${ORIGIN}/Android/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}/python
+
+if echo "$@"|grep -q rebuild
+then
+    echo "CLEANING UP"
+    rm -vf $PDK_APYTHON ${ORIGIN}/Android/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}/libpython3.*.so
+fi
+
+if [ -f $PDK_APYTHON ]
+then
+    echo "
+    * found TARGET $PDK_APYTHON - skipping HOST + TARGET build
+"
+else
+    if mkdir -p ${DEV_APPDIR}
+    then
+        echo Building HOST + TARGET cpython${PYVER}${PYMODE} from $ORIGIN/Android
+
+        patch_me
+        pwd
+
+        cd $ORIGIN/Android
+
+        if ./makesetup $DEV_PATHS $OPT_COMMON $OPT_ANDROID
+        then
+
+            #will fail on ncurses as first pass
+            >$ORIGIN.log
+            echo "to view log : tail -f $ORIGIN.log"
+            make 2>> $ORIGIN.log | pv -w 60 -p -l -s 2000 >>$ORIGIN.log
+            if [ -f $PDK_APYTHON ]
+            then
+                echo "
+
+        Great built on first pass - you lucky owner of the perfect build env, do not dare to update it !
+
+        "
+            else
+                echo "
+
+        Build failed, that was expected because i tell you so
+
+        Logfile is $ORIGIN.log
+
+        "
+                cp -vf $ORIGIN.patchset/external/ncurses-6.0.mint.tar.gz ${ORIGIN}/Android/build/external-libraries/ncurses-6.0.tar.gz
+                echo "Stuff fixed ... maybe,  press <enter> to resume build"
+                read
+                echo "to view log : tail -f $ORIGIN.log"
+                make 2>&1  | pv -w 60 -p -l -s 6300 >$ORIGIN.log
+            fi
+            #make install
+        fi
+    fi
+fi
+
+
+cd ${ROOT}
+
+
+if [ -f $PDK_APYTHON ]
+then
+    mkdir -p ${DEV_APPDIR}/usr/bin/ ${DEV_APPDIR}/lib-armv7/
+
+    build_dir=${ORIGIN}/Android/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}
+    dyn_load= ${DEV_APPDIR}/usr/lib/python3.7/lib-dynload
+
+    cp -vf ${build_dir}/build/lib.linux-arm-3.7/_sysconfigdata_dm_linux_.py $dyn_load
+    cp -vf ${build_dir}/python ${DEV_APPDIR}/usr/bin/python3.7
+    cp -vf ${build_dir}/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}/libpython3.*.so ${DEV_APPDIR}/lib-armv7/
+
+    register_pdk PDK_PYTHON $PDK_PYTHON
+    register_pdk PDK_APYTHON $PDK_APYTHON
+else
+    echo "I have failed to build $ORIGIN, <press enter to read $ORIGIN.log>"
+    echo "================================================================="
+    cat $ORIGIN.log | more
+    echo "================================================================="
+
+fi
+
+
+
