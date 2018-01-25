@@ -1,4 +1,4 @@
-*** Modules/signalmodule.c
+== Modules/signalmodule.c
 ```
 /data/data/build.32/cpython-android_api19/Modules/signalmodule.c:1436:33: error: implicit declaration of function '__libc_current_sigrtmin' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
     if (PyModule_AddIntMacro(m, SIGRTMIN))
@@ -35,7 +35,7 @@ fix
 ```
 
 
-*** Linker error 
+== Linker error 
 ```
 /data/data/android/android-ndk-r14b/toolchains/llvm/prebuilt/linux-x86_64/bin/clang -target armv7-none-linux-androideabi -gcc-toolchain /data/data/android/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64 -L/data/data/build.32/cpython-android_api19/Android/build/python3.7-extlibs-android-19-armv7//data/local/tmp/python/lib --sysroot=/data/data/android/android-ndk-r14b/platforms/android-19/arch-arm -march=armv7-a -Wl,--fix-cortex-a8  -pie -Xlinker -export-dynamic -o python Programs/python.o -L. -lpython3.7dm -ldl    -lm  
 ./libpython3.7dm.so: error: undefined reference to 'localeconv'
@@ -98,7 +98,7 @@ extern struct lconv *localeconv(void){
 ```
 
 
-
+```
 /*
 
 ref:
@@ -112,3 +112,4 @@ ref:
         https://github.com/nlohmann/json/pull/687/files
         https://gist.github.com/dpantele/d2e2aec8ff23b0208245c8a6e882f7fe
 */
+```
