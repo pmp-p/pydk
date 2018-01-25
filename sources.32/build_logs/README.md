@@ -1,3 +1,7 @@
+# Modules/_localemodule.c
+
+fix PyLocale_setlocale() to always return "C" on API19 instead of failing 
+
 # Modules/signalmodule.c
 ```
 /data/data/build.32/cpython-android_api19/Modules/signalmodule.c:1436:33: error: implicit declaration of function '__libc_current_sigrtmin' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
