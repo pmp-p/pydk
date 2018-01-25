@@ -1,3 +1,5 @@
+Testdrive results for https://github.com/vstinner/cpython/tree/android_api19 proposal.
+
 # Modules/_localemodule.c
 
 fix PyLocale_setlocale() to always return "C" on API19 instead of failing 
