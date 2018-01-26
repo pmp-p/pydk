@@ -1,5 +1,24 @@
 Testdrive results for https://github.com/vstinner/cpython/tree/android_api19 proposal.
 
+# strftime calls
+somewhere the libc call is failing with a trace similar to a decode_current_locale/encode_current_locale call:
+```
+import datetime
+d=datetime.date.fromordinal(1)
+#ok
+d.strftime('')
+#not
+d.strftime('%Y')
+```
+
+```
+Traceback (most recent call last):
+  File "testt.pt", line 9, in <module>
+    d.strftime('%Y')
+ValueError: character U+b8c30025 is not in range [U+0000; U+10ffff]
+```
+
+
 
 # Modules/_localemodule.c
 fix PyLocale_setlocale() to always return "C" on API19 instead of failing 
