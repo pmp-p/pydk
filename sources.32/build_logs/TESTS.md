@@ -1,4 +1,4 @@
-hacked linker, compiled on debian jessie armhf from master, running as root from bash under h3droid 1.3.2 
+# hacked linker, compiled on debian jessie armhf from master, running as root from bash under h3droid 1.3.2 
 
 Python 3.7.0a4+ (default, Jan 24 2018, 17:24:13) 
 [GCC 4.9.2] on linux
@@ -27,6 +27,21 @@ Python 3.7.0a4+ (default, Jan 24 2018, 17:24:13)
     test_winreg test_winsound test_xmlrpc_net test_zipfile64
 
 Total duration: 54 min 21 sec
-Tests result: FAILURE
 ```
 
+# bpo-30386 patched for api19, running as root from bash under h3droid 1.3.2
+```
+317 tests OK.
+
+9 tests failed:
+    test_asyncio test_strftime test_unicode test_venv test_warnings
+    test_xmlrpc test_xmlrpc_net test_zipfile test_zlib
+
+15 tests skipped:
+    test_asdl_parser test_startfile test_timeout test_tix test_tk
+    test_ttk_guionly test_ttk_textonly test_turtle test_urllib2net
+    test_urllibnet test_wait3 test_winconsoleio test_winreg
+    test_winsound test_zipfile64
+
+Total duration: 50 min 59 sec
+```
