@@ -1,8 +1,22 @@
 Testdrive results for https://github.com/vstinner/cpython/tree/android_api19 proposal.
 
-# Modules/_localemodule.c
 
+# Modules/_localemodule.c
 fix PyLocale_setlocale() to always return "C" on API19 instead of failing 
+
+because import locale.py will not fail, only function call is failing
+fix (overloading setlocale in locale.py ) doesn't solve :
+```
+Python 3.7.0a4+ (default, Jan 25 2018, 18:13:47) 
+[Clang 3.8.275480 ] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import _locale as l
+>>> l.setlocale(l.LC_ALL)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+locale.Error: locale query failed
+```
+
 
 # Modules/signalmodule.c
 ```
