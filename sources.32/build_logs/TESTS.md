@@ -1,5 +1,8 @@
 # bpo-30386 patched for api19, running as root from bash under h3droid 1.3.2
 ```
+== CPython 3.7.0a3+ (default, Jan 26 2018, 22:57:01) [Clang 3.8.275480 ]
+== Linux-3.4.113-armv7l-with-libc little-endian
+[...]
 323 tests OK.
 
 3 tests failed:
