@@ -1,0 +1,53 @@
+--- cpython-bpo-30386/Modules/timemodule.c	2017-12-10 15:07:21.000000000 +0100
++++ cpython-bpo-30386.api19/Modules/timemodule.c	2018-01-26 18:35:00.000000000 +0100
+@@ -728,17 +728,25 @@
+     else if (buf.tm_isdst > 1)
+         buf.tm_isdst = 1;
+ 
+-#ifdef HAVE_WCSFTIME
+-    format = PyUnicode_AsWideCharString(format_arg, NULL);
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    format = _PyUnicode_AsUTF8String(format_arg, NULL);
+     if (format == NULL)
+         return NULL;
+     fmt = format;
++
+ #else
+-    /* Convert the unicode string to an ascii one */
+-    format = PyUnicode_EncodeLocale(format_arg, "surrogateescape");
+-    if (format == NULL)
+-        return NULL;
+-    fmt = PyBytes_AS_STRING(format);
++    #ifdef HAVE_WCSFTIME
++        format = PyUnicode_AsWideCharString(format_arg, NULL);
++        if (format == NULL)
++            return NULL;
++        fmt = format;
++    #else
++        /* Convert the unicode string to an ascii one */
++        format = PyUnicode_EncodeLocale(format_arg, "surrogateescape");
++        if (format == NULL)
++            return NULL;
++        fmt = PyBytes_AS_STRING(format);
++    #endif
+ #endif
+ 
+ #if defined(MS_WINDOWS) && !defined(HAVE_WCSFTIME)
+@@ -806,12 +814,17 @@
+                More likely, the format yields an empty result,
+                e.g. an empty format, or %Z when the timezone
+                is unknown. */
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    printf(" >>>>>>> [%s] <<<<<<<", &outbuf[0] );
++    ret =  PyUnicode_DecodeFSDefaultAndSize(outbuf, buflen);
++#else
+ #ifdef HAVE_WCSFTIME
+             ret = PyUnicode_FromWideChar(outbuf, buflen);
+ #else
+             ret = PyUnicode_DecodeLocaleAndSize(outbuf, buflen,
+                                                 "surrogateescape");
+ #endif
++#endif
+             PyMem_Free(outbuf);
+             break;
+         }
