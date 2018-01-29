@@ -99,6 +99,7 @@ then
     echo "lib-dynload path is $dyn_load"
 
     cp -vf ${build_dir}/build/lib.linux-arm-3.7/_sysconfigdata_m_linux_.py $dyn_load
+    cp -vf ${build_dir}/build/lib.linux-arm-3.7/_sysconfigdata_m_linux_.py $dyn_load/_sysconfigdata_m_android_.py
     echo -n "Copying builtins modules, count :"
     cp -fv  ${build_dir}/build/lib.linux-arm-3.7/*.so $dyn_load | wc -l
 

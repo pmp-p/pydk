@@ -1,0 +1,11 @@
+--- panda3d-input-overhaul/dtool/src/dtoolbase/mutexPosixImpl.h	2018-01-28 14:44:54.000000000 +0100
++++ panda3d-input-overhaul.api19/dtool/src/dtoolbase/mutexPosixImpl.h	2018-01-28 20:48:26.000000000 +0100
+@@ -28,7 +28,7 @@
+  */
+ class EXPCL_DTOOL MutexPosixImpl {
+ public:
+-  CONSTEXPR MutexPosixImpl() NOEXCEPT;
++  INLINE MutexPosixImpl() NOEXCEPT;
+   INLINE ~MutexPosixImpl();
+ 
+ private:

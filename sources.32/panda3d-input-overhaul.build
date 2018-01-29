@@ -1,0 +1,244 @@
+#!/bin/bash
+
+GHZIP=https://github.com/panda3d/panda3d/archive/input-overhaul.zip
+ZIP=panda3d-input-overhaul
+SRC=panda3d-input-overhaul
+
+OPT_COMMON="--no-eigen --use-gles --use-gles2 --use-zlib --threads 4"
+
+if echo $ANDROID_ARCH|grep -q arm
+then
+    export PANDA_ARCH="armv7a"
+else
+    echo "Arch $ANDROID_ARCH not supported by this script"
+    read
+fi
+export NDK_ROOT=$ANDROID_NDK_ROOT
+
+OPT_ANDROID="--arch $PANDA_ARCH --target android-${__ANDROID_API__} --no-pview --no-pandatool --use-neon --no-sse2"
+
+#==============================================================================
+ORIGIN=$(dirname $(realpath "$0") )
+
+. $SDK/build.${BITS}.functions
+
+set_source_tree
+
+ROOT=$(pwd)
+
+patch_me
+
+#reparse just in case python was built without reloading env
+. $SDK/built.${BITS}.env
+
+if $PDK_PYTHON -V | grep -q 3.7
+then
+    echo "Will use python 3.7 :  $PDK_PYTHON"
+else
+    echo "This script is for cpython 3.7 only"
+    read
+    exit
+fi
+
+
+if echo $ANDROID_API|grep -q 19
+then
+    echo "#FIXME: readline/sqlite won't fix : WITH_LIBRARIES==$WITH_LIBRARIES =>  "
+    export WITH_LIBRARIES="libffi,openssl,ncurses"
+    echo "using instead : WITH_LIBRARIES=$WITH_LIBRARIES"
+fi
+
+echo "#FIXME: panda3d not clang ready"
+export NDK_GCC="gcc"
+
+pwd
+
+echo "<enter> to continue"
+read
+
+
+
+if [ -f $PDK_PYTHON ]
+then
+
+#    echo "sudo apt-get install build-essential checkinstall pkg-config python-dev libpng-dev libjpeg-dev libtiff-dev zlib1g-dev libssl-dev libx11-dev libgl1-mesa-dev libxrandr-dev # libxxf86dga-dev libxcursor-dev bison flex libfreetype6-dev libvorbis-dev libeigen3-dev libopenal-dev libode-dev libbullet-dev nvidia-cg-toolkit libgtk2.0-dev libgles2-mesa-dev"
+
+
+
+    cd ${ORIGIN}
+
+    echo "
+        * cleaning up thirdparties
+    "
+
+
+    rm -rf thirdparty
+
+    echo "
+        * Entering $(pwd)
+    "
+    mkdir -p thirdparty/android-libs-${PANDA_ARCH}
+
+    export TP=${ORIGIN}/thirdparty/android-libs-${PANDA_ARCH}
+
+    echo "
+        * Setting Host python ${TP}/python include+lib
+    "
+    mkdir -p ${TP}/python${PYVER}/{lib,include,include/python${PYDOT}${PYMODE}}
+    rm ${TP}/python || echo -n
+    ln -sf ${TP}/python${PYVER} ${TP}/python
+
+    cp -f ../cpython-bpo-30386/Include/*.h ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE}/
+    cp -vf ../cpython-bpo-30386/Android/build/python-native/pyconfig.h ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE}/
+    cp -vf ../cpython-bpo-30386/Android/build/python-native/libpython${PYDOT}${PYMODE}.a  ${TP}/python${PYVER}/lib/
+
+    TP_PYTHON="--use-python --python-incdir=${TP}/python${PYVER}/include --python-libdir=${TP}/python${PYVER}/lib"
+
+    if [ -d host ]
+    then
+        echo "
+        * Host tools found
+    "
+    else
+
+        $PDK_PYTHON makepanda/makepanda.py --everything $OPT_COMMON $TP_PYTHON
+        mv built host
+    fi
+
+    cp -vf ../cpython-bpo-30386/Android/build/python${PYDOT}-android-${ANDROID_API}-${ANDROID_ARCH}/pyconfig.h ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE}/
+    export LD_LIBRARY_PATH=$(pwd)/host/lib
+    export PATH=$(pwd)/host/bin:$PATH
+
+    echo "
+        * interrogate is $(which interrogate)
+    "
+
+    rm -vf ${TP}/python${PYVER}/lib/libpython${PYDOT}${PYMODE}.a
+    cp -vf ../cpython-bpo-30386/Android/build/python${PYDOT}-android-${ANDROID_API}-${ANDROID_ARCH}/libpython${PYDOT}${PYMODE}.so ${TP}/python${PYVER}/lib/
+    rm -vf ${TP}/python${PYVER}/include/python${PYDOT}
+    ln -sf ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE} ${TP}/python${PYVER}/include/python${PYDOT}
+
+    cmd="$PDK_PYTHON makepanda/makepanda.py $OPT_COMMON $OPT_ANDROID $TP_PYTHON"
+    cat > $ORIGIN.rebuild.sh <<END
+#!/bin/bash
+. $SDK/sdk.env
+cd $ORIGIN
+$cmd
+END
+    chmod +x $ORIGIN.rebuild.sh
+    $cmd
+else
+    echo "FATAL: Can't find static host cpython $PDK_PYTHON"
+fi
+
+echo "Installing to $DEV_APPDIR"
+
+mkdir -p "$DEV_APPDIR/lib-${ANDROID_ARCH}/"
+mkdir -p "$DEV_APPDIR/usr/lib-${ANDROID_ARCH}/panda3d/"
+
+if [ -f panda3d/built/lib/libpython3.7m.so ]
+then
+    mv -vf panda3d/built/lib/libpython3.7m.so "$DEV_APPDIR/lib-${ANDROID_ARCH}/"
+fi
+
+export PDK_PANDA3D=$DEV_APPDIR/usr/lib-$ANDROID_ARCH/panda3d
+
+export PDK_PYPANDA3D="$DEV_APPDIR/usr/lib/python${PYDOT}/site-packages/panda3d"
+
+mkdir -p $PDK_PYPANDA3D
+
+touch $PDK_PYPANDA3D/__init__.py
+
+echo "
+    * installing python package in $PDK_PYPANDA3D/__init__.py
+    "
+
+if [ -f $PDK_PYPANDA3D/__init__.py ]
+then
+    cat > $PDK_PYPANDA3D/__init__.py <<END
+import sys
+from ctypes import CDLL
+LIBS = """
+libgnustl_shared.so
+libp3dtool.so
+libp3dtoolconfig.so
+libpandaexpress.so
+libpanda.so
+libp3direct.so
+libp3dcparse.so
+libpandaphysics.so
+libmultify.so
+libp3framework.so
+libpzip.so
+libpandafx.so
+libp3interrogatedb.so
+libinterrogate.so
+libinterrogate_module.so
+libpunzip.so
+libp3android.so
+libpandaskel.so
+libparse_file.so
+libpandagles.so
+libpandaai.so
+libp3vision.so
+libpandaegg.so
+libtest_interrogate.so
+""".strip()
+
+DLLS = list( map(str.strip, LIBS.split('\n') ) )
+
+for lpass in (3,2,1):
+    for dll in DLLS:
+        try:
+            CDLL( "$DEV_APPDIR/usr/lib-$ANDROID_ARCH/panda3d/%s" % dll )
+        except Exception as e:
+            print(lpass,dll,e,file=sys.stderr)
+END
+    pwd
+    if [ -d built/libs ]
+    then
+        # first move python libs and clean SONAME
+        echo "
+    * installing python support libs
+    "
+        for pylib in $(find built/libs/*/*.cpython-*.so)
+        do
+            mv -vf $pylib $PDK_PYPANDA3D/
+            #$(basename $pylib|cut -f1 -d.).so
+        done
+
+
+        # then panda
+        echo "
+    * installing panda c++ support libs
+    "
+        for pandalib in $(find built/libs/*/lib*.so)
+        do
+            mv -vf $pandalib $DEV_APPDIR/usr/lib-$ANDROID_ARCH/panda3d/
+        done
+        rmdir built/libs/* panda3d/built/libs
+    fi
+
+    echo "
+
+    Panda3d $ANDROID_ARCH port installed in [$DEV_APPDIR]
+    See gradle sample project to link both python and panda3d in your apk
+
+    Python support libs : $PDK_PYPANDA3D
+    C++ support libs : $PDK_PANDA3D
+
+"
+
+else
+    echo "PDK_PYPANDA3D: wrong target path '$PDK_PYPANDA3D'"
+fi
+
+
+
+
+
+
+
+
+
+

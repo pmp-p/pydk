@@ -1,0 +1,217 @@
+--- panda3d-input-overhaul/panda/src/androiddisplay/androidGraphicsWindow.cxx	2018-01-28 14:44:54.000000000 +0100
++++ panda3d-input-overhaul.api19/panda/src/androiddisplay/androidGraphicsWindow.cxx	2018-01-28 22:53:43.000000000 +0100
+@@ -29,6 +29,13 @@
+ #include <android/window.h>
+ #include <android/log.h>
+ 
++
++#define LOG_TAG "AndroidGraphicsWindow"
++#define LOG_INFO(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
++#define LOG_ERROR(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
++
++static EGLNativeWindowType awindow = NULL;
++
+ extern IMPORT_CLASS struct android_app* panda_android_app;
+ 
+ TypeHandle AndroidGraphicsWindow::_type_handle;
+@@ -54,7 +61,11 @@
+ 
+   _app = panda_android_app;
+ 
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++PT(GraphicsWindowInputDevice) device =
++#else
+   GraphicsWindowInputDevice device =
++#endif
+     GraphicsWindowInputDevice::pointer_and_keyboard(this, "keyboard_mouse");
+   add_input_device(device);
+ }
+@@ -178,6 +189,7 @@
+ process_events() {
+   GraphicsWindow::process_events();
+ 
++#ifdef APK
+   // Read all pending events.
+   int looper_id;
+   int events;
+@@ -190,6 +202,8 @@
+       source->process(_app, source);
+     }
+   }
++#endif
++
+ }
+ 
+ /**
+@@ -272,6 +286,7 @@
+     }
+   }
+ 
++  #if APP
+   // Register the callbacks
+   assert(_app != NULL);
+   _app->userData = this;
+@@ -288,11 +303,29 @@
+     return false;
+   }
+ 
+-  // Set some other properties.
++    // Set some other properties.
+   _properties.set_origin(0, 0);
+   _properties.set_cursor_hidden(true);
+   _properties.set_undecorated(true);
+ 
++
++#else
++    char* senv;
++    senv= getenv("PANDA_NATIVE_WINDOW");
++    sscanf( senv, "%p", &awindow );
++    LOG_INFO(" >>>>> window pointer %p found <<<<< ", awindow);
++
++    senv= getenv("PANDA_NATIVE_SURFACE");
++    sscanf( senv, "%p", &_egl_surface );
++    LOG_INFO(" >>>>> surface pointer %p found <<<<< ", _egl_surface);
++
++    if (_egl_surface == EGL_NO_SURFACE) {
++        androiddisplay_cat.error() << "NO EGL Surface pointer\n";
++        return false;
++    }
++
++#endif
++
+   if (!androidgsg->get_fb_properties().verify_hardware_software
+       (_fb_properties, androidgsg->get_gl_renderer())) {
+     close_window();
+@@ -303,6 +336,8 @@
+ 
+   androiddisplay_cat.error() << "open_window done\n";
+ 
++    create_surface();
++
+   return true;
+ }
+ 
+@@ -311,6 +346,8 @@
+  */
+ void AndroidGraphicsWindow::
+ destroy_surface() {
++
++#if APP
+   if (_egl_surface != EGL_NO_SURFACE) {
+     if (!eglDestroySurface(_egl_display, _egl_surface)) {
+       androiddisplay_cat.error() << "Failed to destroy surface: "
+@@ -318,6 +355,7 @@
+     }
+     _egl_surface = EGL_NO_SURFACE;
+   }
++#endif
+ 
+   // Destroy the current context.
+   if (_gsg != (GraphicsStateGuardian *)NULL) {
+@@ -332,6 +370,35 @@
+  */
+ bool AndroidGraphicsWindow::
+ create_surface() {
++#ifndef APP
++    LOG_INFO("362: create_surface");
++    AndroidGraphicsStateGuardian *androidgsg;
++    DCAST_INTO_R(androidgsg, _gsg, false);
++
++    ANativeWindow_setBuffersGeometry(awindow, 0, 0, androidgsg->_format);
++/*
++  // Create the EGL surface.
++  _egl_surface = eglCreateWindowSurface(_egl_display, androidgsg->_fbconfig, awindow, NULL);
++  if (eglGetError() != EGL_SUCCESS) {
++    androiddisplay_cat.error()
++      << "Failed to create window surface.\n";
++    return false;
++  }
++*/
++    char* senv;
++    EGLContext context = EGL_NO_CONTEXT;
++    senv= getenv("PANDA_NATIVE_CONTEXT");
++    sscanf( senv, "%p", &context );
++    LOG_INFO(" >>>>> context pointer %p found <<<<< ", context);
++
++    androidgsg->_context = context;
++
++    // Switch to our newly created context.
++    if (!eglMakeCurrent(_egl_display, _egl_surface, _egl_surface, androidgsg->_context)) {
++        androiddisplay_cat.error() << "Failed to call eglMakeCurrent: " << get_egl_error_string(eglGetError()) << "\n";
++    }
++
++#else
+   AndroidGraphicsStateGuardian *androidgsg;
+   DCAST_INTO_R(androidgsg, _gsg, false);
+ 
+@@ -379,7 +446,7 @@
+     close_window();
+     return false;
+   }
+-
++#endif
+   return true;
+ }
+ 
+@@ -427,15 +494,13 @@
+       system_changed_properties(properties);
+       break;
+     case APP_CMD_WINDOW_RESIZED:
+-      properties.set_size(ANativeWindow_getWidth(_app->window),
+-                          ANativeWindow_getHeight(_app->window));
++      properties.set_size(ANativeWindow_getWidth(_app->window), ANativeWindow_getHeight(_app->window));
+       break;
+     case APP_CMD_WINDOW_REDRAW_NEEDED:
+       break;
+     case APP_CMD_CONTENT_RECT_CHANGED:
+       properties.set_origin(_app->contentRect.left, _app->contentRect.top);
+-      properties.set_size(_app->contentRect.right - _app->contentRect.left,
+-                          _app->contentRect.bottom - _app->contentRect.top);
++      properties.set_size(_app->contentRect.right - _app->contentRect.left,  _app->contentRect.bottom - _app->contentRect.top);
+       system_changed_properties(properties);
+       break;
+     case APP_CMD_GAINED_FOCUS:
+@@ -501,11 +566,12 @@
+   ButtonHandle button = map_button(keycode);
+ 
+   if (button == ButtonHandle::none()) {
+-    androiddisplay_cat.warning()
+-      << "Unknown keycode: " << keycode << "\n";
++    androiddisplay_cat.warning() << "Unknown keycode: " << keycode << "\n";
+     return 0;
+   }
+-
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    #warning FIXME
++#else
+   // Is it an up or down event?
+   int32_t action = AKeyEvent_getAction(event);
+   if (action == AKEY_EVENT_ACTION_DOWN) {
+@@ -513,6 +579,7 @@
+   } else if (action == AKEY_EVENT_ACTION_UP) {
+     _input_devices[0].button_up(button);
+   }
++#endif
+   // TODO getRepeatCount, ACTION_MULTIPLE
+ 
+   return 1;
+@@ -525,7 +592,9 @@
+ handle_motion_event(const AInputEvent *event) {
+   int32_t action = AMotionEvent_getAction(event);
+   action &= AMOTION_EVENT_ACTION_MASK;
+-
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    #warning FIXME
++#else
+   if (action == AMOTION_EVENT_ACTION_DOWN) {
+     _input_devices[0].button_down(MouseButton::one());
+   } else if (action == AMOTION_EVENT_ACTION_UP) {
+@@ -536,7 +605,7 @@
+   float y = AMotionEvent_getY(event, 0) - _app->contentRect.top;
+ 
+   _input_devices[0].set_pointer_in_window(x, y);
+-
++#endif
+   return 1;
+ }
+ 

@@ -1,0 +1,11 @@
+--- panda3d-input-overhaul/dtool/src/dtoolbase/mutexPosixImpl.I	2018-01-28 14:44:54.000000000 +0100
++++ panda3d-input-overhaul.api19/dtool/src/dtoolbase/mutexPosixImpl.I	2018-01-28 20:49:14.000000000 +0100
+@@ -14,7 +14,7 @@
+ /**
+  *
+  */
+-CONSTEXPR MutexPosixImpl::
++INLINE MutexPosixImpl::
+ MutexPosixImpl() NOEXCEPT : _lock(PTHREAD_MUTEX_INITIALIZER) {
+ }
+ 
