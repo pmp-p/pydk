@@ -1,5 +1,5 @@
---- host/Modules/mmapmodule.c	2017-11-25 18:48:48.000000000 +0100
-+++ armv7a/Modules/mmapmodule.c	2017-11-27 01:08:29.219704268 +0100
+--- cpython-master/Modules/mmapmodule.c	2018-01-23 22:26:07.000000000 +0100
++++ cpython-master.api19/Modules/mmapmodule.c	2018-01-23 23:55:20.000000000 +0100
 @@ -79,6 +79,12 @@
  #  define MAP_ANONYMOUS MAP_ANON
  #endif

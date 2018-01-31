@@ -1,6 +1,6 @@
---- host/Makefile.pre.in	2017-11-25 18:48:48.000000000 +0100
-+++ armv7a/Makefile.pre.in	2017-11-27 00:44:43.755670265 +0100
-@@ -210,7 +210,7 @@
+--- cpython-master/Makefile.pre.in	2018-01-23 22:26:07.000000000 +0100
++++ cpython-master.api19/Makefile.pre.in	2018-01-23 23:55:20.000000000 +0100
+@@ -215,7 +215,7 @@
  PY3LIBRARY=     @PY3LIBRARY@
  DLLLIBRARY=	@DLLLIBRARY@
  LDLIBRARYDIR=   @LDLIBRARYDIR@

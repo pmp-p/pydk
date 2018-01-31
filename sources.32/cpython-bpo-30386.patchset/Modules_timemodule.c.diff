@@ -1,0 +1,46 @@
+--- cpython-bpo-30386/Modules/timemodule.c	2017-12-10 15:07:21.000000000 +0100
++++ cpython-bpo-30386.api19/Modules/timemodule.c	2018-01-26 22:57:43.000000000 +0100
+@@ -675,6 +675,35 @@
+ #define time_strlen strlen
+ #endif
+ 
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    static PyObject *
++    time_strftime(PyObject *self, PyObject *args)
++    {
++        struct tm buf;
++        char result[1024];
++        memset((void *) &buf, '\0', sizeof(buf));
++        time_t tt;
++        PyObject *format_arg;
++
++        PyObject *tup = NULL;
++        if (!PyArg_ParseTuple(args, "U|O:strftime", &format_arg, &tup))
++            return NULL;
++
++        if (tup == NULL) {
++            tt = time(NULL);
++            if (_PyTime_localtime(tt, &buf) != 0)
++                return NULL;
++        }
++        else if (!gettmarg(tup, &buf,
++                           "iiiiiiiii;strftime(): illegal time tuple argument") ||
++                 !checktm(&buf))
++        {
++            return NULL;
++        }
++        strftime(result, sizeof(result), _PyUnicode_AsString(format_arg), &buf);
++        return PyUnicode_FromStringAndSize(result, strlen(result) );
++    }
++#else
+ static PyObject *
+ time_strftime(PyObject *self, PyObject *args)
+ {
+@@ -824,6 +853,7 @@
+ #endif
+     return ret;
+ }
++#endif
+ 
+ #undef time_char
+ #undef format_time

@@ -1,5 +1,5 @@
 --- panda3d-input-overhaul/panda/src/androiddisplay/androidGraphicsWindow.cxx	2018-01-28 14:44:54.000000000 +0100
-+++ panda3d-input-overhaul.api19/panda/src/androiddisplay/androidGraphicsWindow.cxx	2018-01-28 22:53:43.000000000 +0100
++++ panda3d-input-overhaul.api19/panda/src/androiddisplay/androidGraphicsWindow.cxx	2018-01-31 09:15:25.562772144 +0100
 @@ -29,6 +29,13 @@
  #include <android/window.h>
  #include <android/log.h>

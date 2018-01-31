@@ -1,5 +1,5 @@
 --- cpython-bpo-30386/Modules/posixmodule.c	2017-12-10 15:07:21.000000000 +0100
-+++ cpython-bpo-30386.api19/Modules/posixmodule.c	2018-01-22 10:01:32.000000000 +0100
++++ cpython-bpo-30386.api19/Modules/posixmodule.c	2018-01-26 11:31:32.000000000 +0100
 @@ -9,7 +9,6 @@
     test macro, e.g. '_MSC_VER'. */
  

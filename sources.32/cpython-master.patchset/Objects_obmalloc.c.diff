@@ -1,5 +1,5 @@
---- host/Objects/obmalloc.c	2017-11-25 18:48:48.000000000 +0100
-+++ armv7a/Objects/obmalloc.c	2017-11-26 20:56:14.391343237 +0100
+--- cpython-master/Objects/obmalloc.c	2018-01-23 22:26:07.000000000 +0100
++++ cpython-master.api19/Objects/obmalloc.c	2018-01-23 23:55:20.000000000 +0100
 @@ -2,6 +2,11 @@
  
  #include <stdbool.h>

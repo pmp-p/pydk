@@ -1,0 +1,15 @@
+--- cpython-master/Python/getplatform.c	2018-01-23 22:26:07.000000000 +0100
++++ cpython-master.api19/Python/getplatform.c	2018-01-24 01:13:42.000000000 +0100
+@@ -1,8 +1,10 @@
+ 
+ #include "Python.h"
+ 
+-#ifndef PLATFORM
+-#define PLATFORM "unknown"
++/* bpo-32637: Force sys.platform == "android" on Android */
++#ifdef __ANDROID__
++#  undef PLATFORM
++#  define PLATFORM "android"
+ #endif
+ 
+ const char *

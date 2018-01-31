@@ -1,5 +1,5 @@
 --- cpython-bpo-30386/Modules/mmapmodule.c	2017-12-10 15:07:21.000000000 +0100
-+++ cpython-bpo-30386.api19/Modules/mmapmodule.c	2018-01-21 19:11:30.000000000 +0100
++++ cpython-bpo-30386.api19/Modules/mmapmodule.c	2018-01-26 11:31:32.000000000 +0100
 @@ -79,6 +79,12 @@
  #  define MAP_ANONYMOUS MAP_ANON
  #endif

@@ -1,13 +1,5 @@
---- host/Modules/posixmodule.c	2017-12-05 09:27:19.000000000 +0100
-+++ armv7a/Modules/posixmodule.c	2018-01-13 21:32:13.000000000 +0100
-@@ -9,7 +9,6 @@
-    test macro, e.g. '_MSC_VER'. */
-
-
--
- #ifdef __APPLE__
-    /*
-     * Step 1 of support for weak-linking a number of symbols existing on
+--- cpython-master/Modules/posixmodule.c	2018-01-23 22:26:07.000000000 +0100
++++ cpython-master.api19/Modules/posixmodule.c	2018-01-23 23:55:20.000000000 +0100
 @@ -394,6 +393,11 @@
  #define MODNAME "posix"
  #endif
@@ -20,7 +12,7 @@
 
  #ifdef HAVE_FORK
  static void
-@@ -5883,6 +5887,51 @@
+@@ -5885,6 +5889,51 @@
  for both the master and slave ends.
  [clinic start generated code]*/
 
@@ -72,7 +64,7 @@
  static PyObject *
  os_openpty_impl(PyObject *module)
  /*[clinic end generated code: output=98841ce5ec9cef3c input=f3d99fd99e762907]*/
-@@ -5971,7 +6020,7 @@
+@@ -5973,7 +6022,7 @@
      return NULL;
  }
  #endif /* defined(HAVE_OPENPTY) || defined(HAVE__GETPTY) || defined(HAVE_DEV_PTMX) */
