@@ -1,5 +1,5 @@
 --- panda3d-input-overhaul/makepanda/makepandacore.py	2018-01-28 14:44:54.000000000 +0100
-+++ panda3d-input-overhaul.api19/makepanda/makepandacore.py	2018-01-31 09:15:25.519772145 +0100
++++ panda3d-input-overhaul.api19/makepanda/makepandacore.py	2018-01-31 14:08:51.311364341 +0100
 @@ -442,12 +442,16 @@
  
  def GetCC():
@@ -49,3 +49,18 @@
      arch = GetTargetArch()
      if arch == 'armv7a' or arch == 'arm':
          arch = 'arm'
+@@ -3133,11 +3138,13 @@
+     ORIG_EXT[x] = v
+ 
+ def GetExtensionSuffix():
++    target = GetTarget()
+     if sys.version_info >= (3, 0):
++        if target == "android":
++            return ".cpython-%s.so" % ( os.getenv('PANDA_PYLIB','37m').replace('python','').replace('.','') )
+         suffix = sysconfig.get_config_var('EXT_SUFFIX')
+         if suffix:
+             return suffix
+-    target = GetTarget()
+     if target == 'windows':
+         return '.pyd'
+     else:

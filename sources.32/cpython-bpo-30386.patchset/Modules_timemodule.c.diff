@@ -1,5 +1,5 @@
 --- cpython-bpo-30386/Modules/timemodule.c	2017-12-10 15:07:21.000000000 +0100
-+++ cpython-bpo-30386.api19/Modules/timemodule.c	2018-01-26 22:57:43.000000000 +0100
++++ cpython-bpo-30386.api19/Modules/timemodule.c	2018-01-26 22:57:43.112635785 +0100
 @@ -675,6 +675,35 @@
  #define time_strlen strlen
  #endif

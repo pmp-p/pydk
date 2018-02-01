@@ -496,13 +496,12 @@ public class Term extends Activity implements SurfaceHolder.Callback, UpdateCall
 if ( new File("/data/data/u.r/bin/bash").isFile() ){
     requestWindowFeature(Window.FEATURE_NO_TITLE);
     isSetup = false;
+} else {
+    if ( new File("/data/data/TEST_APK").isFile() ){
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        isSetup = false;
+    }
 }
-/*
-if ( new File("/data/data/DEV").isFile() ){
-    requestWindowFeature(Window.FEATURE_NO_TITLE);
-    isSetup = false;
-}
-*/
 //PMPP
         setContentView(R.layout.term_activity);
         mViewFlipper = (TermViewFlipper) findViewById(VIEW_FLIPPER);

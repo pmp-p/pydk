@@ -7,6 +7,9 @@ APK_FILE=./build/outputs/apk/termegl-debug.apk
 SRC=termegl
 ORIGIN=$(dirname $(realpath "$0") )
 
+#put adb first
+export PATH=$ANDROID_SDK_ROOT/platform-tools:$PATH
+
 adb shell am force-stop $APK
 
 
@@ -70,7 +73,7 @@ END
 
 cp -rv ${SDK}/build.${BITS}/${P3D}/built/lib/libpython3.*.so prebuilt/${ARCH}/
 
-#cp $(find $ANDROID_NDK_ROOT|grep /${ARCH}/|grep libgnustl_shared.so$|sort |tail -n 1) -vf prebuilt/${ARCH}/
+cp $(find $ANDROID_NDK_ROOT|grep /${ARCH}/|grep libgnustl_shared.so$|sort |tail -n 1) -vf prebuilt/${ARCH}/
 
 cp -f ${SDK}/build.${BITS}/${P3D}/built/tmp/lib*.so prebuilt/${ARCH}/
 
@@ -104,19 +107,11 @@ END
     mkdir -p prebuilt/${ARCH}
     echo -n "    Cleaning libs : "
     rm -vf prebuilt/${ARCH}/lib*so|wc -l
-    #cp -rv ${SDK}/build.${BITS}/${P3D}/built/lib/libpython3.*.so libs/${ARCH}/
-    #cp $(find $ANDROID_NDK_ROOT|grep /${ARCH}/|grep libgnustl_shared.so$|sort |tail -n 1) -vf libs/${ARCH}/
-    #for lib in pandagles p3dtool pandaexpress
-    #do
-    #    cp -fv ${SDK}/build.${BITS}/${P3D}/built/tmp/lib${lib}.so prebuilt/${ARCH}/
-    #done
-    #cp -f ${SDK}/build.${BITS}/${P3D}/built/tmp/lib*.so libs/${ARCH}/
 
     if [ -f $APK_FILE ]
     then
         rm -vf $APK_FILE
     fi
-
 
     echo "  * launching gradle build"
     ./gradlew assembleDebug "$@" --offline --no-daemon

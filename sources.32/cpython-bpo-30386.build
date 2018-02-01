@@ -103,8 +103,13 @@ then
     echo -n "Copying builtins modules, count :"
     cp -fv  ${build_dir}/build/lib.linux-arm-3.7/*.so $dyn_load | wc -l
 
+    for mod in _ssl.cpython-37m.so _hashlib.cpython-37m.so
+    do
+        $PDK_PATCHELF --replace-needed libssl.so.1.0.0 libsslbionic.so $dyn_load/$mod
+        $PDK_PATCHELF --replace-needed libcrypto.so.1.0.0 libcryptobionic.so $dyn_load/$mod
+    done
 
-    cp -vf ${build_dir}/python ${DEV_APPDIR}/usr/bin/python3.7
+    cp -vf ${build_dir}/python ${DEV_APPDIR}/usr/bin/python3.7m
     cp -vf ${build_dir}/libpython3.*.so ${DEV_APPDIR}/lib-armv7/
 
     register_pdk PDK_PYTHON $PDK_PYTHON

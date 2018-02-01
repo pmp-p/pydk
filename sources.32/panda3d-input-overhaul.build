@@ -3,6 +3,7 @@
 GHZIP=https://github.com/panda3d/panda3d/archive/input-overhaul.zip
 ZIP=panda3d-input-overhaul
 SRC=panda3d-input-overhaul
+PYTHON=cpython-bpo-30386
 
 OPT_COMMON="--no-eigen --use-gles --use-gles2 --use-zlib --threads 4"
 
@@ -34,6 +35,7 @@ patch_me
 if $PDK_PYTHON -V | grep -q 3.7
 then
     echo "Will use python 3.7 :  $PDK_PYTHON"
+    export PANDA_PYLIB=python3.7m
 else
     echo "This script is for cpython 3.7 only"
     read
@@ -57,6 +59,8 @@ echo "<enter> to continue"
 read
 
 
+cd ${ORIGIN}
+
 
 if [ -f $PDK_PYTHON ]
 then
@@ -65,7 +69,6 @@ then
 
 
 
-    cd ${ORIGIN}
 
     echo "
         * cleaning up thirdparties
@@ -88,9 +91,9 @@ then
     rm ${TP}/python || echo -n
     ln -sf ${TP}/python${PYVER} ${TP}/python
 
-    cp -f ../cpython-bpo-30386/Include/*.h ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE}/
-    cp -vf ../cpython-bpo-30386/Android/build/python-native/pyconfig.h ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE}/
-    cp -vf ../cpython-bpo-30386/Android/build/python-native/libpython${PYDOT}${PYMODE}.a  ${TP}/python${PYVER}/lib/
+    cp -f ../${PYTHON}/Include/*.h ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE}/
+    cp -vf ../${PYTHON}/Android/build/python-native/pyconfig.h ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE}/
+    cp -vf ../${PYTHON}/Android/build/python-native/libpython${PYDOT}${PYMODE}.a  ${TP}/python${PYVER}/lib/
 
     TP_PYTHON="--use-python --python-incdir=${TP}/python${PYVER}/include --python-libdir=${TP}/python${PYVER}/lib"
 
@@ -105,7 +108,7 @@ then
         mv built host
     fi
 
-    cp -vf ../cpython-bpo-30386/Android/build/python${PYDOT}-android-${ANDROID_API}-${ANDROID_ARCH}/pyconfig.h ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE}/
+    cp -vf ../${PYTHON}/Android/build/python${PYDOT}-android-${ANDROID_API}-${ANDROID_ARCH}/pyconfig.h ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE}/
     export LD_LIBRARY_PATH=$(pwd)/host/lib
     export PATH=$(pwd)/host/bin:$PATH
 
@@ -114,7 +117,7 @@ then
     "
 
     rm -vf ${TP}/python${PYVER}/lib/libpython${PYDOT}${PYMODE}.a
-    cp -vf ../cpython-bpo-30386/Android/build/python${PYDOT}-android-${ANDROID_API}-${ANDROID_ARCH}/libpython${PYDOT}${PYMODE}.so ${TP}/python${PYVER}/lib/
+    cp -vf ../${PYTHON}/Android/build/python${PYDOT}-android-${ANDROID_API}-${ANDROID_ARCH}/libpython${PYDOT}${PYMODE}.so ${TP}/python${PYVER}/lib/
     rm -vf ${TP}/python${PYVER}/include/python${PYDOT}
     ln -sf ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE} ${TP}/python${PYVER}/include/python${PYDOT}
 
@@ -156,8 +159,10 @@ echo "
 if [ -f $PDK_PYPANDA3D/__init__.py ]
 then
     cat > $PDK_PYPANDA3D/__init__.py <<END
-import sys
+import sys, os
 from ctypes import CDLL
+#libgnustl_shared.so
+#libc++_shared.so
 LIBS = """
 libgnustl_shared.so
 libp3dtool.so
@@ -187,12 +192,19 @@ libtest_interrogate.so
 
 DLLS = list( map(str.strip, LIBS.split('\n') ) )
 
-for lpass in (3,2,1):
+for lpass in range(4):
+    poplist = []
     for dll in DLLS:
         try:
-            CDLL( "$DEV_APPDIR/usr/lib-$ANDROID_ARCH/panda3d/%s" % dll )
+            if os.access(dll,0):
+                CDLL( "/data/data/u.r/usr/lib-armv7/panda3d/%s" % dll )
+            else:
+                CDLL("/data/data/u.r/lib/%s"  % dll)
+            poplist.append(dll)
         except Exception as e:
             print(lpass,dll,e,file=sys.stderr)
+    while len(poplist):
+        DLLS.remove(poplist.pop(0))
 END
     pwd
     if [ -d built/libs ]
@@ -216,7 +228,7 @@ END
         do
             mv -vf $pandalib $DEV_APPDIR/usr/lib-$ANDROID_ARCH/panda3d/
         done
-        rmdir built/libs/* panda3d/built/libs
+        rmdir built/libs/*
     fi
 
     echo "

@@ -1,5 +1,5 @@
 --- cpython-bpo-30386/Modules/_localemodule.c	2017-12-10 15:07:21.000000000 +0100
-+++ cpython-bpo-30386.api19/Modules/_localemodule.c	2018-01-26 11:36:10.000000000 +0100
++++ cpython-bpo-30386.api19/Modules/_localemodule.c	2018-01-26 11:36:10.656582980 +0100
 @@ -103,6 +103,12 @@
          PyErr_SetString(Error, "invalid locale category");
          return NULL;

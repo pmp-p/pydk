@@ -23,10 +23,13 @@ static int PyAPI_Ready = 0;
 
 static char *root_folder = "/data/data/u.r";
 
-#define PY_PATH "/data/data/u.r/usr/lib/python3.7"
+
 #define PYTHONPATH "/data/data/u.r/usr/lib/python3.7/lib-dynload:/data/data/u.r/usr/lib/python3.7:/data/data/u.r/usr/lib/python3"
 #define LIB_PYTHON "libpython3.7m.so"
-#define PY_LIB "/data/data/u.r/usr/lib/python3.7"
+
+#define PY_PATH "/data/data/u.r/usr/lib/python3.7"
+//could be zip if change dir/file test to check trailing /
+#define PY_LIB "/data/data/u.r/usr/lib/python3.7/"
 #define PY_LIBS "/data/data/u.r/usr/lib/python3.7:/data/data/u.r/usr/lib/python3"
 
 #define PYVER 37
@@ -53,7 +56,7 @@ static char *root_folder = "/data/data/u.r";
 
 static ANativeWindow *window = 0;
 static char app_ptr[32]= {0};
-static char *argv[] = {"."};
+static char *argv[] = {"/data/data/u.root/main.py"};
 
 static EGLDisplay display;
 static EGLSurface surface;
@@ -126,8 +129,8 @@ extern "C" {
 
             snprintf(app_ptr, 16, "%p", (void * )window );
             setenv("PANDA_NATIVE_WINDOW", app_ptr, 1);
-            interpreter_prepare();
-            //interpreter_launch(1,argv);
+            //interpreter_prepare();
+            interpreter_launch(1,argv);
 
         } else {
             LOG_INFO("Releasing window");
