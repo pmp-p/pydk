@@ -1,5 +1,5 @@
 --- panda3d-input-overhaul/panda/src/androiddisplay/androidGraphicsStateGuardian.cxx	2018-01-28 14:44:54.000000000 +0100
-+++ panda3d-input-overhaul.api19/panda/src/androiddisplay/androidGraphicsStateGuardian.cxx	2018-01-31 09:15:25.549772144 +0100
++++ panda3d-input-overhaul.api19/panda/src/androiddisplay/androidGraphicsStateGuardian.cxx	2018-02-02 11:46:32.548559544 +0100
 @@ -17,6 +17,14 @@
  
  #include <dlfcn.h>

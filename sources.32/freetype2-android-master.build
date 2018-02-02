@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+PANDA3D=panda3d-input-overhaul
+PYTHON=cpython-bpo-30386
+GHZIP=https://github.com/cdave1/freetype2-android/archive/master.zip
+SRC=freetype2-android-master
+
+#==============================================================================
+ORIGIN=$(dirname $(realpath "$0") )
+
+. $SDK/build.${BITS}.functions
+
+set_source_tree 280
+
+
+ROOT=$(pwd)
+
+pwd
+
+

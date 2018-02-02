@@ -11,7 +11,7 @@ ORIGIN=$(dirname $(realpath "$0") )
 
 . $SDK/build.${BITS}.functions
 
-set_source_tree
+set_source_tree 4200
 
 if echo $ANDROID_API|grep -q 19
 then
@@ -20,10 +20,7 @@ then
     echo "using instead : WITH_LIBRARIES=$WITH_LIBRARIES"
 fi
 
-export NDK_GCC="gcc"
-
 ROOT=$(pwd)
-
 
 export DEV_PATHS DEV_TARGET PYVER PYDOT PYMODE OPT_COMMON OPT_ANDROID
 

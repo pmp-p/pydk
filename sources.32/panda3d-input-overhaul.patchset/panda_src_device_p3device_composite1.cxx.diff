@@ -1,5 +1,5 @@
 --- panda3d-input-overhaul/panda/src/device/p3device_composite1.cxx	2018-01-28 14:44:54.000000000 +0100
-+++ panda3d-input-overhaul.api19/panda/src/device/p3device_composite1.cxx	2018-01-31 13:40:27.879403797 +0100
++++ panda3d-input-overhaul.api19/panda/src/device/p3device_composite1.cxx	2018-02-02 11:46:32.613559543 +0100
 @@ -1,3 +1,17 @@
 +#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
 +    #include <linux/input.h>

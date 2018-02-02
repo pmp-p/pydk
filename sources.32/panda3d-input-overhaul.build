@@ -4,6 +4,8 @@ GHZIP=https://github.com/panda3d/panda3d/archive/input-overhaul.zip
 ZIP=panda3d-input-overhaul
 SRC=panda3d-input-overhaul
 PYTHON=cpython-bpo-30386
+FT2=freetype2-android-master
+
 
 OPT_COMMON="--no-eigen --use-gles --use-gles2 --use-zlib --threads 4"
 
@@ -23,9 +25,10 @@ ORIGIN=$(dirname $(realpath "$0") )
 
 . $SDK/build.${BITS}.functions
 
-set_source_tree
 
 ROOT=$(pwd)
+
+set_source_tree 4000
 
 patch_me
 
@@ -95,6 +98,16 @@ then
     cp -vf ../${PYTHON}/Android/build/python-native/pyconfig.h ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE}/
     cp -vf ../${PYTHON}/Android/build/python-native/libpython${PYDOT}${PYMODE}.a  ${TP}/python${PYVER}/lib/
 
+    echo "
+        * Setting FT2 ${TP}/freetype2 include+lib
+    "
+
+    #mkdir -p ${TP}/freetype2 ${TP}/freetype2/lib
+    ln -s ${ROOT}/${FT2}/include ${TP}/freetype2
+    #cp -vf ${ROOT}/${FT2}/Android/obj/local/armeabi-v7a/libfreetype2-static.a ${TP}/libfreetype.a
+    cp -vf ${ROOT}/${FT2}/Android/libs/armeabi/libfreetype.so ${TP}/
+
+    TP_FT2="--use-freetype --freetype-incdir=${TP} --freetype-libdir=${TP}"
     TP_PYTHON="--use-python --python-incdir=${TP}/python${PYVER}/include --python-libdir=${TP}/python${PYVER}/lib"
 
     if [ -d host ]
@@ -104,7 +117,7 @@ then
     "
     else
 
-        $PDK_PYTHON makepanda/makepanda.py --everything $OPT_COMMON $TP_PYTHON
+        $PDK_PYTHON makepanda/makepanda.py --everything $OPT_COMMON $TP_PYTHON "$@"
         mv built host
     fi
 
@@ -121,15 +134,15 @@ then
     rm -vf ${TP}/python${PYVER}/include/python${PYDOT}
     ln -sf ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE} ${TP}/python${PYVER}/include/python${PYDOT}
 
-    cmd="$PDK_PYTHON makepanda/makepanda.py $OPT_COMMON $OPT_ANDROID $TP_PYTHON"
+    cmd="$PDK_PYTHON makepanda/makepanda.py $OPT_COMMON $OPT_ANDROID $TP_PYTHON $TP_FT2"
     cat > $ORIGIN.rebuild.sh <<END
 #!/bin/bash
 . $SDK/sdk.env
 cd $ORIGIN
-$cmd
+NDK_ROOT=$NDK_ROOT PANDA_ARCH=$PANDA_ARCH $cmd "\$@"
 END
     chmod +x $ORIGIN.rebuild.sh
-    $cmd
+    $cmd "$@"
 else
     echo "FATAL: Can't find static host cpython $PDK_PYTHON"
 fi
@@ -165,6 +178,7 @@ from ctypes import CDLL
 #libc++_shared.so
 LIBS = """
 libgnustl_shared.so
+libfreetype.so
 libp3dtool.so
 libp3dtoolconfig.so
 libpandaexpress.so
@@ -196,15 +210,21 @@ for lpass in range(4):
     poplist = []
     for dll in DLLS:
         try:
-            if os.access(dll,0):
-                CDLL( "/data/data/u.r/usr/lib-armv7/panda3d/%s" % dll )
+            dll_path = '%s'
+            for dll_path in ["/data/data/u.r/usr/lib-armv7/panda3d/%s","/data/data/u.r/lib-armv7/%s","/data/data/u.r/lib/%s","/system/lib/%s"]:
+                dll_path = dll_path % dll
+                if os.access(dll_path, 0):
+                    #print(lpass,dll,file=sys.stderr)
+                    CDLL( dll_path )
+                    poplist.append(dll)
+                    break
             else:
-                CDLL("/data/data/u.r/lib/%s"  % dll)
-            poplist.append(dll)
+                print("?",dll)
         except Exception as e:
             print(lpass,dll,e,file=sys.stderr)
     while len(poplist):
         DLLS.remove(poplist.pop(0))
+
 END
     pwd
     if [ -d built/libs ]
@@ -213,7 +233,9 @@ END
         echo "
     * installing python support libs
     "
-        for pylib in $(find built/libs/*/*.cpython-*.so)
+        #for pylib in $(find built/libs/*/*.cpython-*.so)
+        #$(find built/|grep cpython-37m.so$)
+        for pylib in built/panda3d/*.cpython-*.so
         do
             mv -vf $pylib $PDK_PYPANDA3D/
             #$(basename $pylib|cut -f1 -d.).so
@@ -224,11 +246,11 @@ END
         echo "
     * installing panda c++ support libs
     "
-        for pandalib in $(find built/libs/*/lib*.so)
+        for pandalib in built/*/*-*/lib*so built/tmp/lib*so
         do
             mv -vf $pandalib $DEV_APPDIR/usr/lib-$ANDROID_ARCH/panda3d/
         done
-        rmdir built/libs/*
+        rmdir built/libs/* built/libs
     fi
 
     echo "

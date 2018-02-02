@@ -1,5 +1,5 @@
 --- panda3d-input-overhaul/makepanda/makepandacore.py	2018-01-28 14:44:54.000000000 +0100
-+++ panda3d-input-overhaul.api19/makepanda/makepandacore.py	2018-01-31 14:08:51.311364341 +0100
++++ panda3d-input-overhaul.api19/makepanda/makepandacore.py	2018-02-02 11:46:32.496559546 +0100
 @@ -442,12 +442,16 @@
  
  def GetCC():

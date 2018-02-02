@@ -1,5 +1,5 @@
 --- panda3d-input-overhaul/makepanda/makepanda.py	2018-01-28 14:44:54.000000000 +0100
-+++ panda3d-input-overhaul.api19/makepanda/makepanda.py	2018-01-31 09:15:25.533772145 +0100
++++ panda3d-input-overhaul.api19/makepanda/makepanda.py	2018-02-02 11:46:32.518559545 +0100
 @@ -1745,7 +1745,7 @@
              cmd += " -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now"
              if GetTargetArch() == 'armv7a':

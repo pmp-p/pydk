@@ -32,12 +32,12 @@ Setting source tree in [$ORIGIN] for [$SRC]"
         if md5sum -c ${ARCHIVE}.md5 2>/dev/null
         then
             echo "  * Archive $ARCHIVE.md5 validated"
-            cd $ORIGIN && unzip $ARCHIVE | pv -w 60 -p -l -s 4134 >/dev/null && break
+            cd $ORIGIN && unzip $ARCHIVE | pv -w 60 -p -l -s $1 >/dev/null && break
         else
             echo "  * Storing source code from [$GHZIP] in cache [$ARCHIVE]"
             wget $GHZIP -O$ARCHIVE
             cd $ORIGIN
-            if unzip $ARCHIVE | pv -w 60  -p -l -s 4134 >/dev/null
+            if unzip $ARCHIVE | pv -w 60  -p -l -s $1 >/dev/null
             then
                 md5sum $ARCHIVE > $ARCHIVE.md5
                 break
