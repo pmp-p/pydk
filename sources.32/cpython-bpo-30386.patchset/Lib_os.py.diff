@@ -1,13 +1,27 @@
 --- cpython-bpo-30386/Lib/os.py	2017-12-10 15:07:21.000000000 +0100
-+++ cpython-bpo-30386.api19/Lib/os.py	2018-02-02 20:08:32.210861880 +0100
-@@ -1076,3 +1076,33 @@
++++ cpython-bpo-30386.api19/Lib/os.py	2018-02-03 02:07:48.252362576 +0100
+@@ -1076,3 +1076,32 @@
      @classmethod
      def __subclasshook__(cls, subclass):
          return hasattr(subclass, '__fspath__')
 +
 +
-+if sys.platform=='android': #access('/system/bin/linker',0):
-+
++if sys.platform=='android':
++#access('/system/bin/linker',0):
++    if sys.getandroidapilevel() <20:
++        def ttyname(fdnum):
++            fdnum = int(fdnum)
++            bestshot = '/dev/pts/0'
++            bad = True
++            uid = getuid()
++            while bad and fdnum>=0:
++                couldbe = '/dev/pts/%i' % fdnum
++                if access(couldbe,R_OK):
++                    if access(couldbe, W_OK) and uid == stat(couldbe).st_uid:
++                        bestshot = couldbe
++                        break
++                fdnum -=1
++            return bestshot
 +#    def ttyname(fdnum):
 +#        import cffi
 +#        ffi = cffi.FFI()
@@ -17,20 +31,5 @@
 +#        pchar = ffi.new("char []",bytes(chr(0) * 16,'utf-8') )
 +#        LIBC.ptsname_r( fdnum, pchar, 16)
 +#        return ffi.string(pchar)
-+
-+    def ttyname(fdnum):
-+        fdnum = int(fdnum)
-+        bestshot = '/dev/pts/0'
-+        bad = True
-+        uid = getuid()
-+        while bad and fdnum>=0:
-+            couldbe = '/dev/pts/%i' % fdnum
-+            if access(couldbe,R_OK):
-+                if access(couldbe, W_OK) and uid == stat(couldbe).st_uid:
-+                    bestshot = couldbe
-+                    break
-+            fdnum -=1
-+        return bestshot
-+
 +#
 +
