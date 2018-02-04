@@ -102,3 +102,4 @@ ENV/
 .eric4project
 DroidPyDK.e4p
 __init__.py
+sources.32/termegl/.gradle

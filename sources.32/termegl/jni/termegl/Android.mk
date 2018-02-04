@@ -35,7 +35,7 @@ LOCAL_CFLAGS += -I$(SDK)/build.32/libtuio/oscpack
 
 
 LOCAL_LDLIBS := -lz -ldl -lc -lm -llog -lEGL -landroid -lEGL -lGLESv1_CM
-LOCAL_LDLIBS += $(LOCAL_PATH)/../../prebuilt/$(TARGET_ARCH_ABI)/libpython3.7m.so
+LOCAL_LDLIBS += -L$(LOCAL_PATH)/../../prebuilt/$(TARGET_ARCH_ABI) -lpython3.7m
 
 #LOCAL_LDLIBS += -lGLESv2
 #LOCAL_LDLIBS += -lGLESv3
