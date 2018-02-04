@@ -106,16 +106,56 @@ Patching source tree if required"
     fi
 }
 
-if adb devices -l 2>/dev/null|grep -v ^L|grep -v ^$|wc -l|grep -q 0
-then
-    echo No android device found
-    if echo $ADB_NET | grep -q 192
+function install_run
+{
+    APK_FILE=$1
+    if [ -f $APK_FILE ]
     then
-        echo "Trying to connect $ADB_NET via network"
-        adb disconnect $ADB_NET
-        adb connect $ADB_NET
-    else
-        echo "No USB device found"
+        echo "  * installing $APK_FILE"
+        $ADB install $APK_FILE
+        aapt=$(find $ANDROID_SDK_ROOT/build-tools/|grep aapt$|sort|tail -n1)
+        pkg=$($aapt dump badging "$APK_FILE"|awk -F" " '/package/ {print $2}'|awk -F"'" '/name=/ {print $2}')
+        act=$($aapt dump badging "$APK_FILE"|awk -F" " '/launchable-activity/ {print $2}'|awk -F"'" '/name=/ {print $2}')
+        echo "Running $pkg/$act"
+        $ADB shell am start -n "$pkg/$act"
+
+        echo "press <enter> to kill app"
+        read
+        echo "$ADB shell am force-stop $APK"
+        $ADB shell am force-stop $APK
+    fi
+}
+
+
+if echo  $(which adb)|grep -q /usr/bin
+then
+    export PATH=$ANDROID_SDK_ROOT/platform-tools:$PATH
+    echo using sdk adb from $(which adb)
+fi
+
+export ADB="$ANDROID_SDK_ROOT/platform-tools/adb"
+
+if $ANDROID_SDK_ROOT/platform-tools/adb devices -l|grep -q $ADB_HOST 2>/dev/null
+then
+    export ADB="$ANDROID_SDK_ROOT/platform-tools/adb -s $ADB_HOST"
+    echo "
+
+    Device = $ADB_HOST
+
+"
+else
+    if $ADB devices -l 2>/dev/null|grep -v ^L|grep -v ^$|wc -l|grep -q 0
+    then
+        echo No connected android device found
+        if echo $ADB_NET | grep -q 192
+        then
+            echo "Trying to connect $ADB_NET via network"
+            $ADB disconnect $ADB_NET
+            $ADB connect $ADB_NET
+            export ADB="$ANDROID_SDK_ROOT/platform-tools/adb -s $ADB_NET"
+        else
+            echo "No USB device found"
+        fi
     fi
 fi
 

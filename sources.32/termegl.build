@@ -7,11 +7,9 @@ APK_FILE=./build/outputs/apk/termegl-debug.apk
 SRC=termegl
 ORIGIN=$(dirname $(realpath "$0") )
 
-#put adb first
-export PATH=$ANDROID_SDK_ROOT/platform-tools:$PATH
+. $SDK/build.${BITS}.functions
 
-adb shell am force-stop $APK
-
+$ADB shell am force-stop $APK
 
 if cd $ORIGIN/$SRC
 then
@@ -19,7 +17,7 @@ then
     if [ -f $APK_FILE ]
     then
         echo "Uninstall $APK"
-        adb uninstall $APK
+        $ADB uninstall $APK
 
         rm -vf $APK_FILE
     fi
@@ -116,19 +114,7 @@ END
     echo "  * launching gradle build"
     ./gradlew assembleDebug "$@" --offline --no-daemon
 
-    if [ -f $APK_FILE ]
-    then
-        echo "install $APK_FILE"
-        adb install $APK_FILE
-        aapt=$(find $ANDROID_SDK_ROOT/build-tools/|grep aapt$|sort|tail -n1)
-        pkg=$($aapt dump badging "$APK_FILE"|awk -F" " '/package/ {print $2}'|awk -F"'" '/name=/ {print $2}')
-        act=$($aapt dump badging "$APK_FILE"|awk -F" " '/launchable-activity/ {print $2}'|awk -F"'" '/name=/ {print $2}')
-        echo "Running $pkg/$act"
-        adb shell am start -n "$pkg/$act"
+    $ADB shell touch /data/local/tmp/DEV
 
-        echo "press <enter> to kill app"
-        read
-        echo "adb shell am force-stop $APK"
-        adb shell am force-stop $APK
-    fi
+    install_run $APK_FILE
 fi

@@ -1,6 +1,9 @@
+#include <jni.h>
+
 #include <stdio.h>
 #include <stdint.h>
-#include <jni.h>
+#include <stdlib.h>
+
 
 
 #include <android/native_window.h>
@@ -56,7 +59,7 @@ static char *root_folder = "/data/data/u.r";
 
 static ANativeWindow *window = 0;
 static char app_ptr[32]= {0};
-static char *argv[] = {"/data/data/u.root/main.py"};
+static char *argv[] = {"/data/data/u.r/pyservice.py"};
 
 static EGLDisplay display;
 static EGLSurface surface;
@@ -70,8 +73,66 @@ static EGLContext context;
 #include <math.h>
 
 
+//terminal
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <sys/wait.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <termios.h>
+#include <signal.h>
+
+// tcgetattr /tcsetattr are not part of Bionic at API level 4. Here's a compatible version.
+
+static __inline__ int my_tcgetattr(int fd, struct termios *s)
+{
+    return ioctl(fd, TCGETS, s);
+}
+
+static __inline__ int my_tcsetattr(int fd, int __opt, const struct termios *s)
+{
+    return ioctl(fd, __opt, (void *)s);
+}
+
+
+
+
 
 extern "C" {
+
+    JNIEXPORT void Java_u_r_Exec_setPtyUTF8ModeInternal(JNIEnv *env, jobject clazz, jint fd, jboolean utf8Mode)
+    {
+        struct termios tios;
+
+        // TODO: handle the situation, when the file descriptor is incompatible with tcgetattr (e.g. not from /dev/ptmx)
+        if (my_tcgetattr(fd, &tios) < 0)
+            env->ThrowNew(env->FindClass("java/io/IOException"), "Failed to get terminal attributes");
+
+        if (utf8Mode) {
+            tios.c_iflag |= IUTF8;
+        } else {
+            tios.c_iflag &= ~IUTF8;
+        }
+
+        if (my_tcsetattr(fd, TCSANOW, &tios) < 0)
+            env->ThrowNew(env->FindClass("java/io/IOException"), "Failed to change terminal UTF-8 mode");
+    }
+
+    JNIEXPORT void Java_u_r_Exec_setPtyWindowSizeInternal(JNIEnv *env, jobject clazz, jint fd, jint row, jint col, jint xpixel, jint ypixel)
+    {
+        struct winsize sz;
+
+        sz.ws_row = row;
+        sz.ws_col = col;
+        sz.ws_xpixel = xpixel;
+        sz.ws_ypixel = ypixel;
+
+        // TODO: handle the situation, when the file descriptor is incompatible with TIOCSWINSZ (e.g. not from /dev/ptmx)
+        if (ioctl(fd, TIOCSWINSZ, &sz) == -1)
+            env->ThrowNew(env->FindClass("java/io/IOException"), "Failed to issue TIOCSWINSZ ioctl");
+    }
+
 
     JNIEXPORT void JNICALL Java_u_r_Term_nativeOnStart(JNIEnv* jenv, jobject obj)
     {

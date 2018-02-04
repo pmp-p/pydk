@@ -61,7 +61,7 @@ public class Exec
     }
 
     /**
-     * Set the widow size for a given pty. Allows programs
+     * Set the window size for a given pty. Allows programs
      * connected to the pty learn how large their screen is.
      */
     public static void setPtyWindowSize(ParcelFileDescriptor fd, int row, int col, int xpixel, int ypixel) {

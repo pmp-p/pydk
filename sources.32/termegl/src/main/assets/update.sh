@@ -1,11 +1,17 @@
-if [ -f /data/data/u.r.tar.xz ]
+if [ -f /data/local/tmp/u.r.tar ]
 then
     echo Using onboard cache file
-    ./busybox tar xJf /data/data/u.r.tar.xz
-    ./busybox rm /data/data/u.r.tar.xz
-else
-    if [ -f /data/data/DEV ]
+    ./busybox tar xJf /data/local/tmp/u.r.tar
+    if [ -f /data/local/tmp/DEV ]
     then
+        echo "devmode keeping cache file /data/data/u.r.tar"
+    else
+       ./busybox rm /data/local/tmp/u.r.tar
+    fi
+else
+    if [ -f /data/local/tmp/DEV ]
+    then
+        ./busybox chmod 755 -R .
         echo Grabbing local cache rootfs
         ./busybox wget http://192.168.1.66/h3droid/u.r.tar -O- | ./busybox tar xf -
     else
