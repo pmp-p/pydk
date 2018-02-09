@@ -1,0 +1,4 @@
+#auto-generated do not edit
+LOCAL_ARM_MODE := arm
+LOCAL_DISABLE_RELRO := true
+

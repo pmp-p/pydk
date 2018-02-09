@@ -120,58 +120,53 @@ import android.graphics.PixelFormat;
 import android.widget.Toast;
 
 
+import android.os.Process;
+
+
+
+
+
 
 
 
 /*
-public class GameView extends SurfaceView {
-    private SurfaceHolder holder;
-    boolean blue;
-    public GameView(Context context,boolean _blue) {
-        super(context);
-        holder = getHolder();
-        blue=_blue;
-        holder.addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
-            }
+THREAD_PRIORITY_URGENT_AUDIO
+THREAD_PRIORITY_URGENT_DISPLAY
 
-            @Override
-            public void surfaceCreated(SurfaceHolder holder) {
-                Canvas c = holder.lockCanvas(null);
-                onDraw(c);
-                holder.unlockCanvasAndPost(c);
-            }
-            @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
-            });
-    }
+https://developer.android.com/reference/android/os/Process.html#setThreadPriority(int)
 
-    @Override
-        protected void onDraw(Canvas canvas) {
-            if(blue)
-                canvas.drawColor(Color.YELLOW);
-            else
-                canvas.drawColor(Color.GREEN);
+    mBackgroundThread = new RunnerThread("background", new Runnable() {
+        @Override public void run() {
+            boolean running;
+            int ops = 0;
+            do {
+                running = mBackgroundOp.onRun();
+                ops++;
+            } while (evalRepeat(running, true) && running);
+            mBackgroundEndTime = SystemClock.uptimeMillis();
+            mBackgroundOps = ops * mBackgroundOp.getOpsPerRun();
+            threadFinished(false);
         }
-}
+    }, Process.THREAD_PRIORITY_BACKGROUND);
 */
 
 
+
+
+
+
+/*===================================================================================*/
+
 public class Term extends Activity implements SurfaceHolder.Callback, UpdateCallback {
 
-
-
-
-
-
-/*================================================================================*/
     private static String TAG = "Term-EGL";
+
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.i(TermDebug.LOG_TAG, "onStart()");
+        //Process.setThreadPriority(Process.THREAD_PRIORITY_URGENT_DISPLAY);
         nativeOnStart();
     }
 
@@ -204,20 +199,9 @@ public class Term extends Activity implements SurfaceHolder.Callback, UpdateCall
 
 /*================================================================================*/
 
-
-
-
-
-
-
-    /**
-     * The ViewFlipper which holds the collection of EmulatorView widgets.
-     */
     private TermViewFlipper mViewFlipper;
 
-    /**
-     * The name of the ViewFlipper in the resources.
-     */
+    //The name of the ViewFlipper in the resources.
     private static final int VIEW_FLIPPER = R.id.view_flipper;
 
     private SessionList mTermSessions;
@@ -253,6 +237,7 @@ public class Term extends Activity implements SurfaceHolder.Callback, UpdateCall
     private static final String PERMISSION_PATH_BROADCAST = "u.r.permission.APPEND_TO_PATH";
     private static final String PERMISSION_PATH_PREPEND_BROADCAST = "u.r.permission.PREPEND_TO_PATH";
     private int mPendingPathBroadcasts = 0;
+
     private BroadcastReceiver mPathReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String path = makePathFromBundle(getResultExtras(false));
@@ -273,6 +258,7 @@ public class Term extends Activity implements SurfaceHolder.Callback, UpdateCall
     private static final int FLAG_INCLUDE_STOPPED_PACKAGES = 0x20;
 
     private TermService mTermService;
+
     private ServiceConnection mTSConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             Log.i(TermDebug.LOG_TAG, "Bound to TermService");
@@ -386,11 +372,14 @@ public class Term extends Activity implements SurfaceHolder.Callback, UpdateCall
         }
     }
 
+    //===================================================
     /**
      * Should we use keyboard shortcuts?
      */
     private boolean mUseKeyboardShortcuts;
 
+
+    //===================================================
     /**
      * Intercepts keys before the view/terminal gets it.
      */
@@ -450,6 +439,8 @@ public class Term extends Activity implements SurfaceHolder.Callback, UpdateCall
 
     private Handler mHandler = new Handler();
     private boolean isSetup = true;
+
+    //===================================================
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -592,6 +583,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
 //PMPP
     }
 
+    //===================================================
+
     private String makePathFromBundle(Bundle extras) {
         if (extras == null || extras.size() == 0) {
             return "";
@@ -613,6 +606,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
 
         return path.substring(0, path.length()-1);
     }
+
+    //===================================================
 
     private void populateViewFlipper() {
         if (mTermService != null) {
@@ -657,6 +652,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
         }
     }
 
+    //===================================================
+
     private void populateWindowList() {
         if (mActionBar == null) {
             // Not needed
@@ -682,6 +679,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
         }
     }
 
+    //===================================================
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -700,10 +699,14 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
         }
     }
 
+    //===================================================
+
     private void restart() {
         startActivity(getIntent());
         finish();
     }
+
+    //===================================================
 
     protected static TermSession createTermSession(Context context, TermSettings settings, String initialCommand) throws IOException {
         GenericTermSession session = new ShellTermSession(settings, initialCommand);
@@ -713,12 +716,16 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
         return session;
     }
 
+    //===================================================
+
     private TermSession createTermSession() throws IOException {
         TermSettings settings = mSettings;
         TermSession session = createTermSession(this, settings, settings.getInitialCommand());
         session.setFinishCallback(mTermService);
         return session;
     }
+
+    //===================================================
 
     private TermView createEmulatorView(TermSession session) {
         DisplayMetrics metrics = new DisplayMetrics();
@@ -732,6 +739,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
         return emulatorView;
     }
 
+    //===================================================
+
     private TermSession getCurrentTermSession() {
         SessionList sessions = mTermSessions;
         if (sessions == null) {
@@ -744,6 +753,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
     private EmulatorView getCurrentEmulatorView() {
         return (EmulatorView) mViewFlipper.getCurrentView();
     }
+
+    //===================================================
 
     private void updatePrefs() {
         mUseKeyboardShortcuts = mSettings.getUseKeyboardShortcutsFlag();
@@ -799,6 +810,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
         setRequestedOrientation(o);
     }
 
+    //===================================================
+
     @Override
     public void onResume() {
         super.onResume();
@@ -847,6 +860,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
         nativeOnResume();
     }
 
+    //===================================================
+
     @Override
     public void onPause() {
         super.onPause();
@@ -889,10 +904,14 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
         nativeOnPause();
     }
 
+    //===================================================
+
     private boolean checkHaveFullHwKeyboard(Configuration c) {
         return (c.keyboard == Configuration.KEYBOARD_QWERTY) &&
             (c.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO);
     }
+
+    //===================================================
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -911,6 +930,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
         }
     }
 
+    //===================================================
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -918,6 +939,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
         MenuItemCompat.setShowAsAction(menu.findItem(R.id.menu_close_window), MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
         return true;
     }
+
+    //===================================================
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -957,6 +980,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
         return super.onOptionsItemSelected(item);
     }
 
+    //===================================================
+
     private void doCreateNewWindow() {
         if (mTermSessions == null) {
             Log.w(TermDebug.LOG_TAG, "Couldn't create new window because mTermSessions == null");
@@ -978,6 +1003,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
         }
     }
 
+    //===================================================
+
     private void confirmCloseWindow() {
         final AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setIcon(android.R.drawable.ic_dialog_alert);
@@ -996,6 +1023,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
         b.setNegativeButton(android.R.string.no, null);
         b.show();
     }
+
+    //===================================================
 
     private void doCloseWindow() {
         if (mTermSessions == null) {
@@ -1017,6 +1046,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
             mViewFlipper.showNext();
         }
     }
+
+    //===================================================
 
     @Override
     protected void onActivityResult(int request, int result, Intent data) {
@@ -1041,6 +1072,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
             break;
         }
     }
+
+    //===================================================
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -1076,6 +1109,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
         }
     }
 
+    //===================================================
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem wakeLockItem = menu.findItem(R.id.menu_toggle_wakelock);
@@ -1093,6 +1128,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
         return super.onPrepareOptionsMenu(menu);
     }
 
+    //===================================================
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
             ContextMenuInfo menuInfo) {
@@ -1107,6 +1144,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
           menu.getItem(PASTE_ID).setEnabled(false);
       }
     }
+
+    //===================================================
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
@@ -1131,6 +1170,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
           }
         }
 
+    //=====================================================
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         /* The pre-Eclair default implementation of onKeyDown() would prevent
@@ -1147,6 +1188,8 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
             return super.onKeyDown(keyCode, event);
         }
     }
+
+    //===================================================
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {

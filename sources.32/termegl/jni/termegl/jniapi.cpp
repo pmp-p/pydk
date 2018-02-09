@@ -27,7 +27,7 @@ static int PyAPI_Ready = 0;
 static char *root_folder = "/data/data/u.r";
 
 
-#define PYTHONPATH "/data/data/u.r/usr/lib/python3.7/lib-dynload:/data/data/u.r/usr/lib/python3.7:/data/data/u.r/usr/lib/python3"
+#define PYTHONPATH "/data/data/u.r/usr/lib/python3.7/site-packages:/data/data/u.r/usr/lib/python3.7/lib-dynload:/data/data/u.r/usr/lib/python3.7:/data/data/u.r/usr/lib/python3"
 #define LIB_PYTHON "libpython3.7m.so"
 
 #define PY_PATH "/data/data/u.r/usr/lib/python3.7"
@@ -47,11 +47,7 @@ static char *root_folder = "/data/data/u.r";
   *
   */
 
-//#include "/data/data/u.root/usr/src/projects/python-cffi/cpython_thread.cpp"
-
 #include "cpython_main/cpython_thread.cpp"
-
-
 
 #undef LOG_TAG
 #define LOG_TAG "PythonAPI-EGL"
@@ -59,7 +55,7 @@ static char *root_folder = "/data/data/u.r";
 
 static ANativeWindow *window = 0;
 static char app_ptr[32]= {0};
-static char *argv[] = {"/data/data/u.r/pyservice.py"};
+static char *argv[] = {"-/data/data/u.r/pyservice.py"};
 
 static EGLDisplay display;
 static EGLSurface surface;

@@ -1,0 +1,30 @@
+#auto-generated do not edit
+
+cp -rv /data/data/build.32/panda3d-input-overhaul/built/lib/libpython3.*.so prebuilt/armeabi-v7a/
+
+cp /data/data/android/android-ndk-r14b/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/libgnustl_shared.so -vf prebuilt/armeabi-v7a/
+
+cp -f /data/data/build.32/panda3d-input-overhaul/built/tmp/lib*.so prebuilt/armeabi-v7a/
+
+if ndk-build -C .
+then
+
+    for fixlib in $(find |grep libtermegl.so)
+    do
+        if grep -q obj/local $fixlib
+        then
+            echo
+            /data/data/cross.32/bin/patchelf --replace-needed ./obj/local/armeabi-v7a/libpython3.7m.so libpython3.7m.so $fixlib
+        else
+            echo  is OK
+        fi
+
+    done
+
+    #cp -f prebuilt/armeabi-v7a/*so obj/local/armeabi-v7a/
+    mv -vn prebuilt/armeabi-v7a/*so libs/armeabi-v7a/
+
+    exit 0
+else
+    exit 1
+fi

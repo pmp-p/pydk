@@ -68,17 +68,6 @@ public class TermService extends Service implements TermSession.FinishCallback
 
     @Override
     public IBinder onBind(Intent intent) {
-/*PMPP
-        if (TermExec.SERVICE_ACTION_V1.equals(intent.getAction())) {
-            Log.i("TermService", "Outside process called onBind()");
-
-            return new RBinder();
-        } else {
-            Log.i("TermService", "Activity called onBind()");
-
-            return mTSBinder;
-        }
-PMPP*/
         return mTSBinder;
     }
 
@@ -121,72 +110,7 @@ PMPP*/
     public void onSessionFinish(TermSession session) {
         mTermSessions.remove(session);
     }
-/*PMPP
-    private final class RBinder extends ITerminal.Stub {
-        @Override
-        public IntentSender startSession(final ParcelFileDescriptor pseudoTerminalMultiplexerFd,
-                                         final ResultReceiver callback) {
-            final String sessionHandle = UUID.randomUUID().toString();
 
-            // distinct Intent Uri and PendingIntent requestCode must be sufficient to avoid collisions
-            final Intent switchIntent = new Intent(RemoteInterface.PRIVACT_OPEN_NEW_WINDOW)
-                    .setData(Uri.parse(sessionHandle))
-                    .addCategory(Intent.CATEGORY_DEFAULT)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    .putExtra(RemoteInterface.PRIVEXTRA_TARGET_WINDOW, sessionHandle);
-
-            final PendingIntent result = PendingIntent.getActivity(getApplicationContext(), sessionHandle.hashCode(),
-                    switchIntent, 0);
-
-            final PackageManager pm = getPackageManager();
-            final String[] pkgs = pm.getPackagesForUid(getCallingUid());
-            if (pkgs == null || pkgs.length == 0)
-                return null;
-
-            for (String packageName:pkgs) {
-                try {
-                    final PackageInfo pkgInfo = pm.getPackageInfo(packageName, 0);
-
-                    final ApplicationInfo appInfo = pkgInfo.applicationInfo;
-                    if (appInfo == null)
-                        continue;
-
-                    final CharSequence label = pm.getApplicationLabel(appInfo);
-
-                    if (!TextUtils.isEmpty(label)) {
-                        final String niceName = label.toString();
-
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                final TermSettings settings = new TermSettings(getResources(),
-                                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
-
-                                final GenericTermSession session = new BoundSession(pseudoTerminalMultiplexerFd,
-                                        settings, niceName);
-
-                                mTermSessions.add(session);
-
-                                session.setHandle(sessionHandle);
-                                session.setFinishCallback(new RBinderCleanupCallback(result, callback));
-                                session.setTitle("");
-
-                                // TODO: handle the situation, when supplied file descriptor does not originate from
-                                // /dev/ptmx (probably should be implemented by throwing IllegalStateEXception
-                                // when recognized specific errno values in native Exec methods)
-                                session.initializeEmulator(80, 24);
-                            }
-                        });
-                    }
-
-                    return result.getIntentSender();
-                } catch (PackageManager.NameNotFoundException ignore) {}
-            }
-
-            return null;
-        }
-    }
-PMPP*/
     private final class RBinderCleanupCallback implements TermSession.FinishCallback {
         private final PendingIntent result;
         private final ResultReceiver callback;

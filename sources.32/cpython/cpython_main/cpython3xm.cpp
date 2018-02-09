@@ -130,11 +130,12 @@ int interpreter_main(int argc, char *argv[] ){
     setenv("XDG_CONFIG_HOME", "/data/data/u.r/XDG_CONFIG_HOME", 1);
     setenv("XDG_CACHE_HOME", "/data/data/u.r/XDG_CACHE_HOME", 1);
     setenv("PYTHONDONTWRITEBYTECODE","1",1);
-    setenv("PYTHON_NAME", "python-main", 1);
+    setenv("PYTHON_NAME", "python-apk", 1);
     setenv("LD_LIBRARY_PATH","/data/data/u.root/lib-armhf:/data/data/u.r/lib-armhf:/vendor/lib:/system/lib",1);
     setenv("PYTHON_HOME", "/data/data/u.r/usr", 1);
     setenv("PYTHONPATH",PYTHONPATH,1);
     setenv("PYTHONCOERCECLOCALE","1",1);
+    setenv("PYTHONUNBUFFERED","1",1);
 
     Py_SetProgramName(L"./python3");
 
@@ -161,7 +162,7 @@ int interpreter_main(int argc, char *argv[] ){
     char paths[256];
 
     snprintf(paths, sizeof(str_cp),
-         "%s/stdlib.zip:%s:%s/lib-dynload:%s/site-packages:%s",
+         "%s:%s/lib-dynload:%s/site-packages:%s:%s/stdlib.zip",
          PY_PATH,PY_PATH, PY_PATH, PY_PATH, PY_PATH, PY_LIBS);
 
     LOGP("calculated paths to be...");
@@ -182,7 +183,7 @@ int interpreter_main(int argc, char *argv[] ){
     LOGP("</InitThreads>");
 
     LOGP("<LogTest>");
-    PyRun_SimpleString("import androidembed\nandroidembed.log('    testing python print redirection')");
+    PyRun_SimpleString("import androidembed\nandroidembed.log('    Testing python print redirection')");
     LOGP("</LogTest>");
 
     /* inject our bootstrap code to redirect python stdin/stdout replace sys.path with our path */
@@ -242,16 +243,14 @@ int interpreter_main(int argc, char *argv[] ){
     PyRun_SimpleString(
       "sys.argv = ['notaninterpreter']\n"
       "class LogFile(object):\n"
-      "    def __init__(self):\n"
-      "        self.buffer = ''\n"
+      "    def __init__(self):self.buffer = ''\n"
       "    def write(self, s):\n"
       "        s = self.buffer + s\n"
       "        lines = s.split(\"\\n\")\n"
       "        for l in lines[:-1]:\n"
       "            androidembed.log(l)\n"
       "        self.buffer = lines[-1]\n"
-      "    def flush(self):\n"
-      "        return\n"
+      "    def flush(self):return\n"
       "sys.stdout = sys.stderr = LogFile()\n"
       "print('Android path', sys.path)\n"
       "import os\n"
@@ -259,21 +258,50 @@ int interpreter_main(int argc, char *argv[] ){
       "print('python bootstrap done. __name__ is', __name__)");
 
 
+    //int  priority = getpriority(0, 0);
+    //return setpriority( PRIO_PROCESS, 0, priority+increment);
+    //snprintf(str_cp, sizeof(str_cp), "prio=%i", priority );
+    //LOGP( str_cp );
+
 
     LOGP("Run user program, change dir and execute entrypoint :");
     snprintf(main_py, 512, "%s", argv[0] );
 
     LOGP( main_py);
     if ( (int)main_py[0]==45){
-        LOGP("FIFO interactive");
+        LOGP("Line interactive");
 
-        snprintf(str_cp, sizeof(str_cp), "print('pid=%i')", getpid() );
-        PyRun_SimpleString( str_cp );
+        //snprintf(str_cp, sizeof(str_cp), "print('pid=%i')", getpid() );
+        //PyRun_SimpleString( str_cp );
 
-        snprintf(main_py, sizeof(main_py),"/data/data/u.r/tmp/pin");
+        snprintf(str_cp, sizeof(str_cp),"%s", &main_py[1]);
+        fd = fopen( str_cp, "r");
+        if (fd == NULL) {
+            LOGP("failed to open the entrypoint :");
+            LOGP(str_cp);
+            ret = 1;
+            goto done;
+        }
 
-        LOGP("Running entry point :"); LOGP(main_py);
-        LOGP(" ////////// TODO INTERACTIVE ////////////");
+        LOGP("Running entry point :"); LOGP(str_cp);
+        ret = PyRun_SimpleFile(fd, str_cp );
+        if (fd){
+            fclose(fd);
+            fd=0;
+        }
+
+        //LOGP( getenv("CONSOLE" )  );
+        PyCompilerFlags cf;
+        cf.cf_flags = 0;
+        Py_InspectFlag = 0;
+
+        freopen( getenv("CONSOLE") , "r", stdin );
+        freopen( getenv("CONSOLE") , "w", stdout );
+        freopen( getenv("CONSOLE") , "w", stderr );
+
+        ret =  PyRun_AnyFileFlags( stdin, "<stdin>", &cf);
+        snprintf(str_cp, sizeof(str_cp)," == Line interactive done [%i] ==", ret);
+        LOGP( str_cp );
         goto done;
     }
 
@@ -283,8 +311,8 @@ int interpreter_main(int argc, char *argv[] ){
         ret = 1;
 
         //default
-        LOGP("WARNING: Running default program, change dir and execute entrypoint :");
-        snprintf(main_py,  sizeof(main_py), "%s/%s", root_folder , "main.py");
+        LOGP("WARNING: Running default __init__.py");
+        snprintf(main_py,  sizeof(main_py), "%s/%s", root_folder , "__init__.py");
 
         LOGP( main_py);
 

@@ -55,6 +55,8 @@ import android.os.Message;
  * This frees emulator data from memory, stops the reader and writer threads,
  * and closes the attached I/O streams.
  */
+
+
 public class TermSession {
     public void setKeyListener(TermKeyListener l) {
         mKeyListener = l;
