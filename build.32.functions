@@ -144,7 +144,7 @@ then
 
 "
 else
-    if $ADB devices -l 2>/dev/null|grep -v ^L|grep -v ^$|wc -l|grep -q 0
+    if $ADB devices -l 2>/dev/null|grep -v ^L|grep -c -v ^$ |grep -q 0
     then
         echo No connected android device found
         if echo $ADB_NET | grep -q 192

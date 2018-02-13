@@ -3,6 +3,7 @@ import os.path
 import sys
 import time as Time
 import traceback
+import threading
 
 sys.path.append('/data/data/u.root/usr/src/Roaming/lib/')
 import xpy
@@ -34,9 +35,10 @@ while True:
     if os.path.exists(env):
         break
     Time.sleep(1)
-    #androidembed.log('waiting...')
 
 #os.system('umask 0000;/data/data/u.r/busybox mkfifo %s.in;/data/data/u.r/busybox mkfifo %s.out' % (prefix,prefix) )
+
+Time.sleep(1)
 
 with open(env, 'r') as fenv:
     for l in fenv.readlines():
@@ -44,17 +46,74 @@ with open(env, 'r') as fenv:
         if l.startswith('CONSOLE='):
             androidembed.log( l )
             pts_out = l.split('=')[-1]
+            os.environ['CONSOLE'] = pts_out
         elif l.startswith('REPL_PID='):
             androidembed.log( l  )
             repl_pid = int( l.split('=')[-1] )
 
 
-os.environ['CONSOLE'] = pts_out
+
+
+
+class Thread_InputService(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+
+
+    def InputService(self,task):
+        key = self.io.get_key()
+        while True:
+            flush = self.io.get_key()
+            if not flush:break
+
+        if key==b'q':
+            messenger.send('arrow_left')
+        elif key==b'd':
+            messenger.send('arrow_right')
+        elif key==b'z':
+            messenger.send('arrow_up')
+        elif key==b's':
+            messenger.send('arrow_down')
+        elif key==b' ':
+            messenger.send('space')
+        else:
+            messenger.send('arrow_left-up')
+            messenger.send('arrow_right-up')
+            messenger.send('arrow_up-up')
+            messenger.send('arrow_down-up')
+
+        Time.sleep(.001)
+
+        return self.Task_cont
+
+    def run(self):
+        import nanotui3.input
+        while True:
+            try:
+                messenger
+                break
+            except:
+                Time.sleep(4)
+        androidembed.log("%s now feeding %s" % ( self, messenger.getEvents()) )
+
+        import direct
+        import direct.task
+        import direct.task.Task
+        import direct.task.TaskManagerGlobal
+
+        self.Task_cont = direct.task.Task.Task.cont
+
+        self.io = nanotui3.input.WASD()
+        self.io.Begin()
+        self.ioTask = direct.task.TaskManagerGlobal.taskMgr.add(self.InputService, "InputService")
+        render.setDepthTest(True)
+
 
 def test():
     import time as t;tm=t.time(); import panda3d;print(t.time()-tm)
 
 #def run(p='/data/data/u.root/usr/src/sdk-panda3d/samples/asteroids/main.py',*flags):
+#def run(p='/data/data/u.root/usr/src/sdk-panda3d/samples/carousel/main.py',*flags):
 def run(p='/data/data/u.root/usr/src/sdk-panda3d/samples/roaming-ralph/main.py',*flags):
     global __file__
     p = p.replace('>','/')
@@ -64,7 +123,10 @@ def run(p='/data/data/u.root/usr/src/sdk-panda3d/samples/roaming-ralph/main.py',
     androidembed.log(f"{p} launched from {__file__}")
     __file__ = p
     oldwd = os.getcwd()
-    os.chdir( os.path.dirname(__file__) )
+    cd = os.path.dirname(__file__)
+    loadPrcFileData("", "model-path %s:." % cd )
+    loadPrcFileData("", "background-color 0 0 0 0")
+    os.chdir( cd )
     try:
         #redir stderr to logcat
         if -2 in flags:
@@ -77,12 +139,33 @@ def run(p='/data/data/u.root/usr/src/sdk-panda3d/samples/roaming-ralph/main.py',
         __file__ = RunTime.__file__
         os.chdir(oldwd)
 
+def tui(__file__='/data/data/u.r/pandamenu.py'):
+#def tui(__file__='/data/data/u.root/usr/src/Roaming/lib/nanotui_demo.py'):
+    cd= os.path.dirname(__file__)
+    print('\r\nRunning',__file__,'in',cd,"\r\n")
+    oldwd = os.getcwd()
+    os.chdir( cd )
+    try:
+        sys.stderr = RunTime.__stderr__
+        with open(__file__,'r') as fp:
+            exec( fp.read(), globals(), globals() )
+    finally:
+        sys.stderr = sys.__stderr__
+        __file__ = RunTime.__file__
+        os.chdir(oldwd)
 
 
 sys.stdout = sys.__stdout__
 sys.stderr = sys.__stderr__
 
-#import direct
+RunTime.io = Thread_InputService()
+RunTime.io.start()
 
+from panda3d.core import loadPrcFileData
+
+loadPrcFileData("", "default-model-extension .bam")
 androidembed.log(' == Interactive (%s, %s) ==' % (repl_pid, pts_out) )
 
+
+sys.stdout.flush()
+sys.stderr.flush()

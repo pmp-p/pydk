@@ -40,36 +40,36 @@ class TermKeyListener {
     private void initKeyCodes() {
         mKeyMap = new HashMap<Integer, String>();
         mKeyMap.put(KEYMOD_SHIFT | KEYCODE_DPAD_LEFT, "\033[1;2D");
-        mKeyMap.put(KEYMOD_ALT | KEYCODE_DPAD_LEFT, "\033[1;3D");
-        mKeyMap.put(KEYMOD_ALT | KEYMOD_SHIFT | KEYCODE_DPAD_LEFT, "\033[1;4D");
-        mKeyMap.put(KEYMOD_CTRL | KEYCODE_DPAD_LEFT, "\033[1;5D");
-        mKeyMap.put(KEYMOD_CTRL | KEYMOD_SHIFT | KEYCODE_DPAD_LEFT, "\033[1;6D");
-        mKeyMap.put(KEYMOD_CTRL | KEYMOD_ALT | KEYCODE_DPAD_LEFT, "\033[1;7D");
-        mKeyMap.put(KEYMOD_CTRL | KEYMOD_ALT | KEYMOD_SHIFT | KEYCODE_DPAD_LEFT, "\033[1;8D");
+        mKeyMap.put(KEYMOD_ALT   | KEYCODE_DPAD_LEFT, "\033[1;3D");
+        mKeyMap.put(KEYMOD_ALT   | KEYMOD_SHIFT | KEYCODE_DPAD_LEFT, "\033[1;4D");
+        mKeyMap.put(KEYMOD_CTRL  | KEYCODE_DPAD_LEFT, "\033[1;5D");
+        mKeyMap.put(KEYMOD_CTRL  | KEYMOD_SHIFT | KEYCODE_DPAD_LEFT, "\033[1;6D");
+        mKeyMap.put(KEYMOD_CTRL  | KEYMOD_ALT | KEYCODE_DPAD_LEFT, "\033[1;7D");
+        mKeyMap.put(KEYMOD_CTRL  | KEYMOD_ALT | KEYMOD_SHIFT | KEYCODE_DPAD_LEFT, "\033[1;8D");
 
         mKeyMap.put(KEYMOD_SHIFT | KEYCODE_DPAD_RIGHT, "\033[1;2C");
-        mKeyMap.put(KEYMOD_ALT | KEYCODE_DPAD_RIGHT, "\033[1;3C");
-        mKeyMap.put(KEYMOD_ALT | KEYMOD_SHIFT | KEYCODE_DPAD_RIGHT, "\033[1;4C");
-        mKeyMap.put(KEYMOD_CTRL | KEYCODE_DPAD_RIGHT, "\033[1;5C");
-        mKeyMap.put(KEYMOD_CTRL | KEYMOD_SHIFT | KEYCODE_DPAD_RIGHT, "\033[1;6C");
-        mKeyMap.put(KEYMOD_CTRL | KEYMOD_ALT | KEYCODE_DPAD_RIGHT, "\033[1;7C");
-        mKeyMap.put(KEYMOD_CTRL | KEYMOD_ALT | KEYMOD_SHIFT | KEYCODE_DPAD_RIGHT, "\033[1;8C");
+        mKeyMap.put(KEYMOD_ALT   | KEYCODE_DPAD_RIGHT, "\033[1;3C");
+        mKeyMap.put(KEYMOD_ALT   | KEYMOD_SHIFT | KEYCODE_DPAD_RIGHT, "\033[1;4C");
+        mKeyMap.put(KEYMOD_CTRL  | KEYCODE_DPAD_RIGHT, "\033[1;5C");
+        mKeyMap.put(KEYMOD_CTRL  | KEYMOD_SHIFT | KEYCODE_DPAD_RIGHT, "\033[1;6C");
+        mKeyMap.put(KEYMOD_CTRL  | KEYMOD_ALT | KEYCODE_DPAD_RIGHT, "\033[1;7C");
+        mKeyMap.put(KEYMOD_CTRL  | KEYMOD_ALT | KEYMOD_SHIFT | KEYCODE_DPAD_RIGHT, "\033[1;8C");
 
         mKeyMap.put(KEYMOD_SHIFT | KEYCODE_DPAD_UP, "\033[1;2A");
-        mKeyMap.put(KEYMOD_ALT | KEYCODE_DPAD_UP, "\033[1;3A");
-        mKeyMap.put(KEYMOD_ALT | KEYMOD_SHIFT | KEYCODE_DPAD_UP, "\033[1;4A");
-        mKeyMap.put(KEYMOD_CTRL | KEYCODE_DPAD_UP, "\033[1;5A");
-        mKeyMap.put(KEYMOD_CTRL | KEYMOD_SHIFT | KEYCODE_DPAD_UP, "\033[1;6A");
-        mKeyMap.put(KEYMOD_CTRL | KEYMOD_ALT | KEYCODE_DPAD_UP, "\033[1;7A");
-        mKeyMap.put(KEYMOD_CTRL | KEYMOD_ALT | KEYMOD_SHIFT | KEYCODE_DPAD_UP, "\033[1;8A");
+        mKeyMap.put(KEYMOD_ALT   | KEYCODE_DPAD_UP, "\033[1;3A");
+        mKeyMap.put(KEYMOD_ALT   | KEYMOD_SHIFT | KEYCODE_DPAD_UP, "\033[1;4A");
+        mKeyMap.put(KEYMOD_CTRL  | KEYCODE_DPAD_UP, "\033[1;5A");
+        mKeyMap.put(KEYMOD_CTRL  | KEYMOD_SHIFT | KEYCODE_DPAD_UP, "\033[1;6A");
+        mKeyMap.put(KEYMOD_CTRL  | KEYMOD_ALT | KEYCODE_DPAD_UP, "\033[1;7A");
+        mKeyMap.put(KEYMOD_CTRL  | KEYMOD_ALT | KEYMOD_SHIFT | KEYCODE_DPAD_UP, "\033[1;8A");
 
         mKeyMap.put(KEYMOD_SHIFT | KEYCODE_DPAD_DOWN, "\033[1;2B");
-        mKeyMap.put(KEYMOD_ALT | KEYCODE_DPAD_DOWN, "\033[1;3B");
-        mKeyMap.put(KEYMOD_ALT | KEYMOD_SHIFT | KEYCODE_DPAD_DOWN, "\033[1;4B");
-        mKeyMap.put(KEYMOD_CTRL | KEYCODE_DPAD_DOWN, "\033[1;5B");
-        mKeyMap.put(KEYMOD_CTRL | KEYMOD_SHIFT | KEYCODE_DPAD_DOWN, "\033[1;6B");
-        mKeyMap.put(KEYMOD_CTRL | KEYMOD_ALT | KEYCODE_DPAD_DOWN, "\033[1;7B");
-        mKeyMap.put(KEYMOD_CTRL | KEYMOD_ALT | KEYMOD_SHIFT | KEYCODE_DPAD_DOWN, "\033[1;8B");
+        mKeyMap.put(KEYMOD_ALT   | KEYCODE_DPAD_DOWN, "\033[1;3B");
+        mKeyMap.put(KEYMOD_ALT   | KEYMOD_SHIFT | KEYCODE_DPAD_DOWN, "\033[1;4B");
+        mKeyMap.put(KEYMOD_CTRL  | KEYCODE_DPAD_DOWN, "\033[1;5B");
+        mKeyMap.put(KEYMOD_CTRL  | KEYMOD_SHIFT | KEYCODE_DPAD_DOWN, "\033[1;6B");
+        mKeyMap.put(KEYMOD_CTRL  | KEYMOD_ALT | KEYCODE_DPAD_DOWN, "\033[1;7B");
+        mKeyMap.put(KEYMOD_CTRL  | KEYMOD_ALT | KEYMOD_SHIFT | KEYCODE_DPAD_DOWN, "\033[1;8B");
 
         //^[[3~
         mKeyMap.put(KEYMOD_SHIFT | KEYCODE_FORWARD_DEL, "\033[3;2~");
@@ -128,7 +128,7 @@ class TermKeyListener {
         mKeyCodes[KEYCODE_NUMPAD_ENTER] = "\015";
         mKeyCodes[KEYCODE_NUMPAD_EQUALS] = "=";
         mKeyCodes[KEYCODE_NUMPAD_COMMA] = ",";
-/*
+
         mKeyCodes[KEYCODE_NUMPAD_DOT] = ".";
         mKeyCodes[KEYCODE_NUMPAD_0] = "0";
         mKeyCodes[KEYCODE_NUMPAD_1] = "1";
@@ -140,7 +140,8 @@ class TermKeyListener {
         mKeyCodes[KEYCODE_NUMPAD_7] = "7";
         mKeyCodes[KEYCODE_NUMPAD_8] = "8";
         mKeyCodes[KEYCODE_NUMPAD_9] = "9";
-*/
+/*
+
         // Keypad is used for cursor/func keys
         mKeyCodes[KEYCODE_NUMPAD_DOT] = mKeyCodes[KEYCODE_FORWARD_DEL];
         mKeyCodes[KEYCODE_NUMPAD_0] = mKeyCodes[KEYCODE_INSERT];
@@ -177,6 +178,7 @@ class TermKeyListener {
         mAppKeyCodes[KEYCODE_NUMPAD_7] = "\033Ow";
         mAppKeyCodes[KEYCODE_NUMPAD_8] = "\033Ox";
         mAppKeyCodes[KEYCODE_NUMPAD_9] = "\033Oy";
+*/
     }
 
     public void setCursorKeysApplicationMode(boolean val) {
