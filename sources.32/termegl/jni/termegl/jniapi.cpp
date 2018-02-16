@@ -9,7 +9,7 @@
 #include <android/native_window.h>
 #include <android/native_window_jni.h>
 #include <EGL/egl.h>
-//#include <GLES/gl.h>
+#include <GLES/gl.h>
 
 #include "logger.h"
 
@@ -180,15 +180,17 @@ extern "C" {
     {
         LOG_INFO("    ===================  nativeSetSurface ==================== ");
         if (surface != 0) {
+            if (getenv("PANDA_NATIVE_WINDOW")){
+                LOG_ERROR("  === native window already set ==");
+            } else {
+                window = ANativeWindow_fromSurface(jenv, surface);
+                LOG_INFO("   @@@@@@@@@@@@ Got window %p  @@@@@@@@@@@", window);
 
-            window = ANativeWindow_fromSurface(jenv, surface);
-            LOG_INFO("   @@@@@@@@@@@@ Got window %p  @@@@@@@@@@@", window);
-
-            snprintf(app_ptr, 16, "%p", (void * )window );
-            setenv("PANDA_NATIVE_WINDOW", app_ptr, 1);
-            //interpreter_prepare();
-            interpreter_launch(1,argv);
-
+                snprintf(app_ptr, 16, "%p", (void * )window );
+                setenv("PANDA_NATIVE_WINDOW", app_ptr, 1);
+                //interpreter_prepare();
+                interpreter_launch(1,argv);
+            }
         } else {
             LOG_INFO("Releasing window");
             ANativeWindow_release(window);
@@ -216,10 +218,17 @@ extern "C" {
             //renderer_instance->setWindow( (ANativeWindow*) window);
             LOG_INFO("Initializing context");
             const EGLint attribs[] = {
-                EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-                EGL_BLUE_SIZE, 8,
-                EGL_GREEN_SIZE, 8,
-                EGL_RED_SIZE, 8,
+                EGL_SURFACE_TYPE,   EGL_WINDOW_BIT,
+                EGL_BLUE_SIZE,      8,
+                EGL_GREEN_SIZE,     8,
+                EGL_RED_SIZE,       8,
+                    EGL_RENDERABLE_TYPE, 0,
+/*
+                    EGL_TRANSPARENT_TYPE, EGL_TRANSPARENT_RGB,
+                    EGL_TRANSPARENT_RED_VALUE,0,
+                    EGL_TRANSPARENT_BLUE_VALUE,0,
+                    EGL_TRANSPARENT_GREEN_VALUE,0,*/
+                    EGL_DEPTH_SIZE, 24,   // <=  if >0 no more see through the terminal window
                 EGL_NONE
             };
 
@@ -289,15 +298,16 @@ extern "C" {
             snprintf(app_ptr, 16, "%p", (void * )context );
             setenv("PANDA_NATIVE_CONTEXT", app_ptr, 1);
 
+            //glViewport(100, 100, 700,500);
+
             /*
-            glDisable(GL_DITHER);
-            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-            glClearColor(0, 0, 0, 0);
+            //glClearColor(0, 0, 0, 0);
             glEnable(GL_CULL_FACE);
             glShadeModel(GL_SMOOTH);
+            glDisable(GL_DITHER);
+            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
             glEnable(GL_DEPTH_TEST);
-
-            glViewport(85, 60, width-85, height-60);
+            glDepthMask(GL_TRUE);
 
             ratio = (GLfloat) width / height;
             glMatrixMode(GL_PROJECTION);

@@ -20,7 +20,7 @@
 #define INCLUDED_OSCRECEIVER_H
 
 #include "LibExport.h"
-#include "tuio_client.h"
+#include "../tuio_client.h"
 
 #include "osc/OscReceivedElements.h"
 #include "osc/OscHostEndianness.h"

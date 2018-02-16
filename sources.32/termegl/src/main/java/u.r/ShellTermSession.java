@@ -32,6 +32,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 
+
 /**
  * A terminal session, controlling the process attached to the session (usually
  * a shell). It keeps track of process PID and destroys it's process group
@@ -169,64 +170,63 @@ public class ShellTermSession extends GenericTermSession {
         String[] env = new String[4];
         env[0] = "LD_LIBRARY_PATH=/vendor/lib:/system/lib";
         env[1] = "TERM=xterm-256color";
-        env[2] = "HOME=/data/data/u.r" ;
+        env[2] = "HOME=" + ROOT_LOCATION;
 
     //**************
     Log.i(TAG, "  == Shell Term Sesssion ==");
 
-    if ( new File("/data/data/u.r/bin/bash").isFile() ) {
-        env[3] = "PATH=/data/data/u.r/bin:" + path;
-        if (true){
-                mProcId = createSubprocess("/data/data/u.r/bin/bash --login",env);
-        } else {
-            mProcId = createSubprocess("/system/bin/sh /data/data/u.r/bin/pp",env);
-        }
+    env[3] = "PATH=/vendor/bin:/system/bin:/sbin:" + path;
 
+    if (new File("/data/data/FAST").isFile() ){
+        mProcId = createSubprocess("/system/bin/sh "+ROOT_LOCATION +"/pp",env);
     } else {
-        PrintWriter script = new PrintWriter( new File("/data/data/u.r/urootrc") );
-        script.println("#!/system/bin/sh");
-        script.println("export PATH=/sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin");
-        script.println("umask 022");
-        script.println("cd /data/data/u.r");
-        script.println("mkdir -p tmp XDG_CACHE_HOME XDG_CONFIG_HOME");
+        if ( new File("/data/data/u.r/bin/bash").isFile() ) {
+            env[3] = "PATH=/data/data/u.r/bin:" + path;
+            mProcId = createSubprocess("/data/data/u.r/bin/bash --login",env);
 
-        if ( unzip_support_assets()>0 ){
-            script.println("echo  -n 'Extracting GNU/Linux support files : '");
-            script.println("/system/bin/mv assets/* ./;rmdir assets");
-            script.println("rm -rf /data/data/u.r/tmp");
-            script.println("mkdir -p /data/data/u.r/tmp");
-            script.println("chmod 777 /data/data/u.r/tmp");
-            script.println("cd /data/data/u.r");
-            script.println("/system/bin/chmod 777 busybox update.sh");
-            script.println("./busybox bash /data/data/u.r/update.sh");
-
-            script.println("./busybox chmod 755 urootrc 386 *.so bin/* etc/* lib-*/lib*");
-            script.println("./busybox chmod 755 -R lib-*/bash lib-*/transcript1 X11");
-            script.println("./busybox chmod 755 micropython/site-packages/*/* micropython/lib-dynload/*");
-
-            script.println("./bin/busybox --install -s bin/");
-            script.println("cd bin");
-            script.println("rm reboot");
-            script.println("rm ping");
-            script.println("ln 386 ndk-depends");
-            script.println("cd ..");
-
-            script.println("echo 'Done, press <Enter> to enter bash'");
-            script.println("read");
-            script.println("./bin/bash --login");
         } else {
-            script.println("echo \"  ----------------------------- ");
-            script.println( mInitialCommand );
-            script.println("  -----------------------------\"");
-            script.println("Master, i have failed ( again ) ...");
-            script.println("press <Enter> and go complain for: failure unzipping busybox helper");
-            script.println("read");
+            PrintWriter script = new PrintWriter( new File("/data/data/u.r/urootrc") );
+            script.println("#!/system/bin/sh");
+            script.println("export PATH=/sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin");
+            script.println("umask 022");
+            script.println("cd /data/data/u.r");
+            script.println("mkdir -p tmp XDG_CACHE_HOME XDG_CONFIG_HOME");
+
+            if ( unzip_support_assets()>0 ){
+                script.println("echo  -n \"Extracting GNU/Linux support files into ${HOME} : \"");
+                script.println("/system/bin/mv assets/* ./;rmdir assets");
+                script.println("rm -rf ${HOME}/tmp");
+                script.println("mkdir -p ${HOME}/tmp;chmod 777 ${HOME}/tmp;cd ${HOME}");
+                script.println("/system/bin/chmod 777 busybox update.sh");
+                script.println("./busybox bash ${HOME}/update.sh");
+
+                script.println("./busybox chmod 755 urootrc 386 *.so bin/* etc/* lib-*/lib*");
+                script.println("./busybox chmod 755 -R lib-*/bash lib-*/transcript1 X11");
+                script.println("./busybox chmod 755 micropython/site-packages/*/* micropython/lib-dynload/*");
+
+                script.println("./bin/busybox --install -s bin/");
+                script.println("cd bin");
+                script.println("rm reboot");
+                script.println("rm ping");
+                script.println("ln 386 ndk-depends");
+                script.println("cd ..");
+
+                script.println("echo 'Done, press <Enter> to enter bash'");
+                script.println("read");
+                script.println("./bin/bash --login");
+            } else {
+                script.println("echo \"  ----------------------------- ");
+                script.println( mInitialCommand );
+                script.println("  -----------------------------\"");
+                script.println("Master, i have failed ( again ) ...");
+                script.println("press <Enter> and go complain for: failure unzipping busybox helper");
+                script.println("read");
+            }
+
+            script.close();
+            mProcId = createSubprocess("/system/bin/sh "+ROOT_LOCATION+"/urootrc",env);
+
         }
-
-        script.close();
-
-        env[3] = "PATH=/vendor/bin:/system/bin:/sbin:" + path;
-        mProcId = createSubprocess("/system/bin/sh /data/data/u.r/urootrc",env);
 
     }
 

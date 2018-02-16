@@ -52,6 +52,7 @@ import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
 import android.widget.Scroller;
 
+
 /**
  * A view on a {@link TermSession}.  Displays the terminal emulator's screen,
  * provides access to its scrollback buffer, and passes input through to the
@@ -82,36 +83,24 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
 
     private TermSession mTermSession;
 
-    /**
-     * Total width of each character, in pixels
-     */
+    //Total width of each character, in pixels
     private float mCharacterWidth;
 
-    /**
-     * Total height of each character, in pixels
-     */
+    // Total height of each character, in pixels
     private int mCharacterHeight;
 
-    /**
-     * Top-of-screen margin
-     */
+    // Top-of-screen margin
     private int mTopOfScreenMargin;
 
-    /**
-     * Used to render text
-     */
+    // Used to render text
     private TextRenderer mTextRenderer;
 
-    /**
-     * Text size. Zero means 4 x 8 font.
-     */
+    //Text size. Zero means 4 x 8 font.
     private int mTextSize = 14;
 
     private int mCursorBlink;
 
-    /**
-     * Color scheme (default foreground/background colors).
-     */
+    // Color scheme (default foreground/background colors).
     private ColorScheme mColorScheme = BaseTextRenderer.defaultColorScheme;
 
     private Paint mForegroundPaint;
@@ -120,35 +109,21 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
 
     private boolean mUseCookedIme;
 
-    /**
-     * Our terminal emulator.
-     */
     private TerminalEmulator mEmulator;
 
-    /**
-     * The number of rows of text to display.
-     */
+    // The number of rows of text to display.
     private int mRows;
 
-    /**
-     * The number of columns of text to display.
-     */
+    // The number of columns of text to display.
     private int mColumns;
 
-    /**
-     * The number of columns that are visible on the display.
-     */
-
+    // The number of columns that are visible on the display.
     private int mVisibleColumns;
 
-    /*
-     * The number of rows that are visible on the view
-     */
+    // The number of rows that are visible on the view
     private int mVisibleRows;
 
-    /**
-     * The top row of text to display. Ranges from -activeTranscriptRows to 0
-     */
+    // The top row of text to display. Ranges from -activeTranscriptRows to 0
     private int mTopRow;
 
     private int mLeftColumn;
@@ -228,15 +203,10 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
         }
     };
 
-    /**
-     *
-     * A hash table of underlying URLs to implement clickable links.
-     */
+    // A hash table of underlying URLs to implement clickable links.
     private Hashtable<Integer,URLSpan[]> mLinkLayer = new Hashtable<Integer,URLSpan[]>();
 
-    /**
-     * Accept links that start with http[s]:
-     */
+    // Accept links that start with http[s]:
     private static class HttpMatchFilter implements MatchFilter {
         public boolean acceptMatch(CharSequence s, int start, int end) {
             return startsWith(s, start, end, "http:") ||
@@ -419,9 +389,7 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
         return lineCount;
     }
 
-    /**
-     * Sends mouse wheel codes to terminal in response to fling.
-     */
+    // Sends mouse wheel codes to terminal in response to fling.
     private class MouseTrackingFlingRunner implements Runnable {
         private Scroller mScroller;
         private int mLastY;
@@ -467,14 +435,10 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
 
     private String mImeBuffer = "";
 
-    /**
-     * Our message handler class. Implements a periodic callback.
-     */
+    // Our message handler class. Implements a periodic callback.
     private final Handler mHandler = new Handler();
 
-    /**
-     * Called by the TermSession when the contents of the view need updating
-     */
+    // Called by the TermSession when the contents of the view need updating
     private UpdateCallback mUpdateNotify = new UpdateCallback() {
         public void onUpdate() {
             if ( mIsSelectingText ) {
@@ -1277,8 +1241,9 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
      */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (LOG_KEY_EVENTS) {
-            Log.w(TAG, "onKeyDown " + keyCode);
+        if ( System.getenv("RAW_INPUT")!= null ) {
+            Log.w(TAG, Build.MODEL + " onKeyDown " + keyCode);
+            return true;
         }
         if (handleControlKey(keyCode, true)) {
             return true;
@@ -1322,8 +1287,9 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
      */
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (LOG_KEY_EVENTS) {
-            Log.w(TAG, "onKeyUp " + keyCode);
+        if ( System.getenv("RAW_INPUT")!= null ) {
+            Log.w(TAG,Build.MODEL + " onKeyUp " + keyCode);
+            return true;
         }
         if (handleControlKey(keyCode, false)) {
             return true;

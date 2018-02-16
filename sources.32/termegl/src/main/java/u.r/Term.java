@@ -58,7 +58,33 @@ if (view != null) {
 
 */
 
-
+    /*
+protected static void setEnv(Map<String, String> newenv) throws Exception {
+  try {
+    Class<?> processEnvironmentClass = Class.forName("java.lang.ProcessEnvironment");
+    Field theEnvironmentField = processEnvironmentClass.getDeclaredField("theEnvironment");
+    theEnvironmentField.setAccessible(true);
+    Map<String, String> env = (Map<String, String>) theEnvironmentField.get(null);
+    env.putAll(newenv);
+    Field theCaseInsensitiveEnvironmentField = processEnvironmentClass.getDeclaredField("theCaseInsensitiveEnvironment");
+    theCaseInsensitiveEnvironmentField.setAccessible(true);
+    Map<String, String> cienv = (Map<String, String>)     theCaseInsensitiveEnvironmentField.get(null);
+    cienv.putAll(newenv);
+  } catch (NoSuchFieldException e) {
+    Class[] classes = Collections.class.getDeclaredClasses();
+    Map<String, String> env = System.getenv();
+    for(Class cl : classes) {
+      if("java.util.Collections$UnmodifiableMap".equals(cl.getName())) {
+        Field field = cl.getDeclaredField("m");
+        field.setAccessible(true);
+        Object obj = field.get(env);
+        Map<String, String> map = (Map<String, String>) obj;
+        map.clear();
+        map.putAll(newenv);
+      }
+    }
+  }
+}*/
 
 package u.r;
 
@@ -111,7 +137,7 @@ import android.view.*;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.inputmethod.InputMethodManager;
 import android.view.ContextMenu.ContextMenuInfo;
-
+import android.view.ViewGroup.LayoutParams;
 
 import android.widget.TextView;
 //import android.view.View.OnClickListener;
@@ -122,10 +148,7 @@ import android.widget.Toast;
 
 import android.os.Process;
 
-
-
-
-
+//import android.widget.LinearLayout;
 
 
 
@@ -177,12 +200,20 @@ public class Term extends Activity implements SurfaceHolder.Callback, UpdateCall
         nativeOnStop();
     }
 
-    public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
-        nativeSetSurface(holder.getSurface());
-    }
 
+    @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Log.i(TermDebug.LOG_TAG,"surfaceCreated(SurfaceHolder holder)");
+
+        //android.view.ViewGroup.LayoutParams lp = this.getLayoutParams();
+        /*LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(context);
+        lp.width = 854; // required width
+        lp.height = 480; // required height*/
+        //this.setLayoutParams(lp);
+    }
+
+    public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
+        nativeSetSurface(holder.getSurface());
     }
 
     public void surfaceDestroyed(SurfaceHolder holder) {
@@ -473,12 +504,12 @@ public class Term extends Activity implements SurfaceHolder.Callback, UpdateCall
             int actionBarMode = mSettings.actionBarMode();
             mActionBarMode = actionBarMode;
             switch (actionBarMode) {
-            case TermSettings.ACTION_BAR_MODE_ALWAYS_VISIBLE:
-                setTheme(R.style.Theme_Holo);
-                break;
-            case TermSettings.ACTION_BAR_MODE_HIDES:
-                setTheme(R.style.Theme_Holo_ActionBarOverlay);
-                break;
+                case TermSettings.ACTION_BAR_MODE_ALWAYS_VISIBLE:
+                    setTheme(R.style.Theme_Holo);
+                    break;
+                case TermSettings.ACTION_BAR_MODE_HIDES:
+                    setTheme(R.style.Theme_Holo_ActionBarOverlay);
+                    break;
             }
         } else {
             mActionBarMode = TermSettings.ACTION_BAR_MODE_ALWAYS_VISIBLE;
@@ -1177,16 +1208,21 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
         /* The pre-Eclair default implementation of onKeyDown() would prevent
            our handling of the Back key in onKeyUp() from taking effect, so
            ignore it here */
-        if (AndroidCompat.SDK < 5 && keyCode == KeyEvent.KEYCODE_BACK) {
+        //if (AndroidCompat.SDK < 5 && keyCode == KeyEvent.KEYCODE_BACK) {
             /* Android pre-Eclair has no key event tracking, and a back key
                down event delivered to an activity above us in the back stack
                could be succeeded by a back key up event to us, so we need to
                keep track of our own back key presses */
+
+        /*
             mBackKeyPressed = true;
             return true;
         } else {
             return super.onKeyDown(keyCode, event);
         }
+        */
+        //Log.i(TermDebug.LOG_TAG, Integer.toString(keyCode) );
+        return super.onKeyDown(keyCode, event);
     }
 
     //===================================================

@@ -19,12 +19,12 @@
 #ifndef INCLUDED_TUIODISPATCHER_H
 #define INCLUDED_TUIODISPATCHER_H
 
-#include "tuio_listener.h"
+#include "../tuio_listener.h"
 
 #ifndef WIN32
-#include <pthread.h>
+    #include <pthread.h>
 #else
-#include <windows.h>
+    #include <windows.h>
 #endif
 
 namespace TUIO {

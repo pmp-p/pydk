@@ -54,16 +54,20 @@ with open(env, 'r') as fenv:
 
 
 
+import nanotui3.input
 
-class Thread_InputService(threading.Thread):
+class Thread_InputService(threading.Thread, nanotui3.input.WASD):
     def __init__(self):
+        nanotui3.input.WASD.__init__(self)
         threading.Thread.__init__(self)
 
 
+
+
     def InputService(self,task):
-        key = self.io.get_key()
+        key = self.get_key()
         while True:
-            flush = self.io.get_key()
+            flush = self.get_key()
             if not flush:break
 
         if key==b'q':
@@ -87,14 +91,25 @@ class Thread_InputService(threading.Thread):
         return self.Task_cont
 
     def run(self):
-        import nanotui3.input
+
         while True:
             try:
                 messenger
                 break
             except:
                 Time.sleep(4)
+
+        os.environ['RAW_INPUT']="1"
+
         androidembed.log("%s now feeding %s" % ( self, messenger.getEvents()) )
+
+        import panda3d
+        import panda3d.core
+        self.mgr = panda3d.core.InputDeviceManager.get_global_ptr()
+
+        androidembed.log("%s"%self.mgr)
+
+
 
         import direct
         import direct.task
@@ -103,8 +118,15 @@ class Thread_InputService(threading.Thread):
 
         self.Task_cont = direct.task.Task.Task.cont
 
-        self.io = nanotui3.input.WASD()
-        self.io.Begin()
+        try:
+            self.input_dev = base.win.get_input_device(0)
+            self.inj_kbd = self.input_dev.keystroke
+            androidembed.log("KBD Injection : %s" % self.inj_kbd)
+        except Exception as e:
+            androidembed.log("ki failed %s" % e)
+
+
+        self.Begin()
         self.ioTask = direct.task.TaskManagerGlobal.taskMgr.add(self.InputService, "InputService")
         render.setDepthTest(True)
 
@@ -114,16 +136,16 @@ def test():
 
 #def run(p='/data/data/u.root/usr/src/sdk-panda3d/samples/asteroids/main.py',*flags):
 #def run(p='/data/data/u.root/usr/src/sdk-panda3d/samples/carousel/main.py',*flags):
-def run(p='/data/data/u.root/usr/src/sdk-panda3d/samples/roaming-ralph/main.py',*flags):
-    global __file__
-    p = p.replace('>','/')
-    try:__file__
-    except:__file__=RunTime.__file__
-
-    androidembed.log(f"{p} launched from {__file__}")
-    __file__ = p
-    oldwd = os.getcwd()
+def run(__file__='/data/data/u.root/usr/src/sdk-panda3d/samples/roaming-ralph/main.py',*flags):
+    __file__ = __file__.replace('>','/')
     cd = os.path.dirname(__file__)
+
+    androidembed.log(f"\r\nRunning {__file__} in {cd}\r\n")
+
+    RunTime.io.start()
+
+    oldwd = os.getcwd()
+
     loadPrcFileData("", "model-path %s:." % cd )
     loadPrcFileData("", "background-color 0 0 0 0")
     os.chdir( cd )
@@ -132,17 +154,20 @@ def run(p='/data/data/u.root/usr/src/sdk-panda3d/samples/roaming-ralph/main.py',
         if -2 in flags:
             sys.stderr = RunTime.__stderr__
 
-        with open(p,'r') as fp:
+        with open(__file__, 'r') as fp:
             exec( fp.read(), globals(), globals() )
     finally:
         sys.stderr = sys.__stderr__
-        __file__ = RunTime.__file__
         os.chdir(oldwd)
+    RunTime.io.End()
 
 def tui(__file__='/data/data/u.r/pandamenu.py'):
 #def tui(__file__='/data/data/u.root/usr/src/Roaming/lib/nanotui_demo.py'):
     cd= os.path.dirname(__file__)
     print('\r\nRunning',__file__,'in',cd,"\r\n")
+
+    RunTime.io.start()
+
     oldwd = os.getcwd()
     os.chdir( cd )
     try:
@@ -153,17 +178,26 @@ def tui(__file__='/data/data/u.r/pandamenu.py'):
         sys.stderr = sys.__stderr__
         __file__ = RunTime.__file__
         os.chdir(oldwd)
-
+    RunTime.io.End()
 
 sys.stdout = sys.__stdout__
 sys.stderr = sys.__stderr__
 
 RunTime.io = Thread_InputService()
-RunTime.io.start()
+
 
 from panda3d.core import loadPrcFileData
 
 loadPrcFileData("", "default-model-extension .bam")
+
+loadPrcFileData("", "textures-power-2 down")
+loadPrcFileData("", "textures-square down")
+loadPrcFileData("", "tga-rle #t") # tga-grayscale
+
+
+loadPrcFileData("", "framebuffer-hardware #t")
+loadPrcFileData("", "framebuffer-software #t")
+
 androidembed.log(' == Interactive (%s, %s) ==' % (repl_pid, pts_out) )
 
 
