@@ -108,7 +108,32 @@ then
     cp -vf ${ROOT}/${FT2}/Android/libs/armeabi/libfreetype.so ${TP}/
 
     TP_FT2="--use-freetype --freetype-incdir=${TP} --freetype-libdir=${TP}"
+    TP_HB="--use-harfbuzz --harfbuzz-incdir=${TP} --harfbuzz-libdir=${TP}"
+    TP_VB="--use-vorbis --vorbis-incdir=${TP} --vorbis-libdir=${TP}"
+
+    VB="libvorbis-libogg-android-master"
+    ln -s ${ROOT}/${VB}/jni/include/vorbis ${TP}/
+    ln -s ${ROOT}/${VB}/jni/include/ogg ${TP}/
+
+    cp -vf ${ROOT}/${VB}/libs/armeabi-v7a/lib*.so ${TP}/
+
+    HB=harfbuzz-android-master
+    mkdir -p ${TP}/harfbuzz/lib
+    ln -s ${ROOT}/${HB}/src/*.h ${TP}/harfbuzz/
+    cp -vf ${ROOT}/${HB}/obj/local/armeabi-v7a/libharfbuzz.so ${TP}/
+
+    TP_OA="--use-openal --openal-incdir=${TP} --openal-libdir=${TP}"
+
+    OA=HelloOpenAL
+    ln -s ${ROOT}/${OA}/openal/include/AL ${TP}/
+    cp -vf ../HelloOpenAL/libs/armeabi/libopenal.so ${TP}/
+
+    TP_BUL="--use-bullet --bullet-incdir=${TP} --bullet-libdir=${TP}"
+    ln -s ${ROOT}/bullet3-master/src ${TP}/bullet
+    cp -vf $(find ${ROOT}/bullet3-master/|grep /lib.*.a$) ${TP}/
     TP_PYTHON="--use-python --python-incdir=${TP}/python${PYVER}/include --python-libdir=${TP}/python${PYVER}/lib"
+
+    TP_ALL="${TP_FT2} ${TP_HB} ${TP_OA} ${TP_VB} ${TP_BUL} ${TP_PYTHON}"
 
     if [ -d host ]
     then
@@ -134,7 +159,7 @@ then
     rm -vf ${TP}/python${PYVER}/include/python${PYDOT}
     ln -sf ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE} ${TP}/python${PYVER}/include/python${PYDOT}
 
-    cmd="$PDK_PYTHON makepanda/makepanda.py $OPT_COMMON $OPT_ANDROID $TP_PYTHON $TP_FT2"
+    cmd="$PDK_PYTHON makepanda/makepanda.py $OPT_COMMON $OPT_ANDROID $TP_ALL"
     cat > $ORIGIN.rebuild.sh <<END
 #!/bin/bash
 . $SDK/sdk.env
@@ -178,11 +203,17 @@ from ctypes import CDLL
 #libc++_shared.so
 LIBS = """
 libgnustl_shared.so
+libogg.so
+libvorbisfile.so
+libvorbis.so
 libfreetype.so
+libharfbuzz.so
+libopenal.so
 libp3dtool.so
 libp3dtoolconfig.so
 libpandaexpress.so
 libpanda.so
+libp3openal_audio.so
 libp3direct.so
 libp3dcparse.so
 libpandaphysics.so
@@ -196,6 +227,7 @@ libinterrogate_module.so
 libpunzip.so
 libp3android.so
 libpandaskel.so
+libpandabullet.so
 libparse_file.so
 libpandagles.so
 libpandaai.so
@@ -211,7 +243,11 @@ for lpass in range(4):
     for dll in DLLS:
         try:
             dll_path = '%s'
-            for dll_path in ["/data/data/u.r/usr/lib-armv7/panda3d/%s","/data/data/u.r/lib-armv7/%s","/data/data/u.r/lib/%s","/system/lib/%s"]:
+            for dll_path in [
+                    "/data/data/u.r/usr/lib-armv7/panda3d/%s",
+                    "/data/data/u.r/lib-armv7/%s",
+                    "/data/data/u.r/lib/%s",
+                    "/system/lib/%s"]:
                 dll_path = dll_path % dll
                 if os.access(dll_path, 0):
                     #print(lpass,dll,file=sys.stderr)

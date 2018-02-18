@@ -1242,6 +1242,7 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ( System.getenv("RAW_INPUT")!= null ) {
+// should never happen
             Log.w(TAG, Build.MODEL + " onKeyDown " + keyCode);
             return true;
         }
@@ -1288,6 +1289,7 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if ( System.getenv("RAW_INPUT")!= null ) {
+// should never happen
             Log.w(TAG,Build.MODEL + " onKeyUp " + keyCode);
             return true;
         }
@@ -1307,8 +1309,22 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
         return true;
     }
 
+
+
+// https://developer.android.com/reference/android/view/KeyEvent.html#getDisplayLabel%28%29
+
+
+
     @Override
     public boolean onKeyPreIme(int keyCode, KeyEvent event) {
+        if ( System.getenv("RAW_INPUT")!= null ) {
+            //Log.w(TAG,Build.MODEL + " onKeyPreIme " + keyCode);
+            new OSC().execute("/kbd " + keyCode +", "+event.getAction()+ ", "+ event.getRepeatCount()+", "+event.getDisplayLabel() );
+            //return super.onKeyPreIme(keyCode, event);
+            //return true; //would block down/up
+            return true;
+        }
+
         if (sTrapAltAndMeta) {
             boolean altEsc = mKeyListener.getAltSendsEsc();
             boolean altOn = (event.getMetaState() & KeyEvent.META_ALT_ON) != 0;

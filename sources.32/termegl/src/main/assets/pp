@@ -14,7 +14,8 @@ pwd
 if true
 then
     echo "REPL, you can use panda3D from it, type ctrl+c to gain access back after running app"
-    cat >/dev/null
+    #cat >/dev/null
+    sleep 36000
 else
     echo -n "Waiting parent process at tmp/pid.$$ : "
     sleep 1
