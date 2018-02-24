@@ -1,0 +1,11 @@
+--- panda3d-master/panda/src/android/android_main.cxx	2018-02-24 03:52:48.000000000 +0100
++++ panda3d-master.api19/panda/src/android/android_main.cxx	2018-02-24 05:44:59.157172515 +0100
+@@ -11,6 +11,8 @@
+  * @date 2013-01-12
+  */
+ 
++#include <fcntl.h>
++
+ #include "config_android.h"
+ #include "config_util.h"
+ #include "virtualFileMountAndroidAsset.h"

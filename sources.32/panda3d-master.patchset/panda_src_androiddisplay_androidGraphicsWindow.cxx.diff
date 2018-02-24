@@ -1,5 +1,5 @@
---- panda3d-input-overhaul/panda/src/androiddisplay/androidGraphicsWindow.cxx	2018-02-04 11:37:09.000000000 +0100
-+++ panda3d-input-overhaul.api19/panda/src/androiddisplay/androidGraphicsWindow.cxx	2018-02-21 01:00:52.157571247 +0100
+--- panda3d-master/panda/src/androiddisplay/androidGraphicsWindow.cxx	2018-02-24 03:52:48.000000000 +0100
++++ panda3d-master.api19/panda/src/androiddisplay/androidGraphicsWindow.cxx	2018-02-24 05:37:13.189183308 +0100
 @@ -8,7 +8,7 @@
   *
   * @file androidGraphicsWindow.cxx
@@ -47,7 +47,7 @@
 +    _app = panda_android_app;
  
 -  _app = panda_android_app;
-+    PT(GraphicsWindowInputDevice) device = GraphicsWindowInputDevice::pointer_and_keyboard(this, "keyboard_mouse");
++    GraphicsWindowInputDevice device = GraphicsWindowInputDevice::pointer_and_keyboard(this, "keyboard_mouse");
  
 -  GraphicsWindowInputDevice device =
 -    GraphicsWindowInputDevice::pointer_and_keyboard(this, "keyboard_mouse");
@@ -276,7 +276,7 @@
    return true;
  }
  
-@@ -406,7 +488,9 @@
+@@ -408,7 +490,9 @@
  void AndroidGraphicsWindow::
  ns_handle_command(int32_t command) {
    WindowProperties properties;
@@ -287,7 +287,7 @@
    switch (command) {
      case APP_CMD_SAVE_STATE:
        // The system has asked us to save our current state.  Do so.
-@@ -435,15 +519,13 @@
+@@ -437,15 +521,13 @@
        system_changed_properties(properties);
        break;
      case APP_CMD_WINDOW_RESIZED:
@@ -305,7 +305,7 @@
        system_changed_properties(properties);
        break;
      case APP_CMD_GAINED_FOCUS:
-@@ -460,6 +542,7 @@
+@@ -462,6 +544,7 @@
        system_changed_properties(properties);
        break;
    }
@@ -313,7 +313,7 @@
  }
  
  /**
-@@ -467,8 +550,10 @@
+@@ -469,8 +552,10 @@
   */
  int32_t AndroidGraphicsWindow::
  handle_input_event(struct android_app* app, AInputEvent *event) {
@@ -325,7 +325,7 @@
    int32_t event_type = AInputEvent_getType(event);
    switch (event_type) {
    case AINPUT_EVENT_TYPE_KEY:
-@@ -476,6 +561,7 @@
+@@ -478,6 +563,7 @@
    case AINPUT_EVENT_TYPE_MOTION:
      return window->handle_motion_event(event);
    }
@@ -333,7 +333,7 @@
    return 0;
  }
  
-@@ -505,12 +591,14 @@
+@@ -507,12 +593,14 @@
      _input_devices[0].button_down(KeyboardButton.rshift());
    }*/
  
@@ -350,15 +350,16 @@
      return 0;
    }
  
-@@ -521,6 +609,7 @@
-   } else if (action == AKEY_EVENT_ACTION_UP) {
+@@ -528,7 +616,7 @@
      _input_devices[0].button_up(button);
    }
+   // TODO AKEY_EVENT_ACTION_MULTIPLE
+-
 +#endif
-   // TODO getRepeatCount, ACTION_MULTIPLE
- 
    return 1;
-@@ -531,6 +620,11 @@
+ }
+ 
+@@ -537,6 +625,11 @@
   */
  int32_t AndroidGraphicsWindow::
  handle_motion_event(const AInputEvent *event) {
@@ -370,7 +371,7 @@
    int32_t action = AMotionEvent_getAction(event);
    action &= AMOTION_EVENT_ACTION_MASK;
  
-@@ -563,7 +657,7 @@
+@@ -572,7 +665,7 @@
    float y = AMotionEvent_getY(event, 0) - _app->contentRect.top;
  
    _input_devices[0].set_pointer_in_window(x, y);

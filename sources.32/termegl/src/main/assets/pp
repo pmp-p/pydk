@@ -1,4 +1,36 @@
 #!/system/bin/sh
+
+export LC_ALL=C
+export LANG=C.UTF-8
+export LD_LIBRARY_PATH=/data/data/u.r/lib-armv7:/data/data/u.root/lib-armhf:/data/data/u.r/lib-armhf:/vendor/lib:/system/lib
+
+export UROOT=/data/data/u.root
+export UR=/data/data/u.r
+export INPUTRC=/data/data/u.r/etc/inputrc
+export PANDA_PRC_PATH=/data/data/u.r/etc
+export PANDA_PRC_DIR=/data/data/u.r/etc
+export PYTHONHOME=/data/data/u.r/usr
+export XDG_CONFIG_HOME=/data/data/u.r/XDG_CONFIG_HOME
+export XDG_CACHE_HOME=/data/data/u.r/XDG_CACHE_HOME
+export BOOTCLASSPATH=/system/framework/core.jar:/system/framework/conscrypt.jar:/system/framework/okhttp.jar:/system/framework/core-junit.jar:/system/framework/bouncycastle.jar:/system/framework/ext.jar:/system/framework/framework.jar:/system/framework/framework2.jar:/system/framework/android.policy.jar:/system/framework/services.jar:/system/framework/apache-xml.jar:/system/framework/webviewchromium.jar
+
+export HOME=/data/data/u.r
+export TMP=/data/data/u.r/tmp
+
+export MICROPYHOME=/data/data/u.r/micropython
+
+export TERM=xterm-256color
+export ULIB=/data/data/u.r/usr/lib
+export PYTHONDONTWRITEBYTECODE=1
+export PYTHONPATH=/data/data/u.r/usr/lib/python3
+export MICROPYPATH=/data/data/u.r/micropython:/data/data/u.r/micropython/site-packages:/data/data/u.r/micropython/xpy/mic
+export TEMP=/data/data/u.r/tmp
+export WORKDIR=/data/data/u.r
+
+export PATH=/data/data/u.root/bin:/data/data/u.root/usr/bin:/data/data/u.r/bin:/data/data/u.r/usr/bin:/sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
+export BB=/data/data/u.r/bin/busybox
+export PS1="(RT-32)URoot"
+
 cd $HOME
 rm tmp/*.env 2>/dev/null
 export REPL_PID=$$

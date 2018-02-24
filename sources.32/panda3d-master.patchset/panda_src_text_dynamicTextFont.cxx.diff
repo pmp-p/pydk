@@ -1,0 +1,11 @@
+--- panda3d-master/panda/src/text/dynamicTextFont.cxx	2018-02-24 03:52:48.000000000 +0100
++++ panda3d-master.api19/panda/src/text/dynamicTextFont.cxx	2018-02-24 04:31:42.190274362 +0100
+@@ -45,7 +45,7 @@
+ #include "transparencyAttrib.h"
+ 
+ #ifdef HAVE_HARFBUZZ
+-#include <hb-ft.h>
++    #include "harfbuzz/hb-ft.h"
+ #endif
+ 
+ TypeHandle DynamicTextFont::_type_handle;

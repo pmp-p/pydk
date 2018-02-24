@@ -1,6 +1,6 @@
---- panda3d-input-overhaul/makepanda/makepandacore.py	2018-02-04 11:37:09.000000000 +0100
-+++ panda3d-input-overhaul.api19/makepanda/makepandacore.py	2018-02-19 01:07:04.706565198 +0100
-@@ -442,12 +442,16 @@
+--- panda3d-master/makepanda/makepandacore.py	2018-02-24 03:52:48.000000000 +0100
++++ panda3d-master.api19/makepanda/makepandacore.py	2018-02-24 04:30:35.298275912 +0100
+@@ -458,12 +458,16 @@
  
  def GetCC():
      if TARGET in ('darwin', 'freebsd', 'android'):
@@ -17,7 +17,7 @@
          return os.environ.get('CXX', TOOLCHAIN_PREFIX + 'clang++')
      else:
          return os.environ.get('CXX', TOOLCHAIN_PREFIX + 'g++')
-@@ -2029,10 +2033,10 @@
+@@ -2103,10 +2107,10 @@
          if GetTarget() == 'darwin':
              py_libs = glob.glob(tp_python + "/lib/libpython[0-9].[0-9].dylib")
          else:
@@ -30,7 +30,7 @@
  
          if len(py_libs) == 0:
              exit("Could not find the Python library in %s." % (tp_python))
-@@ -2040,7 +2044,8 @@
+@@ -2114,7 +2118,8 @@
              exit("Found multiple Python libraries in %s." % (tp_python))
  
          py_lib = os.path.basename(py_libs[0])
@@ -40,16 +40,7 @@
          SDK["PYTHONEXEC"] = tp_python + "/bin/" + SDK["PYTHONVERSION"]
          SDK["PYTHON"] = tp_python + "/include/" + SDK["PYTHONVERSION"]
  
-@@ -2383,7 +2388,7 @@
-     SDK["ANDROID_NDK"] = ndk_root
- 
-     # Determine the toolchain location.
--    gcc_ver = '4.8'
-+    gcc_ver = '4.9'
-     arch = GetTargetArch()
-     if arch == 'armv7a' or arch == 'arm':
-         arch = 'arm'
-@@ -3120,11 +3125,13 @@
+@@ -3200,11 +3205,13 @@
      ORIG_EXT[x] = v
  
  def GetExtensionSuffix():

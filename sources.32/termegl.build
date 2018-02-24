@@ -73,7 +73,14 @@ cp -rv ${SDK}/build.${BITS}/${P3D}/built/lib/libpython3.*.so prebuilt/${ARCH}/
 
 cp $(find $ANDROID_NDK_ROOT|grep /${ARCH}/|grep libgnustl_shared.so$|sort |tail -n 1) -vf prebuilt/${ARCH}/
 
-cp -f ${SDK}/build.${BITS}/${P3D}/built/tmp/lib*.so prebuilt/${ARCH}/
+if cp -f ${SDK}/build.${BITS}/${P3D}/built/tmp/lib*.so prebuilt/${ARCH}/
+then
+    echo ================================================
+    echo ============== PLEASE SYNC DEVICE ==============
+    echo ================================================
+else
+    cp -f ${DEV_APPDIR}/usr/lib-${ANDROID_ARCH}/panda3d/lib*.so prebuilt/${ARCH}/
+fi
 
 if ndk-build -C .
 then

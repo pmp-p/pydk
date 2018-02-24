@@ -225,7 +225,7 @@ public class Term extends Activity implements SurfaceHolder.Callback, UpdateCall
     public static native void nativeOnResume();
     public static native void nativeOnPause();
     public static native void nativeOnStop();
-    public static native void nativeSetSurface(Surface surface);
+    public static native void nativeSetSurface(Surface jsurface);
 
 
 /*================================================================================*/
@@ -519,7 +519,7 @@ if ( new File("/data/data/u.r/bin/bash").isFile() ){
     requestWindowFeature(Window.FEATURE_NO_TITLE);
     isSetup = false;
 } else {
-    if ( new File("/data/data/TEST_APK").isFile() ){
+    if ( new File("/data/data/FAST").isFile() ){
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         isSetup = false;
     }

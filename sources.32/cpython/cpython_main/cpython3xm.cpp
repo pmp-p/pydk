@@ -268,6 +268,8 @@ int interpreter_main(int argc, char *argv[] ){
     snprintf(main_py, 512, "%s", argv[0] );
 
     LOGP( main_py);
+
+    // check for ^- marking that we want to interact after main script
     if ( (int)main_py[0]==45){
         LOGP("Line interactive");
 

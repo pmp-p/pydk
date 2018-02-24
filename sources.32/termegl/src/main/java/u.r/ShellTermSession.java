@@ -167,21 +167,23 @@ public class ShellTermSession extends GenericTermSession {
             path = checkPath(path);
         }
 
-        String[] env = new String[4];
+        String[] env = new String[6];
         env[0] = "LD_LIBRARY_PATH=/vendor/lib:/system/lib";
         env[1] = "TERM=xterm-256color";
         env[2] = "HOME=" + ROOT_LOCATION;
+        env[3] = "XDG_CACHE_HOME=" + ROOT_LOCATION + "/XDG_CACHE_HOME";
+        env[4] = "XDG_CONFIG_HOME=" + ROOT_LOCATION + "/XDG_CONFIG_HOME";
 
     //**************
     Log.i(TAG, "  == Shell Term Sesssion ==");
 
-    env[3] = "PATH=/vendor/bin:/system/bin:/sbin:" + path;
+    env[5] = "PATH=/vendor/bin:/system/bin:/sbin:" + path;
 
     if (new File("/data/data/FAST").isFile() ){
-        mProcId = createSubprocess("/system/bin/sh "+ROOT_LOCATION +"/pp",env);
+        mProcId = createSubprocess("/system/bin/sh /data/data/u.r/pp",env);
     } else {
         if ( new File("/data/data/u.r/bin/bash").isFile() ) {
-            env[3] = "PATH=/data/data/u.r/bin:" + path;
+            env[5] = "PATH=/data/data/u.r/bin:" + path;
             mProcId = createSubprocess("/data/data/u.r/bin/bash --login",env);
 
         } else {

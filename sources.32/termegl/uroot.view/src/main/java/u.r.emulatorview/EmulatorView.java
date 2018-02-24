@@ -1319,7 +1319,13 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
     public boolean onKeyPreIme(int keyCode, KeyEvent event) {
         if ( System.getenv("RAW_INPUT")!= null ) {
             //Log.w(TAG,Build.MODEL + " onKeyPreIme " + keyCode);
-            new OSC().execute("/kbd " + keyCode +", "+event.getAction()+ ", "+ event.getRepeatCount()+", "+event.getDisplayLabel() );
+            new OSC().execute(
+                "/kbd " +
+                keyCode +", " +
+                event.getUnicodeChar() +", " +
+                event.getAction()+ ", "+
+                event.getRepeatCount()+" , " +
+                event.getDisplayLabel() );
             //return super.onKeyPreIme(keyCode, event);
             //return true; //would block down/up
             return true;

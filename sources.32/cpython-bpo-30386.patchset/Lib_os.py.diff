@@ -1,6 +1,6 @@
 --- cpython-bpo-30386/Lib/os.py	2017-12-10 15:07:21.000000000 +0100
-+++ cpython-bpo-30386.api19/Lib/os.py	2018-02-03 02:07:48.252362576 +0100
-@@ -1076,3 +1076,32 @@
++++ cpython-bpo-30386.api19/Lib/os.py	2018-02-23 02:01:35.022484286 +0100
+@@ -1076,3 +1076,48 @@
      @classmethod
      def __subclasshook__(cls, subclass):
          return hasattr(subclass, '__fspath__')
@@ -32,4 +32,20 @@
 +#        LIBC.ptsname_r( fdnum, pchar, 16)
 +#        return ffi.string(pchar)
 +#
++
++        try:getcwd()
++        except:chdir( path.realpath("/proc/%s/cwd" % getpid() ).replace(' (deleted)','') )
++
++#        LIBC= None
++#        def getcwd():
++#            global LIBC
++#
++#            import cffi
++#            ffi = cffi.FFI()
++#            LIBC = ffi.dlopen('/system/lib/libc.so')
++#
++#            ffi.cdef("char *getcwd(char *buf, size_t size);")
++#            pchar = ffi.new("char []",bytes(chr(0) * 512,'utf-8') )
++#            LIBC.getcwd( pchar, 512)
++#            return ffi.string(pchar).decode('utf-8')
 +

@@ -198,7 +198,8 @@ extern "C" {
 
         return;
     }
-
+#define ATEST 0
+#define GLES2 0
     int interpreter_prepare()
     {
         void* window=0;
@@ -218,17 +219,26 @@ extern "C" {
             //renderer_instance->setWindow( (ANativeWindow*) window);
             LOG_INFO("Initializing context");
             const EGLint attribs[] = {
+#if ATEST
+                EGL_SURFACE_TYPE,   EGL_PBUFFER_BIT,
+#else
                 EGL_SURFACE_TYPE,   EGL_WINDOW_BIT,
+#endif
                 EGL_BLUE_SIZE,      8,
                 EGL_GREEN_SIZE,     8,
                 EGL_RED_SIZE,       8,
-                    EGL_RENDERABLE_TYPE, 0,
+                EGL_ALPHA_SIZE,     8,
+#if GLES2
+                EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+#else
+                EGL_RENDERABLE_TYPE, 0, //EGL_OPENGL_ES_BIT,
+#endif
 /*
                     EGL_TRANSPARENT_TYPE, EGL_TRANSPARENT_RGB,
                     EGL_TRANSPARENT_RED_VALUE,0,
                     EGL_TRANSPARENT_BLUE_VALUE,0,
                     EGL_TRANSPARENT_GREEN_VALUE,0,*/
-                    EGL_DEPTH_SIZE, 24,   // <=  if >0 no more see through the terminal window
+                    EGL_DEPTH_SIZE, 16,   // <=  if >0 no more see through the terminal window
                 EGL_NONE
             };
 
@@ -246,21 +256,26 @@ extern "C" {
                 return -1;
             }
 
-            if (!eglInitialize(display, 0, 0)) {
-                LOG_ERROR("eglInitialize() returned error %d", eglGetError());
+            EGLint eglMajVers, eglMinVers;
+
+
+            eglMajVers=0;
+            eglMinVers=0;
+            if (!eglInitialize(display, &eglMajVers, &eglMinVers)) {
+                LOG_ERROR("u.r.eglInitialize() returned error %d", eglGetError());
                 return -1;
             }
 
-            LOG_INFO(" >>>>> display pointer set to %p <<<<< ", display);
+            LOG_INFO(" >>>>> display pointer set to %p version %d.%d <<<<< ", display, eglMajVers, eglMinVers);
 
 
             if (!eglChooseConfig(display, attribs, &config, 1, &numConfigs)) {
-                LOG_ERROR("eglChooseConfig() returned error %d", eglGetError());
+                LOG_ERROR("u.r.eglChooseConfig() returned error %d", eglGetError());
                 return -1;
             }
 
             if (!eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format)) {
-                LOG_ERROR("eglGetConfigAttrib() returned error %d", eglGetError());
+                LOG_ERROR("u.r.eglGetConfigAttrib() returned error %d", eglGetError());
                 return -1;
             }
 
@@ -269,30 +284,70 @@ extern "C" {
             snprintf(app_ptr, 16, "%p", (void * )display );
             setenv("PANDA_NATIVE_DISPLAY", app_ptr, 1);
 
-            if (!(surface = eglCreateWindowSurface(display, config, _window, 0))) {
-                LOG_ERROR("eglCreateWindowSurface() returned error %d", eglGetError());
+            const EGLint surfaceAttr[] = {
+                     EGL_WIDTH, 640,
+                     EGL_HEIGHT, 360,
+                     EGL_NONE
+            };
+
+// EGL_RENDER_BUFFER     EGL_SINGLE_BUFFER,
+
+#if ATEST
+            const EGLint ctxAttr[] = {
+                //EGL_CONTEXT_CLIENT_VERSION, 2,              // very important!
+                EGL_CONTEXT_CLIENT_VERSION, 2,              // very important!
+                    EGL_NONE
+            };
+
+
+            if ( !(surface = eglCreatePbufferSurface(display, config, surfaceAttr) ) ){
+            //if ( !(surface = eglCreateWindowSurface(display, config, _window, surfaceAttr) ) ){
+                LOG_INFO("u.r.eglCreatePbufferSurface() returned error %d", eglGetError());
                 goto fail;
             }
 
+#else
+            const EGLint ctxAttr[] = {
+#if GLES2
+                    EGL_CONTEXT_CLIENT_VERSION, 2,              // 2 is N/I for onscreen
+#else
+                EGL_CONTEXT_CLIENT_VERSION, 1,              // 2 is N/I for onscreen
+#endif
+                    EGL_NONE
+            };
+
+            //if ( !(surface = eglCreateWindowSurface(display, config, _window, surfaceAttr) ) ){
+            if (!(surface = eglCreateWindowSurface(display, config, _window, 0))) {
+                LOG_ERROR("u.r.eglCreateWindowSurface() returned error %d", eglGetError());
+                goto fail;
+            }
+
+
+
+
+#endif
             //TRANSMIT
             snprintf(app_ptr, 16, "%p", (void * )surface );
             setenv("PANDA_NATIVE_SURFACE", app_ptr, 1);
 
-            if (!(context = eglCreateContext(display, config, 0, 0))) {
-                LOG_ERROR("eglCreateContext() returned error %d", eglGetError());
+//            if (!(context = eglCreateContext(display, config, 0, 0))) { // VALID
+            if ( !(context = eglCreateContext(display, config, EGL_NO_CONTEXT, ctxAttr)) ){
+                LOG_ERROR("u.r.eglCreateContext() returned error %d", eglGetError());
                 goto fail;
             }
 
             if (!eglMakeCurrent(display, surface, surface, context)) {
-                LOG_ERROR("eglMakeCurrent() returned error %d", eglGetError());
+                LOG_ERROR("u.r.eglMakeCurrent() returned error %d", eglGetError());
                 goto fail;
             }
 
             if (!eglQuerySurface(display, surface, EGL_WIDTH, &width) ||
                 !eglQuerySurface(display, surface, EGL_HEIGHT, &height)) {
-                LOG_ERROR("eglQuerySurface() returned error %d", eglGetError());
+                LOG_ERROR("u.r.eglQuerySurface() returned error %d", eglGetError());
                 goto fail;
             }
+
+            LOG_INFO("u.r.EGL dim %d x %d",width,height);
 
             //TRANSMIT
             snprintf(app_ptr, 16, "%p", (void * )context );

@@ -1,0 +1,26 @@
+--- panda3d-master/panda/src/android/PandaActivity.java	2018-02-24 03:52:48.000000000 +0100
++++ panda3d-master.api19/panda/src/android/PandaActivity.java	2018-02-24 05:34:43.357186779 +0100
+@@ -12,6 +12,7 @@
+  */
+ 
+ package org.panda3d.android;
++/*
+ 
+ import android.app.NativeActivity;
+ import android.content.Intent;
+@@ -22,10 +23,6 @@
+ import org.panda3d.android.NativeIStream;
+ import org.panda3d.android.NativeOStream;
+ 
+-/**
+- * The entry point for a Panda-based activity.  Loads the Panda libraries and
+- * also provides some utility functions.
+- */
+ public class PandaActivity extends NativeActivity {
+     private static final Bitmap.Config sConfigs[] = {
+             null,
+@@ -118,3 +115,4 @@
+         System.loadLibrary("pandagles");
+     }
+ }
++*/
