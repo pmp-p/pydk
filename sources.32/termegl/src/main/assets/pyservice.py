@@ -10,7 +10,7 @@ sys.path.append('/data/data/u.root/usr/src/Roaming/lib/')
 import xpy
 
 
-HOME = "/data/data/u.r"
+HOME = os.getenv('HOME',"/data/data/u.r")
 
 
 RunTime.__file__ = f"{HOME}/pyservice.py"
@@ -26,7 +26,7 @@ os.system( f'rm {tmpdir}/*.in {tmpdir}/*.out' )
 androidembed.log('PYAPK : pid=%s' % os.getpid() )
 androidembed.log('PYAPK : CONSOLE=%s' % os.getenv('CONSOLE') )
 
-mark_env = '{tmpdir}/{os.getpid()}.env'
+mark_env = f'{tmpdir}/{os.getpid()}.env'
 
 androidembed.log(f'Waiting env file [{mark_env}]')
 
@@ -198,20 +198,31 @@ class Thread_TUIOService(Inputs):
 #            flush = self.get_key()
 #            if not flush:break
 #
+def info(*argv,**kw):
+    androidembed.log("PYLOG: %s" % repr(argv) )
 
-#def tui(__file__='/data/data/u.r/pandamenu.py'):
-'/data/data/u.root/usr/src/Roaming/lib/pandatest.py'
-#def run(p='/data/data/u.root/usr/src/sdk-panda3d/samples/asteroids/main.py',*flags):
-#def run(p='/data/data/u.root/usr/src/sdk-panda3d/samples/carousel/main.py',*flags):
-#def run(__file__='/data/data/u.root/usr/src/sdk-panda3d/samples/roaming-ralph/main.py',*flags):
-#def run(__file__='/data/data/u.root/usr/src/sdk-panda3d/samples/music-box/main.py',*flags):
+builtins.info = info
+builtins.log  = info
+builtins.err  = info
+builtins.dev  = info
+builtins.fix  = info
 
-DEFAULT = "/data/data/u.root/usr/src/sdk-panda3d/samples-bullet/bullet_problem/main.py"
-DEFAULT = "/data/data/u.root/usr/src/sdk-panda3d/samples-bullet/bullet_problem/test2w.py"
 
-def flush_io():
-    sys.stdout = sys.__stdout__
-    sys.stderr = sys.__stderr__
+DEFAULT='/data/data/u.r/pandamenu.py'
+DEFAULT='/data/data/u.root/usr/src/Roaming/lib/pandatest.py'
+DEFAULT='/data/data/u.root/sdk/panda3d/samples/asteroids/main.py'
+DEFAULT='/data/data/u.root/sdk/panda3d/samples/carousel/main.py'
+DEFAULT='/data/data/u.root/sdk/panda3d/samples/roaming-ralph/main.py'
+DEFAULT='/data/data/u.root/sdk/panda3d/samples/music-box/main.py'
+
+DEFAULT = "/data/data/u.root/sdk/panda3d/samples-bullet/bullet_problem/main.py"
+DEFAULT = "/data/data/u.root/usr/src/Roaming/lib/utest.py"
+#DEFAULT = "/data/data/u.root/sdk/panda3d/samples-bullet/bullet_problem/test2w.py"
+
+def flush_io(restore=False):
+    if restore:
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
     sys.stdout.flush()
     sys.stderr.flush()
 
@@ -316,22 +327,49 @@ def run(__file__=DEFAULT,*flags):
         except Exception as e:
             androidembed.log( f"panda clean up from [{__file__}] failed : {e}" )
     finally:
-        sys.stderr = sys.__stderr__
         os.chdir(oldwd)
         RunTime.tuio.End()
 
-    flush_io()
+    flush_io(True)
+    #FIXME: pause instead of destroy
     del RunTime.tuio
     androidembed.log('io restored')
 
 
 
+def dry(__file__=DEFAULT,*flags):
+    __file__ = __file__.replace('>','/')
+    cd = os.path.dirname(__file__)
+
+    flush_io()
+
+
+    oldwd = os.getcwd()
+    os.chdir( cd )
+
+    androidembed.log(f"\r\nRunning {__file__} in {cd}\r\n")
+
+    try:
+        #redir stdout to logcat
+        if -1 in flags:
+            sys.stdout = RunTime.__stdout__
+        #redir stderr to logcat
+        if -2 in flags:
+            sys.stderr = RunTime.__stderr__
+
+        with open(__file__, 'r') as fp:
+            exec( fp.read(), globals(), globals() )
+    except SystemExit as se:
+        print(f"script {__file__} exiting...")
+    except Exception as e:
+        androidembed.log( f"clean up from [{__file__}] failed : {e}" )
+    finally:
+        flush_io(restore=True)
+        os.chdir(oldwd)
+
 
 def dbg(__file__=DEFAULT):
     return run(__file__,-1,-2)
-
-
-
 
 
 try:
@@ -355,8 +393,7 @@ try:
     #loadPrcFileData("", "win-origin -2 -2")
     #loadPrcFileData("", "win-size 848 480")
 
-    CACHE_DIR='/data/data/u.r/XDG_CACHE_HOME/panda3d'
-    loadPrcFileData("", 'model-cache-dir %s' % CACHE_DIR )
+    loadPrcFileData("", 'model-cache-dir %s' % f'{HOME}/XDG_CACHE_HOME/panda3d' )
     loadPrcFileData("", "model-cache-textures #f")
     loadPrcFileData("", "model-path /data/data/u.root/usr/share/panda3d/models:." )
     androidembed.log("pandarc complete")
@@ -414,6 +451,33 @@ sys.stderr = sys.__stderr__
 #
 #"""
 
+def aloop(*args, **kargs):
+    """ Ensure there is an opened event loop available and return it"""
+    loop = asyncio.get_event_loop()
+    if loop.is_closed():
+        policy = asyncio.get_event_loop_policy()
+        loop = policy.new_event_loop(*args, **kargs)
+        policy.set_event_loop(loop)
+    return loop
+
+
+
+def arun(coro):
+    """ Run this in a event loop """
+    import inspect
+    loop = aloop()
+    if not inspect.isawaitable(coro):
+        if not inspect.iscoroutinefunction(coro):
+            coro = asyncio.coroutine(coro)
+        coro = coro()
+    future = asyncio.ensure_future(coro)
+    return loop.run_until_complete(future)
+
+def foo():
+    for x in range(10):
+        yield from asyncio.sleep(1)
+        print(f'bar {x}')
+        flush_io()
 
 androidembed.log(' == Interactive (%s, %s) ==' % (repl_pid, pts_out) )
 

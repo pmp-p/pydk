@@ -167,18 +167,16 @@ public class ShellTermSession extends GenericTermSession {
             path = checkPath(path);
         }
 
-        String[] env = new String[6];
+        String[] env = new String[7];
         env[0] = "LD_LIBRARY_PATH=/vendor/lib:/system/lib";
         env[1] = "TERM=xterm-256color";
         env[2] = "HOME=" + ROOT_LOCATION;
         env[3] = "XDG_CACHE_HOME=" + ROOT_LOCATION + "/XDG_CACHE_HOME";
         env[4] = "XDG_CONFIG_HOME=" + ROOT_LOCATION + "/XDG_CONFIG_HOME";
-
+        env[5] = "PATH=/vendor/bin:/system/bin:/sbin:" + path;
+        env[6] = "APK_MODE=terminal";
     //**************
     Log.i(TAG, "  == Shell Term Sesssion ==");
-
-    env[5] = "PATH=/vendor/bin:/system/bin:/sbin:" + path;
-
     if (new File("/data/data/FAST").isFile() ){
         mProcId = createSubprocess("/system/bin/sh /data/data/u.r/pp",env);
     } else {

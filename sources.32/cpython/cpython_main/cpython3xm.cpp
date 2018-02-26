@@ -297,7 +297,7 @@ int interpreter_main(int argc, char *argv[] ){
         cf.cf_flags = 0;
         Py_InspectFlag = 0;
 
-        freopen( getenv("CONSOLE") , "r", stdin );
+        freopen( getenv("CONSOLE") , "rw", stdin );
         freopen( getenv("CONSOLE") , "w", stdout );
         freopen( getenv("CONSOLE") , "w", stderr );
 

@@ -7,7 +7,7 @@ PYTHON=cpython-bpo-30386
 FT2=freetype2-android-master
 
 
-OPT_COMMON="--no-eigen --use-gles --use-gles2 --use-zlib --threads 4"
+OPT_COMMON="--no-eigen --use-gles --use-gles2 --use-zlib --threads 4 --override STDFLOAT_DOUBLE=1"
 
 if echo $ANDROID_ARCH|grep -q arm
 then
@@ -53,14 +53,6 @@ then
     echo "using instead : WITH_LIBRARIES=$WITH_LIBRARIES"
 fi
 
-echo "#FIXME: panda3d not clang ready"
-export NDK_GCC="gcc"
-
-pwd
-
-echo "<enter> to continue"
-read
-
 
 cd ${ORIGIN}
 
@@ -77,6 +69,7 @@ then
         * cleaning up thirdparties
     "
 
+     mkdir built/libs/armeabi-v7a -p
 
     rm -rf thirdparty
 
@@ -244,9 +237,9 @@ for lpass in range(4):
         try:
             dll_path = '%s'
             for dll_path in [
+                    "/data/data/u.r/lib/%s",
                     "/data/data/u.r/usr/lib-armv7/panda3d/%s",
                     "/data/data/u.r/lib-armv7/%s",
-                    "/data/data/u.r/lib/%s",
                     "/system/lib/%s"]:
                 dll_path = dll_path % dll
                 if os.access(dll_path, 0):
@@ -260,8 +253,19 @@ for lpass in range(4):
             print(lpass,dll,e,file=sys.stderr)
     while len(poplist):
         DLLS.remove(poplist.pop(0))
-
+import panda3d.core
+loadPrcFileData = panda3d.core.loadPrcFileData
+loadPrcFileData("", "model-path .:/data/data/u.root/usr/share/panda3d:/data/data/u.root/usr/share/panda3d/models" )
+loadPrcFileData("", "yield-timeslice #t")
+loadPrcFileData("", "default-model-extension .bam")
+loadPrcFileData("", "textures_power_2 down")
+loadPrcFileData("", "textures-power-2 down")
+loadPrcFileData("", "textures-square down")
+loadPrcFileData("", "background-color 0 0 0 0")
+loadPrcFileData("", "audio-library-name p3openal_audio")
+loadPrcFileData("", "undecorated #t")
 END
+
     pwd
     if [ -d built/libs ]
     then
@@ -282,7 +286,7 @@ END
         echo "
     * installing panda c++ support libs
     "
-        for pandalib in built/*/*-*/lib*so built/tmp/lib*so
+        for pandalib in built/*/*-*/lib*so built/lib/lib*so
         do
             mv -vf $pandalib $DEV_APPDIR/usr/lib-$ANDROID_ARCH/panda3d/
         done
@@ -298,13 +302,28 @@ END
     C++ support libs : $PDK_PANDA3D
 
 "
+    if [ -f /data/data/DEV ]
+    then
+        echo "syncing with URoot"
+        for dest in /data/target/u.r /data/data/armhf/u.r
+        do
+            cp -vf /data/data/u.r/usr/bin/python3.7m            $dest/usr/bin/python3.7m
+            cp -vf /data/data/u.r/lib-armv7/libpython3.7m.so    $dest/lib-armv7/libpython3.7m.so
+            cp -vf /data/data/u.r/usr/lib/python3.7/lib-dynload/*.py $dest/usr/lib/python3.7/lib-dynload/
+
+            echo lib-armv7
+            cp -vRf /data/data/u.r/usr/lib-armv7/* $dest/usr/lib-armv7/ | wc -l
+
+            echo PANDA_MODULES
+            cp -vRf /data/data/u.r/usr/lib/python3.7/site-packages/panda3d $dest/usr/lib/python3.7/site-packages/ | wc -l
+        done
+    fi
+
+    register_pdk PDK_PANDA3D ${ORIGIN}
 
 else
-    echo "PDK_PYPANDA3D: wrong target path '$PDK_PYPANDA3D'"
+    echo "PDK_PYPANDA3D: wrong target path '$PDK_PANDA3D'"
 fi
-
-
-
 
 
 
