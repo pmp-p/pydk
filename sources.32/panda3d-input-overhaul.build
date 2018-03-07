@@ -7,7 +7,7 @@ PYTHON=cpython-bpo-30386
 FT2=freetype2-android-master
 
 
-OPT_COMMON="--no-eigen --use-gles --use-gles2 --use-zlib --threads 4 --override STDFLOAT_DOUBLE=1"
+OPT_COMMON="--no-eigen --use-gles2 --use-zlib --threads 4 --override STDFLOAT_DOUBLE=1"
 
 if echo $ANDROID_ARCH|grep -q arm
 then
@@ -28,7 +28,7 @@ ORIGIN=$(dirname $(realpath "$0") )
 
 ROOT=$(pwd)
 
-set_source_tree 4000
+set_source_tree 7200
 
 patch_me
 
@@ -68,8 +68,6 @@ then
     echo "
         * cleaning up thirdparties
     "
-
-     mkdir built/libs/armeabi-v7a -p
 
     rm -rf thirdparty
 
@@ -143,14 +141,26 @@ then
     export LD_LIBRARY_PATH=$(pwd)/host/lib
     export PATH=$(pwd)/host/bin:$PATH
 
-    echo "
-        * interrogate is $(which interrogate)
-    "
+    if echo $(which interrogate)|grep -q interrogate
+    then
+        echo "
+            * interrogate is $(which interrogate)
+        "
+    else
+        echo "
+FATAL: interrogate not found in host/bin build
+        "
+        read
+    fi
+
 
     rm -vf ${TP}/python${PYVER}/lib/libpython${PYDOT}${PYMODE}.a
     cp -vf ../${PYTHON}/Android/build/python${PYDOT}-android-${ANDROID_API}-${ANDROID_ARCH}/libpython${PYDOT}${PYMODE}.so ${TP}/python${PYVER}/lib/
     rm -vf ${TP}/python${PYVER}/include/python${PYDOT}
     ln -sf ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE} ${TP}/python${PYVER}/include/python${PYDOT}
+    mkdir -p built/libs/armeabi-v7a/
+    ( sleep 5  && mkdir -p built/libs/armeabi-v7a/ ) &
+    ( sleep 180 && mkdir -p built/libs/armeabi-v7a/ ) &
 
     cmd="$PDK_PYTHON makepanda/makepanda.py $OPT_COMMON $OPT_ANDROID $TP_ALL"
     cat > $ORIGIN.rebuild.sh <<END
@@ -160,6 +170,7 @@ cd $ORIGIN
 NDK_ROOT=$NDK_ROOT PANDA_ARCH=$PANDA_ARCH $cmd "\$@"
 END
     chmod +x $ORIGIN.rebuild.sh
+
     $cmd "$@"
 else
     echo "FATAL: Can't find static host cpython $PDK_PYTHON"

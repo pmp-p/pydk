@@ -231,7 +231,7 @@ extern "C" {
 #if GLES2
                 EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
 #else
-                EGL_RENDERABLE_TYPE, 0, //EGL_OPENGL_ES_BIT,
+                EGL_RENDERABLE_TYPE, 4, //EGL_OPENGL_ES_BIT,
 #endif
 /*
                     EGL_TRANSPARENT_TYPE, EGL_TRANSPARENT_RGB,

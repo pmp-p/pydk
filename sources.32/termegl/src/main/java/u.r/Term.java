@@ -174,8 +174,8 @@ https://developer.android.com/reference/android/os/Process.html#setThreadPriorit
 */
 
 
-
-
+import android.app.ActivityManager;
+import android.content.pm.ConfigurationInfo;
 
 
 /*===================================================================================*/
@@ -184,6 +184,12 @@ public class Term extends Activity implements SurfaceHolder.Callback, UpdateCall
 
     private static String TAG = "Term-EGL";
 
+    private boolean hasGLES20() {
+        ActivityManager am = (ActivityManager)
+                getSystemService(Context.ACTIVITY_SERVICE);
+        ConfigurationInfo info = am.getDeviceConfigurationInfo();
+        return info.reqGlEsVersion >= 0x20000;
+    }
 
     @Override
     protected void onStart() {
@@ -204,7 +210,11 @@ public class Term extends Activity implements SurfaceHolder.Callback, UpdateCall
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Log.i(TermDebug.LOG_TAG,"surfaceCreated(SurfaceHolder holder)");
-
+        if ( hasGLES20() ){
+            Log.i(TermDebug.LOG_TAG," == GL/ES 2.0 avail ==");
+        } else {
+            Log.i(TermDebug.LOG_TAG," == Fallback to GL/ES 1.0 ==");
+        }
         //android.view.ViewGroup.LayoutParams lp = this.getLayoutParams();
         /*LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(context);
         lp.width = 854; // required width

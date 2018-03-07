@@ -9,7 +9,6 @@ import threading
 sys.path.append('/data/data/u.root/usr/src/Roaming/lib/')
 import xpy
 
-
 HOME = os.getenv('HOME',"/data/data/u.r")
 
 
@@ -35,6 +34,7 @@ while True:
         break
     Time.sleep(.1)
 
+RunTime.sbc = None
 
 RunTime.io = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 RunTime.io.bind( ('0.0.0.0',int( os.environ.get('TUIO_SOCKET','7000')), ) )
@@ -89,16 +89,11 @@ class Inputs(threading.Thread):
         self.alive = True
 
     def awaitPandaIO(self,delay=.5):
-        androidembed.log('awaiting panda3d')
-        while True:
-            try:
-                messenger
-                break
-            except:
-                Time.sleep(.2)
-        Time.sleep(.5)
+        androidembed.log('waiting for panda3d taskMgr')
+        while not RunTime.task_mgr.running:
+            Time.sleep(delay)
+        Time.sleep(delay)
         androidembed.log(' == panda3d detected ==')
-        RunTime.__base__ = base
         os.environ['RAW_INPUT']="1"
         return True
 
@@ -168,6 +163,7 @@ class Thread_TUIOService(Inputs):
             Time.sleep(.1)
 
         if self.awaitPandaIO():
+            self.setup_task(self.URoot_InputService)
             while True:
                 data, address = RunTime.io.recvfrom(32)
                 if not self.alive:break
@@ -175,6 +171,8 @@ class Thread_TUIOService(Inputs):
                     self.kb.append( data.decode('utf-8')[5:].split(', ') )
                 else:
                     androidembed.log("? %s : [%s]"% ( len(data),repr(data)) )
+
+
 
     def End(self):
         if self.alive:
@@ -185,19 +183,14 @@ class Thread_TUIOService(Inputs):
             os.environ.pop('RAW_INPUT',None)
 
 
+def flush_io(restore=False):
+    if restore:
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+    sys.stdout.flush()
+    sys.stderr.flush()
 
-#class Thread_InputService(threading.Thread, nanotui3.input.WASD):
-#    def __init__(self):
-#        nanotui3.input.WASD.__init__(self)
-#        threading.Thread.__init__(self)
-#
-#
-#    def InputService(self,task):
-#        key = self.get_key()
-#        while True:
-#            flush = self.get_key()
-#            if not flush:break
-#
+
 def info(*argv,**kw):
     androidembed.log("PYLOG: %s" % repr(argv) )
 
@@ -206,6 +199,9 @@ builtins.log  = info
 builtins.err  = info
 builtins.dev  = info
 builtins.fix  = info
+builtins.exc  = info
+builtins.trace  = info
+builtins.flush_io = flush_io
 
 
 DEFAULT='/data/data/u.r/pandamenu.py'
@@ -217,14 +213,9 @@ DEFAULT='/data/data/u.root/sdk/panda3d/samples/music-box/main.py'
 
 DEFAULT = "/data/data/u.root/sdk/panda3d/samples-bullet/bullet_problem/main.py"
 DEFAULT = "/data/data/u.root/usr/src/Roaming/lib/utest.py"
-#DEFAULT = "/data/data/u.root/sdk/panda3d/samples-bullet/bullet_problem/test2w.py"
-
-def flush_io(restore=False):
-    if restore:
-        sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
-    sys.stdout.flush()
-    sys.stderr.flush()
+DEFAULT = "/data/data/u.root/sdk/panda3d/samples-next/test2w.py"
+DEFAULT = '/data/data/u.root/sdk/panda3d/samples-next/hello.py'
+DEFAULT = "/data/data/u.root/sdk/panda3d/LUI/Demos/01_MinimalExample.py"
 
 def run(__file__=DEFAULT,*flags):
     __file__ = __file__.replace('>','/')
@@ -234,9 +225,7 @@ def run(__file__=DEFAULT,*flags):
 
     androidembed.log(f"\r\nRunning {__file__} in {cd}\r\n")
 
-    RunTime.tuio = Thread_TUIOService()
 
-    RunTime.tuio.start()
 
     oldwd = os.getcwd()
 
@@ -244,90 +233,45 @@ def run(__file__=DEFAULT,*flags):
     loadPrcFileData("", "background-color 0 0 0 0")
     os.chdir( cd )
 
-
     androidembed.log("-----------------------------------------")
-    androidembed.log("----------------------------------------")
-    androidembed.log("---------------------------------------")
 
-    if hasattr(RunTime,'__base__') and hasattr(builtins,'base'):
-        androidembed.log("masking existing showbase")
-        #delattr(builtins,'base')
-        #RunTime.__camera__.reparent_to(render)
-        #render.ls()
-    else:
+    if RunTime.sbc is None:
         import direct
         import direct.showbase
         import direct.showbase.ShowBase
         import direct.task
         import direct.task.Task
         import direct.task.TaskManagerGlobal
+
         RunTime.task_mgr = direct.task.TaskManagerGlobal.taskMgr
+        RunTime.sbc = sbc = direct.showbase.ShowBase.AppContext()
 
-#        base = direct.showbase.ShowBase.ShowBase()
-#
-#        for c in render.findAllMatches('*'):
-#            print(c)
-#            RunTime.__camera__ = c
-#            #RunTime.__camera__.detachNode()
-#
-#
-#
-#        base.camNode.getDisplayRegion(0).setActive(True)
-#
-#        for t in RunTime.task_mgr.getAllTasks():
-#            androidembed.log("%s"%t)
-#        RunTime.__base__ = getattr(builtins,'base',None)
 
-    RunTime.tuio.setup_task(RunTime.tuio.URoot_InputService)
     androidembed.log("-----------------------------------------")
 
+    RunTime.tuio = Thread_TUIOService()
 
+    RunTime.tuio.start()
+
+
+
+
+
+    #redir stdout to logcat
+    if -1 in flags:
+        sys.stdout = RunTime.__stdout__
+    #redir stderr to logcat
+    if -2 in flags:
+        sys.stderr = RunTime.__stderr__
+
+
+    RunTime.sbc.Begin()
     try:
-        #redir stdout to logcat
-        if -1 in flags:
-            sys.stdout = RunTime.__stdout__
-        #redir stderr to logcat
-        if -2 in flags:
-            sys.stderr = RunTime.__stderr__
-
         with open(__file__, 'r') as fp:
             exec( fp.read(), globals(), globals() )
-    except SystemExit as se:
-        androidembed.log( f"Exit request from [{__file__}]" )
-        try:
-            RunTime.tuio.End()
-            print(f"script {__file__} exiting...")
-            render.node().removeAllChildren()
-
-
-            base.setBackgroundColor(0.0, 0.0, 0.0, 1.0)
-            RunTime.task_mgr.step()
-            RunTime.task_mgr.step()
-
-            base.setBackgroundColor(0.1, 0.1, 0.1, 0.0)
-            #base.setBackgroundColor(0.1, 0.1, 0.8, 0)
-            RunTime.task_mgr.step()
-            RunTime.task_mgr.step() # need two ...
-            for t in RunTime.task_mgr.getAllTasks():
-                androidembed.log("%s"%t)
-                RunTime.task_mgr.remove(t)
-
-
-            RunTime.task_mgr.step()
-            RunTime.task_mgr.step()
-
-
-            #base.camNode.getDisplayRegion(0).setActive(False)
-            #base.destroy()
-
-            #RunTime.task_mgr.destroy()
-
-            #base.graphicsEngine.remove_all_windows()
-
-        except Exception as e:
-            androidembed.log( f"panda clean up from [{__file__}] failed : {e}" )
     finally:
         os.chdir(oldwd)
+        RunTime.sbc.End()
         RunTime.tuio.End()
 
     flush_io(True)
