@@ -159,14 +159,15 @@ class Thread_TUIOService(Inputs):
         return self.Task_cont
 
     def run(self):
-        while self.alive is None:
-            Time.sleep(.1)
-
+#        while self.alive is None:
+#            Time.sleep(.1)
         if self.awaitPandaIO():
+            Time.sleep(1)
             self.setup_task(self.URoot_InputService)
             while True:
                 data, address = RunTime.io.recvfrom(32)
-                if not self.alive:break
+                if not self.alive:
+                    break
                 if data.startswith(b'/kbd'):
                     self.kb.append( data.decode('utf-8')[5:].split(', ') )
                 else:
@@ -208,14 +209,17 @@ DEFAULT='/data/data/u.r/pandamenu.py'
 DEFAULT='/data/data/u.root/usr/src/Roaming/lib/pandatest.py'
 DEFAULT='/data/data/u.root/sdk/panda3d/samples/asteroids/main.py'
 DEFAULT='/data/data/u.root/sdk/panda3d/samples/carousel/main.py'
-DEFAULT='/data/data/u.root/sdk/panda3d/samples/roaming-ralph/main.py'
 DEFAULT='/data/data/u.root/sdk/panda3d/samples/music-box/main.py'
+DEFAULT='/data/data/u.root/sdk/panda3d/samples/roaming-ralph/main.py'
 
 DEFAULT = "/data/data/u.root/sdk/panda3d/samples-bullet/bullet_problem/main.py"
 DEFAULT = "/data/data/u.root/usr/src/Roaming/lib/utest.py"
 DEFAULT = "/data/data/u.root/sdk/panda3d/samples-next/test2w.py"
-DEFAULT = '/data/data/u.root/sdk/panda3d/samples-next/hello.py'
+
 DEFAULT = "/data/data/u.root/sdk/panda3d/LUI/Demos/01_MinimalExample.py"
+DEFAULT = "/data/data/u.root/sdk/panda3d/LUI/Demos/02_SimpleConsole.py"
+DEFAULT = '/data/data/u.root/sdk/panda3d/samples-next/hello.py'
+
 
 def run(__file__=DEFAULT,*flags):
     __file__ = __file__.replace('>','/')
@@ -313,7 +317,7 @@ def dry(__file__=DEFAULT,*flags):
 
 
 def dbg(__file__=DEFAULT):
-    return run(__file__,-1,-2)
+    return dry(__file__,-1,-2)
 
 
 try:
@@ -331,8 +335,10 @@ try:
     loadPrcFileData("", "win-size 640 360")
     loadPrcFileData("", "window-type onscreen")
     loadPrcFileData("", "window-title none")
+    loadPrcFileData("", "undecorated #t")
 
     #X loadPrcFileData("", "yield-timeslice #t")
+    loadPrcFileData("", "gl-debug #t")
 
     #loadPrcFileData("", "win-origin -2 -2")
     #loadPrcFileData("", "win-size 848 480")
@@ -340,6 +346,15 @@ try:
     loadPrcFileData("", 'model-cache-dir %s' % f'{HOME}/XDG_CACHE_HOME/panda3d' )
     loadPrcFileData("", "model-cache-textures #f")
     loadPrcFileData("", "model-path /data/data/u.root/usr/share/panda3d/models:." )
+
+    loadPrcFileData("", "yield-timeslice #t")
+    loadPrcFileData("", "default-model-extension .bam")
+    loadPrcFileData("", "textures_power_2 down")
+    loadPrcFileData("", "textures-power-2 down")
+    loadPrcFileData("", "textures-square down")
+    loadPrcFileData("", "background-color 0 0 0 0")
+    loadPrcFileData("", "audio-library-name p3openal_audio")
+
     androidembed.log("pandarc complete")
 except Exception as e:
     androidembed.log("!!!! pandarc failed %s"%e)

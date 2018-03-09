@@ -29,23 +29,47 @@ export WORKDIR=/data/data/u.r
 
 export PATH=/data/data/u.root/bin:/data/data/u.root/usr/bin:/data/data/u.r/bin:/data/data/u.r/usr/bin:/sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
 export BB=/data/data/u.r/bin/busybox
-export PS1="(RT-32)URoot"
+export PS1="(RT-32)URoot \$ "
 
 cd $HOME
+
+sleep 1
+
 rm tmp/*.env 2>/dev/null
 export REPL_PID=$$
-export CONSOLE="$(realpath /proc/$$/fd/1)"
-env|grep -v ^ANDROID|grep -v ^BOOT|grep -v '=/mnt' |grep -v LS_COLORS > tmp/${PPID}.env
-if echo $SHELL|grep -q bash
+
+if [ -n "$RPID" ]
 then
-    reset
+    echo "Using PPID/[RPID] for remote connection"
+    export TPID=${RPID}
 else
-    cat tmp/${PPID}.env
+    if [ -n "$APK_MODE" ]
+    then
+        echo "Using [PPID]/RPID for local connection"
+        export TPID=${PPID}
+    else
+        TPID=$(pidof u.r)
+        echo "Using autodetection of python-terminal apk pid=$TPID"
+    fi
 fi
-pwd
+
+export CONSOLE="$(realpath /proc/$$/fd/1)"
+env|grep -v ^ANDROID|grep -v ^BOOT|grep -v '=/mnt' |grep -v LS_COLORS > tmp/${TPID}.env
+
+#if echo $SHELL|grep -q bash
+#then
+#    reset
+#else
+#    cat tmp/${TPID}.env
+#fi
+
 if true
 then
-    echo "REPL, you can use panda3D from it, type ctrl+c to gain access back after running app"
+    echo "
+PYTHON REPL (APK pid=$TPID connected through $CONSOLE)
+You can use panda3D from it, type ctrl+c to gain access back after running your app.
+
+"
     #cat >/dev/null
     sleep 36000
 else
@@ -61,7 +85,7 @@ else
     echo "now redirecting my input to parent"
     stty echo isig intr ^Q quit undef susp undef
     sleep 1
-    cat > tmp/${PPID}.in
+    cat > tmp/${TPID}.in
 fi
 
 echo "press <enter>"

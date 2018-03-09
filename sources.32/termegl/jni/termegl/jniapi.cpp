@@ -199,7 +199,7 @@ extern "C" {
         return;
     }
 #define ATEST 0
-#define GLES2 0
+#define GLES2 1
     int interpreter_prepare()
     {
         void* window=0;
@@ -224,14 +224,14 @@ extern "C" {
 #else
                 EGL_SURFACE_TYPE,   EGL_WINDOW_BIT,
 #endif
-                EGL_BLUE_SIZE,      8,
-                EGL_GREEN_SIZE,     8,
-                EGL_RED_SIZE,       8,
-                EGL_ALPHA_SIZE,     8,
+                EGL_BLUE_SIZE,     8,// 8,
+                EGL_GREEN_SIZE,    8,// 8,
+                EGL_RED_SIZE,      8,// 8,
+                EGL_ALPHA_SIZE,    8,// 8,
 #if GLES2
-                EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+                EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT, // 4 ?
 #else
-                EGL_RENDERABLE_TYPE, 4, //EGL_OPENGL_ES_BIT,
+                EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
 #endif
 /*
                     EGL_TRANSPARENT_TYPE, EGL_TRANSPARENT_RGB,
@@ -330,7 +330,6 @@ extern "C" {
             snprintf(app_ptr, 16, "%p", (void * )surface );
             setenv("PANDA_NATIVE_SURFACE", app_ptr, 1);
 
-//            if (!(context = eglCreateContext(display, config, 0, 0))) { // VALID
             if ( !(context = eglCreateContext(display, config, EGL_NO_CONTEXT, ctxAttr)) ){
                 LOG_ERROR("u.r.eglCreateContext() returned error %d", eglGetError());
                 goto fail;

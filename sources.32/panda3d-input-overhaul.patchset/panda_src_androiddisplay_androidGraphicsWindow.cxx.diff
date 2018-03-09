@@ -1,5 +1,5 @@
 --- panda3d-input-overhaul/panda/src/androiddisplay/androidGraphicsWindow.cxx	2018-02-04 11:37:09.000000000 +0100
-+++ panda3d-input-overhaul.api19/panda/src/androiddisplay/androidGraphicsWindow.cxx	2018-02-21 01:00:52.157571247 +0100
++++ panda3d-input-overhaul.api19/panda/src/androiddisplay/androidGraphicsWindow.cxx	2018-03-08 04:47:00.691237605 +0100
 @@ -8,7 +8,7 @@
   *
   * @file androidGraphicsWindow.cxx
@@ -30,7 +30,7 @@
  extern IMPORT_CLASS struct android_app* panda_android_app;
  
  TypeHandle AndroidGraphicsWindow::_type_handle;
-@@ -47,17 +57,17 @@
+@@ -47,17 +57,30 @@
    GraphicsWindow(engine, pipe, name, fb_prop, win_prop, flags, gsg, host),
    _mouse_button_state(0)
  {
@@ -38,25 +38,38 @@
 -  DCAST_INTO_V(android_pipe, _pipe);
 +    AndroidGraphicsPipe *android_pipe;
 +    DCAST_INTO_V(android_pipe, _pipe);
-+
-+    _egl_display = android_pipe->_egl_display;
-+    _egl_surface = 0;
  
 -  _egl_display = android_pipe->_egl_display;
 -  _egl_surface = 0;
-+    _app = panda_android_app;
++    _egl_display = android_pipe->_egl_display;
++    _egl_surface = 0;
  
 -  _app = panda_android_app;
-+    PT(GraphicsWindowInputDevice) device = GraphicsWindowInputDevice::pointer_and_keyboard(this, "keyboard_mouse");
++    _app = panda_android_app;
  
 -  GraphicsWindowInputDevice device =
 -    GraphicsWindowInputDevice::pointer_and_keyboard(this, "keyboard_mouse");
 -  add_input_device(device);
++#ifdef OPENGLES_2
++    LOG_INFO("                                     ===== GL ES 2.0 ============");
++    LOG_INFO("GLSL: %s", (char *) glGetString(GL_SHADING_LANGUAGE_VERSION) );
++    printf("GL_SHADING_LANGUAGE_VERSION: %s\n", (char *) glGetString(GL_SHADING_LANGUAGE_VERSION));
++
++#else
++    #ifdef OPENGLES_1
++        LOG_INFO("                                 ===== GL ES 1.0 : NO LUI====");
++    #else
++        #error OPENGLES_1/2 must be defined
++    #endif
++#endif
++
++    PT(GraphicsWindowInputDevice) device = GraphicsWindowInputDevice::pointer_and_keyboard(this, "keyboard_mouse");
++
 +    add_input_device(device);
  }
  
  /**
-@@ -65,7 +75,8 @@
+@@ -65,7 +88,8 @@
   */
  AndroidGraphicsWindow::
  ~AndroidGraphicsWindow() {
@@ -66,7 +79,15 @@
  }
  
  /**
-@@ -179,6 +190,9 @@
+@@ -88,6 +112,7 @@
+     return false;
+   }
+ 
++
+   AndroidGraphicsStateGuardian *androidgsg;
+   DCAST_INTO_R(androidgsg, _gsg, false);
+   {
+@@ -179,6 +204,9 @@
  process_events() {
    GraphicsWindow::process_events();
  
@@ -76,7 +97,7 @@
    // Read all pending events.
    int looper_id;
    int events;
-@@ -191,6 +205,8 @@
+@@ -191,6 +219,8 @@
        source->process(_app, source);
      }
    }
@@ -85,7 +106,7 @@
  }
  
  /**
-@@ -207,32 +223,37 @@
+@@ -207,32 +237,37 @@
   */
  void AndroidGraphicsWindow::
  set_properties_now(WindowProperties &properties) {
@@ -145,7 +166,7 @@
  }
  
  /**
-@@ -240,6 +261,11 @@
+@@ -240,6 +275,11 @@
   */
  void AndroidGraphicsWindow::
  close_window() {
@@ -157,7 +178,7 @@
    destroy_surface();
  
    if (_gsg != (GraphicsStateGuardian *)NULL) {
-@@ -254,6 +280,7 @@
+@@ -254,6 +294,7 @@
      _app->onAppCmd = nullptr;
      _app->onInputEvent = nullptr;
    }
@@ -165,7 +186,7 @@
  }
  
  /**
-@@ -280,6 +307,23 @@
+@@ -280,6 +321,23 @@
      }
    }
  
@@ -189,7 +210,7 @@
    // Register the callbacks
    assert(_app != NULL);
    _app->userData = this;
-@@ -296,10 +340,11 @@
+@@ -296,10 +354,11 @@
      return false;
    }
  
@@ -202,7 +223,7 @@
  
    if (!androidgsg->get_fb_properties().verify_hardware_software
        (_fb_properties, androidgsg->get_gl_renderer())) {
-@@ -311,6 +356,8 @@
+@@ -311,6 +370,8 @@
  
    androiddisplay_cat.error() << "open_window done\n";
  
@@ -211,7 +232,7 @@
    return true;
  }
  
-@@ -319,6 +366,11 @@
+@@ -319,6 +380,11 @@
   */
  void AndroidGraphicsWindow::
  destroy_surface() {
@@ -223,7 +244,7 @@
    if (_egl_surface != EGL_NO_SURFACE) {
      if (!eglDestroySurface(_egl_display, _egl_surface)) {
        androiddisplay_cat.error() << "Failed to destroy surface: "
-@@ -326,6 +378,7 @@
+@@ -326,6 +392,7 @@
      }
      _egl_surface = EGL_NO_SURFACE;
    }
@@ -231,12 +252,23 @@
  
    // Destroy the current context.
    if (_gsg != (GraphicsStateGuardian *)NULL) {
-@@ -340,6 +393,35 @@
+@@ -340,6 +407,46 @@
   */
  bool AndroidGraphicsWindow::
  create_surface() {
 +#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
 +    LOG_INFO("362: create_surface");
++
++    #ifdef OPENGLES_2
++        LOG_INFO(" u.r    ===== GL ES 2.0 ============");
++    #else
++        #ifdef OPENGLES_1
++            LOG_INFO(" u.r    ===== GL ES 1.0 : NO LUI====");
++        #else
++            #error OPENGLES_1/2 must be defined
++        #endif
++    #endif
++
 +    AndroidGraphicsStateGuardian *androidgsg;
 +    DCAST_INTO_R(androidgsg, _gsg, false);
 +
@@ -267,7 +299,7 @@
    AndroidGraphicsStateGuardian *androidgsg;
    DCAST_INTO_R(androidgsg, _gsg, false);
  
-@@ -387,7 +469,7 @@
+@@ -387,7 +494,7 @@
      close_window();
      return false;
    }
@@ -276,7 +308,7 @@
    return true;
  }
  
-@@ -406,7 +488,9 @@
+@@ -406,7 +513,9 @@
  void AndroidGraphicsWindow::
  ns_handle_command(int32_t command) {
    WindowProperties properties;
@@ -287,7 +319,7 @@
    switch (command) {
      case APP_CMD_SAVE_STATE:
        // The system has asked us to save our current state.  Do so.
-@@ -435,15 +519,13 @@
+@@ -435,15 +544,13 @@
        system_changed_properties(properties);
        break;
      case APP_CMD_WINDOW_RESIZED:
@@ -305,7 +337,7 @@
        system_changed_properties(properties);
        break;
      case APP_CMD_GAINED_FOCUS:
-@@ -460,6 +542,7 @@
+@@ -460,6 +567,7 @@
        system_changed_properties(properties);
        break;
    }
@@ -313,7 +345,7 @@
  }
  
  /**
-@@ -467,8 +550,10 @@
+@@ -467,8 +575,10 @@
   */
  int32_t AndroidGraphicsWindow::
  handle_input_event(struct android_app* app, AInputEvent *event) {
@@ -325,7 +357,7 @@
    int32_t event_type = AInputEvent_getType(event);
    switch (event_type) {
    case AINPUT_EVENT_TYPE_KEY:
-@@ -476,6 +561,7 @@
+@@ -476,6 +586,7 @@
    case AINPUT_EVENT_TYPE_MOTION:
      return window->handle_motion_event(event);
    }
@@ -333,7 +365,7 @@
    return 0;
  }
  
-@@ -505,12 +591,14 @@
+@@ -505,12 +616,14 @@
      _input_devices[0].button_down(KeyboardButton.rshift());
    }*/
  
@@ -350,7 +382,7 @@
      return 0;
    }
  
-@@ -521,6 +609,7 @@
+@@ -521,6 +634,7 @@
    } else if (action == AKEY_EVENT_ACTION_UP) {
      _input_devices[0].button_up(button);
    }
@@ -358,7 +390,7 @@
    // TODO getRepeatCount, ACTION_MULTIPLE
  
    return 1;
-@@ -531,6 +620,11 @@
+@@ -531,6 +645,11 @@
   */
  int32_t AndroidGraphicsWindow::
  handle_motion_event(const AInputEvent *event) {
@@ -370,7 +402,7 @@
    int32_t action = AMotionEvent_getAction(event);
    action &= AMOTION_EVENT_ACTION_MASK;
  
-@@ -563,7 +657,7 @@
+@@ -563,7 +682,7 @@
    float y = AMotionEvent_getY(event, 0) - _app->contentRect.top;
  
    _input_devices[0].set_pointer_in_window(x, y);

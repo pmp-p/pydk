@@ -7,7 +7,7 @@ PYTHON=cpython-bpo-30386
 FT2=freetype2-android-master
 
 
-OPT_COMMON="--no-eigen --use-gles2 --use-zlib --threads 4 --override STDFLOAT_DOUBLE=1"
+OPT_COMMON="--no-eigen --no-gles --use-gles2 --use-zlib --threads 4 --override STDFLOAT_DOUBLE=1"
 
 if echo $ANDROID_ARCH|grep -q arm
 then
@@ -233,7 +233,7 @@ libp3android.so
 libpandaskel.so
 libpandabullet.so
 libparse_file.so
-libpandagles.so
+libpandagles2.so
 libpandaai.so
 libp3vision.so
 libpandaegg.so
@@ -241,18 +241,15 @@ libtest_interrogate.so
 """.strip()
 
 DLLS = list( map(str.strip, LIBS.split('\n') ) )
-
+appdir = '/'.join(__file__.split('/',4)[:-1])
+print('APPDIR: %s' % appdir )
 for lpass in range(4):
     poplist = []
     for dll in DLLS:
         try:
             dll_path = '%s'
-            for dll_path in [
-                    "/data/data/u.r/lib/%s",
-                    "/data/data/u.r/usr/lib-armv7/panda3d/%s",
-                    "/data/data/u.r/lib-armv7/%s",
-                    "/system/lib/%s"]:
-                dll_path = dll_path % dll
+            for dll_path in [ "%s/lib/%s", "%s/usr/lib-armv7/panda3d/%s", "%s/lib-armv7/%s" ]:
+                dll_path = dll_path % (appdir, dll)
                 if os.access(dll_path, 0):
                     #print(lpass,dll,file=sys.stderr)
                     CDLL( dll_path )
@@ -264,17 +261,6 @@ for lpass in range(4):
             print(lpass,dll,e,file=sys.stderr)
     while len(poplist):
         DLLS.remove(poplist.pop(0))
-import panda3d.core
-loadPrcFileData = panda3d.core.loadPrcFileData
-loadPrcFileData("", "model-path .:/data/data/u.root/usr/share/panda3d:/data/data/u.root/usr/share/panda3d/models" )
-loadPrcFileData("", "yield-timeslice #t")
-loadPrcFileData("", "default-model-extension .bam")
-loadPrcFileData("", "textures_power_2 down")
-loadPrcFileData("", "textures-power-2 down")
-loadPrcFileData("", "textures-square down")
-loadPrcFileData("", "background-color 0 0 0 0")
-loadPrcFileData("", "audio-library-name p3openal_audio")
-loadPrcFileData("", "undecorated #t")
 END
 
     pwd
@@ -286,6 +272,9 @@ END
     "
         #for pylib in $(find built/libs/*/*.cpython-*.so)
         #$(find built/|grep cpython-37m.so$)
+
+
+
         for pylib in built/panda3d/*.cpython-*.so
         do
             mv -vf $pylib $PDK_PYPANDA3D/
@@ -297,6 +286,7 @@ END
         echo "
     * installing panda c++ support libs
     "
+
         for pandalib in built/*/*-*/lib*so built/lib/lib*so
         do
             mv -vf $pandalib $DEV_APPDIR/usr/lib-$ANDROID_ARCH/panda3d/
@@ -331,7 +321,23 @@ END
     fi
 
     register_pdk PDK_PANDA3D ${ORIGIN}
+    export PDK_PANDA3D=${ORIGIN}
 
+    if [ -d ../LUI-android ]
+    then
+        cd ../LUI-android
+        rm -rf linux_*_panda1.10.0_py37 android_*_panda1.10.0_py37 lui.so
+
+        $PDK_PANDA3D/pandahost.sh build.py --clean "$@"
+
+        cp -vf lui.so /data/data/u.r/usr/lib/python3.7/site-packages/panda3d/
+
+        if [ -f /data/data/DEV ]
+        then
+            cp -vf lui.so /data/data/armhf/u.r/usr/lib/python3.7/site-packages/panda3d/
+            cp -vf lui.so /data/target/u.r/usr/lib/python3.7/site-packages/panda3d/
+        fi
+    fi
 else
     echo "PDK_PYPANDA3D: wrong target path '$PDK_PANDA3D'"
 fi

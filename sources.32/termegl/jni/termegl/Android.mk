@@ -34,7 +34,8 @@ LOCAL_CFLAGS += -I$(SDK)/build.32/libtuio
 LOCAL_CFLAGS += -I$(SDK)/build.32/libtuio/oscpack
 
 
-LOCAL_LDLIBS := -lz -ldl -lc -lm -llog -lEGL -landroid -lEGL -lGLESv1_CM
+LOCAL_LDLIBS := -lz -ldl -lc -lm -llog -landroid -lEGL -lGLESv2
+#-lGLESv1_CM
 LOCAL_LDLIBS += -L$(LOCAL_PATH)/../../prebuilt/$(TARGET_ARCH_ABI) -lpython3.7m
 
 #LOCAL_LDLIBS += -lGLESv2

@@ -1,5 +1,5 @@
 --- panda3d-input-overhaul/makepanda/makepanda.py	2018-02-04 11:37:09.000000000 +0100
-+++ panda3d-input-overhaul.api19/makepanda/makepanda.py	2018-02-19 02:11:30.574475652 +0100
++++ panda3d-input-overhaul.api19/makepanda/makepanda.py	2018-03-09 11:28:38.890678126 +0100
 @@ -1283,7 +1283,8 @@
              if optlevel >= 3:
                  cmd += " -fomit-frame-pointer"
@@ -19,3 +19,60 @@
          else:
              cmd += " -pthread"
  
+@@ -5099,19 +5100,43 @@
+ # DIRECTORY: panda/src/androiddisplay/
+ #
+ 
+-if (GetTarget() == 'android' and PkgSkip("EGL")==0 and PkgSkip("GLES")==0 and not RUNTIME):
+-  DefSymbol('GLES', 'OPENGLES_1', '')
+-  OPTS=['DIR:panda/src/androiddisplay', 'DIR:panda/src/glstuff', 'BUILDING:PANDAGLES',  'GLES', 'EGL']
+-  TargetAdd('pandagles_androiddisplay_composite1.obj', opts=OPTS, input='p3androiddisplay_composite1.cxx')
+-  OPTS=['DIR:panda/metalibs/pandagles', 'BUILDING:PANDAGLES', 'GLES', 'EGL']
+-  TargetAdd('pandagles_pandagles.obj', opts=OPTS, input='pandagles.cxx')
+-  TargetAdd('libpandagles.dll', input='pandagles_pandagles.obj')
+-  TargetAdd('libpandagles.dll', input='p3glesgsg_config_glesgsg.obj')
+-  TargetAdd('libpandagles.dll', input='p3glesgsg_glesgsg.obj')
+-  TargetAdd('libpandagles.dll', input='pandagles_androiddisplay_composite1.obj')
+-  TargetAdd('libpandagles.dll', input='libp3android.dll')
+-  TargetAdd('libpandagles.dll', input=COMMON_PANDA_LIBS)
+-  TargetAdd('libpandagles.dll', opts=['MODULE', 'GLES', 'EGL'])
++
++if GetTarget() == 'android' and PkgSkip("EGL")==0:
++  if PkgSkip("GLES")==0 and not RUNTIME:
++    DefSymbol('GLES', 'OPENGLES_1', '')
++    OPTS=['DIR:panda/src/androiddisplay', 'DIR:panda/src/glstuff', 'DIR:' + native_app_glue, 'BUILDING:PANDAGLES',  'GLES', 'EGL']
++    TargetAdd('pandagles_androiddisplay_composite1.obj', opts=OPTS, input='p3androiddisplay_composite1.cxx')
++    OPTS=['DIR:panda/metalibs/pandagles', 'BUILDING:PANDAGLES', 'GLES', 'EGL']
++    TargetAdd('pandagles_pandagles.obj', opts=OPTS, input='pandagles.cxx')
++    TargetAdd('libpandagles.dll', input='pandagles_pandagles.obj')
++    TargetAdd('libpandagles.dll', input='p3glesgsg_config_glesgsg.obj')
++    TargetAdd('libpandagles.dll', input='p3glesgsg_glesgsg.obj')
++    TargetAdd('libpandagles.dll', input='pandagles_androiddisplay_composite1.obj')
++    TargetAdd('libpandagles.dll', input='libp3android.dll')
++    TargetAdd('libpandagles.dll', input=COMMON_PANDA_LIBS)
++    TargetAdd('libpandagles.dll', opts=['MODULE', 'GLES', 'EGL'])
++
++  elif PkgSkip("GLES2")==0 and not RUNTIME:
++    DefSymbol('GLES2', 'OPENGLES_2', '')
++
++    OPTS=['DIR:panda/src/androiddisplay', 'DIR:panda/src/glstuff', 'BUILDING:PANDAGLES2',  'GLES2', 'EGL']
++    TargetAdd('pandagles2_androiddisplay_composite1.obj', opts=OPTS, input='p3androiddisplay_composite1.cxx')
++
++    OPTS=['DIR:panda/metalibs/pandagles2', 'BUILDING:PANDAGLES2', 'GLES2', 'EGL']
++    TargetAdd('pandagles2_pandagles2.obj', opts=OPTS, input='pandagles2.cxx')
++    TargetAdd('libpandagles2.dll', input='pandagles2_pandagles2.obj')
++
++    TargetAdd('libpandagles2.dll', input='p3gles2gsg_config_gles2gsg.obj')
++    TargetAdd('libpandagles2.dll', input='p3gles2gsg_gles2gsg.obj')
++    TargetAdd('libpandagles2.dll', input='pandagles2_androiddisplay_composite1.obj')
++    TargetAdd('libpandagles2.dll', input='libp3android.dll')
++
++    TargetAdd('libpandagles2.dll', opts=['MODULE', 'GLES2', 'EGL'])
++    TargetAdd('libpandagles2.dll', input=COMMON_PANDA_LIBS)
++    TargetAdd('libpandagles2.dll', input=COMMON_PANDA_LIBS)
++  else:
++    print("either GLES or GLES2 must be selected for android platform")
++    raise SystemExit
+ 
+ #
+ # DIRECTORY: panda/src/tinydisplay/

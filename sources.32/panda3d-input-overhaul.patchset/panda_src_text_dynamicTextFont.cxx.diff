@@ -1,5 +1,5 @@
 --- panda3d-input-overhaul/panda/src/text/dynamicTextFont.cxx	2018-02-04 11:37:09.000000000 +0100
-+++ panda3d-input-overhaul.api19/panda/src/text/dynamicTextFont.cxx	2018-02-19 01:07:04.818565195 +0100
++++ panda3d-input-overhaul.api19/panda/src/text/dynamicTextFont.cxx	2018-02-23 05:31:59.682191860 +0100
 @@ -45,7 +45,7 @@
  #include "transparencyAttrib.h"
  
