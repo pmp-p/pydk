@@ -35,3 +35,8 @@ The onboard sdk rely on an elf loader / qemu trick around debian jessie and the 
 
 If you need more info or have use for onboard sdk contact me via #H3Droid on freenode irc.
 
+
+EGL Terminal running Panda3D+LUI GLES 2.0  and Tilde VT100 at the same time.
+
+[![PayPayl](https://raw.githubusercontent.com/pmp-p/h3droid/sdk/usr/src/projects/b0.png)](http://paypal.me/pmpp)
+
