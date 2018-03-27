@@ -4,7 +4,14 @@ cp -rv /data/data/build.32/panda3d-input-overhaul/built/lib/libpython3.*.so preb
 
 cp /data/data/android/android-ndk-r14b/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/libgnustl_shared.so -vf prebuilt/armeabi-v7a/
 
-cp -f /data/data/build.32/panda3d-input-overhaul/built/tmp/lib*.so prebuilt/armeabi-v7a/
+if cp -f /data/data/build.32/panda3d-input-overhaul/built/tmp/lib*.so prebuilt/armeabi-v7a/
+then
+    echo ================================================
+    echo ============== PLEASE SYNC DEVICE ==============
+    echo ================================================
+else
+    cp -f /data/data/u.r/usr/lib-armv7/panda3d/lib*.so prebuilt/armeabi-v7a/
+fi
 
 if ndk-build -C .
 then
@@ -21,7 +28,6 @@ then
 
     done
 
-    #cp -f prebuilt/armeabi-v7a/*so obj/local/armeabi-v7a/
     mv -vn prebuilt/armeabi-v7a/*so libs/armeabi-v7a/
 
     exit 0

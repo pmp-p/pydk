@@ -34,7 +34,7 @@ while True:
 
         DBG=0
 
-        upd = Lapse(.15)
+        upd = RunTime.Lapse(.15)
 
         dmp = os.popen('./TuioDump')
         min = 220

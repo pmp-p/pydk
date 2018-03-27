@@ -46,7 +46,7 @@ then
 #auto-generated do not edit
 APP_PLATFORM := $ANDROID_TARGET
 APP_ABI := $ARCH
-
+APP_PIE = true
 APP_OPTIM := debug
 APP_STL := c++_shared
 APP_CPPFLAGS := -fPIE -fexceptions -funwind-tables -frtti -std=c++11
@@ -62,6 +62,8 @@ END
 #auto-generated do not edit
 LOCAL_ARM_MODE := arm
 LOCAL_DISABLE_RELRO := true
+LOCAL_CPP_FEATURES := rtti
+LOCAL_CPP_FEATURES := exceptions
 
 END
 
@@ -97,7 +99,6 @@ then
 
     done
 
-    #cp -f prebuilt/${ARCH}/*so obj/local/armeabi-v7a/
     mv -vn prebuilt/${ARCH}/*so libs/armeabi-v7a/
 
     exit 0

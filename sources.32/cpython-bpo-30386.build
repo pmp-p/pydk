@@ -1,14 +1,15 @@
 #!/bin/bash
 
-
+TARGET=Android
 SRC=cpython-bpo-30386
 OPT_COMMON="--with-computed-gotos --with-system-ffi --enable-shared"
-OPT_ANDROID="--without-ensurepip --with-c-locale-coercion --disable-ipv6"
+OPT_TARGET="--without-ensurepip --with-c-locale-coercion --disable-ipv6"
 GHZIP=https://github.com/xdegaye/cpython/archive/bpo-30386.zip
 
 #==============================================================================
-ORIGIN=$(dirname $(realpath "$0") )
+ROOT=$(dirname $(realpath "$0") )
 
+. $SDK/build.functions
 . $SDK/build.${BITS}.functions
 
 set_source_tree 4200
@@ -20,17 +21,15 @@ then
     echo "using instead : WITH_LIBRARIES=$WITH_LIBRARIES"
 fi
 
-ROOT=$(pwd)
+export DEV_PATHS DEV_TARGET PYVER PYDOT PYMODE OPT_COMMON OPT_TARGET
 
-export DEV_PATHS DEV_TARGET PYVER PYDOT PYMODE OPT_COMMON OPT_ANDROID
-
-export PDK_PYTHON=${ORIGIN}/Android/build/python-native/python
-export PDK_APYTHON=${ORIGIN}/Android/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}/python
+export PDK_PYTHON=${ORIGIN}/${TARGET}/build/python-native/python
+export PDK_APYTHON=${ORIGIN}/${TARGET}/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}/python
 
 if echo "$@"|grep -q rebuild
 then
     echo "CLEANING UP"
-    rm -vf $PDK_APYTHON ${ORIGIN}/Android/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}/libpython3.*.so
+    rm -vf $PDK_APYTHON ${ORIGIN}/${TARGET}/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}/libpython3.*.so
 fi
 
 if [ -f $PDK_APYTHON ]
@@ -41,16 +40,16 @@ then
 else
     if mkdir -p ${DEV_APPDIR}
     then
-        echo Building HOST + TARGET cpython${PYVER}${PYMODE} from $ORIGIN/Android
+        echo Building HOST + TARGET cpython${PYVER}${PYMODE} from $ORIGIN/${TARGET}
 
         patch_me
 
         echo "press <enter> to start build process"
         read
 
-        cd $ORIGIN/Android
+        cd $ORIGIN/${TARGET}
 
-        if ./makesetup $DEV_PATHS $OPT_COMMON $OPT_ANDROID
+        if ./makesetup $DEV_PATHS $OPT_COMMON $OPT_TARGET
         then
 
             #will fail on ncurses as first pass
@@ -72,7 +71,7 @@ else
         Loggile is $ORIGIN.log
 
         "
-                cp -vf $ORIGIN.patchset/external/ncurses-6.0.mint.tar.gz ${ORIGIN}/Android/build/external-libraries/ncurses-6.0.tar.gz
+                cp -vf $ORIGIN.patchset/external/ncurses-6.0.mint.tar.gz ${ORIGIN}/${TARGET}/build/external-libraries/ncurses-6.0.tar.gz
                 echo "Stuff fixed ... maybe,  press <enter>"
                 read
                 echo "to view log : tail -f $ORIGIN.log"
@@ -91,7 +90,7 @@ then
 
     mkdir -p ${DEV_APPDIR}/usr/bin/ ${DEV_APPDIR}/lib-armv7/ $dyn_load
 
-    build_dir=${ORIGIN}/Android/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}
+    build_dir=${ORIGIN}/${TARGET}/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}
 
     echo "lib-dynload path is $dyn_load"
 

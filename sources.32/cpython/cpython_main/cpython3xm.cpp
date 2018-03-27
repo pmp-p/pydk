@@ -241,7 +241,7 @@ int interpreter_main(int argc, char *argv[] ){
     chdir(root_folder);
 
     PyRun_SimpleString(
-      "sys.argv = ['notaninterpreter']\n"
+      "sys.argv = ['embedded']\n"
       "class LogFile(object):\n"
       "    def __init__(self):self.buffer = ''\n"
       "    def write(self, s):\n"
@@ -251,18 +251,12 @@ int interpreter_main(int argc, char *argv[] ){
       "            androidembed.log(l)\n"
       "        self.buffer = lines[-1]\n"
       "    def flush(self):return\n"
-      "sys.stdout = sys.stderr = LogFile()\n"
-      "print('Android path', sys.path)\n"
-      "import os\n"
-      "print('os.environ is', os.environ)\n"
-      "print('python bootstrap done. __name__ is', __name__)");
-
+      "sys.stdout = sys.stderr = LogFile()\n");
 
     //int  priority = getpriority(0, 0);
     //return setpriority( PRIO_PROCESS, 0, priority+increment);
     //snprintf(str_cp, sizeof(str_cp), "prio=%i", priority );
     //LOGP( str_cp );
-
 
     LOGP("Run user program, change dir and execute entrypoint :");
     snprintf(main_py, 512, "%s", argv[0] );
@@ -272,9 +266,6 @@ int interpreter_main(int argc, char *argv[] ){
     // check for ^- marking that we want to interact after main script
     if ( (int)main_py[0]==45){
         LOGP("Line interactive");
-
-        //snprintf(str_cp, sizeof(str_cp), "print('pid=%i')", getpid() );
-        //PyRun_SimpleString( str_cp );
 
         snprintf(str_cp, sizeof(str_cp),"%s", &main_py[1]);
         fd = fopen( str_cp, "r");
@@ -286,6 +277,9 @@ int interpreter_main(int argc, char *argv[] ){
         }
 
         LOGP("Running entry point :"); LOGP(str_cp);
+        snprintf(str_cp, sizeof(str_cp),"sys.argv.append('%s')\n", &main_py[1]);
+        PyRun_SimpleString( str_cp );
+
         ret = PyRun_SimpleFile(fd, str_cp );
         if (fd){
             fclose(fd);
@@ -301,9 +295,14 @@ int interpreter_main(int argc, char *argv[] ){
         freopen( getenv("CONSOLE") , "w", stdout );
         freopen( getenv("CONSOLE") , "w", stderr );
 
+        PyRun_SimpleString("print(sys.version,file=sys.__stdout__)\n");
+
         ret =  PyRun_AnyFileFlags( stdin, "<stdin>", &cf);
         snprintf(str_cp, sizeof(str_cp)," == Line interactive done [%i] ==", ret);
         LOGP( str_cp );
+        LOGP( "Begin # UI loop only");
+        PyRun_SimpleString("RunTime.sbc.sb.task_mgr.run()");
+        LOGP( "End # UI loop only");
         goto done;
     }
 
