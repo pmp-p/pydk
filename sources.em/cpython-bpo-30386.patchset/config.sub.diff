@@ -1,0 +1,29 @@
+--- cpython-bpo-30386/config.sub	2017-12-10 15:07:21.000000000 +0100
++++ cpython-bpo-30386.em/config.sub	2018-03-25 17:21:27.190250547 +0200
+@@ -118,7 +118,8 @@
+   linux-musl* | linux-uclibc* | uclinux-uclibc* | uclinux-gnu* | kfreebsd*-gnu* | \
+   knetbsd*-gnu* | netbsd*-gnu* | netbsd*-eabi* | \
+   kopensolaris*-gnu* | cloudabi*-eabi* | \
+-  storm-chaos* | os2-emx* | rtmk-nova*)
++  storm-chaos* | os2-emx* | rtmk-nova* | \
++  emscripten)
+     os=-$maybe_os
+     basic_machine=`echo $1 | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\1/'`
+     ;;
+@@ -253,6 +254,7 @@
+ 	| am33_2.0 \
+ 	| arc | arceb \
+ 	| arm | arm[bl]e | arme[lb] | armv[2-8] | armv[3-8][lb] | armv7[arm] \
++	| asmjs \
+ 	| avr | avr32 \
+ 	| ba \
+ 	| be32 | be64 \
+@@ -1547,6 +1549,8 @@
+ 	-dicos*)
+ 		os=-dicos
+ 		;;
++	-emscripten)
++		;;
+ 	-nacl*)
+ 		;;
+ 	-ios)

@@ -1,0 +1,92 @@
+#!/bin/bash
+TARGET=Emscripten
+LIBPYTHON=libpython3.7.a
+
+SRC=cpython-bpo-30386
+OPT_COMMON="--with-system-ffi --disable-shared --disable-ipv6 --without-ensurepip --with-c-locale-coercion"
+#--with-computed-gotos --without-threads
+OPT_COMMON="$OPT_COMMON --without-pymalloc"
+OPT_TARGET="--without-gcc --host=asmjs-unknown-emscripten"
+GHZIP=https://github.com/xdegaye/cpython/archive/bpo-30386.zip
+
+EM_SDL="-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 -s USE_SDL_NET=2"
+EM_AUDIO="-s USE_OGG=1 -s USE_VORBIS=1 -s USE_OPENAL=1"
+EM_GFX="-s USE_LIBPNG=1 -s USE_FREETYPE=1 -s USE_WEBGL2=1"
+EM_LIBS="-s USE_BULLET=1 -s USE_ZLIB=1"
+
+EM_LIBS="$EM_SDL $EM_AUDIO $EM_GFX $EM_LIBS -s ERROR_ON_MISSING_LIBRARIES=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s LINKABLE=1"
+EM_FLAGS="-s TOTAL_MEMORY=512MB -s DEMANGLE_SUPPORT=0 -s ASSERTIONS=0"
+
+#==============================================================================
+ROOT=$(dirname $(realpath "$0") )
+
+. $SDK/build.functions
+. $SDK/build.${BITS}.functions
+
+
+
+set_source_tree 4200
+
+export DEV_PATHS DEV_TARGET PYVER PYDOT PYMODE OPT_COMMON OPT_TARGET
+
+
+if echo "$@"|grep -q rebuild
+then
+    echo "CLEANING UP"
+    rm -vf $PDK_EM_PYTHON $ORIGIN/${TARGET}/build.host
+fi
+
+
+if [ -n "$PDK_EM_PYTHON" ] && [ -f "$PDK_EM_PYTHON" ]
+then
+    echo "
+    * found TARGET $PDK_EM_PYTHON - skipping HOST + TARGET build
+"
+else
+    if [ -n "$PDK_EM_PYTHON_HOST" ] && [ -f "$PDK_EM_PYTHON_HOST" ]
+    then
+        echo "
+    * found HOST python [$PDK_EM_PYTHON_HOST]
+"
+    else
+        export PDK_EM_PYTHON_HOST=$ROOT/$SRC.host/bin/python3
+        if mkdir -p $ORIGIN/${TARGET}/build.host
+        then
+
+            echo "Building HOST $PDK_EM_PYTHON_HOST"
+
+            patch_me
+
+            echo "press <enter> to start build process"
+            read
+
+            cd $ORIGIN/${TARGET}/build.host
+            ../../configure --prefix=$ROOT/$SRC.host $OPT_COMMON
+            make -j 4 install
+            register_pdk PDK_EM_PYTHON_HOST $PDK_EM_PYTHON_HOST
+        else
+            echo "can't create build dir $ORIGIN/${TARGET}/build.host"
+            exit 1
+        fi
+    fi
+
+    export PDK_EM_PYTHON=${ROOT}/${SRC}.em/bin/python
+
+    echo Building TARGET [$PDK_EM_PYTHON]
+
+    . $TOOLCHAIN
+    if echo $(which emcc)|grep -q emcc$
+    then
+        mkdir -p $ORIGIN/${TARGET}/build.em
+        cd $ORIGIN/${TARGET}/build.em
+        cp ../config.site ./
+        CPPFLAGS="$EM_LIBS $EM_FLAGS" CONFIG_SITE=./config.site READELF=true emconfigure ../../configure $OPT_COMMON $OPT_TARGET \
+ --build=$(../../config.guess) --prefix=$ROOT/$SRC.em
+        cp -vf ../Setup.local Modules/Setup.local
+        emmake make HOSTPYTHON=$PDK_EM_PYTHON_HOST PYTHON_FOR_BUILD=$PDK_EM_PYTHON_HOST CROSS_COMPILE=yes $LIBPYTHON
+    else
+        echo emsdk toolchain not found in [$TOOLCHAIN]
+    fi
+fi
+
+

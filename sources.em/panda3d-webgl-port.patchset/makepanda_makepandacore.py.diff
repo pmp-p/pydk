@@ -1,0 +1,11 @@
+--- panda3d-webgl-port.git/makepanda/makepandacore.py	2017-09-06 11:21:01.000000000 +0200
++++ panda3d-webgl-port.36/makepanda/makepandacore.py	2018-03-25 19:20:59.003084426 +0200
+@@ -2046,7 +2046,7 @@
+     if CrossCompiling():
+         # We need a version of Python we can run.
+         SDK["PYTHONEXEC"] = sys.executable
+-        host_version = "python" + sysconfig.get_python_version() + abiflags
++        host_version = "python" + sysconfig.get_python_version()
+         if SDK["PYTHONVERSION"] != host_version:
+             exit("Host Python version (%s) must be the same as target Python version (%s)!" % (host_version, SDK["PYTHONVERSION"]))
+

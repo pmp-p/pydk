@@ -1,0 +1,22 @@
+--- cpython-bpo-30386/configure.ac	2017-12-10 15:07:21.000000000 +0100
++++ cpython-bpo-30386.em/configure.ac	2018-03-25 17:21:27.183250548 +0200
+@@ -377,6 +377,9 @@
+ 	*-*-cygwin*)
+ 		ac_sys_system=Cygwin
+ 		;;
++	asmjs-*-*)
++		ac_sys_system=Emscripten
++		;;
+ 	*)
+ 		# for now, limit cross builds to known configurations
+ 		MACHDEP="unknown"
+@@ -421,6 +424,9 @@
+ 	*-*-cygwin*)
+ 		_host_cpu=
+ 		;;
++	asmjs-*-*)
++		_host_cpu=
++		;;
+ 	*)
+ 		# for now, limit cross builds to known configurations
+ 		MACHDEP="unknown"

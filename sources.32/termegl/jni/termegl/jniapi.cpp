@@ -222,17 +222,26 @@ extern "C" {
 #if ATEST
                 EGL_SURFACE_TYPE,   EGL_PBUFFER_BIT,
 #else
-                EGL_SURFACE_TYPE,   EGL_WINDOW_BIT,
+                //T EGL_SURFACE_TYPE,   EGL_WINDOW_BIT,
+                EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PIXMAP_BIT,
 #endif
                 EGL_BLUE_SIZE,     8,// 8,
                 EGL_GREEN_SIZE,    8,// 8,
                 EGL_RED_SIZE,      8,// 8,
                 EGL_ALPHA_SIZE,    8,// 8,
+                EGL_NATIVE_RENDERABLE, EGL_TRUE,
+                EGL_SAMPLE_BUFFERS, 1,
+                EGL_BUFFER_SIZE, 32,
+                EGL_COLOR_BUFFER_TYPE, EGL_RGB_BUFFER,
+
+                EGL_BIND_TO_TEXTURE_RGB, EGL_TRUE,
+                EGL_BIND_TO_TEXTURE_RGBA, EGL_TRUE,
 #if GLES2
                 EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT, // 4 ?
 #else
                 EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
 #endif
+                EGL_STENCIL_SIZE, 8,
 /*
                     EGL_TRANSPARENT_TYPE, EGL_TRANSPARENT_RGB,
                     EGL_TRANSPARENT_RED_VALUE,0,

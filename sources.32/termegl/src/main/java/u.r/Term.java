@@ -145,12 +145,13 @@ import android.graphics.PixelFormat;
 
 import android.widget.Toast;
 
+import android.view.View;
 
 import android.os.Process;
 
 //import android.widget.LinearLayout;
 
-
+import u.r.emulatorview.OSC;
 
 /*
 THREAD_PRIORITY_URGENT_AUDIO
@@ -370,13 +371,47 @@ public class Term extends Activity implements SurfaceHolder.Callback, UpdateCall
 
     private boolean mHaveFullHwKeyboard = false;
 
-
+    // End GestureDetector.OnGestureListener methods
 
     private class EmulatorViewGestureListener extends SimpleOnGestureListener {
         private EmulatorView view;
 
         public EmulatorViewGestureListener(EmulatorView view) {
             this.view = view;
+
+            view.setOnHoverListener(new View.OnHoverListener() {
+                @Override
+                public boolean onHover(View v, MotionEvent ev) {
+                    boolean state = ( System.getenv("RAW_INPUT")!= null) ;
+                    new OSC().execute( "/hl " + ev + "\n");
+                    if ( ( System.getenv("RAW_INPUT")!= null) && ( ev.getButtonState()==ev.BUTTON_BACK ) ){
+                        Log.w(TermDebug.LOG_TAG, "#FIXME: block bubble #1 : " + state);
+                    }
+                    return state;
+                }
+            });
+
+            view.setOnGenericMotionListener(new View.OnGenericMotionListener() {
+                @Override
+                public boolean onGenericMotion(View v, MotionEvent ev) {
+                    new OSC().execute( "/gm " + ev +"\n");
+
+                    if ( ( System.getenv("RAW_INPUT")!= null) && ( ev.getButtonState()==ev.BUTTON_BACK ) ){
+                        Log.w(TermDebug.LOG_TAG, "#FIXME: block bubble #2");
+                        return true;
+                    }
+
+                    return ( System.getenv("RAW_INPUT")!= null );
+                    /*
+                    if ( System.getenv("RAW_INPUT")!= null )
+                        return false;
+                    else
+                        return true;
+                    */
+                }
+
+            });
+
         }
 
         @Override
@@ -418,6 +453,15 @@ public class Term extends Activity implements SurfaceHolder.Callback, UpdateCall
      * Should we use keyboard shortcuts?
      */
     private boolean mUseKeyboardShortcuts;
+/*
+    private View.OnHoverListener ohl = new View.OnHoverListener() {
+        @Override
+        public boolean onHover( View v, MotionEvent ev ) {
+            Log.w(TAG, " onHover " + ev);
+            return true;
+        }
+    };
+*/
 
 
     //===================================================
@@ -467,9 +511,13 @@ public class Term extends Activity implements SurfaceHolder.Callback, UpdateCall
          * Make sure the back button always leaves the application.
          */
         private boolean backkeyInterceptor(int keyCode, KeyEvent event) {
+            if (keyCode == KeyEvent.KEYCODE_BACK)
+                Log.w(TermDebug.LOG_TAG, "#FIXME: block bubble when RAW_INPUT");
+
             if (keyCode == KeyEvent.KEYCODE_BACK && mActionBarMode == TermSettings.ACTION_BAR_MODE_HIDES && mActionBar.isShowing()) {
                 /* We need to intercept the key event before the view sees it,
                    otherwise the view will handle it before we get it */
+
                 onKeyUp(keyCode, event);
                 return true;
             } else {
@@ -486,7 +534,7 @@ public class Term extends Activity implements SurfaceHolder.Callback, UpdateCall
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        Log.e(TermDebug.LOG_TAG, "onCreate");
+        //Log.e(TermDebug.LOG_TAG, "onCreate");
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         mSettings = new TermSettings(getResources(), mPrefs);
         mPrivateAlias = new ComponentName(this, RemoteInterface.PRIVACT_ACTIVITY_ALIAS);

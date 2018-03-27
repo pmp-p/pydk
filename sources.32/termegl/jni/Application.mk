@@ -1,7 +1,7 @@
 #auto-generated do not edit
 APP_PLATFORM := android-19
 APP_ABI := armeabi-v7a
-
+APP_PIE = true
 APP_OPTIM := debug
 APP_STL := c++_shared
 APP_CPPFLAGS := -fPIE -fexceptions -funwind-tables -frtti -std=c++11

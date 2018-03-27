@@ -221,6 +221,7 @@ if [ -f $SDK/built.${BITS}.env ]
 then
     source "$SDK/build.${BITS}.env"
     source "$SDK/built.${BITS}.env"
+    source "$SDK/build.functions"
     source "$SDK/build.${BITS}.functions"
     source $SDKMAN_DIR/bin/sdkman-init.sh
 else
@@ -248,6 +249,7 @@ else
 
     cp -vf ${ORIGIN}/build.${BITS}.env $SDK/
     ln ${ORIGIN}/build.${BITS}.functions $SDK/
+    ln ${ORIGIN}/build.functions $SDK/
 
     ln ${ORIGIN}/sources.${BITS}/*.build $SDK/build.${BITS}/
     cp -aR ${ORIGIN}/sources.${BITS}/*.patchset $SDK/build.${BITS}/
@@ -260,7 +262,7 @@ fi
 . $SDK_ROOT/sdk.env
 
 echo "
-    * installing armv7a-none-linux-android toolchain  in $TOOLCHAIN
+    * installing armv7a-none-linux-android toolchain in $TOOLCHAIN
 "
 $NDK/build/tools/make_standalone_toolchain.py \
  --arch arm --api $ANDROID_API --stl=gnustl --force --install-dir $TOOLCHAIN

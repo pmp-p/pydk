@@ -5,6 +5,7 @@ import time as Time
 import traceback
 import socket
 import threading
+from collections import namedtuple
 
 sys.path.append('/data/data/u.root/usr/src/Roaming/lib/')
 import xpy
@@ -54,15 +55,20 @@ with open(mark_env, 'r') as fenv:
 
 os.unlink(mark_env)
 
+lspam = RunTime.Lapse(2)
+
 
 class Inputs(threading.Thread):
 
     kb = []
+    ev = []
 
     def __init__(self,*argv,**kw):
         threading.Thread.__init__(self)
         self.setup(*argv,**kw)
         self.alive = None
+        self.data = '<null>'
+        self.pressed = []
 
     def setup_task(self,handler):
         import panda3d
@@ -95,6 +101,7 @@ class Inputs(threading.Thread):
         Time.sleep(delay)
         androidembed.log(' == panda3d detected ==')
         os.environ['RAW_INPUT']="1"
+        os.environ['RAW_TOUCH_DBG']="1"
         return True
 
 
@@ -134,45 +141,160 @@ class Thread_TUIOService(Inputs):
         '\t': 'tab',
     }
 
+    BUTTON_PRIMARY = 'BUTTON_PRIMARY'
+    BUTTON_BACK = 'BUTTON_BACK'
+    BUTTON_TERTIARY = 'BUTTON_TERTIARY'
+
+    #vnc
+    TOOL_TYPE_FINGER = 'TOOL_TYPE_FINGER'
+
     def setup(self,*argv,**kw):
         androidembed.log('Begin: input thread ')
 
 
-    def URoot_InputService(self,task):
-        if len(self.kb):
-            elems = self.kb.pop(0)
-            keycode, keyuc, evtype, evcount, key = elems
-            keycode = int(keycode)
-            if evtype=='1':up='-up'
-            else:up=''
+    def get_event(self,data,hint=0):
+        ev  = {'buttonState':0}
+        if hint:
+            data = data[hint:-2]
+        else:
+            data = data[:-2].split('{ ',1)[-1]
 
-            if keycode in self.KMAP:
-                messenger.send(''.join( (self.KMAP[keycode],up,) ) )
-            elif key in self.CMAP:
-                messenger.send(''.join( (self.CMAP[key],up,) ) )
-            else:
-                messenger.send( ''.join( (key.lower(),up,) ) )
-                #self.inj_kbd( int(keyuc) )
-                androidembed.log("kbd %s" % elems )
+        for data in data.replace('[','').replace(']','').split(', '):
+            data = data.split('=')
+            ev[data[0]] = data[1]
+
+        return  namedtuple('GenericDict', ev.keys())(**ev)
+
+    def mouse_move(self,ev):
+        global lspam
+        x = float(ev.x0)
+        y = float(ev.y0)
+        self.mouse_dev.setPointerInWindow( int( x )  ,int( y ) )
+        if lspam:
+            self.dirty = f'mouse_move({x}, {y})'
+            return
+        self.dirty = True
+
+
+    def mouse_buttons(self, ev,down=0,up=0):
+        if down:
+            mhandle  = self.mouse_dev.button_down
+        elif up:
+            mhandle  = self.mouse_dev.button_up
+
+
+        if (self.BUTTON_PRIMARY in ev.buttonState) or (self.TOOL_TYPE_FINGER in ev.toolType0):
+            mhandle( panda3d.core.MouseButton.one() )
+            self.pressed.append( self.BUTTON_PRIMARY )
+            self.dirty = f'mouse_buttons(1, down={down}, up={up})'
+
+        if self.BUTTON_BACK in ev.buttonState:
+            mhandle( panda3d.core.MouseButton.two() )
+            self.pressed.append( self.BUTTON_BACK )
+            self.dirty = f'mouse_buttons(2, down={down}, up={up})'
+
+        if self.BUTTON_TERTIARY in ev.buttonState:
+            mhandle( panda3d.core.MouseButton.three() )
+            self.pressed.append( self.BUTTON_TERTIARY )
+            self.dirty = f'mouse_buttons(3, down={down}, up={up})'
+
+        if up:
+            if self.BUTTON_PRIMARY in self.pressed:
+                self.pressed.remove(self.BUTTON_PRIMARY)
+                mhandle( panda3d.core.MouseButton.one() )
+                self.dirty = f'mouse_buttons(1, down={down}, up={up})'
+
+            if self.BUTTON_BACK in self.pressed:
+                self.pressed.remove(self.BUTTON_BACK)
+                mhandle( panda3d.core.MouseButton.one() )
+                self.dirty = f'mouse_buttons(2, down={down}, up={up})'
+
+            if self.BUTTON_TERTIARY in self.pressed:
+                self.pressed.remove(self.BUTTON_TERTIARY)
+                mhandle( panda3d.core.MouseButton.three() )
+                self.dirty = f'mouse_buttons(3, down={down}, up={up})'
+
+    def URoot_InputService(self,task):
+        elems = []
+        try:
+            self.dirty = ''
+            if len(self.ev):
+                ev = self.ev.pop(0)
+                if ('ACTION_HOVER_MOVE' in ev.action):
+                    self.mouse_move(ev)
+                elif ('ACTION_MOVE' in ev.action):
+                    self.mouse_move(ev)
+
+                elif ('ACTION_DOWN' in ev.action):
+                    # finger, vnc do no hover
+                    self.mouse_move(ev)
+                    self.mouse_buttons(ev,down=1)
+
+                elif ('ACTION_UP' in ev.action):
+                    # finger, vnc do no hover
+                    self.mouse_move(ev)
+                    self.mouse_buttons(ev,up=1)
+
+
+                if self.dirty is not True:
+                    if not self.dirty:
+                        androidembed.log("%s : %s" %( self.data[:3], ev) )
+                    else:
+                        androidembed.log("u.r.input : %s" %( self.dirty) )
+
+            if len(self.kb):
+                elems = self.kb.pop(0)
+                keycode, keyuc, evtype, evcount, key, tc = elems
+                keycode = int(keycode)
+                if evtype=='1':up='-up'
+                else:up=''
+
+                if keycode in self.KMAP:
+                    messenger.send(''.join( (self.KMAP[keycode],up,) ) )
+                elif key in self.CMAP:
+                    messenger.send(''.join( (self.CMAP[key],up,) ) )
+                else:
+                    messenger.send( ''.join( (key.lower(),up,) ) )
+                    #self.inj_kbd( int(keyuc) )
+                    androidembed.log("kbd %s" % elems )
+
+        except Exception as e:
+            logstr = "URoot_InputService.ERROR %s : %s : %s" % (e,self.data,elems)
+            androidembed.log( logstr.replace( chr(0), '') )
+            traceback.print_exc()
 
 
         return self.Task_cont
 
+
     def run(self):
-#        while self.alive is None:
-#            Time.sleep(.1)
+
         if self.awaitPandaIO():
             Time.sleep(1)
+            self.mouse_ptr = RunTime.sbc.sb.win.movePointer
+            self.mouse_dev = RunTime.sbc.sb.win.getInputDevice(0)
             self.setup_task(self.URoot_InputService)
+
             while True:
-                data, address = RunTime.io.recvfrom(32)
+                data, address = RunTime.io.recvfrom(1024)
                 if not self.alive:
                     break
-                if data.startswith(b'/kbd'):
-                    self.kb.append( data.decode('utf-8')[5:].split(', ') )
-                else:
-                    androidembed.log("? %s : [%s]"% ( len(data),repr(data)) )
 
+                self.data = data.decode('utf-8').strip()
+                try:
+                    if self.data.startswith('/kbd '):
+                        self.kb.append( self.data[5:].split(', ') )
+
+                    elif self.data.startswith('/kpi '):
+                        androidembed.log(self.data)
+
+                    else:
+                        ev = self.get_event(self.data)
+                        self.ev.append( ev )
+
+                except Exception as e:
+                    androidembed.log( "run.ERROR %s : %s" %( e,self.data ) )
+                    traceback.print_exc()
 
 
     def End(self):
@@ -182,7 +304,7 @@ class Thread_TUIOService(Inputs):
 
             os.environ['RAW_INPUT']="0"
             os.environ.pop('RAW_INPUT',None)
-
+            os.environ.pop('RAW_TOUCH_DBG',None)
 
 def flush_io(restore=False):
     if restore:
@@ -190,6 +312,12 @@ def flush_io(restore=False):
         sys.stderr = sys.__stderr__
     sys.stdout.flush()
     sys.stderr.flush()
+
+def flush_hook(*argv,**kw):
+    flush_io()
+    return sys.__excepthook__(*argv,**kw)
+
+sys.excepthook = flush_hook
 
 
 def info(*argv,**kw):
@@ -216,9 +344,13 @@ DEFAULT = "/data/data/u.root/sdk/panda3d/samples-bullet/bullet_problem/main.py"
 DEFAULT = "/data/data/u.root/usr/src/Roaming/lib/utest.py"
 DEFAULT = "/data/data/u.root/sdk/panda3d/samples-next/test2w.py"
 
-DEFAULT = "/data/data/u.root/sdk/panda3d/LUI/Demos/01_MinimalExample.py"
-DEFAULT = "/data/data/u.root/sdk/panda3d/LUI/Demos/02_SimpleConsole.py"
+#DEFAULT = "/data/data/u.root/sdk/panda3d/LUI/Demos/01_MinimalExample.py"
+#DEFAULT = "/data/data/u.root/sdk/panda3d/LUI/Demos/02_SimpleConsole.py"
 DEFAULT = '/data/data/u.root/sdk/panda3d/samples-next/hello.py'
+#DEFAULT = '/data/data/u.root/sdk/panda3d/samples-next/shader_text.py'
+#DEFAULT = '/data/data/u.root/sdk/panda3d/samples-next/shader_test.py'
+
+
 
 
 def run(__file__=DEFAULT,*flags):
@@ -233,8 +365,8 @@ def run(__file__=DEFAULT,*flags):
 
     oldwd = os.getcwd()
 
-    loadPrcFileData("", f"model-path {cd}:."  )
-    loadPrcFileData("", "background-color 0 0 0 0")
+    load_prc_file_data("", f"model-path {cd}:."  )
+    load_prc_file_data("", "background-color 0 0 0 0")
     os.chdir( cd )
 
     androidembed.log("-----------------------------------------")
@@ -317,43 +449,48 @@ def dry(__file__=DEFAULT,*flags):
 
 
 def dbg(__file__=DEFAULT):
-    return dry(__file__,-1,-2)
+    return run(__file__,-1,-2)
 
 
 try:
     import panda3d
     import panda3d.core
-    loadPrcFileData = panda3d.core.loadPrcFileData
+    load_prc_file_data = panda3d.core.load_prc_file_data
 
-    loadPrcFileData("", "tga-rle #t") # tga-grayscale
-    #loadPrcFileData("", "threading-model Cull/Draw")
+    load_prc_file_data("", "tga-rle #t") # tga-grayscale
+    #load_prc_file_data("", "threading-model Cull/Draw")
 
-    loadPrcFileData("", "framebuffer-hardware #t")
-    loadPrcFileData("", "framebuffer-software #t")
+    load_prc_file_data("", "framebuffer-hardware #t")
+    load_prc_file_data("", "framebuffer-software #f")
 
-    #loadPrcFileData("", "win-origin -2 -2")
-    loadPrcFileData("", "win-size 640 360")
-    loadPrcFileData("", "window-type onscreen")
-    loadPrcFileData("", "window-title none")
-    loadPrcFileData("", "undecorated #t")
+    #load_prc_file_data("", "win-origin -2 -2")
+    load_prc_file_data("", "win-size 640 360")
+    load_prc_file_data("", "window-type onscreen")
+    load_prc_file_data("", "window-title none")
+    load_prc_file_data("", "undecorated #t")
 
-    #X loadPrcFileData("", "yield-timeslice #t")
-    loadPrcFileData("", "gl-debug #t")
+    #X load_prc_file_data("", "yield-timeslice #t")
+    load_prc_file_data("", "gl-debug #t")
 
-    #loadPrcFileData("", "win-origin -2 -2")
-    #loadPrcFileData("", "win-size 848 480")
+    #load_prc_file_data("", "win-origin -2 -2")
+    #load_prc_file_data("", "win-size 848 480")
 
-    loadPrcFileData("", 'model-cache-dir %s' % f'{HOME}/XDG_CACHE_HOME/panda3d' )
-    loadPrcFileData("", "model-cache-textures #f")
-    loadPrcFileData("", "model-path /data/data/u.root/usr/share/panda3d/models:." )
+    load_prc_file_data("", 'model-cache-dir %s' % f'{HOME}/XDG_CACHE_HOME/panda3d' )
+    load_prc_file_data("", "model-cache-textures #f")
+    load_prc_file_data("", "model-path /data/data/u.root/usr/share/panda3d" )
 
-    loadPrcFileData("", "yield-timeslice #t")
-    loadPrcFileData("", "default-model-extension .bam")
-    loadPrcFileData("", "textures_power_2 down")
-    loadPrcFileData("", "textures-power-2 down")
-    loadPrcFileData("", "textures-square down")
-    loadPrcFileData("", "background-color 0 0 0 0")
-    loadPrcFileData("", "audio-library-name p3openal_audio")
+    load_prc_file_data("", "yield-timeslice #t")
+    load_prc_file_data("", "default-model-extension .bam")
+    #load_prc_file_data("", "textures_power_2 down")
+    #load_prc_file_data("", "textures-square down")
+
+    load_prc_file_data("", "textures-power-2 down")
+
+    load_prc_file_data("", "background-color .5 .5 .5 1")
+    load_prc_file_data("", "audio-library-name p3openal_audio")
+    load_prc_file_data("", 'notify-level-lui warning')
+    #load_prc_file_data("", 'notify-level-gles2gsg spam')
+    #load_prc_file_data("", 'force-parasite-buffer 1 1')
 
     androidembed.log("pandarc complete")
 except Exception as e:
@@ -364,51 +501,6 @@ except Exception as e:
 sys.stdout = sys.__stdout__
 sys.stderr = sys.__stderr__
 
-
-#
-#"""
-#
-#if __ANDROID__:
-#    loadPrcFileData("", "load-display pandagles")
-#    loadPrcFileData("", "load-display pandagles2")
-#    loadPrcFileData("", "load-display p3android")
-#    loadPrcFileData("", "load-file-type p3ptloader")
-#    loadPrcFileData("", "load-file-type egg pandaegg")
-#    loadPrcFileData("", "load-audio-type * p3ffmpeg")
-#    loadPrcFileData("", "load-video-type * p3ffmpeg")
-#    loadPrcFileData("", "egg-object-type-portal          <Scalar> portal { 1 }")
-#    loadPrcFileData("", "egg-object-type-polylight       <Scalar> polylight { 1 }")
-#    loadPrcFileData("", "egg-object-type-seq24           <Switch> { 1 } <Scalar> fps { 24 }")
-#    loadPrcFileData("", "egg-object-type-seq12           <Switch> { 1 } <Scalar> fps { 12 }")
-#    loadPrcFileData("", "egg-object-type-indexed         <Scalar> indexed { 1 }")
-#    loadPrcFileData("", "egg-object-type-seq10           <Switch> { 1 } <Scalar> fps { 10 }")
-#    loadPrcFileData("", "egg-object-type-seq8            <Switch> { 1 } <Scalar> fps { 8 }")
-#    loadPrcFileData("", "egg-object-type-seq6            <Switch> { 1 } <Scalar>  fps { 6 }")
-#    loadPrcFileData("", "egg-object-type-seq4            <Switch> { 1 } <Scalar>  fps { 4 }")
-#    loadPrcFileData("", "egg-object-type-seq2            <Switch> { 1 } <Scalar>  fps { 2 }")
-#    loadPrcFileData("", "egg-object-type-binary          <Scalar> alpha { binary }")
-#    loadPrcFileData("", "egg-object-type-dual            <Scalar> alpha { dual }")
-#    loadPrcFileData("", "egg-object-type-glass           <Scalar> alpha { blend_no_occlude }")
-#    loadPrcFileData("", "egg-object-type-model           <Model> { 1 }")
-#    loadPrcFileData("", "egg-object-type-dcs             <DCS> { 1 }")
-#    loadPrcFileData("", "egg-object-type-notouch         <DCS> { no_touch }")
-#    loadPrcFileData("", "egg-object-type-barrier         <Collide> { Polyset descend }")
-#    loadPrcFileData("", "egg-object-type-sphere          <Collide> { Sphere descend }")
-#    loadPrcFileData("", "egg-object-type-invsphere       <Collide> { InvSphere descend }")
-#    loadPrcFileData("", "egg-object-type-tube            <Collide> { Tube descend }")
-#    loadPrcFileData("", "egg-object-type-trigger         <Collide> { Polyset descend intangible }")
-#    loadPrcFileData("", "egg-object-type-trigger-sphere  <Collide> { Sphere descend intangible }")
-#    loadPrcFileData("", "egg-object-type-floor           <Collide> { Polyset descend level }")
-#    loadPrcFileData("", "egg-object-type-dupefloor       <Collide> { Polyset keep descend level }")
-#    loadPrcFileData("", "egg-object-type-bubble          <Collide> { Sphere keep descend }")
-#    loadPrcFileData("", "egg-object-type-ghost           <Scalar> collide-mask { 0 }")
-#    loadPrcFileData("", "egg-object-type-glow            <Scalar> blend { add }")
-#    loadPrcFileData("", "egg-object-type-direct-widget   <Scalar> collide-mask { 0x80000000 } <Collide> { Polyset descend }")
-#    loadPrcFileData("", "cull-bin gui-popup 60 unsorted")
-#
-#
-#
-#"""
 
 def aloop(*args, **kargs):
     """ Ensure there is an opened event loop available and return it"""

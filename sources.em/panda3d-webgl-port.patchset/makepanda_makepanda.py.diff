@@ -1,0 +1,11 @@
+--- panda3d-webgl-port.git/makepanda/makepanda.py	2017-09-06 11:21:01.000000000 +0200
++++ panda3d-webgl-port.36/makepanda/makepanda.py	2018-03-27 07:12:08.349094782 +0200
+@@ -26,6 +26,8 @@
+ import os
+ import sys
+ 
++if os.environ.get('PYTHONHOME'):del os.environ['PYTHONHOME']
++
+ ########################################################################
+ ##
+ ## PARSING THE COMMAND LINE OPTIONS

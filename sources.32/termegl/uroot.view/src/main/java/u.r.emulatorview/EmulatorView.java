@@ -1180,10 +1180,17 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
         return true;
     }
 
-    // End GestureDetector.OnGestureListener methods
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        new OSC().execute( "/te " + ev +"\n");
+
+        if ( System.getenv("RAW_INPUT")!= null ){
+            if ( ev.getButtonState()==ev.BUTTON_BACK )
+                Log.w(TAG, "#FIXME: block bubble #3");
+            return true;
+        }
+
         if (mIsSelectingText) {
             return onTouchEventWhileSelectingText(ev);
         } else {
@@ -1314,20 +1321,21 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
 // https://developer.android.com/reference/android/view/KeyEvent.html#getDisplayLabel%28%29
 
 
-
     @Override
     public boolean onKeyPreIme(int keyCode, KeyEvent event) {
         if ( System.getenv("RAW_INPUT")!= null ) {
             //Log.w(TAG,Build.MODEL + " onKeyPreIme " + keyCode);
+            new OSC().execute("/kpi " + event +"\n");
             new OSC().execute(
                 "/kbd " +
                 keyCode +", " +
                 event.getUnicodeChar() +", " +
                 event.getAction()+ ", "+
                 event.getRepeatCount()+" , " +
-                event.getDisplayLabel() );
+                event.getDisplayLabel() + ", " +
+                event.getEventTime() + "\n" );
             //return super.onKeyPreIme(keyCode, event);
-            //return true; //would block down/up
+            //return true; //stop bubbling
             return true;
         }
 

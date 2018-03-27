@@ -1,4 +1,5 @@
 #!/system/bin/sh
+sleep 1
 
 export LC_ALL=C
 export LANG=C.UTF-8

@@ -1,10 +1,7 @@
 LOCAL_PATH := $(call my-dir)
 include $(call my-dir)/../../board.tmp
 
-LOCAL_CPP_FEATURES := rtti
-LOCAL_CPP_FEATURES := exceptions
 include $(CLEAR_VARS)
-
 
 # Include libpython3.7dm.so
 
