@@ -10,13 +10,12 @@ OPT_TARGET="--without-gcc --host=asmjs-unknown-emscripten"
 GHZIP=https://github.com/xdegaye/cpython/archive/bpo-30386.zip
 
 EM_SDL="-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 -s USE_SDL_NET=2"
-EM_AUDIO="-s USE_OGG=1 -s USE_VORBIS=1"
 EM_GFX="-s USE_LIBPNG=1 -s USE_FREETYPE=1 -s USE_WEBGL2=1 -s OFFSCREENCANVAS_SUPPORT=1"
-EM_LIBS="-s USE_BULLET=1 -s USE_ZLIB=1"
+EM_LIBS="-s USE_OGG=1 -s USE_VORBIS=1 -s USE_BULLET=1 "
 
 # -s ERROR_ON_UNDEFINED_SYMBOLS=1
-EM_LIBS="$EM_SDL $EM_AUDIO $EM_GFX $EM_LIBS -s ERROR_ON_MISSING_LIBRARIES=1 -s LINKABLE=1"
-EM_FLAGS="-s TOTAL_MEMORY=512MB -s DEMANGLE_SUPPORT=0 -s ASSERTIONS=0"
+EM_LIBS="$EM_SDL $EM_GFX $EM_LIBS "
+EM_FLAGS="-s TOTAL_MEMORY=512MB -s DEMANGLE_SUPPORT=0 -s ASSERTIONS=0 -s ERROR_ON_MISSING_LIBRARIES=1 -s LINKABLE=1 -s USE_ZLIB=1"
 
 #==============================================================================
 ROOT=$(dirname $(realpath "$0") )
@@ -44,7 +43,7 @@ then
     * found TARGET $PDK_EM_PYTHON - skipping HOST + TARGET build
 "
 else
-    if [ -n "$PDK_EM_PYTHON_HOST" ] && [ -f "$PDK_EM_PYTHON_HOST" ]
+    if [ -n "$PDK_EM_PYTHON_HOST" ]
     then
         echo "
     * found HOST python [$PDK_EM_PYTHON_HOST]
@@ -80,10 +79,16 @@ else
     then
         mkdir -p $ORIGIN/${TARGET}/build.em
         cd $ORIGIN/${TARGET}/build.em
-        cp ../config.site ./
-        CPPFLAGS="$EM_LIBS $EM_FLAGS" CONFIG_SITE=./config.site READELF=true emconfigure ../../configure $OPT_COMMON $OPT_TARGET \
+        if [ -f config.done ]
+        then
+            echo emconfigure already done
+        else
+            cp ../config.site ./
+            CPPFLAGS="$EM_FLAGS" CONFIG_SITE=./config.site READELF=true emconfigure ../../configure $OPT_COMMON $OPT_TARGET \
  --build=$(../../config.guess) --prefix=$ROOT/$SRC.em
-        cp -vf ../Setup.local Modules/Setup.local
+            cp -vf ../Setup.local Modules/Setup.local
+            touch config.done
+        fi
         emmake make HOSTPYTHON=$PDK_EM_PYTHON_HOST PYTHON_FOR_BUILD=$PDK_EM_PYTHON_HOST CROSS_COMPILE=yes $LIBPYTHON
     else
         echo emsdk toolchain not found in [$TOOLCHAIN]
