@@ -31,10 +31,7 @@ The onboard sdk rely on an elf loader / qemu trick around debian jessie and the 
 
 If you need more info or have use for onboard sdk contact me via #H3Droid on freenode irc.
 
-
-<<<<<<< HEAD
-
-
+[![PayPayl](https://raw.githubusercontent.com/pmp-p/h3droid/sdk/usr/src/projects/b0.png)](http://paypal.me/pmpp)
 
 
 
@@ -66,6 +63,5 @@ In the build folder you'll find various .build files which are recipes to downlo
 
 EGL Terminal running Panda3D+LUI GLES 2.0  and Tilde VT100 at the same time ( H3droid 4.4.2 / Orange PI PC Mali400 MP2 )
 
-[![PayPayl](https://raw.githubusercontent.com/pmp-p/h3droid/sdk/usr/src/projects/b0.png)](http://paypal.me/pmpp)
->>>>>>> 55e491f9f4a85e814c6e62a07ba38edc40c692ec
+
 
