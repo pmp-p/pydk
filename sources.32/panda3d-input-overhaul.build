@@ -21,12 +21,10 @@ export NDK_ROOT=$ANDROID_NDK_ROOT
 OPT_ANDROID="--arch $PANDA_ARCH --target android-${__ANDROID_API__} --no-pview --no-pandatool --use-neon --no-sse2"
 
 #==============================================================================
-ORIGIN=$(dirname $(realpath "$0") )
+ROOT=$(dirname $(realpath "$0") )
 
+. $SDK/build.functions
 . $SDK/build.${BITS}.functions
-
-
-ROOT=$(pwd)
 
 set_source_tree 7200
 
