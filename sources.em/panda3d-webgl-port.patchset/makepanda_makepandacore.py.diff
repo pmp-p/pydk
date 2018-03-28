@@ -1,5 +1,5 @@
---- panda3d-webgl-port.git/makepanda/makepandacore.py	2017-09-06 11:21:01.000000000 +0200
-+++ panda3d-webgl-port.36/makepanda/makepandacore.py	2018-03-25 19:20:59.003084426 +0200
+--- panda3d-webgl-port.master/makepanda/makepandacore.py	2017-09-06 11:21:01.000000000 +0200
++++ panda3d-webgl-port.py37/makepanda/makepandacore.py	2018-03-28 18:50:56.275122312 +0200
 @@ -2046,7 +2046,7 @@
      if CrossCompiling():
          # We need a version of Python we can run.
@@ -8,4 +8,33 @@
 +        host_version = "python" + sysconfig.get_python_version()
          if SDK["PYTHONVERSION"] != host_version:
              exit("Host Python version (%s) must be the same as target Python version (%s)!" % (host_version, SDK["PYTHONVERSION"]))
-
+ 
+@@ -2637,6 +2637,8 @@
+             if os.path.isdir(pcbsd_inc):
+                 SYS_INC_DIRS.append(pcbsd_inc)
+ 
++        null.close()
++
+         # Print out the search paths
+         if GetVerbose():
+             print("System library search path:")
+@@ -2988,15 +2990,16 @@
+     ORIG_EXT[x] = v
+ 
+ def GetExtensionSuffix():
++    target = GetTarget()
++    if target == 'emscripten':
++        return '.bc'
+     if sys.version_info >= (3, 0):
+         suffix = sysconfig.get_config_var('EXT_SUFFIX')
+         if suffix:
+             return suffix
+-    target = GetTarget()
++
+     if target == 'windows':
+         return '.pyd'
+-    elif target == 'emscripten':
+-        return '.bc'
+     else:
+         return '.so'
+ 

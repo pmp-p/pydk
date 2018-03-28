@@ -1,0 +1,11 @@
+--- panda3d-webgl-port.master/direct/src/dcparser/dcPacker.cxx	2017-09-06 11:21:01.000000000 +0200
++++ panda3d-webgl-port.py37/direct/src/dcparser/dcPacker.cxx	2018-03-27 20:51:32.547955988 +0200
+@@ -708,7 +708,7 @@
+     pack_int64(PyLong_AsLongLong(object));
+ #if PY_MAJOR_VERSION >= 3
+   } else if (PyUnicode_Check(object)) {
+-    char *buffer;
++    const char *buffer;
+     Py_ssize_t length;
+     buffer = PyUnicode_AsUTF8AndSize(object, &length);
+     if (buffer) {

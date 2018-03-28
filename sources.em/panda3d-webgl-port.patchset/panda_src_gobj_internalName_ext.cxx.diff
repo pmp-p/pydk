@@ -1,0 +1,20 @@
+--- panda3d-webgl-port.master/panda/src/gobj/internalName_ext.cxx	2017-09-06 11:21:01.000000000 +0200
++++ panda3d-webgl-port.py37/panda/src/gobj/internalName_ext.cxx	2018-03-27 20:51:32.588955987 +0200
+@@ -26,7 +26,7 @@
+   if (!PyUnicode_CHECK_INTERNED(str)) {
+     // Not an interned string; don't bother.
+     Py_ssize_t len = 0;
+-    char *c_str = PyUnicode_AsUTF8AndSize((PyObject *)str, &len);
++    const char *c_str = PyUnicode_AsUTF8AndSize((PyObject *)str, &len);
+     if (c_str == NULL) {
+       return NULL;
+     }
+@@ -43,7 +43,7 @@
+ 
+   } else {
+     Py_ssize_t len = 0;
+-    char *c_str = PyUnicode_AsUTF8AndSize((PyObject *)str, &len);
++    const char *c_str = PyUnicode_AsUTF8AndSize((PyObject *)str, &len);
+     string name(c_str, len);
+ 
+ #else
