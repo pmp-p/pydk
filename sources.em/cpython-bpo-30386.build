@@ -90,6 +90,9 @@ else
         $EM_MAKE inclinstall libinstall $LIBPYTHON
         mkdir -p $ROOT/$SRC.em/lib
         cp $LIBPYTHON $ROOT/$SRC.em/lib/
+        $SYSCF_HOST="$ROOT/$SRC.host/lib/python3.7/_sysconfigdata__linux_x86_64-linux-gnu.py"
+        $SYSCF_EM="$ROOT/$SRC.em/lib/python3.7/_sysconfigdata__emscripten_x86_64-linux-gnu.py"
+        cp -vf $SYSCF_HOST $SYSCF_EM
     else
         echo emsdk toolchain not found in [$TOOLCHAIN]
     fi

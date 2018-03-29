@@ -1,0 +1,19 @@
+--- panda3d-webgl-port/panda/src/webgldisplay/webGLGraphicsStateGuardian.cxx	2017-09-06 11:21:01.000000000 +0200
++++ panda3d-webgl-port.py37/panda/src/webgldisplay/webGLGraphicsStateGuardian.cxx	2018-03-29 20:56:43.647946202 +0200
+@@ -66,10 +66,16 @@
+   attribs.stencil = (properties.get_stencil_bits() > 0);
+   attribs.majorVersion = 1;
+   attribs.minorVersion = 0;
++
+   attribs.enableExtensionsByDefault = false;
+ 
+   EMSCRIPTEN_WEBGL_CONTEXT_HANDLE result;
+   result = emscripten_webgl_create_context(target, &attribs);
++  if (!result){
++    webgldisplay_cat.error() << "Web GL1 Context creation failed, retring with GL2.\n";
++    attribs.majorVersion = 2;
++    result = emscripten_webgl_create_context(target, &attribs);
++  }
+ 
+   if (result > 0) {
+     _context = result;

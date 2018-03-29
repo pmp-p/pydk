@@ -1,4 +1,4 @@
---- panda3d-webgl-port.master/panda/src/gobj/internalName_ext.cxx	2017-09-06 11:21:01.000000000 +0200
+--- panda3d-webgl-port/panda/src/gobj/internalName_ext.cxx	2017-09-06 11:21:01.000000000 +0200
 +++ panda3d-webgl-port.py37/panda/src/gobj/internalName_ext.cxx	2018-03-27 20:51:32.588955987 +0200
 @@ -26,7 +26,7 @@
    if (!PyUnicode_CHECK_INTERNED(str)) {

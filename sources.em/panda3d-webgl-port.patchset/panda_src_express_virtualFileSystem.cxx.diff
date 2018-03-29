@@ -1,5 +1,5 @@
---- panda3d-webgl-port.master/panda/src/express/virtualFileSystem.cxx	2017-09-06 11:21:01.000000000 +0200
-+++ panda3d-webgl-port.py37/panda/src/express/virtualFileSystem.cxx	2018-03-28 18:12:31.521175698 +0200
+--- panda3d-webgl-port/panda/src/express/virtualFileSystem.cxx	2017-09-06 11:21:01.000000000 +0200
++++ panda3d-webgl-port.py37/panda/src/express/virtualFileSystem.cxx	2018-03-29 15:06:26.590433022 +0200
 @@ -1149,6 +1149,24 @@
    // Also transparently look for a regular file suffixed .pz.
    Filename strpath_pz = strpath + ".pz";
@@ -15,7 +15,7 @@
 +            if ( strpath.exists() ){
 +                // raw file is already here
 +            } else {
-+                int rx = EM_ASM_INT( {  return Module.callfs( Module.Pointer_stringify($0) ); }, strpath.c_str() );
++                int rx = EM_ASM_INT( {  return Module.callfs( Pointer_stringify($0) ); }, strpath.c_str() );
 +            }
 +        }
 +    #endif

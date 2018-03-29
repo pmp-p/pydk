@@ -1,4 +1,4 @@
---- panda3d-webgl-port.master/makepanda/makepandacore.py	2017-09-06 11:21:01.000000000 +0200
+--- panda3d-webgl-port/makepanda/makepandacore.py	2017-09-06 11:21:01.000000000 +0200
 +++ panda3d-webgl-port.py37/makepanda/makepandacore.py	2018-03-28 18:50:56.275122312 +0200
 @@ -2046,7 +2046,7 @@
      if CrossCompiling():
