@@ -12,12 +12,16 @@ ROOT=$(dirname $(realpath "$0") )
 . $SDK/build.functions
 . $SDK/build.${BITS}.functions
 
+
+#reparse just in case we forgot reloading env
+. $SDK/built.${BITS}.env
+
 set_source_tree 4200
 
 if echo $ANDROID_API|grep -q 19
 then
     echo "#FIXME: readline/sqlite won't fix : WITH_LIBRARIES==$WITH_LIBRARIES =>  "
-    export WITH_LIBRARIES="libffi,openssl,ncurses"
+    export WITH_LIBRARIES="libffi,openssl"
     echo "using instead : WITH_LIBRARIES=$WITH_LIBRARIES"
 fi
 

@@ -24,6 +24,7 @@ set_source_tree 4200
 
 export DEV_PATHS DEV_TARGET PYVER PYDOT PYMODE OPT_COMMON OPT_TARGET
 
+EM_FLAGS="-Os -O3 -g0 -s TOTAL_MEMORY=512MB -s LZ4=1 -s ASM_JS=1 -s AGGRESSIVE_VARIABLE_ELIMINATION=1 -s DISABLE_EXCEPTION_CATCHING=1 -s DEMANGLE_SUPPORT=0 -s ASSERTIONS=0 -s ERROR_ON_MISSING_LIBRARIES=1 -s LINKABLE=1 -s USE_ZLIB=1"
 
 if echo "$@"|grep -q rebuild
 then
@@ -90,8 +91,8 @@ else
         $EM_MAKE inclinstall libinstall $LIBPYTHON
         mkdir -p $ROOT/$SRC.em/lib
         cp $LIBPYTHON $ROOT/$SRC.em/lib/
-        $SYSCF_HOST="$ROOT/$SRC.host/lib/python3.7/_sysconfigdata__linux_x86_64-linux-gnu.py"
-        $SYSCF_EM="$ROOT/$SRC.em/lib/python3.7/_sysconfigdata__emscripten_x86_64-linux-gnu.py"
+        SYSCF_HOST="$ROOT/$SRC.host/lib/python3.7/_sysconfigdata__linux_x86_64-linux-gnu.py"
+        SYSCF_EM="$ROOT/$SRC.em/lib/python3.7/_sysconfigdata__emscripten_x86_64-linux-gnu.py"
         cp -vf $SYSCF_HOST $SYSCF_EM
     else
         echo emsdk toolchain not found in [$TOOLCHAIN]

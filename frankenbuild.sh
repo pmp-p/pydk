@@ -11,6 +11,10 @@ export ANDROID_API=19
 
 NDK=android-ndk-r14b
 
+UROOT=/data/data/u.root
+UR=/data/data/u.r
+
+
 #==============================================================================
 
 reset
@@ -52,8 +56,6 @@ echo "
 
 
 SDK=$SDK_ROOT
-UROOT=$SDK/u.root
-UR=$SDK_ROOT/u.r
 
 export TOOLCHAIN="${SDK_ROOT}/cross.${BITS}"
 export USRC="$SDK_ROOT/u.src"
@@ -62,7 +64,7 @@ export ANDROID_NDK_ROOT="$SDK/android/$NDK"
 
 export ORIGIN ARCHIVES
 
-mkdir -p ${SDK_ROOT} $ARCHIVES $SDK
+mkdir -p ${SDK_ROOT} $ARCHIVES $SDK $SDK/android $UROOT
 cd ${SDK_ROOT}
 
 
@@ -209,7 +211,7 @@ export CL_PP=${TOOLCHAIN}/clang++
 export PATH=$SDK/android/bin:${ANDROID_NDK_ROOT}:$PATH
 
 #extra
-export SDKMAN_DIR="$SDK_ROOT/android/sdkman"
+#export SDKMAN_DIR="$SDK_ROOT/android/sdkman"
 
 #tweaks
 export PYTHONDONTWRITEBYTECODE=1
@@ -223,7 +225,7 @@ then
     source "$SDK/built.${BITS}.env"
     source "$SDK/build.functions"
     source "$SDK/build.${BITS}.functions"
-    source $SDKMAN_DIR/bin/sdkman-init.sh
+    #source $SDKMAN_DIR/bin/sdkman-init.sh
 else
     echo "build env $SDK/build.${BITS}.env not configured yet"
 fi
@@ -270,7 +272,7 @@ $NDK/build/tools/make_standalone_toolchain.py \
 
 echo "
     * installing sdkman
-curl -s https://get.sdkman.io | bash
+#curl -s https://get.sdkman.io | bash
 "
 
 

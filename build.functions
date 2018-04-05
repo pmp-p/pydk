@@ -79,20 +79,20 @@ Patching source tree if required"
     then
         echo "  * All Patches already applied"
     else
-        cd $ORIGIN
+        cd $ROOT/$SRC
 
-        if [ -f $ORIGIN.patchset/overlay.tar.bz2 ]
+        if [ -f $ROOT/$SRC.patchset/overlay.tar.bz2 ]
         then
             echo "  * Applying overlay [$ORIGIN.patchset/overlay.tar.bz2]"
             echo -n "     Overwritten files : "
-            /bin/tar xvpjf $ORIGIN.patchset/overlay.tar.bz2 | wc -l
+            /bin/tar xvpjf $ROOT/$SRC.patchset/overlay.tar.bz2 | wc -l
         else
             echo "  * no overlay [$ORIGIN.patchset/overlay.tar.bz2] found to apply"
         fi
 
         if find $ORIGIN.patchset/ |grep -q diff$
         then
-            for patch in $(find $ORIGIN.patchset/*.diff)
+            for patch in $(find $ROOT/$SRC.patchset/*.diff)
             do
                 echo -n "
     Applying patch : $patch   "
