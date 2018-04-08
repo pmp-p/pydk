@@ -162,12 +162,10 @@ os.system(build)
 
 
 
-
+# tar -C ../cpython-bpo-30386.em -cf - --files-from lib_files | tar -C usr -xf -
 
 
 """
-asyncio
-
 lib/python3.7/asyncio
 lib/python3.7/asynchat.py
 lib/python3.7/asyncore.py
@@ -179,7 +177,6 @@ lib/python3.7/multiprocessing
 lib/python3.7/signal.py
 lib/python3.7/pickle.py
 lib/python3.7/struct.py
-lib/python3.7/socket.py
 lib/python3.7/socketserver.py
 lib/python3.7/selectors.py
 lib/python3.7/_compat_pickle.py
@@ -192,9 +189,66 @@ lib/python3.7/inspect.py
 lib/python3.7/ast.py
 lib/python3.7/dis.py
 lib/python3.7/opcode.py
+lib/python3.7/_dummy_thread.py
+lib/python3.7/dummy_threading.py
 
-
-
+lib/python3.7/_collections_abc.py
+lib/python3.7/_compression.py
+lib/python3.7/_sitebuiltins.py
+lib/python3.7/_sysconfigdata__emscripten_x86_64-linux-gnu.py
+lib/python3.7/_threading_local.py
+lib/python3.7/_weakrefset.py
+lib/python3.7/abc.py
+lib/python3.7/codecs.py
+lib/python3.7/collections/__init__.py
+lib/python3.7/collections/abc.py
+lib/python3.7/contextlib.py
+lib/python3.7/copy.py
+lib/python3.7/copyreg.py
+lib/python3.7/dummy_threading.py
+lib/python3.7/enum.py
+lib/python3.7/encodings/__init__.py
+lib/python3.7/encodings/aliases.py
+lib/python3.7/encodings/cp437.py
+lib/python3.7/encodings/latin_1.py
+lib/python3.7/encodings/utf_8.py
+lib/python3.7/fnmatch.py
+lib/python3.7/functools.py
+lib/python3.7/genericpath.py
+lib/python3.7/glob.py
+lib/python3.7/heapq.py
+lib/python3.7/importlib/__init__.py
+lib/python3.7/importlib/_bootstrap.py
+lib/python3.7/importlib/_bootstrap_external.py
+lib/python3.7/importlib/abc.py
+lib/python3.7/importlib/machinery.py
+lib/python3.7/importlib/util.py
+lib/python3.7/io.py
+lib/python3.7/keyword.py
+lib/python3.7/linecache.py
+lib/python3.7/operator.py
+lib/python3.7/os.py
+lib/python3.7/pkgutil.py
+lib/python3.7/posixpath.py
+lib/python3.7/re.py
+lib/python3.7/reprlib.py
+lib/python3.7/runpy.py
+lib/python3.7/shutil.py
+lib/python3.7/site.py
+lib/python3.7/sre_compile.py
+lib/python3.7/sre_constants.py
+lib/python3.7/sre_parse.py
+lib/python3.7/stat.py
+lib/python3.7/struct.py
+lib/python3.7/sysconfig.py
+lib/python3.7/tarfile.py
+lib/python3.7/token.py
+lib/python3.7/tokenize.py
+lib/python3.7/traceback.py
+lib/python3.7/types.py
+lib/python3.7/warnings.py
+lib/python3.7/weakref.py
+lib/python3.7/zipfile.py
 """
 
 
