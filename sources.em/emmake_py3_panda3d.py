@@ -166,6 +166,7 @@ os.system(build)
 
 
 """
+lib/python3.7/__future__.py
 lib/python3.7/asyncio
 lib/python3.7/asynchat.py
 lib/python3.7/asyncore.py
@@ -255,7 +256,15 @@ lib/python3.7/zipfile.py
 
 
 
-
+# pudb
+# need lib/python3/pudb/settings.py fix for xdg dirs.
+"""
+lib/python3.7/configparser.py
+lib/python3.7/encodings/ascii.py
+lib/python3.7/bdb.py
+lib/python3.7/locale.py
+lib/python3.7/tty.py
+"""
 
 
 

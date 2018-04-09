@@ -1,0 +1,31 @@
+--- cpython-bpo-30386/Lib/asyncio/selector_events.py	2017-12-10 15:07:21.000000000 +0100
++++ cpython-bpo-30386.em/Lib/asyncio/selector_events.py	2018-04-09 05:24:08.614228101 +0200
+@@ -5,6 +5,8 @@
+ """
+ 
+ __all__ = ['BaseSelectorEventLoop']
++import sys
++_emscripten = (sys.platform == "emscripten")
+ 
+ import collections
+ import errno
+@@ -63,7 +65,8 @@
+             selector = selectors.DefaultSelector()
+         logger.debug('Using selector: %s', selector.__class__.__name__)
+         self._selector = selector
+-        self._make_self_pipe()
++        if not _emscripten:
++            self._make_self_pipe()
+         self._transports = weakref.WeakValueDictionary()
+ 
+     def _make_socket_transport(self, sock, protocol, waiter=None, *,
+@@ -90,7 +93,8 @@
+             raise RuntimeError("Cannot close a running event loop")
+         if self.is_closed():
+             return
+-        self._close_self_pipe()
++        if not _emscripten:
++            self._close_self_pipe()
+         super().close()
+         if self._selector is not None:
+             self._selector.close()
