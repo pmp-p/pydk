@@ -1,5 +1,5 @@
 --- cpython-bpo-30386/configure	2017-12-10 15:07:21.000000000 +0100
-+++ cpython-bpo-30386.em/configure	2018-03-25 17:21:27.172250548 +0200
++++ cpython-bpo-30386.em/configure	2018-04-08 18:14:12.638159163 +0200
 @@ -3245,6 +3245,9 @@
  	*-*-cygwin*)
  		ac_sys_system=Cygwin
@@ -20,3 +20,23 @@
  	*)
  		# for now, limit cross builds to known configurations
  		MACHDEP="unknown"
+@@ -11342,6 +11348,9 @@
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ #include <sys/epoll.h>
++#ifdef __EMSCRIPTEN__
++#error unsupported
++#endif
+ int
+ main ()
+ {
+@@ -11367,6 +11376,9 @@
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ #include <sys/epoll.h>
++#ifdef __EMSCRIPTEN__
++#error unsupported
++#endif
+ int
+ main ()
+ {
