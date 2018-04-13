@@ -269,6 +269,18 @@ lib/python3.7/tty.py
 
 
 
+#pypython
+"""
+lib/python3.7/textwrap.py
+lib/python3.7/datetime.py
+lib/python3.7/shlex.py
+lib/python3.7/platform.py
+lib/python3.7/difflib.py
+lib/python3.7/imp.py
+lib/python3.7/pydoc_data
+lib/python3.7/pydoc.py
+lib/python3.7/urllib
+"""
 
 
 
@@ -281,11 +293,58 @@ lib/python3.7/tty.py
 
 
 
+"""
+
+ac_cv_func_getpgrp=no
+ac_cv_func_setpgrp=no
+
+ac_cv_func_getresuid=no
+ac_cv_func_seteuid=no
+ac_cv_func_setresuid=no
+ac_cv_func_setreuid=no
+ac_cv_func_setuid=no
+
+ac_cv_func_sethostname=no
 
 
+ac_cv_func_sigtimedwait=no
+ac_cv_func_sigwait=no
+ac_cv_func_sigwaitinfo=no
+
+ac_cv_func_pthread_kill=no
+ac_cv_func_pthread_sigmask=no
+ac_cv_func_pthread_sigmask=no
+ac_cv_func_pthread_getcpuclockid=no
+
+ac_cv_func_sched_get_priority_max=no
+ac_cv_func_sched_get_priority_min=no
+ac_cv_func_sched_getaffinity=no
+ac_cv_func_sched_getparam=no
+ac_cv_func_sched_getscheduler=no
+ac_cv_func_sched_rr_get_interval=no
+ac_cv_func_sched_setaffinity=no
+ac_cv_func_sched_setparam=no
+ac_cv_func_sched_setscheduler=no
+ac_cv_func_sem_timedwait=no
+ac_cv_func_wcsftime=no
+
+"""
 
 
+"""
+>>> import logging
+>>> logging.NOTE = logging.INFO + 5
+>>> logging.addLevelName(logging.INFO + 5, 'NOTE')
+>>> class MyLogger(logging.getLoggerClass()):
+...:    def note(self, msg, *args, **kwargs):
+...:        self.log(logging.NOTE, msg, *args, **kwargs)
+...:
+>>> logging.setLoggerClass(MyLogger)
 
+>>> logging.basicConfig(level=logging.INFO)
+>>> logger.note("hello %s", "Guido")
+NOTE:foo:hello Guido
+"""
 
 
 
