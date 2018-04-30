@@ -1,0 +1,16 @@
+--- panda3d-webgl-port/panda/src/pipeline/threadSimpleManager.cxx	2017-09-06 11:21:01.000000000 +0200
++++ panda3d-webgl-port.py37/panda/src/pipeline/threadSimpleManager.cxx	2018-04-29 13:34:38.684520606 +0200
+@@ -472,9 +472,10 @@
+ #ifdef HAVE_PYTHON
+     // Ensure that the Python threading system is initialized and ready to go.
+ 
+-#if PY_VERSION_HEX >= 0x03020000
+-    Py_Initialize();
+-#endif
++// see https://github.com/pmp-p/pydk/blob/master/sources.32/panda3d-input-overhaul.patchset/panda_src_putil_pythonCallbackObject.cxx.diff
++//#if PY_VERSION_HEX >= 0x03020000
++//    Py_Initialize();
++//#endif
+ 
+     PyEval_InitThreads();
+ #endif

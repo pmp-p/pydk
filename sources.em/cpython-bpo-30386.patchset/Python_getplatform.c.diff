@@ -1,9 +1,9 @@
 --- cpython-bpo-30386/Python/getplatform.c	2017-12-10 15:07:21.000000000 +0100
-+++ cpython-bpo-30386.em/Python/getplatform.c	2018-04-09 04:38:39.348291319 +0200
++++ cpython-bpo-30386.em/Python/getplatform.c	2018-04-22 16:52:07.148255190 +0200
 @@ -5,6 +5,11 @@
  #define PLATFORM "unknown"
  #endif
- 
+
 +#ifdef __EMSCRIPTEN__
 +    #undef PLATFORM
 +    #define PLATFORM "emscripten"

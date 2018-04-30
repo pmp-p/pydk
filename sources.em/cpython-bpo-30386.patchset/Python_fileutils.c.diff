@@ -1,5 +1,5 @@
 --- cpython-bpo-30386/Python/fileutils.c	2017-12-10 15:07:21.000000000 +0100
-+++ cpython-bpo-30386.em/Python/fileutils.c	2018-03-25 17:21:27.212250547 +0200
++++ cpython-bpo-30386.em/Python/fileutils.c	2018-04-22 16:52:07.136255191 +0200
 @@ -789,6 +789,9 @@
  static int
  set_inheritable(int fd, int inheritable, int raise, int *atomic_flag_works)
@@ -16,5 +16,5 @@
  #endif
 +#endif
  }
-
+ 
  /* Make the file descriptor non-inheritable.

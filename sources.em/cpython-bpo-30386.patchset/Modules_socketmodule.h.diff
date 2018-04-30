@@ -1,5 +1,5 @@
 --- cpython-bpo-30386/Modules/socketmodule.h	2017-12-10 15:07:21.000000000 +0100
-+++ cpython-bpo-30386.em/Modules/socketmodule.h	2018-04-08 02:57:41.972432917 +0200
++++ cpython-bpo-30386.em/Modules/socketmodule.h	2018-04-22 16:52:07.121255191 +0200
 @@ -202,6 +202,11 @@
  #ifdef HAVE_SOCKADDR_ALG
      struct sockaddr_alg alg;

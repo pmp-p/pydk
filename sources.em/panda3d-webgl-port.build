@@ -5,12 +5,13 @@ ZIP=panda3d-webgl-port
 SRC=panda3d-webgl-port
 PYTHON=cpython-bpo-30386
 
-OPT_COMMON="--optimize 3 --use-gles --use-gles2 --use-bullet --use-zlib --use-python --use-png"
-OPT_COMMON="$OPT_COMMON --no-jpeg --no-eigen --no-assimp --no-egg --no-x11"
+OPT_COMMON="--optimize 4 --use-freetype --use-gles --use-gles2 --use-bullet --use-zlib --use-python --use-direct --use-openssl --use-openal"
+OPT_COMMON="$OPT_COMMON --no-png --no-jpeg --no-eigen --no-assimp --no-egg --no-x11"
 OPT_COMMON="$OPT_COMMON  --override STDFLOAT_DOUBLE=1"
-OPT_TARGET="--target emscripten --no-pview --no-pandatool --no-neon --no-sse2"
 
-# export CXXFLAGS="-std=c++11 -O2 $EM_LIBS $EM_FLAGS"
+#--nothing
+OPT_TARGET="--target emscripten --no-pandatool --no-neon --no-sse2"
+OPT_TARGET="$OPT_TARGET --use-python --use-direct --no-pview --use-egl"
 
 #==============================================================================
 ROOT=$(dirname $(realpath "$0") )
@@ -37,8 +38,21 @@ fi
 
 cd ${ORIGIN}
 
+EM_LIBS=""
+#EM_FLAGS="-O3 -s ASM_JS=1 -s USE_ZLIB=1 "
 
-EM_FLAGS="-Os -O3 -g0 -s TOTAL_MEMORY=512MB -s LZ4=1 -s ASM_JS=1 -s AGGRESSIVE_VARIABLE_ELIMINATION=1 -s DISABLE_EXCEPTION_CATCHING=1 -s DEMANGLE_SUPPORT=0 -s ASSERTIONS=0 -s ERROR_ON_MISSING_LIBRARIES=1 -s LINKABLE=1 -s USE_ZLIB=1"
+#-fno-exceptions is set at bottom
+
+EM_LIBS="-s OFFSCREENCANVAS_SUPPORT=1 -s USE_WEBGL2=1"
+EM_LIBS="$EM_LIBS -s USE_FREETYPE=1 -s USE_OGG=1 -s USE_VORBIS=1 -s USE_BULLET=1 -s USE_ZLIB=1"
+
+EM_FLAGS="-O3 -fno-rtti -s SIDE_MODULE=1 -s LINKABLE=1"
+EM_FLAGS="$EM_FLAGS -s ASSERTIONS=1 -s DEMANGLE_SUPPORT=0 -s DISABLE_EXCEPTION_CATCHING=1"
+
+#EM_FLAGS="$EM_FLAGS -s AGGRESSIVE_VARIABLE_ELIMINATION=1 -s ELIMINATE_DUPLICATE_FUNCTIONS=1"
+#-s EMULATE_FUNCTION_POINTER_CASTS=1"
+#EM_FLAGS="$EM_FLAGS -s ERROR_ON_MISSING_LIBRARIES=0 -s ERROR_ON_UNDEFINED_SYMBOLS=0"
+
 
 if [ -f $PDK_EM_PYTHON_HOST ]
 then
@@ -136,11 +150,12 @@ FATAL: interrogate not found in host/bin build
 
     TP_OA="--use-openal --openal-incdir=${TP} --openal-libdir=${TP}"
 
-    TP_PYTHON="--use-python --python-incdir=${TP}/python${PYVER}/include --python-libdir=${TP}/python${PYVER}/lib"
+    TP_PYTHON="--use-python --python-incdir=${TP}/python${PYVER}/include"
+    #--python-libdir=${TP}/python${PYVER}/lib"
 
     TP_ALL="${TP_FT2} ${TP_HB} ${TP_OA} ${TP_VB} ${TP_BUL} ${TP_PYTHON}"
 
-    export CXXFLAGS="-std=c++11 $EM_FLAGS $EM_LIBS"
+    export CXXFLAGS="-std=c++11 -fno-exceptions $EM_FLAGS $EM_LIBS"
     $PDK_EM_PYTHON_HOST makepanda/makepanda.py $OPT_COMMON $OPT_TARGET $TP_ALL "$@"
 else
     echo "FATAL: Can't find static host cpython $PDK_PYTHON"

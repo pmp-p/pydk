@@ -1,14 +1,22 @@
 #!/bin/bash
 TARGET=Emscripten
-LIBPYTHON=libpython3.7.a
+
 
 SRC=cpython-bpo-30386
-OPT_COMMON="--with-system-ffi --disable-shared --disable-ipv6 --without-ensurepip --with-c-locale-coercion"
-#--with-computed-gotos --without-threads
-OPT_COMMON="$OPT_COMMON --without-pymalloc"
-OPT_TARGET="--without-gcc --host=asmjs-unknown-emscripten"
+#--disable-shared
+OPT_COMMON="--with-system-ffi --disable-ipv6 --without-ensurepip --with-c-locale-coercion --without-pymalloc"
+#unsupported: --with-computed-gotos --without-threads
+
+OPT_TARGET="--enable-shared --without-gcc --host=asmjs-unknown-emscripten"
 GHZIP=https://github.com/xdegaye/cpython/archive/bpo-30386.zip
 
+if echo $OPT_TARGET|grep -q enable-shared
+then
+    echo "WARNING: unsupported shared build mode"
+    LIBPYTHON=libpython3.7.so
+else
+    LIBPYTHON=libpython3.7.a
+fi
 
 
 
@@ -24,12 +32,33 @@ set_source_tree 4200
 
 export DEV_PATHS DEV_TARGET PYVER PYDOT PYMODE OPT_COMMON OPT_TARGET
 
-EM_FLAGS="-Os -O3 -g0 -s TOTAL_MEMORY=512MB -s LZ4=1 -s ASM_JS=1 -s AGGRESSIVE_VARIABLE_ELIMINATION=1 -s DISABLE_EXCEPTION_CATCHING=1 -s DEMANGLE_SUPPORT=0 -s ASSERTIONS=0 -s ERROR_ON_MISSING_LIBRARIES=1 -s LINKABLE=1 -s USE_ZLIB=1"
+
+#
+#
+#
+#OK
+#export EMCC_FORCE_STDLIBS=1
+#
+#EM_FLAGS="-Os -g0 -s ASM_JS=1 -s USE_ZLIB=1 -s LINKABLE=1 -s EMULATE_FUNCTION_POINTER_CASTS=1"
+#EM_FLAGS="$EM_FLAGS -s AGGRESSIVE_VARIABLE_ELIMINATION=1 -s ELIMINATE_DUPLICATE_FUNCTIONS=1"
+#EM_FLAGS="$EM_FLAGS -s DISABLE_EXCEPTION_CATCHING=1 -s DEMANGLE_SUPPORT=0 -s ASSERTIONS=0"
+#EM_FLAGS="$EM_FLAGS -s ERROR_ON_MISSING_LIBRARIES=0 -s ERROR_ON_UNDEFINED_SYMBOLS=0"
+#EM_FLAGS="$EM_FLAGS -s SIDE_MODULE=1" # -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1"
+#
+
+export EM_FLAGS="-O3 -s USE_ZLIB=1 -s SIDE_MODULE=1" # -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1"
+
+#
+#
+#
+
+
 
 if echo "$@"|grep -q rebuild
 then
     echo "CLEANING UP"
     rm -vf $PDK_EM_PYTHON $ORIGIN/${TARGET}/build.host
+    unset PDK_EM_PYTHON_HOST
 fi
 
 
@@ -57,7 +86,7 @@ else
             read
 
             cd $ORIGIN/${TARGET}/build.host
-            ../../configure --prefix=$ROOT/$SRC.host $OPT_COMMON
+            ../../configure --disable-shared --prefix=$ROOT/$SRC.host $OPT_COMMON
             make -j 4 install
             register_pdk PDK_EM_PYTHON_HOST $PDK_EM_PYTHON_HOST
         else
@@ -66,22 +95,26 @@ else
         fi
     fi
 
-    export PDK_EM_PYTHON=${ROOT}/${SRC}.em/bin/python
+    export PDK_EM_PYTHON=${ROOT}/${SRC}.{$BITS}/bin/python
 
     echo Building TARGET [$PDK_EM_PYTHON]
 
     . $TOOLCHAIN
+
     if echo $(which emcc)|grep -q emcc$
     then
-        mkdir -p $ORIGIN/${TARGET}/build.em
-        cd $ORIGIN/${TARGET}/build.em
+        mkdir -p $ORIGIN/${TARGET}/build.${BITS}
+        cd $ORIGIN/${TARGET}/build.${BITS}
         if [ -f config.done ]
         then
             echo emconfigure already done
         else
             cp ../config.site ./
-            CPPFLAGS="$EM_FLAGS" CONFIG_SITE=./config.site READELF=true emconfigure ../../configure $OPT_COMMON $OPT_TARGET \
- --build=$(../../config.guess) --prefix=$ROOT/$SRC.em
+
+            export CPPFLAGS="$EM_FLAGS"
+            export CONFIG_SITE=./config.site
+            export READELF=true
+            emconfigure ../../configure $OPT_COMMON $OPT_TARGET --build=$(../../config.guess) --prefix=$ROOT/$SRC.${BITS}
             cp -vf ../Setup.local Modules/Setup.local
             touch config.done
         fi
@@ -89,10 +122,10 @@ else
         $EM_MAKE $LIBPYTHON
         sed -i -e 's/libinstall:.*/libinstall:/' Makefile
         $EM_MAKE inclinstall libinstall $LIBPYTHON
-        mkdir -p $ROOT/$SRC.em/lib
-        cp $LIBPYTHON $ROOT/$SRC.em/lib/
+        mkdir -p $ROOT/$SRC.${BITS}/lib
+        cp $LIBPYTHON $ROOT/$SRC.${BITS}/lib/
         SYSCF_HOST="$ROOT/$SRC.host/lib/python3.7/_sysconfigdata__linux_x86_64-linux-gnu.py"
-        SYSCF_EM="$ROOT/$SRC.em/lib/python3.7/_sysconfigdata__emscripten_x86_64-linux-gnu.py"
+        SYSCF_EM="$ROOT/$SRC.${BITS}/lib/python3.7/_sysconfigdata__emscripten_x86_64-linux-gnu.py"
         cp -vf $SYSCF_HOST $SYSCF_EM
     else
         echo emsdk toolchain not found in [$TOOLCHAIN]

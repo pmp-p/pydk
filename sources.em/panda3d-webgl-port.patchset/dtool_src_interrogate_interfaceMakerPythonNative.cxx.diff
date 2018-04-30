@@ -1,5 +1,5 @@
 --- panda3d-webgl-port/dtool/src/interrogate/interfaceMakerPythonNative.cxx	2017-09-06 11:21:01.000000000 +0200
-+++ panda3d-webgl-port.py37/dtool/src/interrogate/interfaceMakerPythonNative.cxx	2018-03-27 20:51:32.564955988 +0200
++++ panda3d-webgl-port.py37/dtool/src/interrogate/interfaceMakerPythonNative.cxx	2018-04-22 19:02:37.278073821 +0200
 @@ -4876,7 +4876,7 @@
                                        << default_value->_str.size() << ";\n";
            }

@@ -1,5 +1,5 @@
 --- cpython-bpo-30386/Lib/threading.py	2017-12-10 15:07:21.000000000 +0100
-+++ cpython-bpo-30386.em/Lib/threading.py	2018-04-08 14:33:41.525465637 +0200
++++ cpython-bpo-30386.em/Lib/threading.py	2018-04-22 16:52:07.077255192 +0200
 @@ -241,7 +241,8 @@
          return self._lock.__enter__()
  

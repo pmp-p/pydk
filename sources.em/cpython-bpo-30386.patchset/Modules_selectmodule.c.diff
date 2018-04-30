@@ -1,5 +1,5 @@
 --- cpython-bpo-30386/Modules/selectmodule.c	2017-12-10 15:07:21.000000000 +0100
-+++ cpython-bpo-30386.em/Modules/selectmodule.c	2018-04-13 07:09:38.031076331 +0200
++++ cpython-bpo-30386.em/Modules/selectmodule.c	2018-04-22 16:52:07.092255192 +0200
 @@ -266,7 +266,11 @@
      do {
          Py_BEGIN_ALLOW_THREADS
