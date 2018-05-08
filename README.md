@@ -62,7 +62,8 @@ It behaves like a virtualenv : your prompt will reflect that fact.
 
 In the build folder you'll find various .build files which are recipes to download / patch / build some software for your presets.
 
-=======
+[demo, can be broken](http://pmpp.pagesperso-orange.fr/python.html)
+
 --
 
 

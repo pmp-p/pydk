@@ -184,7 +184,7 @@ env|grep ^UR > "$SDK_ROOT/sdk.env"
 
 
 
-cat <<END >> "$SDK_ROOT/sdk.env"
+cat <<END > "$SDK_ROOT/sdk.env"
 #device target
 export ADB_NET=$ADB_NET
 export UROOT=$UROOT

@@ -93,7 +93,7 @@ done
 
 
 
-cat <<END >> "$SDK_ROOT/sdk.em.env"
+cat <<END > "$SDK_ROOT/sdk.em.env"
 #sources
 export ORIGIN=$ORIGIN
 export ARCHIVES=$ARCHIVES
