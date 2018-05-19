@@ -112,7 +112,7 @@ EM_FS = ""
 EM_FS = f"{EM_FS} --preload-file ../stdlib@lib" # "
 EM_FS = f"{EM_FS} --preload-file /Volumes/Roaming/lib/xpy@lib/xpy"
 EM_FS = f"{EM_FS} --preload-file /Volumes/Roaming/lib/nanotui3@lib/nanotui3"
-EM_FS = f"{EM_FS} --preload-file pouet.py"
+EM_FS = f"{EM_FS} --preload-file test"
 EM_FS = f"{EM_FS} --preload-file p3d_test.py"
 
 

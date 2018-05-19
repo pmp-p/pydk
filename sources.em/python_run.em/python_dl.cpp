@@ -146,10 +146,16 @@ await(const char *def){
 }
 
 
+
 #if DYLDZ
 void dyld_lzma(const char *lib, long hint_size){
 EM_ASM({
         dyld_lzma(Pointer_stringify($0)+".js.lzma",Pointer_stringify($0), $1);
+}, lib, hint_size);
+}
+void dyld_lzma_bin(const char *lib, long hint_size){
+EM_ASM({
+        dyld_lzma(Pointer_stringify($0)+".js.lzma",Pointer_stringify($0), $1, Pointer_stringify($0)+".bin" );
 }, lib, hint_size);
 }
 #endif
@@ -159,7 +165,7 @@ init_python(){
 
 #if DYLDZ
 #else
-    EM_ASM({ Module.loadDynamicLibrary('libpython.js'); });
+    dyld_lzma_bin("libpython");
 #endif
 
     //  PYTHONDEVMODE=1
@@ -298,10 +304,13 @@ EM_ASM({
 
 }
 
+#define ASYNC 0
 
 int
 main(int argc, char *argv[]) {
-
+    setbuf(stdout, NULL);
+    //setvbuf (stdout, NULL, _IONBF, BUFSIZ);
+    //fflush(NULL)
 EM_ASM({
     console.log("include(begin)");
     var fileref=document.createElement('script');
@@ -314,6 +323,8 @@ EM_ASM({
 
 });
 
+
+
 EM_ASM({
     performance.now = Date.now;
 });
@@ -325,10 +336,16 @@ EM_ASM({
     printf(" exit: %i\n", ret);
 
 */
+#if ASYNC
+    int i=0;
+    while (i<30) {
+        printf("%i",i++);
+        emscripten_sleep(1);
+    }
+    emscripten_force_exit(0);
+#else
     emscripten_set_main_loop( py_iter_one, 0, 1);  // <= this will exit to js now.
-
-    //emscripten_force_exit(0);
-
+#endif
     return 0;                   // success
 }
 
