@@ -1,0 +1,22 @@
+--- Python-3.7.0b5/configure.ac	2018-05-31 01:50:49.000000000 +0200
++++ Python-3.7.0b5.em/configure.ac	2018-06-01 09:30:09.510817814 +0200
+@@ -379,6 +379,9 @@
+ 	*-*-cygwin*)
+ 		ac_sys_system=Cygwin
+ 		;;
++	asmjs-*-*)
++		ac_sys_system=Emscripten
++		;;
+ 	*)
+ 		# for now, limit cross builds to known configurations
+ 		MACHDEP="unknown"
+@@ -423,6 +426,9 @@
+ 	*-*-cygwin*)
+ 		_host_cpu=
+ 		;;
++	asmjs-*-*)
++		_host_cpu=
++		;;
+ 	*)
+ 		# for now, limit cross builds to known configurations
+ 		MACHDEP="unknown"
