@@ -1,5 +1,5 @@
 --- Python-3.7.0b5/configure	2018-05-31 01:50:49.000000000 +0200
-+++ Python-3.7.0b5.em/configure	2018-06-01 09:30:09.529817813 +0200
++++ Python-3.7.0b5.em/configure	2018-06-02 10:43:09.500715069 +0200
 @@ -3257,6 +3257,9 @@
  	*-*-cygwin*)
  		ac_sys_system=Cygwin
@@ -20,7 +20,31 @@
  	*)
  		# for now, limit cross builds to known configurations
  		MACHDEP="unknown"
-@@ -11506,6 +11512,9 @@
+@@ -9168,8 +9174,9 @@
+ # -- usually .so, .sl on HP-UX, .dll on Cygwin
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking the extension of shared libraries" >&5
+ $as_echo_n "checking the extension of shared libraries... " >&6; }
++
+ if test -z "$SHLIB_SUFFIX"; then
+-	case $ac_sys_system in
++    case $ac_sys_system in
+ 	hp*|HP*)
+ 		case `uname -m` in
+ 			ia64) SHLIB_SUFFIX=.so;;
+@@ -9180,6 +9187,12 @@
+ 	*)	   SHLIB_SUFFIX=.so;;
+ 	esac
+ fi
++
++case $ac_sys_system in
++Emscripten)
++    SHLIB_SUFFIX=.js;;
++esac
++
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $SHLIB_SUFFIX" >&5
+ $as_echo "$SHLIB_SUFFIX" >&6; }
+ 
+@@ -11506,6 +11519,9 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  #include <sys/epoll.h>
@@ -30,7 +54,7 @@
  int
  main ()
  {
-@@ -11531,6 +11540,9 @@
+@@ -11531,6 +11547,9 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  #include <sys/epoll.h>
@@ -40,7 +64,7 @@
  int
  main ()
  {
-@@ -12180,7 +12192,9 @@
+@@ -12180,7 +12199,9 @@
  #ifdef HAVE_GRP_H
  #include <grp.h>
  #endif
@@ -51,7 +75,7 @@
  int
  main ()
  {
-@@ -12718,7 +12732,9 @@
+@@ -12718,7 +12739,9 @@
  #else
  #include <sys/types.h>
  #endif
@@ -62,3 +86,20 @@
  int
  main ()
  {
+@@ -14934,10 +14957,14 @@
+ 
+ 
+ case $ac_sys_system in
++    Emscripten)
++        SOABI="cpython-${VERSION}-emscripten"
++        EXT_SUFFIX=".extsu"
++        ;;
+     Linux*|GNU*|Darwin)
+-	EXT_SUFFIX=.${SOABI}${SHLIB_SUFFIX};;
++	    EXT_SUFFIX=.${SOABI}${SHLIB_SUFFIX};;
+     *)
+-	EXT_SUFFIX=${SHLIB_SUFFIX};;
++	    EXT_SUFFIX=${SHLIB_SUFFIX};;
+ esac
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking LDVERSION" >&5
