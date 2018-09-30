@@ -4,12 +4,12 @@
 
 # changing those is totally untested feel free to test and report ...
 
-
-export NDK_VER=14
+export PREFER=/data/data/u.root.kit
+export NDK_VER=16
 export BITS=32
 export ANDROID_API=19
 
-NDK=android-ndk-r14b
+NDK=android-ndk-r16b
 
 UROOT=/data/data/u.root
 UR=/data/data/u.r
@@ -29,19 +29,12 @@ You have selected custom adb networked device $ADB_NET:5555
     "
 fi
 
-if echo "$1"|grep -q data
-then
-    SDK_ROOT="$1"
-    echo "
+SDK_ROOT="$1"
+echo "
 You have selected custom destination [$SDK_ROOT]
-( note that /data/data may be the safest option )
+( note that ${PREFER} may be the safest option )
     "
 
-
-else
-    #change that if you don't want to use current folder
-    SDK_ROOT="$DIST"
-fi
 
 if [ -d "$ORIGIN/archives" ]
 then
@@ -112,7 +105,7 @@ echo "
     fallback is adb over usb.
 
 
-    * [$SDK_ROOT/sdk.env] will hold generic values for NDK [${NDK}] building
+    * [$SDK_ROOT/sdk.32.env] will hold generic values for NDK [${NDK}] building
 
     * You need host build tools.
         eg: 'sudo apt-get install build-essential' on debian like systems.
@@ -180,11 +173,11 @@ cd "${SDK_ROOT}"
 
 export UROOT UR USRC
 
-env|grep ^UR > "$SDK_ROOT/sdk.env"
+env|grep ^UR > "$SDK_ROOT/sdk.32.env"
 
 
 
-cat <<END > "$SDK_ROOT/sdk.env"
+cat <<END > "$SDK_ROOT/sdk.32.env"
 #device target
 export ADB_NET=$ADB_NET
 export UROOT=$UROOT
@@ -261,7 +254,7 @@ else
 fi
 
 
-. $SDK_ROOT/sdk.env
+. $SDK_ROOT/sdk.32.env
 
 echo "
     * installing armv7a-none-linux-android toolchain in $TOOLCHAIN
@@ -319,7 +312,7 @@ echo "
 
 $SDK/build.${BITS}.env was created, you can now use:
 
-. $SDK_ROOT/sdk.env
+. $SDK_ROOT/sdk.${BITS}.env
 
 Before running build.${BITS}/*.build scripts
 

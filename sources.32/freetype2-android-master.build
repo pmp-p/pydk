@@ -2,19 +2,23 @@
 
 PANDA3D=panda3d-input-overhaul
 PYTHON=cpython-bpo-30386
-GHZIP=https://github.com/cdave1/freetype2-android/archive/master.zip
+GHZIP=https://github.com/pmp-p/freetype2-android/archive/master.zip
 SRC=freetype2-android-master
 
 #==============================================================================
-ORIGIN=$(dirname $(realpath "$0") )
+ROOT=$(dirname $(realpath "$0") )
 
+. $SDK/build.functions
 . $SDK/build.${BITS}.functions
 
 set_source_tree 280
 
 
-ROOT=$(pwd)
+export ORIGIN=$(pwd)
+echo Building from $ORIGIN source tree
 
-pwd
+cd Android/jni
+ndk-build
+
 
 

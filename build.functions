@@ -26,24 +26,47 @@ Setting source tree in [$ROOT] for [$SRC]"
         [ -d $SRC ] && break
 
         cd $ARCHIVES
+        if echo "$XZ_SRC"|grep -q xz$
+        then
+            IS_XZ=true
+        else
+            IS_XZ=false
+        fi
 
-        ARCHIVE="${ARCHIVES}/${SRC}.zip"
+        if $IS_XZ
+        then
+            ARCHIVE="${ARCHIVES}/${SRC}.tar.xz"
+        else
+            ARCHIVE="${ARCHIVES}/${SRC}.zip"
+        fi
 
         if md5sum -c ${ARCHIVE}.md5 2>/dev/null
         then
             echo "  * Archive $ARCHIVE.md5 validated"
             cd $ROOT && unzip $ARCHIVE | pv -w 60 -p -l -s $1 >/dev/null && break
         else
-            echo "  * Storing source code from [$GHZIP] in cache [$ARCHIVE]"
-            wget $GHZIP -O$ARCHIVE
+            echo "  * Can't validate archive with $ARCHIVE.md5"
+            echo "  * Getting source code from [$GHZIP$XZ_SRC] into cache folder [$ARCHIVE]"
+            wget $GHZIP$XZ_SRC -O$ARCHIVE
             cd $ROOT
-            if unzip $ARCHIVE | pv -w 60  -p -l -s $1 >/dev/null
+
+            if $IS_XZ
             then
-                md5sum $ARCHIVE > $ARCHIVE.md5
-                break
+                if tar xvf $ARCHIVE | pv -w 60  -p -l -s $1 >/dev/null
+                then
+                    md5sum $ARCHIVE > $ARCHIVE.md5
+                    break
+                fi
+            else
+                if unzip $ARCHIVE | pv -w 60  -p -l -s $1 >/dev/null
+                then
+                    md5sum $ARCHIVE > $ARCHIVE.md5
+                    break
+                fi
             fi
+
         fi
-        echo "is $SRC.zip corrupted ?"
+        echo "is $ARCHIVE corrupted ?"
         wait_or_break
     done
 
