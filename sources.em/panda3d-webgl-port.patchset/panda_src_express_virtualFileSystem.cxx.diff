@@ -3,7 +3,7 @@
 @@ -1149,6 +1149,24 @@
    // Also transparently look for a regular file suffixed .pz.
    Filename strpath_pz = strpath + ".pz";
- 
+
 +//PMPP
 +#ifdef EMSCRIPTEN
 +    #ifdef CPPPARSER
@@ -15,7 +15,7 @@
 +            if ( strpath.exists() ){
 +                // raw file is already here
 +            } else {
-+                int rx = EM_ASM_INT( {  return Module.callfs( Pointer_stringify($0) ); }, strpath.c_str() );
++                int rx = EM_ASM_INT( {  return window.callfs( Pointer_stringify($0) ); }, strpath.c_str() );
 +            }
 +        }
 +    #endif

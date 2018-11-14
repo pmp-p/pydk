@@ -1,0 +1,31 @@
+--- cpython-3.7.1rc1/Python/import.c	2018-09-26 08:16:09.000000000 +0200
++++ cpython-3.7.1rc1.em/Python/import.c	2018-10-09 03:10:41.672197394 +0200
+@@ -1970,6 +1970,20 @@
+     list = PyList_New(0);
+     if (list == NULL)
+         return NULL;
++
++#ifdef __EMSCRIPTEN__
++        PyObject *item = PyUnicode_FromString( ".cpython-37-em.js");
++        if (item == NULL) {
++            Py_DECREF(list);
++            return NULL;
++        }
++        if (PyList_Append(list, item) < 0) {
++            Py_DECREF(list);
++            Py_DECREF(item);
++            return NULL;
++        }
++        Py_DECREF(item);
++#else
+ #ifdef HAVE_DYNAMIC_LOADING
+     while ((suffix = _PyImport_DynLoadFiletab[index])) {
+         PyObject *item = PyUnicode_FromString(suffix);
+@@ -1986,6 +2000,7 @@
+         index += 1;
+     }
+ #endif
++#endif
+     return list;
+ }
+ 

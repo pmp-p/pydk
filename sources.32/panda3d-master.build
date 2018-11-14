@@ -17,7 +17,7 @@ else
     echo "Arch $ANDROID_ARCH not supported by this script"
     read
 fi
-export NDK_ROOT=$ANDROID_NDK_ROOT
+export NDK_ROOT=$ANDROID_NDK_HOME
 
 OPT_ANDROID="--arch $PANDA_ARCH --target android-${__ANDROID_API__} --no-pview --no-pandatool --use-neon --no-sse2"
 

@@ -53,7 +53,7 @@ SDK=$SDK_ROOT
 export TOOLCHAIN="${SDK_ROOT}/cross.${BITS}"
 export USRC="$SDK_ROOT/u.src"
 export ANDROID_SDK_ROOT="$SDK/android/sdk"
-export ANDROID_NDK_ROOT="$SDK/android/$NDK"
+export ANDROID_NDK_HOME="$SDK/android/$NDK"
 
 export ORIGIN ARCHIVES
 
@@ -144,10 +144,10 @@ done
 
 while true
 do
-    if grep -q $NDK_VER $ANDROID_NDK_ROOT/source.properties 2>/dev/null
+    if grep -q $NDK_VER $ANDROID_NDK_HOME/source.properties 2>/dev/null
     then
         echo "
-    found android ndk $NDK_VER : $ANDROID_NDK_ROOT
+    found android ndk $NDK_VER : $ANDROID_NDK_HOME
         "
         break
     else
@@ -158,7 +158,7 @@ Missing $NDK:
     from https://developer.android.com/ndk/downloads/older_releases.html
     and unpack in $SDK
 
-    ( I look for version $NDK_VER in file [$ANDROID_NDK_ROOT/source.properties] )
+    ( I look for version $NDK_VER in file [$ANDROID_NDK_HOME/source.properties] )
     "
         wait_or_break
     fi
@@ -190,8 +190,8 @@ export ARCHIVES=$ARCHIVES
 export SDK=$SDK_ROOT
 
 #android globals
-export ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT
-export NDK=$ANDROID_NDK_ROOT
+export ANDROID_NDK_HOME=$ANDROID_NDK_HOME
+export NDK=$ANDROID_NDK_HOME
 export ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT
 export ANDROID_HOME=$ANDROID_SDK_ROOT
 export ANDROID_TARGET=android-$ANDROID_API
@@ -201,7 +201,7 @@ export TOOLCHAIN=$TOOLCHAIN
 export TC=${TOOLCHAIN}/bin
 export CLANG=${TOOLCHAIN}/bin/clang
 export CL_PP=${TOOLCHAIN}/clang++
-export PATH=$SDK/android/bin:${ANDROID_NDK_ROOT}:$PATH
+export PATH=$SDK/android/bin:${ANDROID_NDK_HOME}:$PATH
 
 #extra
 #export SDKMAN_DIR="$SDK_ROOT/android/sdkman"

@@ -70,7 +70,7 @@ function wait_or_break
 
 while true
 do
-    if which realpath >/dev/null
+    if which pv >/dev/null
     then
         break
     else

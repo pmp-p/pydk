@@ -1,0 +1,14 @@
+--- cpython-3.7.1rc1/Modules/socketmodule.h	2018-09-26 08:16:09.000000000 +0200
++++ cpython-3.7.1rc1.em/Modules/socketmodule.h	2018-10-09 03:10:41.618197395 +0200
+@@ -203,6 +203,11 @@
+ #ifdef HAVE_SOCKADDR_ALG
+     struct sockaddr_alg alg;
+ #endif
++
++#if defined(__EMSCRIPTEN__) && defined(AF_VSOCK)
++    #undef AF_VSOCK
++#endif
++
+ #ifdef AF_VSOCK
+     struct sockaddr_vm vm;
+ #endif

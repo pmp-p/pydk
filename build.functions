@@ -26,48 +26,78 @@ Setting source tree in [$ROOT] for [$SRC]"
         [ -d $SRC ] && break
 
         cd $ARCHIVES
-        if echo "$XZ_SRC"|grep -q xz$
+        IS_XZ=false
+        IS_ZIP=false
+        IS_GZ=false
+
+        if echo "$SRC_URL"|grep -q xz$
         then
             IS_XZ=true
-        else
-            IS_XZ=false
+            EXT="tar.xz"
         fi
 
-        if $IS_XZ
+        if echo "$SRC_URL"|grep -q zip$
         then
-            ARCHIVE="${ARCHIVES}/${SRC}.tar.xz"
-        else
-            ARCHIVE="${ARCHIVES}/${SRC}.zip"
+            IS_ZIP=true
+            EXT="zip"
         fi
+
+        if echo "$SRC_URL"|grep -q gz$
+        then
+            IS_GZ=true
+            EXT="tar.gz"
+        fi
+
+        corrupt=true
+
+        ARCHIVE="${ARCHIVES}/${SRC}.${EXT}"
 
         if md5sum -c ${ARCHIVE}.md5 2>/dev/null
         then
             echo "  * Archive $ARCHIVE.md5 validated"
-            cd $ROOT && unzip $ARCHIVE | pv -w 60 -p -l -s $1 >/dev/null && break
         else
             echo "  * Can't validate archive with $ARCHIVE.md5"
-            echo "  * Getting source code from [$GHZIP$XZ_SRC] into cache folder [$ARCHIVE]"
-            wget $GHZIP$XZ_SRC -O$ARCHIVE
-            cd $ROOT
-
-            if $IS_XZ
-            then
-                if tar xvf $ARCHIVE | pv -w 60  -p -l -s $1 >/dev/null
-                then
-                    md5sum $ARCHIVE > $ARCHIVE.md5
-                    break
-                fi
-            else
-                if unzip $ARCHIVE | pv -w 60  -p -l -s $1 >/dev/null
-                then
-                    md5sum $ARCHIVE > $ARCHIVE.md5
-                    break
-                fi
-            fi
-
+            echo "  * Getting source code from [$SRC_URL] into cache folder [$ARCHIVE]"
+            wget $SRC_URL -O$ARCHIVE
         fi
-        echo "is $ARCHIVE corrupted ?"
-        wait_or_break
+
+        cd $ROOT
+
+        if $IS_XZ
+        then
+            if tar xvf $ARCHIVE | pv -w 60  -p -l -s $1 >/dev/null
+            then
+                md5sum $ARCHIVE > $ARCHIVE.md5
+                corrupt=false
+                break
+            fi
+        fi
+
+        if $IS_ZIP
+        then
+            if unzip $ARCHIVE | pv -w 60  -p -l -s $1 >/dev/null
+            then
+                md5sum $ARCHIVE > $ARCHIVE.md5
+                corrupt=false
+                break
+            fi
+        fi
+
+        if $IS_GZ
+        then
+            if tar xvfz $ARCHIVE | pv -w 60  -p -l -s $1 >/dev/null
+            then
+                md5sum $ARCHIVE > $ARCHIVE.md5
+                corrupt=false
+                break
+            fi
+        fi
+
+        if $corrupt
+        then
+            echo "is $ARCHIVE corrupted ?"
+            wait_or_break
+        fi
     done
 
     export ORIGIN=$ROOT/$SRC

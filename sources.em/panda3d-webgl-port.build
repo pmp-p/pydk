@@ -1,9 +1,12 @@
 #!/bin/bash
 
-GHZIP=https://github.com/panda3d/panda3d/archive/webgl-port.zip
-ZIP=panda3d-webgl-port
+SRC_URL="https://github.com/panda3d/panda3d/archive/webgl-port.zip"
 SRC=panda3d-webgl-port
-PYTHON=cpython-bpo-30386
+
+PYTHON=Python-3.7.1
+FT2=FreeType-master
+HB=harfbuzz-master
+
 
 OPT_COMMON="--optimize 4 --use-freetype --use-gles --use-gles2 --use-bullet --use-zlib --use-python --use-direct --use-openssl --use-openal"
 OPT_COMMON="$OPT_COMMON --no-png --no-jpeg --no-eigen --no-assimp --no-egg --no-x11"
@@ -18,6 +21,8 @@ ROOT=$(dirname $(realpath "$0") )
 
 . $SDK/build.functions
 . $SDK/build.${BITS}.functions
+
+
 
 set_source_tree 7200
 
@@ -36,7 +41,7 @@ else
     exit
 fi
 
-cd ${ORIGIN}
+export ORIGIN=$(pwd)
 
 EM_LIBS=""
 #EM_FLAGS="-O3 -s ASM_JS=1 -s USE_ZLIB=1 "
@@ -87,13 +92,13 @@ then
         * Setting FT2 ${TP}/freetype2 include+lib
     "
 
-    #mkdir -p ${TP}/freetype2 ${TP}/freetype2/lib
-    #ln -s ${ROOT}/${FT2}/include ${TP}/freetype2
-    #cp -vf ${ROOT}/${FT2}/Android/obj/local/armeabi-v7a/libfreetype2-static.a ${TP}/libfreetype.a
+    mkdir -p ${TP}/freetype2 ${TP}/freetype2/lib
+    ln -s ${ROOT}/${FT2}/include ${TP}/freetype2
+    cp -vf ${ROOT}/${FT2}.em/libfreetype.a ${TP}/libfreetype.a
     #cp -vf ${ROOT}/${FT2}/Android/libs/armeabi/libfreetype.so ${TP}/
 
-#    TP_FT2="--use-freetype --freetype-incdir=${TP} --freetype-libdir=${TP}"
-#    TP_HB="--use-harfbuzz --harfbuzz-incdir=${TP} --harfbuzz-libdir=${TP}"
+    TP_FT2="--use-freetype --freetype-incdir=${TP} --freetype-libdir=${TP}"
+    TP_HB="--use-harfbuzz --harfbuzz-incdir=${TP} --harfbuzz-libdir=${TP}"
 #    TP_VB="--use-vorbis --vorbis-incdir=${TP} --vorbis-libdir=${TP}"
 #
 #    VB="libvorbis-libogg-android-master"
@@ -102,10 +107,9 @@ then
 #
 #    cp -vf ${ROOT}/${VB}/libs/armeabi-v7a/lib*.so ${TP}/
 #
-#    HB=harfbuzz-android-master
-#    mkdir -p ${TP}/harfbuzz/lib
-#    ln -s ${ROOT}/${HB}/src/*.h ${TP}/harfbuzz/
-#    cp -vf ${ROOT}/${HB}/obj/local/armeabi-v7a/libharfbuzz.so ${TP}/
+    mkdir -p ${TP}/harfbuzz/lib
+    ln -s ${ROOT}/${HB}/src/*.h ${TP}/harfbuzz/
+    cp -vf ${ROOT}/${HB}.em/libharfbuzz.a ${TP}/
 #
 #
 #    TP_BUL="--use-bullet --bullet-incdir=${TP} --bullet-libdir=${TP}"
@@ -156,6 +160,13 @@ FATAL: interrogate not found in host/bin build
     TP_ALL="${TP_FT2} ${TP_HB} ${TP_OA} ${TP_VB} ${TP_BUL} ${TP_PYTHON}"
 
     export CXXFLAGS="-std=c++11 -fno-exceptions $EM_FLAGS $EM_LIBS"
+
+    echo export LD_LIBRARY_PATH=$(pwd)/host/lib > rebuild.sh
+    echo export PATH=$(pwd)/host/bin:$PATH >> rebuild.sh
+    echo export CXXFLAGS="-std=c++11 -fno-exceptions $EM_FLAGS $EM_LIBS" >> rebuild.sh
+    echo $PDK_EM_PYTHON_HOST makepanda/makepanda.py $OPT_COMMON $OPT_TARGET $TP_ALL "$@" >> rebuild.sh
+    chmod +x rebuild.sh
+
     $PDK_EM_PYTHON_HOST makepanda/makepanda.py $OPT_COMMON $OPT_TARGET $TP_ALL "$@"
 else
     echo "FATAL: Can't find static host cpython $PDK_PYTHON"

@@ -1,0 +1,14 @@
+--- cpython-3.7.1rc1/Python/getplatform.c	2018-09-26 08:16:09.000000000 +0200
++++ cpython-3.7.1rc1.em/Python/getplatform.c	2018-10-09 03:10:41.657197395 +0200
+@@ -5,6 +5,11 @@
+ #define PLATFORM "unknown"
+ #endif
+ 
++#ifdef __EMSCRIPTEN__
++    #undef PLATFORM
++    #define PLATFORM "emscripten"
++#endif
++
+ const char *
+ Py_GetPlatform(void)
+ {
