@@ -57,7 +57,7 @@ else
     export EM_MODE=""
 fi
 
-export EM_FLAGS="$EM_FLAGS -s USE_ZLIB=1 $EM_MODE"
+export EM_FLAGS="$EM_FLAGS -s ENVIRONMENT=web -s USE_ZLIB=1 $EM_MODE"
 
 #
 echo Will build from $ORIGIN source tree
