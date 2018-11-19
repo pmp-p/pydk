@@ -1,5 +1,5 @@
---- cpython-3.7.1rc1/Lib/hashlib.py	2018-09-26 08:16:09.000000000 +0200
-+++ cpython-3.7.1rc1.em/Lib/hashlib.py	2018-10-09 03:10:41.499197398 +0200
+--- Python-3.7.1/Lib/hashlib.py	2018-10-20 08:04:19.000000000 +0200
++++ Python-3.7.1.em/Lib/hashlib.py	2018-11-17 07:18:26.258871253 +0100
 @@ -55,10 +55,14 @@
  
  # This tuple and __get_builtin_constructor() must be modified if a new

@@ -1,5 +1,5 @@
---- cpython-3.7.1rc1/configure	2018-09-26 08:16:09.000000000 +0200
-+++ cpython-3.7.1rc1.em/configure	2018-10-09 03:10:41.477197399 +0200
+--- Python-3.7.1/configure	2018-10-20 08:04:19.000000000 +0200
++++ Python-3.7.1.em/configure	2018-11-17 07:18:26.254871385 +0100
 @@ -3253,6 +3253,9 @@
  	*-*-cygwin*)
  		ac_sys_system=Cygwin
@@ -38,12 +38,12 @@
 +
 +case $ac_sys_system in
 +Emscripten)
-+    SHLIB_SUFFIX=.js;;
++    SHLIB_SUFFIX=.wasm;;
 +esac
 +
  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $SHLIB_SUFFIX" >&5
  $as_echo "$SHLIB_SUFFIX" >&6; }
- 
+
 @@ -11538,6 +11551,9 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
@@ -87,12 +87,12 @@
  main ()
  {
 @@ -14968,10 +14991,14 @@
- 
- 
+
+
  case $ac_sys_system in
 +    Emscripten)
 +        SOABI="cpython-${VERSION}-emscripten"
-+        EXT_SUFFIX=".extsu"
++        EXT_SUFFIX=".wasm"
 +        ;;
      Linux*|GNU*|Darwin)
 -	EXT_SUFFIX=.${SOABI}${SHLIB_SUFFIX};;
@@ -101,5 +101,5 @@
 -	EXT_SUFFIX=${SHLIB_SUFFIX};;
 +	    EXT_SUFFIX=${SHLIB_SUFFIX};;
  esac
- 
+
  { $as_echo "$as_me:${as_lineno-$LINENO}: checking LDVERSION" >&5

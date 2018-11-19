@@ -1,5 +1,5 @@
---- panda3d-webgl-port/panda/src/webgldisplay/webGLGraphicsStateGuardian.cxx	2017-09-06 11:21:01.000000000 +0200
-+++ panda3d-webgl-port.py37/panda/src/webgldisplay/webGLGraphicsStateGuardian.cxx	2018-04-30 20:11:42.514967483 +0200
+--- panda3d-webgl-port/panda/src/webgldisplay/webGLGraphicsStateGuardian.cxx	2018-05-07 17:07:51.000000000 +0200
++++ panda3d-webgl-port.pp/panda/src/webgldisplay/webGLGraphicsStateGuardian.cxx	2018-10-27 21:38:09.021635046 +0200
 @@ -66,10 +66,16 @@
    attribs.stencil = (properties.get_stencil_bits() > 0);
    attribs.majorVersion = 1;

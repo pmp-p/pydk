@@ -1,5 +1,5 @@
---- panda3d-webgl-port/panda/src/express/trueClock.cxx	2017-09-06 11:21:01.000000000 +0200
-+++ panda3d-webgl-port.py37/panda/src/express/trueClock.cxx	2018-04-30 20:56:57.047904606 +0200
+--- panda3d-webgl-port/panda/src/express/trueClock.cxx	2018-05-07 17:07:51.000000000 +0200
++++ panda3d-webgl-port.pp/panda/src/express/trueClock.cxx	2018-10-27 21:37:58.403635292 +0200
 @@ -480,47 +480,7 @@
    _time_scale = new_time_scale;
  }

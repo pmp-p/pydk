@@ -1,5 +1,5 @@
---- cpython-3.7.1rc1/Python/getplatform.c	2018-09-26 08:16:09.000000000 +0200
-+++ cpython-3.7.1rc1.em/Python/getplatform.c	2018-10-09 03:10:41.657197395 +0200
+--- Python-3.7.1/Python/getplatform.c	2018-10-20 08:04:19.000000000 +0200
++++ Python-3.7.1.em/Python/getplatform.c	2018-11-17 07:18:26.298869939 +0100
 @@ -5,6 +5,11 @@
  #define PLATFORM "unknown"
  #endif

@@ -1,0 +1,274 @@
+#!/bin/bash
+reset
+export DEFAULT_PYVER=3.7
+export DEFAULT_WEBROOT="/srv/www/html/p3d"
+export DEFAULT_PY="../Python-3.7.1.${BITS}"
+export PY_INCLUDE="../Python-3.7.1.host/include/python3.7"
+export DEFAULT_PANDA3D="../panda3d-webgl-port"
+export DEFAULT_HARFBUZZ="../harfbuzz-master.em/libharfbuzz.a"
+
+. $SDK/build.functions
+. $SDK/build.${BITS}.functions
+
+
+arg_parse
+
+
+
+. $SDK/build.functions
+. $SDK/build.${BITS}.functions
+
+
+if . $TOOLCHAIN >/dev/null
+then
+    echo Will use emsdk from $TOOLCHAIN
+else
+    echo emsdk from $TOOLCHAIN failed to configure
+    exit 1
+fi
+
+
+unset EMCC_FORCE_STDLIBS
+
+export JAVA_HEAP_SIZE=8192m
+export NODE_OPTIONS="--max_old_space_size=4096"
+export RAM=512MB
+
+EM_BASE="-fno-exceptions -s TOTAL_MEMORY=${RAM} -s ALLOW_MEMORY_GROWTH=0 -s TOTAL_STACK=14680064" # -s TOTAL_STACK=10485760"
+
+if false
+then
+    EM_FLAGS="$EM_BASE -Os -Oz -g0" #OK
+    EM_FLAGS="$EM_FLAGS -s ERROR_ON_MISSING_LIBRARIES=0 -s ERROR_ON_UNDEFINED_SYMBOLS=0"
+
+    echo fast run, slow comp, no debug
+    EM_FLAGS="$EM_FLAGS -s ASSERTIONS=1"
+    EM_FLAGS="$EM_FLAGS -s DISABLE_EXCEPTION_CATCHING=1"
+    EM_FLAGS="$EM_FLAGS -s DEMANGLE_SUPPORT=0"
+
+    EM_FLAGS="$EM_FLAGS -s AGGRESSIVE_VARIABLE_ELIMINATION=1"
+
+#  -s FULL_ES2=1 --profiling"
+
+else
+
+    EM_FLAGS="$EM_BASE -O3 -g0  --memory-init-file 0" #OK
+    EM_FLAGS="$EM_FLAGS -s ERROR_ON_MISSING_LIBRARIES=0 -s ERROR_ON_UNDEFINED_SYMBOLS=0"
+
+    echo avg comp, debug, slow run
+    EM_FLAGS="$EM_FLAGS -s ASSERTIONS=2"
+    EM_FLAGS="$EM_FLAGS -s DISABLE_EXCEPTION_CATCHING=0"
+    EM_FLAGS="$EM_FLAGS -s DEMANGLE_SUPPORT=1"
+
+    EM_FLAGS="$EM_FLAGS -s SAFE_HEAP=1 --profiling-funcs"
+
+    #EM_FLAGS="$EM_FLAGS -s USE_PTHREADS=1 -s PTHREAD_HINT_NUM_CORES=-1"
+    #EM_FLAGS="$EM_FLAGS -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1"
+fi
+
+
+export EM_FLAGS
+
+
+if echo "$@"|grep -q asm
+then
+    echo " ====== ASM.js target ========"
+    EM_FLAGS="$EM_FLAGS -s INLINING_LIMIT=50 -s OUTLINING_LIMIT=50000"
+    EM_FLAGS="$EM_FLAGS -s ELIMINATE_DUPLICATE_FUNCTIONS=1"
+    EMCC="emcc -v ${EM_FLAGS} -s ASM_JS=1 -s WASM=0"
+    EMCPP="em++ -v ${EM_FLAGS} -s ASM_JS=1 -s WASM=0 -std=c++11"
+    SUFFIX='js'
+else
+    echo WASM target is default
+    #EMCC="emcc -v ${EM_FLAGS} -s BINARYEN=1  -s BINARYEN_ASYNC_COMPILATION=0 -s BINARYEN_METHOD=\"native-wasm,asmjs\""
+    EMCC="emcc -v ${EM_FLAGS} -s WASM=1"
+    EMCPP="em++ -v ${EM_FLAGS} -s WASM=1 -std=c++11"
+    SUFFIX='wasm'
+fi
+
+
+mkdir -p prebuilt
+if cd prebuilt
+then
+    echo "Will build libpython.js and libpanda3d.js(c++) and libpp3d.js(python)"
+else
+    exit 1
+fi
+
+
+
+#LIB="-s BUILD_AS_SHARED_LIB=1"  # BAD ! dump FS to console
+LIB="-s LINKABLE=1"  #  implicit because ERROR:root:-s LINKABLE=1 is not supported with -s USE_PTHREADS>0!
+LIB="-s SIDE_MODULE=1" # VALID: minimal required !
+LIB="--memory-init-file 0 -s SIDE_MODULE=1 -s LINKABLE=1" # VALID, -s LINKABLE=1 is implicit
+
+if [ -f "$PY/lib/libpython${PYVER}.so" ]
+then
+    echo using shared libpython from $PY
+    /bin/cp -vf $PY/lib/libpython${PYVER}.so $PY/lib/libpython${PYVER}.bc
+    export BC=$PY/lib/libpython${PYVER}.bc
+else
+    echo "$PY/lib/libpython${PYVER}.so" not found
+    echo unsupported : using static libpython from $PY expect dup sym.
+    export BC=$PY/lib/libpython${PYVER}.a
+fi
+
+
+if [ -f libpython.js ]
+then
+    echo "    - using cached dynamic libpython"
+else
+    echo "    - building shared libpython"
+    #-s EMULATE_FUNCTION_POINTER_CASTS=1 or initimport: can't import _frozen_importlib
+    # rdb has patches but for py 2.7
+    # watch for https://bugs.python.org/issue33012
+    PYOPTS="-I${PY}/include/python${PYVER} -s EMULATE_FUNCTION_POINTER_CASTS=1 -s EXPORT_ALL=1"
+    # -s EXPORTED_FUNCTIONS=[\"_PyOS_InputHook\"]
+    $EMCC ${PYOPTS} ${LIB}  -shared -o libpython.${SUFFIX} ${BC}
+
+    du -hs libpython.*
+    echo
+    echo 'ready'
+fi
+
+lib="${PANDA3D}/built/lib"
+
+#$EMCPP -I${PANDA3D}/built/include -s EXPORTED_FUNCTIONS=[\"_pview_init\",\"_pview_step\"] -o panda3d_hooks.bc panda3d_hooks.cpp
+
+if [ -f libpanda3d.js ]
+then
+    echo "    - using cached dynamic libpanda3d"
+else
+    echo "    - building shared libpanda3d"
+    #$EMCPP -I${PANDA3D}/built/include -s EXPORTED_FUNCTIONS=[\"_pview_init\",\"_pview_step\"] -o panda3d_hooks.bc panda3d_hooks.cpp
+
+    P3DOPTS="-s USE_FREETYPE=1 -s USE_WEBGL2=1  -s USE_OGG=1 -s USE_FREETYPE=1 -s USE_VORBIS=1"
+
+    #OK
+    plib="$lib/libpanda.bc"
+    #plib="$plib ${PANDA3D}/built/panda3d/core.bc ${PANDA3D}/built/panda3d/direct.bc"
+    plib="$plib $lib/libpandaexpress.bc $lib/libp3webgldisplay.bc $lib/libp3dtoolconfig.bc $lib/libp3dtool.bc "
+
+    #plib="$plib $lib/libp3interrogatedb.bc $lib/libp3direct.bc"
+    #
+    # do not use  -s EMULATE_FUNCTION_POINTER_CASTS=1  !
+    time $EMCC ${P3DOPTS} ${PRE} ${LIB} -shared -o libpanda3d.js $plib
+    echo
+    du -hs libpanda3d.js
+    echo
+fi
+
+if [ -f libpp3d.js ]
+then
+    echo "    - using cached dynamic libpp3d"
+else
+    echo "    - building shared libpp3d"
+    lib="${PANDA3D}/built/lib"
+
+    plib="$lib/libpanda.bc"
+    plib="$plib ${PANDA3D}/built/panda3d/core.bc ${PANDA3D}/built/panda3d/direct.bc"
+    plib="$plib $lib/libpandaexpress.bc $lib/libp3webgldisplay.bc $lib/libp3dtoolconfig.bc $lib/libp3dtool.bc "
+    plib="$plib $lib/libp3direct.bc $lib/libp3interrogatedb.bc"
+
+    # $lib/libpandabullet.bc"
+    #  -s EXPORTED_FUNCTIONS=[\"_PyInit_core\",\"_PyInit_direct\"]  # not needed
+    $EMCC ${PRE} ${LIB} -shared -o libpp3d.${SUFFIX} $plib
+    echo
+    du -hs libpp3d.js
+    echo
+fi
+
+#if [ -f libharfbuzz.js ]
+#then
+#    echo "    - using cached dynamic libharfbuzz"
+#else
+#    $EMCC ${PRE} ${LIB} -shared -o libharfbuzz.js $HARFBUZZ
+#fi
+
+#if [ -f libpview3d.js ]
+#then
+#    echo "    - using cached dynamic libpview3d"
+#else
+#    echo "    - building shared libpview3d"
+#    lib="${PANDA3D}/built/lib"
+#    plib="$lib/libp3framework.bc"
+#
+#    # $lib/libpandabullet.bc"
+#
+#    $EMCC ${PRE} ${LIB} -shared -o libpview3d.js $plib panda3d_hooks.bc
+#    echo
+#    du -hs libpview3d.js
+#    echo
+#fi
+
+
+
+#
+#if [ -f libpanda.js ]
+#then
+#    echo "    - using cached dynamic libpanda3d"
+#else
+#    echo "    - building shared lib*"
+#
+#    for plib in ${PANDA3D}/built/lib/libp*bc
+#    do
+#        jslib=$(basename $plib .bc).js
+#        echo building $jslib
+#        $EMCC ${PRE} ${LIB} -shared -o $jslib $plib
+#    done
+#    echo
+#    du -hs lib??*.*
+#fi
+
+
+
+echo
+du -hs lib*.js
+echo
+echo "==========================================================================="
+echo
+
+for lib in lib*.js
+do
+    echo $lib
+    rm $lib.lzma
+    lzma -1 -k $lib
+done
+
+#cp -vf lib*.js.lzma /srv/www/html/p3d
+mv -vf lib*.js.lzma ${WEBROOT}/
+cp -vf lib*.wasm* ${WEBROOT}/
+sync
+
+echo
+echo "==========================================================================="
+echo
+
+
+#now just compile *fast*
+
+rm -f ${WEBROOT}/python.* ${WEBROOT}/lib*.js
+
+export EMCC_FORCE_STDLIBS=1
+
+EM_FLAGS="$EM_BASE -O1 -g0"
+
+
+INC="-I$PY_INCLUDE"
+
+#todo so can compress lzma .js
+#--memory-init-file 0
+
+PRE="-s LZ4=1 -s FORCE_FILESYSTEM=1 --preload-file ../lib@/lib"  # or ModuleNotFoundError: No module named 'encodings'
+
+MAIN="-s MAIN_MODULE=1 -s TOTAL_MEMORY=${RAM} -s NO_EXIT_RUNTIME=1" # -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1"
+
+MAIN="$MAIN -s INVOKE_RUN=1 -s EXTRA_EXPORTED_RUNTIME_METHODS=[\"loadDynamicLibrary\",\"cwrap\",\"ccall\"]"
+time $EMCC ${MAIN} ${PRE} $INC -o python.html ../system/python_dl.cpp -ldl
+
+#   Module.dynamicLibraries = ['libsomething.js'];
+
+#lzma -1 -k python.js
+
+mv -v python.* ${WEBROOT}/
+

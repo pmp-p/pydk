@@ -1,16 +1,18 @@
 #!/bin/bash
 
+export PYVER=3.7 # and only !
+PYTHON=Python-${PYVER}.1
+
 SRC_URL="https://github.com/panda3d/panda3d/archive/webgl-port.zip"
 SRC=panda3d-webgl-port
 
-PYTHON=Python-3.7.1
 FT2=FreeType-master
 HB=harfbuzz-master
 
 
 OPT_COMMON="--optimize 4 --use-freetype --use-gles --use-gles2 --use-bullet --use-zlib --use-python --use-direct --use-openssl --use-openal"
 OPT_COMMON="$OPT_COMMON --no-png --no-jpeg --no-eigen --no-assimp --no-egg --no-x11"
-OPT_COMMON="$OPT_COMMON  --override STDFLOAT_DOUBLE=1"
+OPT_COMMON="$OPT_COMMON  --override STDFLOAT_DOUBLE=1 --override HAVE_THREADS=UNDEF"
 
 #--nothing
 OPT_TARGET="--target emscripten --no-pandatool --no-neon --no-sse2"
@@ -31,12 +33,12 @@ patch_me
 #reparse just in case python was built without reloading env
 . $SDK/built.${BITS}.env
 
-if $PDK_EM_PYTHON_HOST -V | grep -q 3.7
+if $PDK_EM_PYTHON_HOST -V | grep -q $PYVER
 then
-    echo "Will use python 3.7 :  $PDK_EM_PYTHON_HOST"
+    echo "Will use python $PYVER :  $PDK_EM_PYTHON_HOST"
     export PANDA_PYLIB=python3.7m
 else
-    echo "This script is for cpython 3.7 emscripten only"
+    echo "This script is for cpython $PYVER emscripten only"
     read
     exit
 fi
@@ -51,12 +53,16 @@ EM_LIBS=""
 EM_LIBS="-s OFFSCREENCANVAS_SUPPORT=1 -s USE_WEBGL2=1"
 EM_LIBS="$EM_LIBS -s USE_FREETYPE=1 -s USE_OGG=1 -s USE_VORBIS=1 -s USE_BULLET=1 -s USE_ZLIB=1"
 
-EM_FLAGS="-O3 -fno-rtti -s SIDE_MODULE=1 -s LINKABLE=1"
+#-s SIDE_MODULE=1 => NO
+EM_FLAGS="-O3 -fno-rtti -s LINKABLE=1 -s ASM_JS=1"
 EM_FLAGS="$EM_FLAGS -s ASSERTIONS=1 -s DEMANGLE_SUPPORT=0 -s DISABLE_EXCEPTION_CATCHING=1"
+
+#popen
+EM_FLAGS="$EM_FLAGS -s ERROR_ON_UNDEFINED_SYMBOLS=0"
 
 #EM_FLAGS="$EM_FLAGS -s AGGRESSIVE_VARIABLE_ELIMINATION=1 -s ELIMINATE_DUPLICATE_FUNCTIONS=1"
 #-s EMULATE_FUNCTION_POINTER_CASTS=1"
-#EM_FLAGS="$EM_FLAGS -s ERROR_ON_MISSING_LIBRARIES=0 -s ERROR_ON_UNDEFINED_SYMBOLS=0"
+#EM_FLAGS="$EM_FLAGS -s ERROR_ON_MISSING_LIBRARIES=0 "
 
 
 if [ -f $PDK_EM_PYTHON_HOST ]
@@ -72,7 +78,6 @@ then
     echo "
         * Entering $(pwd)
     "
-
     mkdir -p thirdparty/host-libs
     mkdir -p thirdparty/emscripten-libs
 
@@ -82,11 +87,14 @@ then
     echo "
         * Setting Host python ${TP}/python include+lib
     "
-    mkdir -p ${TP} ${TP_HOST}
-    #/python${PYVER}/{lib,include,include/python${PYDOT}${PYMODE}}
+    mkdir -p ${TP} ${TP}/python ${TP}/python${PYVER} ${TP_HOST}
 
     ln -sf ${ROOT}/${PYTHON}.host ${TP_HOST}/python${PYVER}
-    ln -sf ${ROOT}/${PYTHON}.${BITS} ${TP}/python${PYVER}
+
+    ln -sf ${ROOT}/${PYTHON}.${BITS}/lib ${TP}/python${PYVER}/lib
+    ln -sf ${ROOT}/${PYTHON}.${BITS}/lib ${TP}/python/lib
+    ln -sf ${ROOT}/${PYTHON}.host/include ${TP}/python${PYVER}/include
+    ln -sf ${ROOT}/${PYTHON}.host/include/python${PYVER}/include ${TP}/python${PYVER}/include
 
     echo "
         * Setting FT2 ${TP}/freetype2 include+lib
@@ -94,24 +102,19 @@ then
 
     mkdir -p ${TP}/freetype2 ${TP}/freetype2/lib
     ln -s ${ROOT}/${FT2}/include ${TP}/freetype2
-    cp -vf ${ROOT}/${FT2}.em/libfreetype.a ${TP}/libfreetype.a
-    #cp -vf ${ROOT}/${FT2}/Android/libs/armeabi/libfreetype.so ${TP}/
 
-    TP_FT2="--use-freetype --freetype-incdir=${TP} --freetype-libdir=${TP}"
-    TP_HB="--use-harfbuzz --harfbuzz-incdir=${TP} --harfbuzz-libdir=${TP}"
+    #cp -vf ${ROOT}/${FT2}.em/libfreetype.a ${TP}/libfreetype.a
+
+
+    TP_FT2="--use-freetype" # --freetype-incdir=${TP}" # --freetype-libdir=${TP}"
+    #TP_HB="--use-harfbuzz" # --harfbuzz-incdir=${TP}" # --harfbuzz-libdir=${TP}"
 #    TP_VB="--use-vorbis --vorbis-incdir=${TP} --vorbis-libdir=${TP}"
-#
-#    VB="libvorbis-libogg-android-master"
-#    ln -s ${ROOT}/${VB}/jni/include/vorbis ${TP}/
-#    ln -s ${ROOT}/${VB}/jni/include/ogg ${TP}/
-#
-#    cp -vf ${ROOT}/${VB}/libs/armeabi-v7a/lib*.so ${TP}/
-#
+
     mkdir -p ${TP}/harfbuzz/lib
     ln -s ${ROOT}/${HB}/src/*.h ${TP}/harfbuzz/
-    cp -vf ${ROOT}/${HB}.em/libharfbuzz.a ${TP}/
-#
-#
+    #cp -vf ${ROOT}/${HB}.em/libharfbuzz.a ${TP}/
+
+
 #    TP_BUL="--use-bullet --bullet-incdir=${TP} --bullet-libdir=${TP}"
 #    ln -s ${ROOT}/bullet3-master/src ${TP}/bullet
 #    cp -vf $(find ${ROOT}/bullet3-master/|grep /lib.*.a$) ${TP}/
@@ -155,6 +158,7 @@ FATAL: interrogate not found in host/bin build
     TP_OA="--use-openal --openal-incdir=${TP} --openal-libdir=${TP}"
 
     TP_PYTHON="--use-python --python-incdir=${TP}/python${PYVER}/include"
+        #--python-libdir=${TP}/python/lib"
     #--python-libdir=${TP}/python${PYVER}/lib"
 
     TP_ALL="${TP_FT2} ${TP_HB} ${TP_OA} ${TP_VB} ${TP_BUL} ${TP_PYTHON}"
@@ -163,11 +167,11 @@ FATAL: interrogate not found in host/bin build
 
     echo export LD_LIBRARY_PATH=$(pwd)/host/lib > rebuild.sh
     echo export PATH=$(pwd)/host/bin:$PATH >> rebuild.sh
-    echo export CXXFLAGS="-std=c++11 -fno-exceptions $EM_FLAGS $EM_LIBS" >> rebuild.sh
+    echo "export CXXFLAGS='-std=c++11 -fno-exceptions $EM_FLAGS $EM_LIBS'" >> rebuild.sh
     echo $PDK_EM_PYTHON_HOST makepanda/makepanda.py $OPT_COMMON $OPT_TARGET $TP_ALL "$@" >> rebuild.sh
     chmod +x rebuild.sh
-
-    $PDK_EM_PYTHON_HOST makepanda/makepanda.py $OPT_COMMON $OPT_TARGET $TP_ALL "$@"
+    ./rebuild.sh "$@"
+    #$PDK_EM_PYTHON_HOST makepanda/makepanda.py $OPT_COMMON $OPT_TARGET $TP_ALL "$@"
 else
     echo "FATAL: Can't find static host cpython $PDK_PYTHON"
 fi

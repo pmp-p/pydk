@@ -1,5 +1,5 @@
---- cpython-3.7.1rc1/Modules/selectmodule.c	2018-09-26 08:16:09.000000000 +0200
-+++ cpython-3.7.1rc1.em/Modules/selectmodule.c	2018-10-09 03:10:41.575197396 +0200
+--- Python-3.7.1/Modules/selectmodule.c	2018-10-20 08:04:19.000000000 +0200
++++ Python-3.7.1.em/Modules/selectmodule.c	2018-11-17 07:18:26.274870728 +0100
 @@ -266,7 +266,11 @@
      do {
          Py_BEGIN_ALLOW_THREADS

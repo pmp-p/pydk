@@ -23,14 +23,14 @@ else
     SDK_ROOT="$DIST"
 fi
 
-if echo "$2"|grep -q emsdk_set_env
+if echo "$2"|grep -q emsdk_env
 then
     EMSDK="$2"
     echo "
 You have selected emsdk from [$(dirname $EMSDK)]
     "
 else
-    echo "can't find emsdk_set_env.sh argument"
+    echo "can't find emsdk_env.sh argument"
     exit 1
 fi
 

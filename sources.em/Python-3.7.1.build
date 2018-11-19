@@ -2,39 +2,37 @@
 #SRC=cpython-3.7.1rc1
 #GHZIP=https://github.com/python/cpython/archive/v3.7.1rc1.zip
 
-SRC=Python-3.7.1
+export PYVER=3.7
+export SRC=Python-3.7.1
 SRC_URL=https://www.python.org/ftp/python/3.7.1/Python-3.7.1.tar.xz
 
 TARGET=Emscripten
 
-#--disable-shared
-OPT_COMMON="--with-system-ffi --disable-ipv6 --without-ensurepip --with-c-locale-coercion --without-pymalloc"
-#unsupported: --with-computed-gotos --without-threads
+#
+export OPT_COMMON="--with-system-ffi --disable-ipv6 --without-ensurepip --with-c-locale-coercion --without-pymalloc"
 
-OPT_TARGET="--enable-shared --without-gcc --host=asmjs-unknown-emscripten"
+export OPT_HOST="--disable-shared"
+
+#unsupported: --with-computed-gotos --without-threads
+export OPT_TARGET="--enable-shared --without-gcc --host=asmjs-unknown-emscripten"
 
 
 if echo $OPT_TARGET|grep -q enable-shared
 then
     echo "WARNING: shared build mode is a non standard use and requires special js loaders"
-    LIBPYTHON=libpython3.7.so
+    export LIBPYTHON=libpython3.7.so
 else
-    LIBPYTHON=libpython3.7.a
+    export LIBPYTHON=libpython3.7.a
 fi
 
 
 #==============================================================================
-ROOT=$(dirname $(realpath "$0") )
+#export ROOT=$(dirname $(realpath "$0") )
 
 . $SDK/build.functions
 . $SDK/build.${BITS}.functions
 
-
-
 set_source_tree 4243
-
-export DEV_PATHS DEV_TARGET PYVER PYDOT PYMODE OPT_COMMON OPT_TARGET
-
 
 #
 #
@@ -48,11 +46,20 @@ export DEV_PATHS DEV_TARGET PYVER PYDOT PYMODE OPT_COMMON OPT_TARGET
 #EM_FLAGS="$EM_FLAGS -s ERROR_ON_MISSING_LIBRARIES=0 -s ERROR_ON_UNDEFINED_SYMBOLS=0"
 #EM_FLAGS="$EM_FLAGS -s SIDE_MODULE=1" # -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1"
 #
+export EM_FLAGS="-O3 -s EMULATE_FUNCTION_POINTER_CASTS=1 -s EXPORT_ALL=1 " # -s LINKABLE=1
+if echo "$@" | grep -q asm
+then
+    echo "   ===== asm.js ========"
+    export EM_MODE="-s ASM_JS=1"
 
-export EM_FLAGS="-O3 -s USE_ZLIB=1 -s SIDE_MODULE=1" # -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1"
+else
+    echo "   ===== WASM ========"
+    export EM_MODE=""
+fi
+
+export EM_FLAGS="$EM_FLAGS -s USE_ZLIB=1 $EM_MODE"
 
 #
-export ORIGIN=$(pwd)
 echo Will build from $ORIGIN source tree
 
 echo "<enter> to continue"
@@ -77,6 +84,12 @@ then
     * found TARGET $PDK_EM_PYTHON - skipping HOST + TARGET build
 "
 else
+
+    if [ -f $ROOT/$SRC.host/bin/python3 ]
+    then
+        export PDK_EM_PYTHON_HOST=$ROOT/$SRC.host/bin/python3
+    fi
+
     if [ -n "$PDK_EM_PYTHON_HOST" ]
     then
         echo "
@@ -95,11 +108,11 @@ else
             read
 
             cd $ORIGIN/${TARGET}/build.host
-            ../../configure --disable-shared --prefix=$ROOT/$SRC.host $OPT_COMMON
+            ../../configure --prefix=$ROOT/$SRC.host $OPT_COMMON $OPT_HOST
             if make -j 4
             then
             echo "
-    * Creating host support distribution in [$ROOT/$SRC.${BITS}]
+    * Creating host support distribution in [$ROOT/$SRC.host]
 "
                 if make install 2>&1 | pv -w 60  -p -l -s 7600 > install.host.log
                 then
@@ -117,7 +130,7 @@ else
         fi
     fi
 
-    export PDK_EM_PYTHON=${ROOT}/${SRC}.{$BITS}/bin/python
+    export PDK_EM_PYTHON=${ROOT}/${SRC}.${BITS}/bin/python
 
     echo Building TARGET [$PDK_EM_PYTHON]
 
@@ -125,6 +138,12 @@ else
 
     if echo $(which emcc)|grep -q emcc$
     then
+        export CC="emcc $EM_MODE -I/usr/include"
+        export GCC="emcc $EM_MODE -I/usr/include"
+        export CPP="emcc -E"
+        export CXX="em++ $EM_MODE -I/usr/include"
+
+
         mkdir -p $ORIGIN/${TARGET}/build.${BITS}
         cd $ORIGIN/${TARGET}/build.${BITS}
         if [ -f config.done ]
@@ -133,38 +152,88 @@ else
         else
             cp ../config.site ./
 
-            export CPPFLAGS="$EM_FLAGS"
-            export CONFIG_SITE=./config.site
-            export READELF=true
-            emconfigure ../../configure $OPT_COMMON $OPT_TARGET --build=$(../../config.guess) --prefix=$ROOT/$SRC.${BITS}
-            cp -vf ../Setup.local Modules/Setup.local
-            touch config.done
+            echo ". $TOOLCHAIN" >  reconf.sh
+            echo "export CPPFLAGS='$EM_FLAGS'"  >> reconf.sh
+            echo "export CXXFLAGS='$EM_FLAGS'"  >> reconf.sh
+            echo "export CFLAGS='$EM_FLAGS'"  >> reconf.sh
+            echo export CONFIG_SITE=./config.site >> reconf.sh
+            echo export READELF=/bin/true >> reconf.sh
+            echo "emconfigure ../../configure $OPT_COMMON $OPT_TARGET --build=$(../../config.guess) --prefix=${ORIGIN}.${BITS}" >> reconf.sh
+            chmod +x reconf.sh
+            if ./reconf.sh
+            then
+                #cp -vf ../Setup.local Modules/Setup.local
+                cat <<END > Modules/Setup.local
+*static*
+
+array arraymodule.c	# array objects
+cmath cmathmodule.c _math.c # -lm # complex math library functions
+math mathmodule.c _math.c # -lm # math library functions, e.g. sin()
+_contextvars _contextvarsmodule.c
+_struct _struct.c	# binary structure packing/unpacking
+_weakref _weakref.c
+time timemodule.c # -lm # time operations and variables
+_operator _operator.c	# operator.add() and similar goodies
+_random _randommodule.c	# Random number generator
+_collections _collectionsmodule.c # Container types
+_functools _functoolsmodule.c	# Tools for working with functions and callable objects
+itertools itertoolsmodule.c    # Functions creating iterators for efficient looping
+_bisect _bisectmodule.c	# Bisection algorithms
+_socket socketmodule.c
+_json _json.c
+binascii binascii.c
+
+#asyncio req
+select selectmodule.c
+fcntl fcntlmodule.c
+
+_sha1 sha1module.c
+_sha256 sha256module.c
+_sha512 sha512module.c
+_md5 md5module.c
+
+#
+termios termios.c
+#_sha3 _sha3/sha3module.c
+#_blake2 _blake2/blake2module.c _blake2/blake2b_impl.c _blake2/blake2s_impl.c
+
+#future_builtins future_builtins.c
+END
+
+                touch config.done
+            fi
         fi
         EM_MAKE="emmake make HOSTPYTHON=$PDK_EM_PYTHON_HOST PYTHON_FOR_BUILD=$PDK_EM_PYTHON_HOST CROSS_COMPILE=yes"
+        echo "$EM_MAKE $LIBPYTHON"> rebuild.sh
 
         sed -i -e 's/INSTSONAME=libpython\$(LDVERSION).so/INSTSONAME=libpython\$(LDVERSION).bc/' Makefile
         sed -i -e 's/libinstall:.*/libinstall:/' Makefile
-        echo "$EM_MAKE $LIBPYTHON"> rebuild.sh
 
         if $EM_MAKE $LIBPYTHON
         then
             echo "
-    * Creating distribution in [$ROOT/$SRC.${BITS}]
+    * Creating distribution in [$ORIGIN.${BITS}]
 "
-            if $EM_MAKE inclinstall libinstall $LIBPYTHON 2>&1 | pv -w 60  -p -l -s 7400 > install.${BITS}.log
+            mkdir -p $ORIGIN.host/lib/python3.7/config-3.7-x86_64-linux-gnu/Tools/scripts
+            cp -aRfxp $ORIGIN.host/bin/*  $ORIGIN.host/lib/python3.?/config-3.*-linux-gnu/Tools/scripts/
+
+            if $EM_MAKE inclinstall libinstall $LIBPYTHON 2>&1 | pv -w 60  -p -l -s 7500 > install.${BITS}.log
             then
-                echo
+                mkdir -p $ORIGIN.${BITS}/lib $ORIGIN.${BITS}/lib/python${PYVER}
+                #cp $LIBPYTHON $ORIGIN.${BITS}/lib/
+                SYSCF_HOST="$ORIGIN.host/lib/python${PYVER}/_sysconfigdata__linux_x86_64-linux-gnu.py"
+                SYSCF_EM="$ORIGIN.${BITS}/lib/python${PYVER}/_sysconfigdata__emscripten_x86_64-linux-gnu.py"
+                cp -vf $ORIGIN/Emscripten/build.em/libpython3*so $ORIGIN.${BITS}/lib/
+                cp -vf $SYSCF_HOST $SYSCF_EM
             else
-                  echo distribution failed, see $(pwd)/install.${BITS}.log
+                echo "======================================"
+                tail $(pwd)/install.${BITS}.log
+                echo "======================================"
+                echo distribution failed, see $(pwd)/install.${BITS}.log
             fi
         else
             echo Target compilation failed
         fi
-        mkdir -p $ROOT/$SRC.${BITS}/lib
-        cp $LIBPYTHON $ROOT/$SRC.${BITS}/lib/
-        SYSCF_HOST="$ROOT/$SRC.host/lib/python3.7/_sysconfigdata__linux_x86_64-linux-gnu.py"
-        SYSCF_EM="$ROOT/$SRC.${BITS}/lib/python3.7/_sysconfigdata__emscripten_x86_64-linux-gnu.py"
-        cp -vf $SYSCF_HOST $SYSCF_EM
     else
         echo emsdk toolchain not found in [$TOOLCHAIN]
     fi

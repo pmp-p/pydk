@@ -1,5 +1,5 @@
---- cpython-3.7.1rc1/Python/pylifecycle.c	2018-09-26 08:16:09.000000000 +0200
-+++ cpython-3.7.1rc1.em/Python/pylifecycle.c	2018-10-09 03:10:41.703197393 +0200
+--- Python-3.7.1/Python/pylifecycle.c	2018-10-20 08:04:19.000000000 +0200
++++ Python-3.7.1.em/Python/pylifecycle.c	2018-11-17 07:18:26.310869545 +0100
 @@ -2324,6 +2324,8 @@
      if (sigaction(sig, NULL, &context) == -1)
          return SIG_ERR;

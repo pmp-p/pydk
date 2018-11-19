@@ -1,5 +1,5 @@
---- cpython-3.7.1rc1/Modules/readline.c	2018-09-26 08:16:09.000000000 +0200
-+++ cpython-3.7.1rc1.em/Modules/readline.c	2018-10-16 00:25:40.667417701 +0200
+--- Python-3.7.1/Modules/readline.c	2018-10-20 08:04:19.000000000 +0200
++++ Python-3.7.1.em/Modules/readline.c	2018-11-17 07:18:26.270870859 +0100
 @@ -1185,6 +1185,11 @@
  
      completed_input_string = not_done_reading;

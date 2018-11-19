@@ -14,8 +14,41 @@ function wait_or_break
     clear
 }
 
+
+function arg_parse
+#-----------------
+{
+    echo
+    echo "[ $0 ] accepts config for :"
+    echo "--------------------------------------"
+python3 <<END
+import sys,os
+with open("$0.conf","w") as conf:
+    envkeys = list( os.environ.keys() )
+    envkeys.sort()
+    for kw in envkeys:
+        if kw.startswith('DEFAULT_'):
+            var  = kw[8:]
+            info = f'\t{var}={os.getenv(var)}, default is "{os.getenv(kw)}"'
+            #print(info)
+            print(f"export {var}=\${{var:-\${kw}}}", file=conf)
+END
+
+. $0.conf
+
+    for cnf in $(env|grep ^DEFAULT_ | cut -f1 -d= | cut -c9-| sort)
+    do
+        echo "    " $(env |grep ^$cnf=)
+
+    done
+    echo
+}
+
+
 function set_source_tree
 {
+    export ROOT=$(dirname $(realpath "$0") )
+
     cd $ROOT
 
     echo "
@@ -100,6 +133,8 @@ Setting source tree in [$ROOT] for [$SRC]"
         fi
     done
 
+    #export ROOT=$ROOT
+    export SRC=$SRC
     export ORIGIN=$ROOT/$SRC
     cd $ORIGIN
 }
