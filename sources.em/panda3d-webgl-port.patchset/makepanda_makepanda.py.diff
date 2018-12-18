@@ -1,5 +1,5 @@
 --- panda3d-webgl-port/makepanda/makepanda.py	2018-05-07 17:07:51.000000000 +0200
-+++ panda3d-webgl-port.pp/makepanda/makepanda.py	2018-10-27 21:37:58.384635292 +0200
++++ panda3d-webgl-port.pp/makepanda/makepanda.py	2018-12-18 19:05:59.560870907 +0100
 @@ -26,6 +26,8 @@
  import os
  import sys
@@ -9,3 +9,21 @@
  ########################################################################
  ##
  ## PARSING THE COMMAND LINE OPTIONS
+@@ -1332,7 +1334,7 @@
+                 cmd += ' -mfpu=neon'
+ 
+         elif GetTarget() == 'emscripten':
+-            cmd += " -s WARN_ON_UNDEFINED_SYMBOLS=1 -s NO_FILESYSTEM=1"
++            cmd += " -s WARN_ON_UNDEFINED_SYMBOLS=1 -s NO_FILESYSTEM=1 --memory-init-file 0"
+ 
+             if 'VORBIS' in opts and not PkgSkip("VORBIS"):
+                 cmd += " -s USE_VORBIS=1"
+@@ -1827,7 +1829,7 @@
+             cmd += ' -lc -lm'
+ 
+         elif GetTarget() == 'emscripten':
+-            cmd += " -s WARN_ON_UNDEFINED_SYMBOLS=1"
++            cmd += " -s WARN_ON_UNDEFINED_SYMBOLS=0"
+             if GetOrigExt(dll) == ".exe":
+                 cmd += " --memory-init-file 0"
+ 

@@ -24,8 +24,6 @@ ROOT=$(dirname $(realpath "$0") )
 . $SDK/build.functions
 . $SDK/build.${BITS}.functions
 
-
-
 set_source_tree 7200
 
 patch_me
@@ -48,13 +46,22 @@ export ORIGIN=$(pwd)
 EM_LIBS=""
 #EM_FLAGS="-O3 -s ASM_JS=1 -s USE_ZLIB=1 "
 
+if echo "$@" | grep -q asm
+then
+    echo "   ===== asm.js ========"
+    export EM_MODE="-s ASM_JS=1"
+else
+    echo "   ===== WASM ========"
+    export EM_MODE=""
+fi
+
 #-fno-exceptions is set at bottom
 
 EM_LIBS="-s OFFSCREENCANVAS_SUPPORT=1 -s USE_WEBGL2=1"
 EM_LIBS="$EM_LIBS -s USE_FREETYPE=1 -s USE_OGG=1 -s USE_VORBIS=1 -s USE_BULLET=1 -s USE_ZLIB=1"
 
 #-s SIDE_MODULE=1 => NO
-EM_FLAGS="-O3 -fno-rtti -s LINKABLE=1 -s ASM_JS=1"
+EM_FLAGS="-O3 -fno-rtti -s LINKABLE=1 $EM_MODE"
 EM_FLAGS="$EM_FLAGS -s ASSERTIONS=1 -s DEMANGLE_SUPPORT=0 -s DISABLE_EXCEPTION_CATCHING=1"
 
 #popen
@@ -107,12 +114,12 @@ then
 
 
     TP_FT2="--use-freetype" # --freetype-incdir=${TP}" # --freetype-libdir=${TP}"
-    #TP_HB="--use-harfbuzz" # --harfbuzz-incdir=${TP}" # --harfbuzz-libdir=${TP}"
+    TP_HB="--use-harfbuzz --harfbuzz-incdir=${TP} --harfbuzz-libdir=${TP}"
 #    TP_VB="--use-vorbis --vorbis-incdir=${TP} --vorbis-libdir=${TP}"
 
     mkdir -p ${TP}/harfbuzz/lib
     ln -s ${ROOT}/${HB}/src/*.h ${TP}/harfbuzz/
-    #cp -vf ${ROOT}/${HB}.em/libharfbuzz.a ${TP}/
+    cp -vf ${ROOT}/${HB}.em/libharfbuzz.a ${TP}/
 
 
 #    TP_BUL="--use-bullet --bullet-incdir=${TP} --bullet-libdir=${TP}"

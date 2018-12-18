@@ -1,0 +1,21 @@
+--- cpython-3.7.1rc1/Python/formatter_unicode.c	2018-09-26 08:16:09.000000000 +0200
++++ cpython-3.7.1rc1.api19/Python/formatter_unicode.c	2018-09-29 01:39:05.990337593 +0200
+@@ -704,12 +704,18 @@
+ {
+     switch (type) {
+     case LT_CURRENT_LOCALE: {
++//PMPP API<21
++#if __ANDROID_API__ < 21
++    #warning untested
++#endif
+         if (_Py_GetLocaleconvNumeric(&locale_info->decimal_point,
+                                      &locale_info->thousands_sep,
+                                      &locale_info->grouping) < 0) {
+             return -1;
+         }
+         break;
++
++//PMPP API<21
+     }
+     case LT_DEFAULT_LOCALE:
+     case LT_UNDERSCORE_LOCALE:

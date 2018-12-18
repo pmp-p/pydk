@@ -122,7 +122,7 @@ else
     #-s EMULATE_FUNCTION_POINTER_CASTS=1 or initimport: can't import _frozen_importlib
     # rdb has patches but for py 2.7
     # watch for https://bugs.python.org/issue33012
-    PYOPTS="-I${PY}/include/python${PYVER} -s EMULATE_FUNCTION_POINTER_CASTS=1 -s EXPORT_ALL=1"
+    PYOPTS="-I${PY}/include/python${PYVER} -s EMULATE_FUNCTION_POINTER_CASTS=1 -s EXPORT_ALL=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1"
     # -s EXPORTED_FUNCTIONS=[\"_PyOS_InputHook\"]
     $EMCC ${PYOPTS} ${LIB}  -shared -o libpython.${SUFFIX} ${BC}
 

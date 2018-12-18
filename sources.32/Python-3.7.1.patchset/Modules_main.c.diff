@@ -1,0 +1,35 @@
+--- cpython-3.7.1rc1/Modules/main.c	2018-09-26 08:16:09.000000000 +0200
++++ cpython-3.7.1rc1.api19/Modules/main.c	2018-09-29 01:29:03.650351545 +0200
+@@ -62,6 +62,14 @@
+ #define WCSTOK wcstok
+ #endif
+ 
++//PMPP API<21
++#ifdef __ANDROID__
++    #if __ANDROID_API__ < 21
++        #define NO_LOCALECONV 1
++    #endif
++#endif
++//PMPP API<21
++
+ /* For Py_GetArgcArgv(); set by main() */
+ static wchar_t **orig_argv = NULL;
+ static int orig_argc = 0;
+@@ -1986,13 +1994,15 @@
+     int init_utf8_mode = Py_UTF8Mode;
+     _PyCoreConfig save_config = _PyCoreConfig_INIT;
+     int res = -1;
+-
++#if NO_LOCALECONV
++    char *oldloc = NULL;
++#else
+     char *oldloc = _PyMem_RawStrdup(setlocale(LC_ALL, NULL));
+     if (oldloc == NULL) {
+         pymain->err = _Py_INIT_NO_MEMORY();
+         goto done;
+     }
+-
++#endif
+     /* Reconfigure the locale to the default for this process */
+     _Py_SetLocaleFromEnv(LC_ALL);
+ 

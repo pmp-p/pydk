@@ -1,5 +1,5 @@
 --- panda3d-webgl-port/panda/src/pipeline/threadSimpleManager.cxx	2018-05-07 17:07:51.000000000 +0200
-+++ panda3d-webgl-port.pp/panda/src/pipeline/threadSimpleManager.cxx	2018-10-27 21:38:09.006635046 +0200
++++ panda3d-webgl-port.pp/panda/src/pipeline/threadSimpleManager.cxx	2018-12-18 12:58:19.905659772 +0100
 @@ -472,9 +472,10 @@
  #ifdef HAVE_PYTHON
      // Ensure that the Python threading system is initialized and ready to go.

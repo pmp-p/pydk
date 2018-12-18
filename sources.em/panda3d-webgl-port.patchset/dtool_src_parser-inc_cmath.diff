@@ -1,5 +1,5 @@
 --- panda3d-webgl-port/dtool/src/parser-inc/cmath	2018-05-07 17:07:51.000000000 +0200
-+++ panda3d-webgl-port.pp/dtool/src/parser-inc/cmath	2018-10-27 21:37:58.337635293 +0200
++++ panda3d-webgl-port.pp/dtool/src/parser-inc/cmath	2018-12-18 12:58:19.881660556 +0100
 @@ -1,4 +1,4 @@
  #pragma once
  

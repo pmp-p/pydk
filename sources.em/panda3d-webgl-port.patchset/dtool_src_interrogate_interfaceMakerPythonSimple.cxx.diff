@@ -1,5 +1,5 @@
 --- panda3d-webgl-port/dtool/src/interrogate/interfaceMakerPythonSimple.cxx	2018-05-07 17:07:51.000000000 +0200
-+++ panda3d-webgl-port.pp/dtool/src/interrogate/interfaceMakerPythonSimple.cxx	2018-10-27 21:37:58.298635294 +0200
++++ panda3d-webgl-port.pp/dtool/src/interrogate/interfaceMakerPythonSimple.cxx	2018-12-18 12:58:19.877660685 +0100
 @@ -95,7 +95,7 @@
        << "#if PY_MAJOR_VERSION >= 3\n"
        << "static struct PyModuleDef python_simple_module = {\n"

@@ -21,7 +21,7 @@ function arg_parse
     echo
     echo "[ $0 ] accepts config for :"
     echo "--------------------------------------"
-python3 <<END
+python3.7 <<END
 import sys,os
 with open("$0.conf","w") as conf:
     envkeys = list( os.environ.keys() )
@@ -34,7 +34,7 @@ with open("$0.conf","w") as conf:
             print(f"export {var}=\${{var:-\${kw}}}", file=conf)
 END
 
-. $0.conf
+    . $0.conf
 
     for cnf in $(env|grep ^DEFAULT_ | cut -f1 -d= | cut -c9-| sort)
     do

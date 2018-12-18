@@ -68,3 +68,12 @@ bash ./emsdkbuild.sh /data/data/u.root.web $EMSDK
 
 
 
+## history
+
+Thanks to 
+
+https://github.com/rdb / https://github.com/Maratyszcza / https://github.com/iodide-project/pyodide / https://github.com/dgym/cpython-emscripten
+
+Why not brython ?
+
+https://github.com/brython-dev/brython/issues/275
