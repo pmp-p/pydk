@@ -1,0 +1,10 @@
+export PATH=$TOOLCHAIN/bin:$PATH
+cd linenoise-ng
+rm *.o *.a
+clang++ -I./include -std=c++11 -static -c src/ConvertUTF.cpp src/wcwidth.cpp src/linenoise.cpp
+arm-linux-androideabi-ar rc liblinenoise.a linenoise.o ConvertUTF.o wcwidth.o
+rm *.o
+
+clang -I./include -o linenoise-ng tst/example.c liblinenoise.a -lstdc++
+cd ..
+

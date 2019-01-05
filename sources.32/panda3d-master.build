@@ -1,6 +1,6 @@
 #!/bin/bash
 
-GHZIP=https://github.com/panda3d/panda3d/archive/master.zip
+SRC_URL=https://github.com/panda3d/panda3d/archive/master.zip
 ZIP=panda3d-master
 SRC=panda3d-master
 
@@ -22,12 +22,10 @@ export NDK_ROOT=$ANDROID_NDK_HOME
 OPT_ANDROID="--arch $PANDA_ARCH --target android-${__ANDROID_API__} --no-pview --no-pandatool --use-neon --no-sse2"
 
 #==============================================================================
-ORIGIN=$(dirname $(realpath "$0") )
+ROOT=$(dirname $(realpath "$0") )
 
+. $SDK/build.functions
 . $SDK/build.${BITS}.functions
-
-
-ROOT=$(pwd)
 
 set_source_tree 3400
 

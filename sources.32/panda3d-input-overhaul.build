@@ -1,9 +1,8 @@
 #!/bin/bash
 
-GHZIP="https://github.com/panda3d/panda3d/archive/input-overhaul.zip"
-ZIP="panda3d-input-overhaul"
+SRC_URL="https://github.com/panda3d/panda3d/archive/input-overhaul.zip"
 SRC="panda3d-input-overhaul"
-PYTHON="cpython-3.7.1rc1"
+PYTHON="Python-3.7.2"
 FT2="freetype2-android-master"
 HB="harfbuzz-android-master"
 VB="libvorbis-libogg-android-master"
@@ -24,7 +23,6 @@ export NDK_ROOT=$ANDROID_NDK_HOME
 OPT_ANDROID="--arch $PANDA_ARCH --target android-${__ANDROID_API__} --no-pview --no-pandatool --use-neon --no-sse2"
 
 #==============================================================================
-ROOT=$(dirname $(realpath "$0") )
 
 . $SDK/build.functions
 . $SDK/build.${BITS}.functions
@@ -53,9 +51,6 @@ then
     export WITH_LIBRARIES="libffi,openssl,ncurses"
     echo "using instead : WITH_LIBRARIES=$WITH_LIBRARIES"
 fi
-
-
-cd ${ORIGIN}
 
 
 if [ -f $PDK_PYTHON ]
@@ -167,7 +162,7 @@ FATAL: interrogate not found in host/bin build
     cmd="$PDK_PYTHON makepanda/makepanda.py $OPT_COMMON $OPT_ANDROID $TP_ALL"
     cat > $ORIGIN.rebuild.sh <<END
 #!/bin/bash
-. $SDK/sdk.env
+. $SDK/sdk.${BITS}.env
 cd $ORIGIN
 NDK_ROOT=$NDK_ROOT PANDA_ARCH=$PANDA_ARCH $cmd "\$@"
 END
