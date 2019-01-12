@@ -15,8 +15,8 @@ include $(PREBUILT_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 LOCAL_MODULE    := termegl
 LOCAL_SRC_FILES := jniapi.cpp
-LOCAL_CFLAGS := -fexceptions -funwind-tables
-LOCAL_LDFLAGS := -Wl,--no-merge-exidx-entries
+LOCAL_CFLAGS := -fPIC -fexceptions -funwind-tables
+LOCAL_LDFLAGS := -fPIE -Wl,--no-merge-exidx-entries
 
 LOCAL_CFLAGS += -I/data/data/u.root/usr/include/python3.7
 LOCAL_CFLAGS += -I.

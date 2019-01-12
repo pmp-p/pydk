@@ -90,7 +90,9 @@ else
         Logfile is $ORIGIN.log
 
         "
+                # NEED NDK <16b only 15c still has sgtty.h
                 cp -vf $ORIGIN.patchset/external/ncurses-6.0.mint.tar.gz ${ORIGIN}/Android/build/external-libraries/ncurses-6.0.tar.gz
+                cp -vf $ORIGIN.patchset/external/readline-6.3.tar.gz ${ORIGIN}/Android/build/external-libraries/readline-6.3.tar.gz
                 echo "Stuff fixed ... maybe,  press <enter> to resume build"
                 read
                 echo "to view log : tail -f $ORIGIN.log"

@@ -45,7 +45,7 @@ android {
             //abiFilters 'armeabi'
             //stl "gnustl_shared"
             ldLibs "z", "log", "android", "EGL", "GLESv1_CM"
-            cFlags = "-fPIE -std=c++11 -pthread -frtti -fexceptions"
+            cFlags = "-fPIC -fPIE -std=c++11 -pthread -frtti -fexceptions"
         }
     }
 
