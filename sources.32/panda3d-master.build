@@ -1,14 +1,16 @@
 #!/bin/bash
 
-SRC_URL=https://github.com/panda3d/panda3d/archive/master.zip
-ZIP=panda3d-master
+SRC_URL="https://github.com/panda3d/panda3d/archive/master.zip"
 SRC=panda3d-master
 
-PYTHON=cpython-bpo-30386
-FT2=freetype2-android-master
+PYTHON="Python-3.7.2"
+FT2="freetype2-android-master"
+HB="harfbuzz-android-master"
+VB="libvorbis-libogg-android-master"
+OA="HelloOpenAL"
+__ANDROID_API__=19
 
-
-OPT_COMMON="--no-eigen --use-gles --use-gles2 --use-zlib --threads 4 --override STDFLOAT_DOUBLE=1"
+OPT_COMMON="--no-eigen --no-gles --use-gles2 --use-zlib --threads 4 --override STDFLOAT_DOUBLE=1"
 
 if echo $ANDROID_ARCH|grep -q arm
 then
@@ -22,12 +24,11 @@ export NDK_ROOT=$ANDROID_NDK_HOME
 OPT_ANDROID="--arch $PANDA_ARCH --target android-${__ANDROID_API__} --no-pview --no-pandatool --use-neon --no-sse2"
 
 #==============================================================================
-ROOT=$(dirname $(realpath "$0") )
 
 . $SDK/build.functions
 . $SDK/build.${BITS}.functions
 
-set_source_tree 3400
+set_source_tree 7200
 
 patch_me
 
@@ -53,9 +54,6 @@ then
 fi
 
 
-cd ${ORIGIN}
-
-
 if [ -f $PDK_PYTHON ]
 then
 
@@ -67,8 +65,6 @@ then
     echo "
         * cleaning up thirdparties
     "
-
-     mkdir built/libs/armeabi-v7a -p
 
     rm -rf thirdparty
 
@@ -97,32 +93,33 @@ then
     #mkdir -p ${TP}/freetype2 ${TP}/freetype2/lib
     ln -s ${ROOT}/${FT2}/include ${TP}/freetype2
     #cp -vf ${ROOT}/${FT2}/Android/obj/local/armeabi-v7a/libfreetype2-static.a ${TP}/libfreetype.a
-    cp -vf ${ROOT}/${FT2}/Android/libs/armeabi/libfreetype.so ${TP}/
+    #cp -vf ${ROOT}/${FT2}/Android/libs/armeabi/libfreetype.so ${TP}/
+    cp -f ${ROOT}/${FT2}/Android/libs/armeabi-v7a/libfreetype.so ${TP}/
 
     TP_FT2="--use-freetype --freetype-incdir=${TP} --freetype-libdir=${TP}"
     TP_HB="--use-harfbuzz --harfbuzz-incdir=${TP} --harfbuzz-libdir=${TP}"
     TP_VB="--use-vorbis --vorbis-incdir=${TP} --vorbis-libdir=${TP}"
 
-    VB="libvorbis-libogg-android-master"
+    #VB="libvorbis-libogg-android-master"
     ln -s ${ROOT}/${VB}/jni/include/vorbis ${TP}/
     ln -s ${ROOT}/${VB}/jni/include/ogg ${TP}/
 
     cp -vf ${ROOT}/${VB}/libs/armeabi-v7a/lib*.so ${TP}/
 
-    HB=harfbuzz-android-master
+    #HB=harfbuzz-android-master
     mkdir -p ${TP}/harfbuzz/lib
     ln -s ${ROOT}/${HB}/src/*.h ${TP}/harfbuzz/
-    cp -vf ${ROOT}/${HB}/obj/local/armeabi-v7a/libharfbuzz.so ${TP}/
+    cp -f ${ROOT}/${HB}/obj/local/armeabi-v7a/libharfbuzz.so ${TP}/
 
     TP_OA="--use-openal --openal-incdir=${TP} --openal-libdir=${TP}"
 
-    OA=HelloOpenAL
+    #OA=HelloOpenAL
     ln -s ${ROOT}/${OA}/openal/include/AL ${TP}/
-    cp -vf ../HelloOpenAL/libs/armeabi/libopenal.so ${TP}/
+    cp -f ../HelloOpenAL/libs/armeabi/libopenal.so ${TP}/
 
     TP_BUL="--use-bullet --bullet-incdir=${TP} --bullet-libdir=${TP}"
     ln -s ${ROOT}/bullet3-master/src ${TP}/bullet
-    cp -vf $(find ${ROOT}/bullet3-master/|grep /lib.*.a$) ${TP}/
+    cp -f $(find ${ROOT}/bullet3-master/|grep /lib.*.a$) ${TP}/
     TP_PYTHON="--use-python --python-incdir=${TP}/python${PYVER}/include --python-libdir=${TP}/python${PYVER}/lib"
 
     TP_ALL="${TP_FT2} ${TP_HB} ${TP_OA} ${TP_VB} ${TP_BUL} ${TP_PYTHON}"
@@ -133,62 +130,69 @@ then
         * Host tools found
     "
     else
-        while true
-        do
-            #TODO add verbose on 1st pass fails
-            if $PDK_PYTHON makepanda/makepanda.py --everything $OPT_COMMON $TP_PYTHON "$@"
-            then
-                mv built host
-                break
-            else
-                wait_or_break
-            fi
-        done
+        if $PDK_PYTHON makepanda/makepanda.py --everything $OPT_COMMON $TP_PYTHON "$@"
+        then
+            mv built host
+        else
+            echo Fatal unable to build panda host
+            read
+            exit 1
+        fi
     fi
 
     cp -vf ../${PYTHON}/Android/build/python${PYDOT}-android-${ANDROID_API}-${ANDROID_ARCH}/pyconfig.h ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE}/
+
     export LD_LIBRARY_PATH=$(pwd)/host/lib
     export PATH=$(pwd)/host/bin:$PATH
 
-    echo "
-        * interrogate is [ $(which interrogate) ] ( unknown on first pass )
-    "
+    if echo $(which interrogate)|grep -q interrogate
+    then
+        echo "
+            * interrogate is $(which interrogate)
+        "
+    else
+        echo "
+FATAL: interrogate not found in host/bin build
+        "
+        read
+    fi
+
 
     rm -vf ${TP}/python${PYVER}/lib/libpython${PYDOT}${PYMODE}.a
     cp -vf ../${PYTHON}/Android/build/python${PYDOT}-android-${ANDROID_API}-${ANDROID_ARCH}/libpython${PYDOT}${PYMODE}.so ${TP}/python${PYVER}/lib/
     rm -vf ${TP}/python${PYVER}/include/python${PYDOT}
     ln -sf ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE} ${TP}/python${PYVER}/include/python${PYDOT}
+    mkdir -p built/libs/armeabi-v7a/
+    ( sleep 5  && mkdir -p built/libs/armeabi-v7a/ ) &
+    ( sleep 180 && mkdir -p built/libs/armeabi-v7a/ ) &
 
     cmd="$PDK_PYTHON makepanda/makepanda.py $OPT_COMMON $OPT_ANDROID $TP_ALL"
     cat > $ORIGIN.rebuild.sh <<END
 #!/bin/bash
-. $SDK/sdk.env
+. $SDK/sdk.${BITS}.env
 cd $ORIGIN
 NDK_ROOT=$NDK_ROOT PANDA_ARCH=$PANDA_ARCH $cmd "\$@"
 END
     chmod +x $ORIGIN.rebuild.sh
+
     $cmd "$@"
 else
     echo "FATAL: Can't find static host cpython $PDK_PYTHON"
 fi
 
-echo "jump off the train now !"
-read
+echo "Installing to ${ROOT}/DEVICE/${DEV_APPDIR}"
 
+mkdir -p "${ROOT}/DEVICE/${DEV_APPDIR}/lib-${ANDROID_ARCH}/"
+mkdir -p "${ROOT}/DEVICE/${DEV_APPDIR}/usr/lib-${ANDROID_ARCH}/panda3d/"
 
-echo "Installing to $DEV_APPDIR"
+#if [ -f panda3d/built/lib/libpython3.7m.so ]
+#then
+#    mv -vf panda3d/built/lib/libpython3.7m.so "${ROOT}/DEVICE/${DEV_APPDIR}/lib-${ANDROID_ARCH}/"
+#fi
 
-mkdir -p "$DEV_APPDIR/lib-${ANDROID_ARCH}/"
-mkdir -p "$DEV_APPDIR/usr/lib-${ANDROID_ARCH}/panda3d/"
+export PDK_PANDA3D=${ROOT}/DEVICE/${DEV_APPDIR}/usr/lib-$ANDROID_ARCH/panda3d
 
-if [ -f panda3d/built/lib/libpython3.7m.so ]
-then
-    mv -vf panda3d/built/lib/libpython3.7m.so "$DEV_APPDIR/lib-${ANDROID_ARCH}/"
-fi
-
-export PDK_PANDA3D=$DEV_APPDIR/usr/lib-$ANDROID_ARCH/panda3d
-
-export PDK_PYPANDA3D="$DEV_APPDIR/usr/lib/python${PYDOT}/site-packages/panda3d"
+export PDK_PYPANDA3D="${ROOT}/DEVICE/${DEV_APPDIR}/usr/lib/python${PYDOT}/site-packages/panda3d"
 
 mkdir -p $PDK_PYPANDA3D
 
@@ -233,7 +237,7 @@ libp3android.so
 libpandaskel.so
 libpandabullet.so
 libparse_file.so
-libpandagles.so
+libpandagles2.so
 libpandaai.so
 libp3vision.so
 libpandaegg.so
@@ -241,40 +245,30 @@ libtest_interrogate.so
 """.strip()
 
 DLLS = list( map(str.strip, LIBS.split('\n') ) )
-
+appdir = '/'.join(__file__.split('/',4)[:-1])
+print('APK/HOME: %s' % appdir )
 for lpass in range(4):
     poplist = []
+    poppath = []
     for dll in DLLS:
         try:
             dll_path = '%s'
-            for dll_path in [
-                    "/data/data/u.r/lib/%s",
-                    "/data/data/u.r/usr/lib-armv7/panda3d/%s",
-                    "/data/data/u.r/lib-armv7/%s",
-                    "/system/lib/%s"]:
-                dll_path = dll_path % dll
+            for dll_path in [ "%s/lib/%s", "%s/usr/lib-armv7/panda3d/%s", "%s/lib-armv7/%s" ]:
+                dll_path = dll_path % (appdir, dll)
                 if os.access(dll_path, 0):
                     #print(lpass,dll,file=sys.stderr)
                     CDLL( dll_path )
                     poplist.append(dll)
+                    poppath.append(dll_path)
                     break
-            else:
-                print("?",dll)
         except Exception as e:
             print(lpass,dll,e,file=sys.stderr)
     while len(poplist):
-        DLLS.remove(poplist.pop(0))
-import panda3d.core
-loadPrcFileData = panda3d.core.loadPrcFileData
-loadPrcFileData("", "model-path .:/data/data/u.root/usr/share/panda3d:/data/data/u.root/usr/share/panda3d/models" )
-loadPrcFileData("", "yield-timeslice #t")
-loadPrcFileData("", "default-model-extension .bam")
-loadPrcFileData("", "textures_power_2 down")
-loadPrcFileData("", "textures-power-2 down")
-loadPrcFileData("", "textures-square down")
-loadPrcFileData("", "background-color 0 0 0 0")
-loadPrcFileData("", "audio-library-name p3openal_audio")
-loadPrcFileData("", "undecorated #t")
+        dll = poplist.pop(0)
+        dll_path = poppath.pop(0)
+        print("Loaded <%s>" % dll[3:-3],'from',dll_path, file=sys.stderr)
+        DLLS.remove(dll)
+
 END
 
     pwd
@@ -284,54 +278,65 @@ END
         echo "
     * installing python support libs
     "
-        #for pylib in $(find built/libs/*/*.cpython-*.so)
-        #$(find built/|grep cpython-37m.so$)
+
+        mkdir -p ${ROOT}/DEVICE/${DEV_APPDIR}/usr/lib/python3.7/site-packages/panda3d/
+
         for pylib in built/panda3d/*.cpython-*.so
         do
-            mv -vf $pylib $PDK_PYPANDA3D/
-            #$(basename $pylib|cut -f1 -d.).so
+                maybe=$(patchelf --print-needed $pylib|grep /lib/)
+                if echo $maybe|grep -q /lib/
+                then
+                    patchelf --remove-needed $maybe $pylib
+                fi
+            mv -vf $pylib ${ROOT}/DEVICE/${DEV_APPDIR}/usr/lib/python3.7/site-packages/panda3d/
         done
-
 
         # then panda
         echo "
     * installing panda c++ support libs
     "
+
         for pandalib in built/*/*-*/lib*so built/lib/lib*so
         do
-            mv -vf $pandalib $DEV_APPDIR/usr/lib-$ANDROID_ARCH/panda3d/
+            mv -vf $pandalib ${ROOT}/DEVICE/${DEV_APPDIR}/usr/lib-$ANDROID_ARCH/panda3d/
         done
         rmdir built/libs/* built/libs
+
+        rm ${ROOT}/DEVICE/${DEV_APPDIR}/usr/lib-$ANDROID_ARCH/panda3d/{libpython3.7m.so,libgnustl_shared.so}
+
     fi
+
+
 
     echo "
 
-    Panda3d $ANDROID_ARCH port installed in [$DEV_APPDIR]
+    Panda3d $ANDROID_ARCH port installed in [${ROOT}/DEVICE/${DEV_APPDIR}]
     See gradle sample project to link both python and panda3d in your apk
 
     Python support libs : $PDK_PYPANDA3D
     C++ support libs : $PDK_PANDA3D
 
 "
-    if [ -f /data/data/DEV ]
-    then
-        echo "syncing with URoot"
-        for dest in /data/target/u.r /data/data/armhf/u.r
-        do
-            cp -vf /data/data/u.r/usr/bin/python3.7m            $dest/usr/bin/python3.7m
-            cp -vf /data/data/u.r/lib-armv7/libpython3.7m.so    $dest/lib-armv7/libpython3.7m.so
-            cp -vf /data/data/u.r/usr/lib/python3.7/lib-dynload/*.py $dest/usr/lib/python3.7/lib-dynload/
-
-            echo lib-armv7
-            cp -vRf /data/data/u.r/usr/lib-armv7/* $dest/usr/lib-armv7/ | wc -l
-
-            echo PANDA_MODULES
-            cp -vRf /data/data/u.r/usr/lib/python3.7/site-packages/panda3d $dest/usr/lib/python3.7/site-packages/ | wc -l
-        done
-    fi
 
     register_pdk PDK_PANDA3D ${ORIGIN}
+    export PDK_PANDA3D=${ORIGIN}
 
+    if [ -d ../LUI-android ]
+    then
+        cd ../LUI-android
+        rm -rf linux_*_panda1.10.0_py37 android_*_panda1.10.0_py37 lui.so
+
+        $PDK_PANDA3D/pandahost.sh build.py --clean "$@"
+
+        cp -vf lui.so /data/data/u.r/usr/lib/python3.7/site-packages/panda3d/
+
+        if [ -f /data/data/DEV ]
+        then
+
+            cp -vf lui.so ${ROOT}/DEVICE/${DEV_APPDIR}/u.r/usr/lib/python3.7/site-packages/panda3d/
+            cp -vf lui.so /data/target/u.r/usr/lib/python3.7/site-packages/panda3d/
+        fi
+    fi
 else
     echo "PDK_PYPANDA3D: wrong target path '$PDK_PANDA3D'"
 fi

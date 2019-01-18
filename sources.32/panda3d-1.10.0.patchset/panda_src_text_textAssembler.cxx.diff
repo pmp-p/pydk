@@ -1,0 +1,11 @@
+--- panda3d-1.10.0/panda/src/text/textAssembler.cxx	2019-01-03 16:01:10.000000000 +0100
++++ panda3d-1.10.0.armv7a-androideabi/panda/src/text/textAssembler.cxx	2019-01-14 07:48:06.293357494 +0100
+@@ -37,7 +37,7 @@
+ #include <stdio.h>  // for sprintf
+ 
+ #ifdef HAVE_HARFBUZZ
+-#include <hb.h>
++    #include "harfbuzz/hb.h"
+ #endif
+ 
+ using std::max;

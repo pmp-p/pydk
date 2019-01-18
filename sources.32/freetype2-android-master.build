@@ -1,24 +1,25 @@
 #!/usr/bin/env bash
 
-PANDA3D=panda3d-input-overhaul
-PYTHON=cpython-bpo-30386
-GHZIP=https://github.com/pmp-p/freetype2-android/archive/master.zip
+SRC_URL=https://github.com/pmp-p/freetype2-android/archive/master.zip
 SRC=freetype2-android-master
 
-#==============================================================================
-ROOT=$(dirname $(realpath "$0") )
+PANDA3D=panda3d-1.10.0
+PYTHON=Python-3.7.2
 
+#==============================================================================
 . $SDK/build.functions
 . $SDK/build.${BITS}.functions
 
 set_source_tree 280
 
-
-export ORIGIN=$(pwd)
 echo Building from $ORIGIN source tree
 
 cd Android/jni
 ndk-build
 
+cp ../libs/armeabi-v7a/libfreetype.so ${ROOT}/DEVICE/${DEV_APPDIR}/lib-${ANDROID_ARCH}
 
 
+register_pdk PDK_FREETYPE $ORIGIN
+
+cd $ROOT

@@ -7,6 +7,7 @@
 export PREFER=/data/data/u.root.kit
 export NDK_VER=16
 export BITS=32
+export ANDROID_ABI=armeabi-v7a
 export ANDROID_API=19
 
 NDK=android-ndk-r16b
@@ -182,7 +183,10 @@ cat <<END > "$SDK_ROOT/sdk.32.env"
 export ADB_NET=$ADB_NET
 export UROOT=$UROOT
 export UR=$UR
+
+#device SOC
 export BITS=$BITS
+export ANDROID_ABI=$ANDROID_ABI
 
 #sources
 export ORIGIN=$ORIGIN

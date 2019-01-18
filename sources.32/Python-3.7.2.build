@@ -46,6 +46,8 @@ export PDK_PYTHON=${ORIGIN}/Android/build/python-native/python
 
 export PDK_APYTHON=${ORIGIN}/Android/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}/python
 
+export LIB_PYTHON=${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH
+export BIN_PYTHON=${ROOT}/DEVICE/fs/usr/bin
 
 if echo "$@"|grep -q rebuild
 then
@@ -111,12 +113,17 @@ if [ -f $PDK_APYTHON ]
 then
     echo "Installing to ${DEV_APPDIR}"
     echo
-    mkdir -p ${DEV_APPDIR}/usr/bin/ ${DEV_APPDIR}/lib-armv7/
+    mkdir -p $BIN_PYTHON  $LIB_PYTHON/
 
     build_dir=${ORIGIN}/Android/build/python3.7-android-${ANDROID_API}-${ANDROID_ARCH}
 
-    dyn_load=${DEV_APPDIR}/usr/lib/python3.7/lib-dynload
+
+    dyn_load=${ROOT}/DEVICE/fs/usr/lib/python3.7/lib-dynload
+
     mkdir -p "${dyn_load}"
+
+    cp -f ${build_dir}/build/lib.linux-arm-3.7/*.so "${dyn_load}/"
+
     if $DM
     then
         cp -f ${build_dir}/build/lib.linux-arm-3.7/_sysconfigdata_dm_linux_.py "${dyn_load}/"
@@ -124,11 +131,19 @@ then
         cp -f ${build_dir}/build/lib.linux-arm-3.7/_sysconfigdata_m_linux_.py "${dyn_load}/"
     fi
 
-    cp -f ${build_dir}/python "${DEV_APPDIR}/usr/bin/python3.7"
-    cp -f ${build_dir}/libpython3.*.so "${DEV_APPDIR}/lib-armv7/"
+    #FIXME: 3.7 -> 3.7dm link
+    if $DM
+    then
+        cp -f ${build_dir}/python "${BIN_PYTHON}/python3.7dm"
+    else
+        cp -f ${build_dir}/python "${BIN_PYTHON}/python3.7m"
+    fi
+    cp -f ${build_dir}/libpython3.*.so "${LIB_PYTHON}/"
 
     register_pdk PDK_PYTHON $PDK_PYTHON
     register_pdk PDK_APYTHON $PDK_APYTHON
+    register_pdk PDK_LIB_PYTHON ${LIB_PYTHON}
+
 else
     echo "I have failed to build $ORIGIN, <press enter to read $ORIGIN.log>"
     echo "================================================================="

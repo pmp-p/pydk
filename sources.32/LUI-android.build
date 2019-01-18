@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+PANDA3D=panda3d-input-overhaul
+PYTHON=cpython-bpo-30386
+GHZIP=https://github.com/tobspr/LUI/archive/master.zip
+SRC=LUI-master
+
+#==============================================================================
+ORIGIN=$(dirname $(realpath "$0") )
+
+. $SDK/build.${BITS}.functions
+
+set_source_tree 382
+
+
+ROOT=$(pwd)
+
+pwd
+
+if [ -f master.zip ]
+then
+    echo "Module builder ok"
+else
+    wget https://github.com/tobspr/P3DModuleBuilder/archive/master.zip
+fi

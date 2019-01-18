@@ -1,0 +1,155 @@
+#!/bin/bash
+
+reset
+APK=u.root.kit
+SRC=U-Root.kit
+APK_FILE=./build/outputs/apk/U-Root.kit-debug.apk
+ROOT=$(dirname $(realpath "$0") )
+PYTHON=Python-3.7.2
+
+export PYTHON_ABI=python3.7-android-19-armv7
+export P3D=panda3d-1.10.0
+export TARGET_ARCH_ABI=armeabi-v7a
+export JAVA_HOME=/opt/sdk/jdk
+export USE_PYTHON=true
+export USE_P3D=true
+
+if java -version 2>&1 |grep -q 10.0
+then
+    export PATH=$JAVA_HOME/bin:$PATH
+    echo -n "java found at : "
+    which java
+    if java -version 2>&1 |grep -q 10.0
+    then
+        echo "please use a jdk < 10"
+        java -version
+    else
+        java -version
+    fi
+fi
+
+
+
+. $SDK/build.functions
+. $SDK/build.${BITS}.functions
+
+#reparse just in case python was built without reloading env
+. $SDK/built.${BITS}.env
+
+if cd ${ROOT}/lib
+then
+    rm ../${SRC}/src/main/assets/kitlib.zip
+    zip ../U-Root.kit/src/main/assets/kitlib.zip -q -r .
+    cd ${ROOT}
+else
+        echo "ERROR can't pack async lib support"
+        read
+fi
+
+
+if cd $ROOT/$SRC
+then
+
+    $ADB shell am force-stop $APK
+
+    if [ -f $APK_FILE ]
+    then
+        echo "Uninstall $APK"
+        $ADB uninstall $APK
+
+        rm -vf $APK_FILE
+    fi
+
+    mkdir -p prebuilt/${TARGET_ARCH_ABI}/
+
+    if ${USE_P3D}
+    then
+        echo "    * moving panda3d support into prebuild"
+        mv ${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH/lib*.so prebuilt/${TARGET_ARCH_ABI}/
+
+        echo "    * moving panda3d into prebuild"
+        mv ${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH/panda3d/lib*.so prebuilt/${TARGET_ARCH_ABI}/
+
+        #============================================== TEMP ========================================
+        #============================================== TEMP ========================================
+        rmdir ${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH/panda3d ${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH
+        rmdir ${ROOT}/DEVICE/fs/lib-$ANDROID_ARCH
+        #============================================== TEMP ========================================
+        #============================================== TEMP ========================================
+
+    fi
+
+    # overwrite libpython with newer ones
+
+    if ${USE_PYTHON}
+    then
+        echo "    * adding [$PYTHON_ABI] from [$PYTHON] to build"
+        cp -f $ROOT/$PYTHON/Android/build/${PYTHON_ABI}/libpython3.7m.so prebuilt/${TARGET_ARCH_ABI}/
+    fi
+
+    #sanity check
+    echo "Comparing libpython"
+    if cmp prebuilt/${TARGET_ARCH_ABI}/libpython3.7m.so /data/data/armhf/u.r/lib-armv7/libpython3.7m.so
+    then
+        echo 'done'
+    else
+        echo ERROR
+        read
+    fi
+
+    if cd ${ROOT}/DEVICE/fs
+    then
+        rm $ROOT/$SRC/src/main/assets/python37.zip
+        zip $ROOT/$SRC/src/main/assets/python37.zip -q -r .
+        cd $ROOT/$SRC
+    else
+            echo "ERROR can't pack python/panda native lib"
+            read
+    fi
+
+
+    echo "    * adding project ndk configuration"
+    cat > board.tmp <<END
+#auto-generated do not edit
+LOCAL_ARM_MODE := arm
+LOCAL_DISABLE_RELRO := true
+LOCAL_CPP_FEATURES := rtti
+LOCAL_CPP_FEATURES := exceptions
+
+END
+
+    echo "    * adding ndk build file"
+    cat > ndk-build.tmp <<END
+#auto-generated do not edit
+
+cp $(find $ANDROID_NDK_HOME|grep /${TARGET_ARCH_ABI}/|grep libgnustl_shared.so$|sort |tail -n 1) -vf prebuilt/${TARGET_ARCH_ABI}/
+
+if ndk-build -C .
+then
+
+    for fixlib in \$(find |grep libtermegl.so)
+    do
+        if grep -q obj/local \$fixlib
+        then
+            echo
+            $PDK_PATCHELF --replace-needed ./obj/local/${TARGET_ARCH_ABI}/libpython3.7m.so libpython3.7m.so \$fixlib
+        else
+            echo "Linking was OK"
+        fi
+    done
+
+    mv -vn prebuilt/${TARGET_ARCH_ABI}/*so libs/${TARGET_ARCH_ABI}/
+
+    exit 0
+else
+    exit 1
+fi
+END
+
+    chmod 777 ndk-build.tmp
+
+
+    ./gradlew assembleDebug --offline --no-daemon
+
+    install_run $APK_FILE
+fi

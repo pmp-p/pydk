@@ -1,0 +1,29 @@
+--- panda3d-1.10.0/panda/src/androiddisplay/config_androiddisplay.cxx	2019-01-03 16:01:10.000000000 +0100
++++ panda3d-1.10.0.armv7a-androideabi/panda/src/androiddisplay/config_androiddisplay.cxx	2019-01-18 09:01:37.899950528 +0100
+@@ -21,10 +21,17 @@
+ 
+ #include "config_display.h"
+ 
++#include <android/log.h>
++
++#define LOG_TAG "config_androiddisplay.cxx"
++#define LOG_INFO(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
++#define LOG_ERROR(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
++
+ Configure(config_androiddisplay);
+ NotifyCategoryDef(androiddisplay, "display");
+ 
+ ConfigureFn(config_androiddisplay) {
++  LOG_INFO("34: config_androiddisplay.cxx\n");
+   init_libandroiddisplay();
+ }
+ 
+@@ -37,6 +44,8 @@
+ void
+ init_libandroiddisplay() {
+   static bool initialized = false;
++  LOG_INFO("45: config_androiddisplay.cxx\n");
++
+   if (initialized) {
+     return;
+   }

@@ -1,0 +1,11 @@
+--- panda3d-1.10.0/panda/src/putil/pythonCallbackObject.cxx	2019-01-03 16:01:10.000000000 +0100
++++ panda3d-1.10.0.armv7a-androideabi/panda/src/putil/pythonCallbackObject.cxx	2019-01-14 07:48:06.285357752 +0100
+@@ -46,7 +46,7 @@
+ #ifdef WITH_THREAD  // This symbol defined within Python.h
+ 
+ #if PY_VERSION_HEX >= 0x03020000
+-  Py_Initialize();
++  // Py_Initialize();
+ #endif
+ 
+   PyEval_InitThreads();

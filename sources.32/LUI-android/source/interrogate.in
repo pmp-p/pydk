@@ -1,0 +1,3207 @@
+1520768280
+3 3
+3 lui 4 190L 11 panda3d.lui 
+227
+261 9 set_color 0 4 488 23 LUIColorable::set_color 0 3 1 2 3 18
+// Color
+
+// Color
+195
+inline void LUIColorable::set_color(LColor const &color);
+inline void LUIColorable::set_color(LVecBase3 const &rgb);
+inline void LUIColorable::set_color(float r, float g, float b, float a = 1.0);
+
+262 7 set_red 0 4 488 21 LUIColorable::set_red 0 1 4 0
+43
+inline void LUIColorable::set_red(float r);
+
+263 9 set_green 0 4 488 23 LUIColorable::set_green 0 1 5 0
+45
+inline void LUIColorable::set_green(float g);
+
+264 8 set_blue 0 4 488 22 LUIColorable::set_blue 0 1 6 0
+44
+inline void LUIColorable::set_blue(float b);
+
+265 9 set_alpha 0 4 488 23 LUIColorable::set_alpha 0 1 7 0
+45
+inline void LUIColorable::set_alpha(float a);
+
+266 7 get_red 0 4 488 21 LUIColorable::get_red 0 1 8 0
+47
+inline float LUIColorable::get_red(void) const;
+
+267 9 get_green 0 4 488 23 LUIColorable::get_green 0 1 9 0
+49
+inline float LUIColorable::get_green(void) const;
+
+268 8 get_blue 0 4 488 22 LUIColorable::get_blue 0 1 10 0
+48
+inline float LUIColorable::get_blue(void) const;
+
+269 9 get_alpha 0 4 488 23 LUIColorable::get_alpha 0 1 11 0
+49
+inline float LUIColorable::get_alpha(void) const;
+
+270 9 get_color 0 4 488 23 LUIColorable::get_color 0 1 12 0
+57
+inline LColor const &LUIColorable::get_color(void) const;
+
+271 18 get_composed_color 0 4 488 32 LUIColorable::get_composed_color 0 1 13 0
+66
+inline LColor const &LUIColorable::get_composed_color(void) const;
+
+272 9 LUIBounds 0 4 494 20 LUIBounds::LUIBounds 0 5 14 15 16 17 18 0
+261
+LUIBounds::LUIBounds(void);
+explicit LUIBounds::LUIBounds(float fill_value);
+explicit LUIBounds::LUIBounds(LVector4 const &bounds);
+LUIBounds::LUIBounds(float top, float right, float bottom, float left);
+inline LUIBounds::LUIBounds(LUIBounds const &) = default;
+
+273 7 get_top 0 4 494 18 LUIBounds::get_top 0 1 19 0
+44
+inline float LUIBounds::get_top(void) const;
+
+274 9 get_right 0 4 494 20 LUIBounds::get_right 0 1 20 0
+46
+inline float LUIBounds::get_right(void) const;
+
+275 10 get_bottom 0 4 494 21 LUIBounds::get_bottom 0 1 21 0
+47
+inline float LUIBounds::get_bottom(void) const;
+
+276 8 get_left 0 4 494 19 LUIBounds::get_left 0 1 22 0
+45
+inline float LUIBounds::get_left(void) const;
+
+277 7 set_top 0 4 494 18 LUIBounds::set_top 0 1 23 0
+42
+inline void LUIBounds::set_top(float top);
+
+278 9 set_right 0 4 494 20 LUIBounds::set_right 0 1 24 0
+46
+inline void LUIBounds::set_right(float right);
+
+279 10 set_bottom 0 4 494 21 LUIBounds::set_bottom 0 1 25 0
+48
+inline void LUIBounds::set_bottom(float bottom);
+
+280 8 set_left 0 4 494 19 LUIBounds::set_left 0 1 26 0
+44
+inline void LUIBounds::set_left(float left);
+
+281 10 set_bounds 0 4 494 21 LUIBounds::set_bounds 0 2 27 28 0
+143
+inline void LUIBounds::set_bounds(LVector4 const &bounds);
+inline void LUIBounds::set_bounds(float top, float right, float bottom, float left);
+
+282 10 get_bounds 0 4 494 21 LUIBounds::get_bounds 0 1 29 0
+57
+inline LVector4 const &LUIBounds::get_bounds(void) const;
+
+283 10 ~LUIBounds 0 4 494 21 LUIBounds::~LUIBounds 0 0 0
+28
+LUIBounds::~LUIBounds(void);
+
+284 7 LUIRect 0 4 495 16 LUIRect::LUIRect 0 4 30 31 32 33 0
+178
+LUIRect::LUIRect(void);
+explicit LUIRect::LUIRect(LVector4 const &rect);
+LUIRect::LUIRect(float x, float y, float w, float h);
+inline LUIRect::LUIRect(LUIRect const &) = default;
+
+285 5 get_x 0 4 495 14 LUIRect::get_x 0 1 34 0
+40
+inline float LUIRect::get_x(void) const;
+
+286 5 get_y 0 4 495 14 LUIRect::get_y 0 1 35 0
+40
+inline float LUIRect::get_y(void) const;
+
+287 5 get_w 0 4 495 14 LUIRect::get_w 0 1 36 0
+40
+inline float LUIRect::get_w(void) const;
+
+288 5 get_h 0 4 495 14 LUIRect::get_h 0 1 37 0
+40
+inline float LUIRect::get_h(void) const;
+
+289 6 get_xy 0 4 495 15 LUIRect::get_xy 0 1 38 0
+44
+inline LVector2 LUIRect::get_xy(void) const;
+
+290 6 get_wh 0 4 495 15 LUIRect::get_wh 0 1 39 0
+44
+inline LVector2 LUIRect::get_wh(void) const;
+
+291 5 set_x 0 4 495 14 LUIRect::set_x 0 1 40 0
+36
+inline void LUIRect::set_x(float x);
+
+292 5 set_y 0 4 495 14 LUIRect::set_y 0 1 41 0
+36
+inline void LUIRect::set_y(float y);
+
+293 5 set_w 0 4 495 14 LUIRect::set_w 0 1 42 0
+36
+inline void LUIRect::set_w(float w);
+
+294 5 set_h 0 4 495 14 LUIRect::set_h 0 1 43 0
+36
+inline void LUIRect::set_h(float h);
+
+295 8 set_rect 0 4 495 17 LUIRect::set_rect 0 3 44 45 46 0
+190
+inline void LUIRect::set_rect(LVector4 const &rect);
+inline void LUIRect::set_rect(LVector2 const &xy, LVector2 const &wh);
+inline void LUIRect::set_rect(float x, float y, float w, float h);
+
+296 8 get_rect 0 4 495 17 LUIRect::get_rect 0 1 47 0
+53
+inline LVector4 const &LUIRect::get_rect(void) const;
+
+297 8 ~LUIRect 0 4 495 17 LUIRect::~LUIRect 0 0 0
+24
+LUIRect::~LUIRect(void);
+
+298 29 upcast_to_TypedReferenceCount 0 12 496 45 LUIBaseElement::upcast_to_TypedReferenceCount 0 1 153 49
+upcast from LUIBaseElement to TypedReferenceCount
+73
+TypedReferenceCount *LUIBaseElement::upcast_to_TypedReferenceCount(void);
+
+299 26 downcast_to_LUIBaseElement 0 12 497 47 TypedReferenceCount::downcast_to_LUIBaseElement 0 1 154 51
+downcast from TypedReferenceCount to LUIBaseElement
+70
+LUIBaseElement *TypedReferenceCount::downcast_to_LUIBaseElement(void);
+
+300 22 upcast_to_LUIColorable 0 12 496 38 LUIBaseElement::upcast_to_LUIColorable 0 1 155 42
+upcast from LUIBaseElement to LUIColorable
+59
+LUIColorable *LUIBaseElement::upcast_to_LUIColorable(void);
+
+301 26 downcast_to_LUIBaseElement 0 12 488 40 LUIColorable::downcast_to_LUIBaseElement 0 1 156 44
+downcast from LUIColorable to LUIBaseElement
+63
+LUIBaseElement *LUIColorable::downcast_to_LUIBaseElement(void);
+
+302 15 ~LUIBaseElement 0 6 496 31 LUIBaseElement::~LUIBaseElement 0 0 0
+46
+virtual LUIBaseElement::~LUIBaseElement(void);
+
+303 4 bind 0 4 496 20 LUIBaseElement::bind 0 1 48 467
+// Events
+
+/**
+ * @brief Binds a new event handler for a given event
+ * @details This binds a given event handler (a function taking the event as the
+ *   first argument) to an event name. Whenever the event gets triggered, the
+ *   event handler will get invoked.
+ *
+ *   In case the event is already bound, a warning is printed.
+ *
+ * @param event_name Name of the event to bind to
+ * @param callback Event handler, a method taking only one argument (the event)
+ */
+90
+inline void LUIBaseElement::bind(std::string const &event_name, CallbackObject *callback);
+
+304 6 unbind 0 4 496 22 LUIBaseElement::unbind 0 1 49 292
+/**
+ * @brief Unbinds an event handler
+ * @details Unbinds a event handler, in case one is bound to the given event.
+ *   If there was no event handler for the given event, a warning is printed, and
+ *   nothing happens.
+ *
+ * @param event_name Name of the event to unbind the handler for
+ */
+66
+inline void LUIBaseElement::unbind(std::string const &event_name);
+
+305 10 unbind_all 0 4 496 26 LUIBaseElement::unbind_all 0 1 50 263
+/**
+ * @brief Unbinds all events
+ * @details This unbinds the element from all events, effectively calling unbind()
+ *   for every registered event. You should be careful on this, since most builtin
+ *   events will rely on certain events to be bound to them.
+ */
+45
+inline void LUIBaseElement::unbind_all(void);
+
+306 9 has_event 0 4 496 25 LUIBaseElement::has_event 0 1 51 336
+/**
+ * @brief Checks whether an event handler is bound to the given event
+ * @details This checks whether there is a event handler for the event.
+ *   Returns true if there is a handler bound to the event, otherwise false.
+ *
+ * @param event_name Name of the evenet
+ * @return true if the event has an event handler, false otherwise
+ */
+69
+inline bool LUIBaseElement::has_event(std::string const &event_name);
+
+307 13 trigger_event 0 4 496 29 LUIBaseElement::trigger_event 0 2 52 53 0
+211
+void LUIBaseElement::trigger_event(std::string const &event_name, std::wstring const &message = wstring(), LPoint2 const &coords = LPoint2(0));
+void LUIBaseElement::trigger_event(PointerTo< LUIEventData > data);
+
+308 8 set_name 0 4 496 24 LUIBaseElement::set_name 0 1 54 270
+// NAME
+
+// NAME
+
+/**
+ * @brief Sets the elements name
+ * @details This sets the name of the element, which can get queried by get_name
+ *   later on. This does not expose any functionality, and only is a help for the
+ *   user.
+ *
+ * @param name Name of the element
+ */
+62
+inline void LUIBaseElement::set_name(std::string const &name);
+
+309 8 get_name 0 4 496 24 LUIBaseElement::get_name 0 1 55 176
+/**
+ * @brief Returns the name of the element
+ * @details Returns the name of the element, or an empty string if no name
+ *   was set yet.
+ *
+ * @return Name of the element
+ */
+63
+inline std::string const &LUIBaseElement::get_name(void) const;
+
+310 12 set_top_left 0 4 496 28 LUIBaseElement::set_top_left 0 1 56 223
+// Position
+
+// Position
+
+/**
+ * @brief Sets the top left position
+ * @details This makes the element aligned top/left and sets its position relative
+ *   to that corner.
+ *
+ * @param pos Distance to the top-left corner
+ */
+61
+inline void LUIBaseElement::set_top_left(LPoint2 const &pos);
+
+311 13 set_top_right 0 4 496 29 LUIBaseElement::set_top_right 0 1 57 200
+/**
+ * @brief Sets the top right position
+ * @details This makes the element aligned top/right and sets its position relative
+ *   to that corner.
+ *
+ * @param pos Distance to the top-right corner
+ */
+62
+inline void LUIBaseElement::set_top_right(LPoint2 const &pos);
+
+312 15 set_bottom_left 0 4 496 31 LUIBaseElement::set_bottom_left 0 1 58 207
+/**
+ * @brief Sets the bottom left position
+ * @details This makes the element aligned bottom/left and sets its position relative
+ *   to that corner.
+ *
+ * @param pos Distance to the bottom-öeft corner
+ */
+64
+inline void LUIBaseElement::set_bottom_left(LPoint2 const &pos);
+
+313 16 set_bottom_right 0 4 496 32 LUIBaseElement::set_bottom_right 0 1 59 209
+/**
+ * @brief Sets the bottom right position
+ * @details This makes the element aligned bottom/right and sets its position relative
+ *   to that corner.
+ *
+ * @param pos Distance to the bottom-right corner
+ */
+65
+inline void LUIBaseElement::set_bottom_right(LPoint2 const &pos);
+
+314 12 get_top_left 0 4 496 28 LUIBaseElement::get_top_left 0 1 60 244
+/**
+ * @brief Returns the distance to the top left corner
+ * @details This returns the distance to the top left corner. The returned value
+ *   is only meaningful if the elment is aligned top left.
+ * @return Distance to the top left corner
+ */
+56
+inline LPoint2 LUIBaseElement::get_top_left(void) const;
+
+315 13 get_top_right 0 4 496 29 LUIBaseElement::get_top_right 0 1 61 248
+/**
+ * @brief Returns the distance to the top right corner
+ * @details This returns the distance to the top right corner. The returned value
+ *   is only meaningful if the elment is aligned top right.
+ * @return Distance to the top right corner
+ */
+57
+inline LPoint2 LUIBaseElement::get_top_right(void) const;
+
+316 15 get_bottom_left 0 4 496 31 LUIBaseElement::get_bottom_left 0 1 62 256
+/**
+ * @brief Returns the distance to the bottom left corner
+ * @details This returns the distance to the bottom left corner. The returned value
+ *   is only meaningful if the elment is aligned bottom left.
+ * @return Distance to the bottom left corner
+ */
+59
+inline LPoint2 LUIBaseElement::get_bottom_left(void) const;
+
+317 16 get_bottom_right 0 4 496 32 LUIBaseElement::get_bottom_right 0 1 63 260
+/**
+ * @brief Returns the distance to the bottom right corner
+ * @details This returns the distance to the bottom right corner. The returned value
+ *   is only meaningful if the elment is aligned bottom right.
+ * @return Distance to the bottom right corner
+ */
+60
+inline LPoint2 LUIBaseElement::get_bottom_right(void) const;
+
+318 7 set_pos 0 4 496 23 LUIBaseElement::set_pos 0 2 64 65 367
+/**
+ * @brief Sets the top left position
+ * @details This is an alias for LUIBaseElement::set_top_left()
+ *
+ * @param pos See LUIBaseElement::set_top_left()
+ */
+
+/**
+ * @brief Sets the top left position
+ * @details This is an alias for LUIBaseElement::set_top_left()
+ *
+ * @param x See LUIBaseElement::set_top_left()
+ * @param y See LUIBaseElement::set_top_left()
+ */
+111
+inline void LUIBaseElement::set_pos(LPoint2 const &pos);
+inline void LUIBaseElement::set_pos(float x, float y);
+
+319 7 get_pos 0 4 496 23 LUIBaseElement::get_pos 0 1 66 141
+/**
+ * @brief Returns the top left position
+ * @details This is an alias for LUIBaseElement::get_top_left().
+ * @return Top left position
+ */
+51
+inline LPoint2 LUIBaseElement::get_pos(void) const;
+
+320 11 get_abs_pos 0 4 496 27 LUIBaseElement::get_abs_pos 0 1 67 323
+/**
+ * @brief Returns the elements absolute position.
+ * @details This returns the last frame absolute position of the element.
+ *   You should not rely on this method to return correct values, since it is
+ *   only valid after at least one frame has been rendered.
+ * @return Absolute position in pixels of the element
+ */
+55
+inline LPoint2 LUIBaseElement::get_abs_pos(void) const;
+
+321 7 set_top 0 4 496 23 LUIBaseElement::set_top 0 1 68 185
+/**
+ * @brief Sets the top position of the element
+ * @details This makes the element aligned to the top, and sets the distance
+ *   to the top.
+ *
+ * @param top Distance to the top
+ */
+47
+inline void LUIBaseElement::set_top(float top);
+
+322 9 set_right 0 4 496 25 LUIBaseElement::set_right 0 1 69 195
+/**
+ * @brief Sets the right position of the element
+ * @details This makes the element aligned to the right, and sets the distance
+ *   to the right.
+ *
+ * @param right Distance to the right
+ */
+51
+inline void LUIBaseElement::set_right(float right);
+
+323 10 set_bottom 0 4 496 26 LUIBaseElement::set_bottom 0 1 70 200
+/**
+ * @brief Sets the bottom position of the element
+ * @details This makes the element aligned to the bottom, and sets the distance
+ *   to the bottom.
+ *
+ * @param bottom Distance to the bottom
+ */
+53
+inline void LUIBaseElement::set_bottom(float bottom);
+
+324 8 set_left 0 4 496 24 LUIBaseElement::set_left 0 1 71 191
+/**
+ * @brief Sets the left position of the element
+ * @details This makes the element aligned to the left, and sets the distance
+ *   to the left.
+ *
+ * @param left Distance to the right
+ */
+49
+inline void LUIBaseElement::set_left(float left);
+
+325 7 get_top 0 4 496 23 LUIBaseElement::get_top 0 1 72 207
+/**
+ * @brief Returns the distance to the top
+ * @details This returns the distance to the top. This value is only meaningful
+ *   if the element is aligned to the top.
+ *
+ * @return Distance to the top.
+ */
+49
+inline float LUIBaseElement::get_top(void) const;
+
+326 9 get_right 0 4 496 25 LUIBaseElement::get_right 0 1 73 215
+/**
+ * @brief Returns the distance to the right
+ * @details This returns the distance to the right. This value is only meaningful
+ *   if the element is aligned to the right.
+ *
+ * @return Distance to the right.
+ */
+51
+inline float LUIBaseElement::get_right(void) const;
+
+327 10 get_bottom 0 4 496 26 LUIBaseElement::get_bottom 0 1 74 219
+/**
+ * @brief Returns the distance to the bottom
+ * @details This returns the distance to the bottom. This value is only meaningful
+ *   if the element is aligned to the bottom.
+ *
+ * @return Distance to the bottom.
+ */
+52
+inline float LUIBaseElement::get_bottom(void) const;
+
+328 8 get_left 0 4 496 24 LUIBaseElement::get_left 0 1 75 211
+/**
+ * @brief Returns the distance to the left
+ * @details This returns the distance to the left. This value is only meaningful
+ *   if the element is aligned to the left.
+ *
+ * @return Distance to the left.
+ */
+50
+inline float LUIBaseElement::get_left(void) const;
+
+329 12 set_centered 0 4 496 28 LUIBaseElement::set_centered 0 1 76 804
+/**
+ * @brief Sets whether to center the element
+ * @details This method controls whether to center the element horizontally
+ *   or vertically. When passing false to either center_vert or center_horiz,
+ *   nothing in that direction happens.
+ *
+ *   For example:
+ *     set_centered(true, false) makes the element center vertically,
+ *     but keep its horizontal position.
+ *
+ *     set_centered(false, true) makes the element center horizontally,
+ *     but keep its vertical position.
+ *
+ *     set_centered(true, true) makes the element center in both dimensions
+ *
+ *   However, set_centered(false, false) emits a warning, since it effectively
+ *   does nothing.
+ *
+ * @param center_vert Whether to center the element vertically
+ * @param center_horiz Whether to center the element horizontally
+ */
+92
+inline void LUIBaseElement::set_centered(bool center_vert = true, bool center_horiz = true);
+
+330 19 set_center_vertical 0 4 496 35 LUIBaseElement::set_center_vertical 0 1 77 419
+/**
+ * @brief Sets whether to center the element vertically
+ * @details This makes the element center vertically. If centered is set to false,
+ *   a warning is printed. The centered parameter only exists to be able to do
+ *   element.center_vertical = True in python. The parameter should never be
+ *   false. To un-center an element, instead call set_top or set_bottom.
+ *
+ * @param centered Should always be true
+ */
+70
+inline void LUIBaseElement::set_center_vertical(bool centered = true);
+
+331 21 set_center_horizontal 0 4 496 37 LUIBaseElement::set_center_horizontal 0 1 78 425
+/**
+ * @brief Sets whether to center the element horizontally
+ * @details This makes the element center horizontally. If centered is set to false,
+ *   a warning is printed. The centered parameter only exists to be able to do
+ *   element.center_horizontal = True in python. The parameter should never be
+ *   false. To un-center an element, instead call set_left or set_right.
+ *
+ * @param centered Should always be true
+ */
+72
+inline void LUIBaseElement::set_center_horizontal(bool centered = true);
+
+332 11 is_centered 0 4 496 27 LUIBaseElement::is_centered 0 1 79 212
+/**
+ * @brief Returns whether the element is centered
+ * @details This returns whether the element is horizontally and vertically
+ *   centered.
+ *
+ * @return true if the element is centered, false otherweise
+ */
+52
+inline bool LUIBaseElement::is_centered(void) const;
+
+333 20 is_vertical_centered 0 4 496 36 LUIBaseElement::is_vertical_centered 0 1 80 191
+/**
+ * @brief Returns whether the element is vertically centered
+ * @details This returns whether the element is vertically centered.
+ * @return true if the element is vertically centered
+ */
+61
+inline bool LUIBaseElement::is_vertical_centered(void) const;
+
+334 22 is_horizontal_centered 0 4 496 38 LUIBaseElement::is_horizontal_centered 0 1 81 197
+/**
+ * @brief Returns whether the element is horizontally centered
+ * @details This returns whether the element is horizontally centered.
+ * @return true if the element is horizontally centered
+ */
+63
+inline bool LUIBaseElement::is_horizontal_centered(void) const;
+
+335 10 set_margin 0 4 496 26 LUIBaseElement::set_margin 0 3 82 83 84 923
+// Margin
+
+// Margin
+
+/**
+ * @brief Sets the margin of the element
+ * @details This sets the margin of the element. The margin should be stored in
+ *   the order top, right, bottom, left (as in CSS, TRouBLe). The margin controls
+ *   the distance to the sides, and behaves just like in CSS.
+ *
+ * @param margin Margin in pixels, top, right, bottom, left
+ */
+
+/**
+ * @brief Sets the margin of the element
+ * @details This sets the margin of the element. The margin controls the distance
+ *   to the sides, and behaves just like in CSS:
+ *
+ * @param top Margin to the top
+ * @param right Margin to the right
+ * @param bottom Margin to the bottom
+ * @param left Margin to the left
+ */
+
+/**
+ * @brief Sets the margin of the element
+ * @details Sets an equal margin to all sides of the element, this is equal to
+ *   calling LUIBaseElement::set_margin(margin, margin, margin, margin).
+ *
+ * @param margin Margin to all sides
+ */
+207
+inline void LUIBaseElement::set_margin(LVector4 const &margin);
+inline void LUIBaseElement::set_margin(float top, float right, float bottom, float left);
+inline void LUIBaseElement::set_margin(float margin);
+
+336 14 set_margin_top 0 4 496 30 LUIBaseElement::set_margin_top 0 1 85 148
+/**
+ * @brief Sets the top-margin
+ * @details This sets only the top-margin, see LUIBaseElement::set_margin()
+ *
+ * @param top Margin to the top
+ */
+54
+inline void LUIBaseElement::set_margin_top(float top);
+
+337 16 set_margin_right 0 4 496 32 LUIBaseElement::set_margin_right 0 1 86 156
+/**
+ * @brief Sets the right-margin
+ * @details This sets only the right-margin, see LUIBaseElement::set_margin()
+ *
+ * @param right Margin to the right
+ */
+58
+inline void LUIBaseElement::set_margin_right(float right);
+
+338 17 set_margin_bottom 0 4 496 33 LUIBaseElement::set_margin_bottom 0 1 87 160
+/**
+ * @brief Sets the bottom-margin
+ * @details This sets only the bottom-margin, see LUIBaseElement::set_margin()
+ *
+ * @param bottom Margin to the bottom
+ */
+60
+inline void LUIBaseElement::set_margin_bottom(float bottom);
+
+339 15 set_margin_left 0 4 496 31 LUIBaseElement::set_margin_left 0 1 88 152
+/**
+ * @brief Sets the left-margin
+ * @details This sets only the left-margin, see LUIBaseElement::set_margin()
+ *
+ * @param left Margin to the left
+ */
+56
+inline void LUIBaseElement::set_margin_left(float left);
+
+340 14 get_margin_top 0 4 496 30 LUIBaseElement::get_margin_top 0 1 89 123
+/**
+ * @brief Returns the margin to the top
+ * @details This returns the margin to the top
+ * @return Margin to the top
+ */
+56
+inline float LUIBaseElement::get_margin_top(void) const;
+
+341 16 get_margin_right 0 4 496 32 LUIBaseElement::get_margin_right 0 1 90 129
+/**
+ * @brief Returns the margin to the right
+ * @details This returns the margin to the right
+ * @return Margin to the right
+ */
+58
+inline float LUIBaseElement::get_margin_right(void) const;
+
+342 17 get_margin_bottom 0 4 496 33 LUIBaseElement::get_margin_bottom 0 1 91 132
+/**
+ * @brief Returns the margin to the bottom
+ * @details This returns the margin to the bottom
+ * @return Margin to the bottom
+ */
+59
+inline float LUIBaseElement::get_margin_bottom(void) const;
+
+343 15 get_margin_left 0 4 496 31 LUIBaseElement::get_margin_left 0 1 92 126
+/**
+ * @brief Returns the margin to the left
+ * @details This returns the margin to the left
+ * @return Margin to the left
+ */
+57
+inline float LUIBaseElement::get_margin_left(void) const;
+
+344 10 get_margin 0 4 496 26 LUIBaseElement::get_margin 0 2 93 94 543
+/**
+ * @brief Returns the margin of the element.
+ * @details This returns the margin of the element. This method returns a non-const
+ *   reference, thus .get_margin().set_top(123) is perfectly fine. This is mainly
+ *   to support property chaining in python, so the user can do .margin.left = 5
+ * @return Handle to the margin bounds
+ */
+
+/**
+ * @brief Returns the margin of the element
+ * @details This returns the margin of the element, as const-version, so the bounds
+ *   are read-only.
+ * @return Readonly handle to the margin bounds
+ */
+115
+inline LUIBounds &LUIBaseElement::get_margin(void);
+inline LUIBounds const &LUIBaseElement::get_margin(void) const;
+
+345 11 set_padding 0 4 496 27 LUIBaseElement::set_padding 0 3 95 96 97 947
+// Padding
+
+// Padding
+
+/**
+ * @brief Sets the padding of the element
+ * @details This sets the padding of the element. The padding should be stored in
+ *   the order top, right, bottom, left (as in CSS, TRouBLe). The padding controls
+ *   the distance to the sides, and behaves just like in CSS.
+ *
+ * @param padding padding in pixels, top, right, bottom, left
+ */
+
+/**
+ * @brief Sets the padding of the element
+ * @details This sets the padding of the element. The padding controls the distance
+ *   to the sides, and behaves just like in CSS:
+ *
+ * @param top padding to the top
+ * @param right padding to the right
+ * @param bottom padding to the bottom
+ * @param left padding to the left
+ */
+
+/**
+ * @brief Sets the padding of the element
+ * @details Sets an equal padding to all sides of the element, this is equal to
+ *   calling LUIBaseElement::set_padding(padding, padding, padding, padding).
+ *
+ * @param padding padding to all sides
+ */
+212
+inline void LUIBaseElement::set_padding(LVector4 const &padding);
+inline void LUIBaseElement::set_padding(float top, float right, float bottom, float left);
+inline void LUIBaseElement::set_padding(float padding);
+
+346 15 set_padding_top 0 4 496 31 LUIBaseElement::set_padding_top 0 1 98 152
+/**
+ * @brief Sets the top-padding
+ * @details This sets only the top-padding, see LUIBaseElement::set_padding()
+ *
+ * @param top padding to the top
+ */
+55
+inline void LUIBaseElement::set_padding_top(float top);
+
+347 17 set_padding_right 0 4 496 33 LUIBaseElement::set_padding_right 0 1 99 160
+/**
+ * @brief Sets the right-padding
+ * @details This sets only the right-padding, see LUIBaseElement::set_padding()
+ *
+ * @param right padding to the right
+ */
+59
+inline void LUIBaseElement::set_padding_right(float right);
+
+348 18 set_padding_bottom 0 4 496 34 LUIBaseElement::set_padding_bottom 0 1 100 164
+/**
+ * @brief Sets the bottom-padding
+ * @details This sets only the bottom-padding, see LUIBaseElement::set_padding()
+ *
+ * @param bottom padding to the bottom
+ */
+61
+inline void LUIBaseElement::set_padding_bottom(float bottom);
+
+349 16 set_padding_left 0 4 496 32 LUIBaseElement::set_padding_left 0 1 101 156
+/**
+ * @brief Sets the left-padding
+ * @details This sets only the left-padding, see LUIBaseElement::set_padding()
+ *
+ * @param left padding to the left
+ */
+57
+inline void LUIBaseElement::set_padding_left(float left);
+
+350 15 get_padding_top 0 4 496 31 LUIBaseElement::get_padding_top 0 1 102 126
+/**
+ * @brief Returns the padding to the top
+ * @details This returns the padding to the top
+ * @return padding to the top
+ */
+57
+inline float LUIBaseElement::get_padding_top(void) const;
+
+351 17 get_padding_right 0 4 496 33 LUIBaseElement::get_padding_right 0 1 103 132
+/**
+ * @brief Returns the padding to the right
+ * @details This returns the padding to the right
+ * @return padding to the right
+ */
+59
+inline float LUIBaseElement::get_padding_right(void) const;
+
+352 18 get_padding_bottom 0 4 496 34 LUIBaseElement::get_padding_bottom 0 1 104 135
+/**
+ * @brief Returns the padding to the bottom
+ * @details This returns the padding to the bottom
+ * @return padding to the bottom
+ */
+60
+inline float LUIBaseElement::get_padding_bottom(void) const;
+
+353 16 get_padding_left 0 4 496 32 LUIBaseElement::get_padding_left 0 1 105 129
+/**
+ * @brief Returns the padding to the left
+ * @details This returns the padding to the left
+ * @return padding to the left
+ */
+58
+inline float LUIBaseElement::get_padding_left(void) const;
+
+354 11 get_padding 0 4 496 27 LUIBaseElement::get_padding 0 2 106 107 551
+/**
+ * @brief Returns the padding of the element.
+ * @details This returns the padding of the element. This method returns a non-const
+ *   reference, thus .get_padding().set_top(123) is perfectly fine. This is mainly
+ *   to support property chaining in python, so the user can do .padding.left = 5
+ * @return Handle to the padding bounds
+ */
+
+/**
+ * @brief Returns the padding of the element
+ * @details This returns the padding of the element, as const-version, so the bounds
+ *   are read-only.
+ * @return Readonly handle to the padding bounds
+ */
+117
+inline LUIBounds &LUIBaseElement::get_padding(void);
+inline LUIBounds const &LUIBaseElement::get_padding(void) const;
+
+355 8 set_size 0 4 496 24 LUIBaseElement::set_size 0 5 108 109 110 111 112 1412
+// Size
+
+// Size
+
+/**
+ * @brief Sets the size of the element
+ * @details This sets the size of the element. Size can be either floats, determining
+ *  the size in pixels, or valid terms for a LUIExpression, e.g. "23%".
+ *
+ * @param size width and height of the element
+ */
+
+/**
+ * @brief Sets the size of the element
+ * @details This sets the size of the element. Size can be either floats, determining
+ *  the size in pixels, or valid terms for a LUIExpression, e.g. "23%".
+ *
+ * @param width width of the element
+ * @param height height of the element
+ */
+
+/**
+ * @brief Sets the size of the element
+ * @details This sets the size of the element. Size can be either floats, determining
+ *  the size in pixels, or valid terms for a LUIExpression, e.g. "23%".
+ *
+ * @param width width of the element
+ * @param height height of the element
+ */
+
+/**
+ * @brief Sets the size of the element
+ * @details This sets the size of the element. Size can be either floats, determining
+ *  the size in pixels, or valid terms for a LUIExpression, e.g. "23%".
+ *
+ * @param width width of the element
+ * @param height height of the element
+ */
+
+/**
+ * @brief Sets the size of the element
+ * @details This sets the size of the element. Size can be either floats, determining
+ *  the size in pixels, or valid terms for a LUIExpression, e.g. "23%".
+ *
+ * @param width width of the element
+ * @param height height of the element
+ */
+371
+inline void LUIBaseElement::set_size(LVector2 const &size);
+inline void LUIBaseElement::set_size(float width, float height);
+inline void LUIBaseElement::set_size(std::string const &width, float height);
+inline void LUIBaseElement::set_size(std::string const &width, std::string const &height);
+inline void LUIBaseElement::set_size(float width, std::string const &height);
+
+356 9 set_width 0 4 496 25 LUIBaseElement::set_width 0 2 113 114 500
+/**
+ * @brief Sets the width of the element
+ * @details This sets the width of the element, width can either be a float
+ *   determining the size in pixels, or a valid term for a LUIExpression, e.g. "23%".
+ *
+ * @param width Width of the element
+ */
+
+/**
+ * @brief Sets the width of the element
+ * @details This sets the width of the element, width can either be a float
+ *   determining the size in pixels, or a valid term for a LUIExpression, e.g. "23%".
+ *
+ * @param width Width of the element
+ */
+116
+inline void LUIBaseElement::set_width(float width);
+inline void LUIBaseElement::set_width(std::string const &width);
+
+357 10 set_height 0 4 496 26 LUIBaseElement::set_height 0 2 115 116 510
+/**
+ * @brief Sets the height of the element
+ * @details This sets the height of the element, height can either be a float
+ *   determining the size in pixels, or a valid term for a LUIExpression, e.g. "23%".
+ *
+ * @param height Height of the element
+ */
+
+/**
+ * @brief Sets the height of the element
+ * @details This sets the height of the element, height can either be a float
+ *   determining the size in pixels, or a valid term for a LUIExpression, e.g. "23%".
+ *
+ * @param height Height of the element
+ */
+120
+inline void LUIBaseElement::set_height(float height);
+inline void LUIBaseElement::set_height(std::string const &height);
+
+358 9 get_width 0 4 496 25 LUIBaseElement::get_width 0 1 117 280
+/**
+ * @brief Returns the width of the element
+ * @details This returns an approximated width of the element. In case a fixed
+ *   size was set on the element, it returns those. Otherwise it approximates
+ *   the width using the last-frame width.
+ * @return Approximated width
+ */
+51
+inline float LUIBaseElement::get_width(void) const;
+
+359 10 get_height 0 4 496 26 LUIBaseElement::get_height 0 1 118 284
+/**
+ * @brief Returns the height of the element
+ * @details This returns an approximated height of the element. In case a fixed
+ *   size was set on the element, it returns those. Otherwise it approximates
+ *   the height using the last-frame height.
+ * @return Approximated width
+ */
+52
+inline float LUIBaseElement::get_height(void) const;
+
+360 11 clear_width 0 4 496 27 LUIBaseElement::clear_width 0 1 119 150
+/**
+ * @brief Clears the elements width
+ * @details This clears the elements width expression, clearing anything set
+ *   with set_width() before.
+ */
+46
+inline void LUIBaseElement::clear_width(void);
+
+361 12 clear_height 0 4 496 28 LUIBaseElement::clear_height 0 1 120 153
+/**
+ * @brief Clears the elements height
+ * @details This clears the elements height expression, clearing anything set
+ *   with set_height() before.
+ */
+47
+inline void LUIBaseElement::clear_height(void);
+
+362 10 clear_size 0 4 496 26 LUIBaseElement::clear_size 0 1 121 127
+/**
+ * @brief Clears the elements size
+ * @details This clears the elements size, calling clear_width() and clear_height().
+ */
+45
+inline void LUIBaseElement::clear_size(void);
+
+363 9 has_width 0 4 496 25 LUIBaseElement::has_width 0 1 122 267
+/**
+ * @brief Returns whether the element has a width expression
+ * @details This checks whether there was a width set on the element, either
+ *   a fixed width in pixels, or a percentage width.
+ * @return true if the element has a width assigned, false otherwise
+ */
+50
+inline bool LUIBaseElement::has_width(void) const;
+
+364 10 has_height 0 4 496 26 LUIBaseElement::has_height 0 1 123 271
+/**
+ * @brief Returns whether the element has a height expression
+ * @details This checks whether there was a height set on the element, either
+ *   a fixed height in pixels, or a percentage height
+ * @return true if the element has a height assigned, false otherwise
+ */
+51
+inline bool LUIBaseElement::has_height(void) const;
+
+365 8 has_size 0 4 496 24 LUIBaseElement::has_size 0 1 124 205
+/**
+ * @brief Returns whether the element has a size assigned
+ * @details This returns whether has_width() and has_height() are both true.
+ * @return True if the element has a size for both dimensions.
+ */
+49
+inline bool LUIBaseElement::has_size(void) const;
+
+366 8 get_size 0 4 496 24 LUIBaseElement::get_size 0 1 125 276
+/**
+ * @brief Returns the size of the element
+ * @details This returns an approximated size of the element. In case a fixed
+ *   size was set on the element, it returns those. Otherwise it approximates
+ *   the size using the last-frame size.
+ * @return Approximated width
+ */
+53
+inline LVector2 LUIBaseElement::get_size(void) const;
+
+367 11 set_visible 0 4 496 27 LUIBaseElement::set_visible 0 1 126 425
+// Visible
+
+// Visible
+
+/**
+ * @brief Sets whether the element is visible
+ * @details This sets the element visible. If visible is set to false, the element
+ *   will not be rendered anymore. If visible is set to true, the element
+ *   will be shown.
+ *
+ *   If any of the objects parents is hidden, this method has no effect, and the
+ *   element will always be hidden,
+ *
+ * @param visible Whether to render the element
+ */
+54
+inline void LUIBaseElement::set_visible(bool visible);
+
+368 10 is_visible 0 4 496 26 LUIBaseElement::is_visible 0 1 127 398
+/**
+ * @brief Returns whether the element is explicitly hidden or shown.
+ * @details This returns the value previously set by set_visible(). It does
+ *   *not* take into account whether any of the parents of the object is visible
+ *   or not, so you cannot use this to determine whether the element was actually
+ *   rendered or not.
+ * @return Whether the element was explicitly hidden / shown
+ */
+51
+inline bool LUIBaseElement::is_visible(void) const;
+
+369 4 hide 0 4 496 20 LUIBaseElement::hide 0 1 128 87
+/**
+ * @brief Hides the element
+ * @details This is an alias for set_visible(false)
+ */
+39
+inline void LUIBaseElement::hide(void);
+
+370 4 show 0 4 496 20 LUIBaseElement::show 0 1 129 86
+/**
+ * @brief Shows the element
+ * @details This is an alias for set_visible(true)
+ */
+39
+inline void LUIBaseElement::show(void);
+
+371 9 set_solid 0 4 496 25 LUIBaseElement::set_solid 0 1 130 18
+// Solid
+
+// Solid
+50
+inline void LUIBaseElement::set_solid(bool solid);
+
+372 9 get_solid 0 4 496 25 LUIBaseElement::get_solid 0 1 131 216
+/**
+ * @brief Returns whether element is solid
+ * @details This returns the value previously set with set_solid(). See
+ *   LUIBaseElement::set_solid() for further information.
+ * @return Solidness of the element
+ */
+50
+inline bool LUIBaseElement::get_solid(void) const;
+
+373 12 set_z_offset 0 4 496 28 LUIBaseElement::set_z_offset 0 1 132 22
+// Z-Index
+
+// Z-Index
+50
+void LUIBaseElement::set_z_offset(float z_offset);
+
+374 12 get_z_offset 0 4 496 28 LUIBaseElement::get_z_offset 0 1 133 161
+/**
+ * @brief Returns the z offset of the element
+ * @details This returns the z offset previously set with set_z_offset()
+ * @return z offset of the element
+ */
+54
+inline float LUIBaseElement::get_z_offset(void) const;
+
+375 9 has_focus 0 4 496 25 LUIBaseElement::has_focus 0 1 134 233
+// Focus
+
+// Focus
+
+/**
+ * @brief Returns whether the element is focused
+ * @details This method returns whether the element currently is focused.
+ *   This is usually true after a call to request_focus()
+ * @return [description]
+ */
+50
+inline bool LUIBaseElement::has_focus(void) const;
+
+376 13 request_focus 0 4 496 29 LUIBaseElement::request_focus 0 1 135 0
+41
+bool LUIBaseElement::request_focus(void);
+
+377 4 blur 0 4 496 20 LUIBaseElement::blur 0 1 136 0
+32
+void LUIBaseElement::blur(void);
+
+378 10 has_parent 0 4 496 26 LUIBaseElement::has_parent 0 1 137 196
+/**
+ * @brief Returns whether the element has a parent
+ * @details This method returns whether the element is currently parented to anything
+ * @return true if a parent is set, false otherwise
+ */
+51
+inline bool LUIBaseElement::has_parent(void) const;
+
+379 12 clear_parent 0 4 496 28 LUIBaseElement::clear_parent 0 1 138 0
+40
+void LUIBaseElement::clear_parent(void);
+
+380 10 set_parent 0 4 496 26 LUIBaseElement::set_parent 0 1 139 0
+51
+void LUIBaseElement::set_parent(LUIObject *parent);
+
+381 10 get_parent 0 4 496 26 LUIBaseElement::get_parent 0 1 140 176
+/**
+ * @brief Returns a handle to the parent
+ * @details This returns a handle to the elements parent, or NULL if no parent
+ *   is present.
+ * @return Handle to the parent
+ */
+57
+inline LUIObject *LUIBaseElement::get_parent(void) const;
+
+382 10 intersects 0 6 496 26 LUIBaseElement::intersects 0 1 141 436
+/**
+ * @brief Checks if the element intersects with a point
+ * @details This checks if the element intersects with a given *absolute*
+ *   coordinate point. This is only valid after traversing the tree, since otherwise
+ *   the absolute position is not known.
+ *
+ * @param x absolute x-coordinate in pixels
+ * @param y absolute y-coordinate in pixels
+ *
+ * @return true if the coordinate intersects with the element, false otherwise
+ */
+71
+virtual inline bool LUIBaseElement::intersects(float x, float y) const;
+
+383 17 clear_clip_bounds 0 4 496 33 LUIBaseElement::clear_clip_bounds 0 1 142 169
+/**
+ * @brief Clears the clip bounds
+ * @details This clears any clip bounds previously set with set_clip_bounds(),
+ *   and thus makes the element not clip anymore.
+ */
+52
+inline void LUIBaseElement::clear_clip_bounds(void);
+
+384 15 set_clip_bounds 0 4 496 31 LUIBaseElement::set_clip_bounds 0 2 143 144 964
+/**
+ * @brief Sets the elements clip bounds
+ * @details This sets the elements clip bounds. This is equal to setting
+ *   'overflow: hidden' in CSS. In case the clip bounds are (0, 0, 0, 0),
+ *   the clipping will happen at the sides of the element. The bounds specify
+ *   the distance of the clipping rect from the sides.
+ *
+ * @param bounds Distance of the clipping rect from the sides
+ */
+
+/**
+ * @brief Sets the elements clip bounds
+ * @details This sets the elements clip bounds. This is equal to setting
+ *   'overflow: hidden' in CSS. In case the clip bounds are (0, 0, 0, 0),
+ *   the clipping will happen at the sides of the element. The bounds specify
+ *   the distance of the clipping rect from the sides.
+ *
+ * @param top Distance of the clipping rect from the top
+ * @param right Distance of the clipping rect from the right
+ * @param bottom Distance of the clipping rect from the bottom
+ * @param left Distance of the clipping rect from the left
+ */
+164
+inline void LUIBaseElement::set_clip_bounds(LUIBounds const &bounds);
+inline void LUIBaseElement::set_clip_bounds(float top, float right, float bottom, float left);
+
+385 15 get_clip_bounds 0 4 496 31 LUIBaseElement::get_clip_bounds 0 1 145 179
+/**
+ * @brief Returns the clip bounds
+ * @details This returns the clip bounds. In case no clip bounds were set, this
+ *   returns (0, 0, 0, 0).
+ * @return Current clip bounds
+ */
+68
+inline LUIBounds const &LUIBaseElement::get_clip_bounds(void) const;
+
+386 19 get_abs_clip_bounds 0 4 496 35 LUIBaseElement::get_abs_clip_bounds 0 1 146 203
+/**
+ * @brief Returns the clip rect
+ * @details This returns the clip region, in absolute coordinate space. This is only
+ *   valid after a frame has been rendered.
+ * @return Absolute clip rectangle
+ */
+70
+inline LUIRect const &LUIBaseElement::get_abs_clip_bounds(void) const;
+
+387 10 is_topmost 0 4 496 26 LUIBaseElement::is_topmost 0 1 147 301
+/**
+ * @brief Returns whether the element is topmost
+ * @details This returns whether the element is set to topmost, and thus gets
+ *   rendered in front of all objects. This does not check if any parent of the
+ *   object is topmost.
+ *
+ * @return True if the element is explicitly set to topmost
+ */
+51
+inline bool LUIBaseElement::is_topmost(void) const;
+
+388 11 set_topmost 0 4 496 27 LUIBaseElement::set_topmost 0 1 148 538
+/**
+ * @brief Sets the element to render topmost
+ * @details This makes the element render in top of all other elements. This also
+ *   affects the children of the element in case it has some. Topmost elements are
+ *   rendered in a seperate render pass above all elements. They also recieve
+ *   events before regular events.
+ *
+ *   This does affect all children elements, too. Setting this too false will have
+ *   no effect if any parent of the element is set to topmost.
+ *
+ * @param topmost Whether to render the element topmost
+ */
+54
+inline void LUIBaseElement::set_topmost(bool topmost);
+
+389 16 get_relative_pos 0 4 496 32 LUIBaseElement::get_relative_pos 0 1 149 402
+/**
+ * @brief Returns the relative position of an absolute point
+ * @details This returns the position of a point relative to this element. This is
+ *   only valid after a frame has been rendered, since it depends on the absolute
+ *   position. The relative position is computed by pos - element_pos.
+ *
+ * @param pos Absolute point position
+ * @return Vector to that point, relative to the element
+ */
+75
+inline LVector2 LUIBaseElement::get_relative_pos(LPoint2 const &pos) const;
+
+390 14 set_debug_name 0 4 496 30 LUIBaseElement::set_debug_name 0 1 150 282
+/**
+ * @brief Sets the debugging name
+ * @details This sets the debug name, which is shown when calling
+ *   LUIBaseElement::ls(). It usually is set to the class name, but can be overriden
+ *   to provide additional information.
+ *
+ * @param debug_name Debug-Name of the object.
+ */
+74
+inline void LUIBaseElement::set_debug_name(std::string const &debug_name);
+
+391 14 get_debug_name 0 4 496 30 LUIBaseElement::get_debug_name 0 1 151 151
+/**
+ * @brief Returns the debugging name
+ * @details This returns the debug name previously set with set_debug_name()
+ * 
+ * @return The debug name
+ */
+69
+inline std::string const &LUIBaseElement::get_debug_name(void) const;
+
+392 9 LUIObject 0 4 507 20 LUIObject::LUIObject 0 2 157 158 0
+258
+LUIObject::LUIObject(PyObject *self, float x = 0.0, float y = 0.0, float w = -1.0, float h = -1.0, bool solid = false);
+LUIObject::LUIObject(PyObject *self, LUIObject *parent, float x = 0.0, float y = 0.0, float w = -1.0, float h = -1.0, bool solid = false);
+
+393 12 get_children 0 4 507 23 LUIObject::get_children 0 1 159 0
+75
+inline PointerTo< LUIElementIterator > LUIObject::get_children(void) const;
+
+394 9 get_child 0 4 507 20 LUIObject::get_child 0 1 160 0
+81
+inline PointerTo< LUIBaseElement > LUIObject::get_child(std::size_t index) const;
+
+395 9 add_child 0 4 507 20 LUIObject::add_child 0 1 161 0
+91
+inline PointerTo< LUIBaseElement > LUIObject::add_child(PointerTo< LUIBaseElement > child);
+
+396 12 remove_child 0 4 507 23 LUIObject::remove_child 0 1 162 0
+71
+inline void LUIObject::remove_child(PointerTo< LUIBaseElement > child);
+
+397 19 remove_all_children 0 4 507 30 LUIObject::remove_all_children 0 1 163 0
+49
+inline void LUIObject::remove_all_children(void);
+
+398 15 get_child_count 0 4 507 26 LUIObject::get_child_count 0 1 164 0
+50
+inline int LUIObject::get_child_count(void) const;
+
+399 16 set_content_node 0 4 507 27 LUIObject::set_content_node 0 1 165 0
+77
+inline void LUIObject::set_content_node(PointerTo< LUIObject > content_node);
+
+400 16 get_content_node 0 4 507 27 LUIObject::get_content_node 0 1 166 0
+70
+inline PointerTo< LUIObject > LUIObject::get_content_node(void) const;
+
+401 2 ls 0 6 507 13 LUIObject::ls 0 1 167 0
+43
+virtual void LUIObject::ls(int indent = 0);
+
+402 14 get_class_type 0 4 507 25 LUIObject::get_class_type 0 1 168 0
+50
+static TypeHandle LUIObject::get_class_type(void);
+
+403 14 get_class_type 0 4 496 30 LUIBaseElement::get_class_type 0 1 152 0
+55
+static TypeHandle LUIBaseElement::get_class_type(void);
+
+404 20 load_descriptor_file 0 4 512 30 LUIAtlas::load_descriptor_file 0 1 171 0
+72
+bool LUIAtlas::load_descriptor_file(std::string const &descriptor_path);
+
+405 12 load_texture 0 4 512 22 LUIAtlas::load_texture 0 1 172 0
+61
+bool LUIAtlas::load_texture(std::string const &texture_path);
+
+406 11 get_texture 0 4 512 21 LUIAtlas::get_texture 0 1 173 176
+/**
+ * @brief Returns the atlas texture
+ * @details This returns a handle to the atlas texture, which can be used for
+ *   rendering.
+ * @return Handle to the atlas texture
+ */
+50
+inline Texture *LUIAtlas::get_texture(void) const;
+
+407 9 has_entry 0 4 512 19 LUIAtlas::has_entry 0 1 174 311
+/**
+ * @brief Checks whether an entry exists in the atlas.
+ * @details This methods checks if an entry with the given name exists in the
+ *   atlas. If an entry was found, true is returned, otherwise false.
+ *
+ * @param name Entry name, case sensitive
+ * @return true if the entry was found, false otherwise
+ */
+63
+inline bool LUIAtlas::has_entry(std::string const &name) const;
+
+408 9 get_entry 0 4 512 19 LUIAtlas::get_entry 0 1 175 348
+/**
+ * @brief Returns an atlas entry.
+ * @details This search for an atlas entry with the given name, and returns it.
+ *   If an entry was not found in the atlas, an assertion is raised.
+ *   This behaviour can be prevented by using LUIAtlas::has_entry() before.
+ *
+ * @param name Entry name, case sensitive
+ * @return Handle to the atlas entry
+ */
+79
+inline LUIAtlasEntry const &LUIAtlas::get_entry(std::string const &name) const;
+
+409 8 get_size 0 4 512 18 LUIAtlas::get_size 0 1 176 241
+/**
+ * @brief Returns the atlas size.
+ * @details Returns the atlas size in pixels, this is a convenience function for
+ *   Texture::get_x_size(). It assumes the atlas has the same width and height.
+ * @return Size of the atlas in pixels
+ */
+42
+inline int LUIAtlas::get_size(void) const;
+
+410 8 LUIAtlas 0 4 512 18 LUIAtlas::LUIAtlas 0 2 169 170 0
+97
+inline LUIAtlas::LUIAtlas(void) = default;
+inline LUIAtlas::LUIAtlas(LUIAtlas const &) = default;
+
+411 9 ~LUIAtlas 0 4 512 19 LUIAtlas::~LUIAtlas 0 0 0
+26
+LUIAtlas::~LUIAtlas(void);
+
+412 14 get_global_ptr 0 4 514 28 LUIAtlasPool::get_global_ptr 0 1 178 0
+56
+static LUIAtlasPool *LUIAtlasPool::get_global_ptr(void);
+
+413 10 load_atlas 0 4 514 24 LUIAtlasPool::load_atlas 0 1 179 0
+130
+void LUIAtlasPool::load_atlas(std::string const &atlas_id, std::string const &atlas_desc_path, std::string const &atlas_tex_path);
+
+414 9 has_atlas 0 4 514 23 LUIAtlasPool::has_atlas 0 1 180 310
+/**
+ * @brief Checks whether an atlas exists
+ * @details This method checks if there was an atlas loaded with the given name.
+ *   If this is the case, the method returns true, otherwise false.
+ *
+ * @param atlas_id Name of the atlas, case sensitive
+ * @return true if the atlas was loaded, false otherwise
+ */
+71
+inline bool LUIAtlasPool::has_atlas(std::string const &atlas_id) const;
+
+415 9 get_atlas 0 4 514 23 LUIAtlasPool::get_atlas 0 1 181 272
+/**
+ * @brief Returns an atlas by name
+ * @details This method returns an atlas with the given name. If the name was
+ *   not found, because the atlas was not loaded yet, null is returned.
+ *
+ * @param atlas_id Name of the atlas
+ * @return Handle to the atlas, or null
+ */
+88
+inline PointerTo< LUIAtlas > LUIAtlasPool::get_atlas(std::string const &atlas_id) const;
+
+416 14 get_descriptor 0 4 514 28 LUIAtlasPool::get_descriptor 0 1 182 522
+/**
+ * @brief Returns a descriptor from a given atlas
+ * @details This returns a descriptor with the given name from the given atlas.
+ *   If there is no atlas with the given name, or no entry in that in that atlas
+ *   exists, an error is printed, and an assertion is raised.
+ *
+ *   The descriptor contains information about the atlas texture, size, and the
+ *   uv position of the referenced sprite.
+ *
+ * @param atlas_id Name of the atlas
+ * @param entry_id Name of the entry
+ *
+ * @return Descriptor of the sprite
+ */
+119
+inline LUIAtlasDescriptor LUIAtlasPool::get_descriptor(std::string const &atlas_id, std::string const &entry_id) const;
+
+417 12 LUIAtlasPool 0 4 514 26 LUIAtlasPool::LUIAtlasPool 0 1 177 0
+66
+inline LUIAtlasPool::LUIAtlasPool(LUIAtlasPool const &) = default;
+
+418 13 ~LUIAtlasPool 0 4 514 27 LUIAtlasPool::~LUIAtlasPool 0 0 0
+34
+LUIAtlasPool::~LUIAtlasPool(void);
+
+419 9 LUISprite 0 4 515 20 LUISprite::LUISprite 0 3 183 184 185 108
+// Initialize with a path to an image
+
+// Initialize with a texture handle
+
+// Initialize with a atlas entry
+551
+LUISprite::LUISprite(PyObject *self, LUIObject *parent, std::string const &image, float x = 0.0, float y = 0.0, float w = 0.0, float h = 0.0, LColor const &color = LColor(1));
+LUISprite::LUISprite(PyObject *self, LUIObject *parent, Texture *texture, float x = 0.0, float y = 0.0, float w = 0.0, float h = 0.0, LColor const &color = LColor(1));
+LUISprite::LUISprite(PyObject *self, LUIObject *parent, std::string const &entry_id, std::string const &atlas_id, float x = 0.0, float y = 0.0, float w = 0.0, float h = 0.0, LColor const &color = LColor(1));
+
+420 12 set_uv_range 0 4 515 23 LUISprite::set_uv_range 0 2 186 187 11
+// Texcoord
+165
+inline void LUISprite::set_uv_range(LTexCoord const &uv_begin, LTexCoord const &uv_end);
+inline void LUISprite::set_uv_range(float u0, float v0, float u1, float v1);
+
+421 12 get_uv_begin 0 4 515 23 LUISprite::get_uv_begin 0 1 188 0
+60
+inline LTexCoord const &LUISprite::get_uv_begin(void) const;
+
+422 10 get_uv_end 0 4 515 21 LUISprite::get_uv_end 0 1 189 0
+58
+inline LTexCoord const &LUISprite::get_uv_end(void) const;
+
+423 11 set_texture 0 4 515 22 LUISprite::set_texture 0 4 190 191 192 193 10
+// Texture
+362
+inline void LUISprite::set_texture(Texture *tex, bool resize = true);
+inline void LUISprite::set_texture(LUIAtlasDescriptor const &descriptor, bool resize = true);
+inline void LUISprite::set_texture(std::string const &source, bool resize = true);
+inline void LUISprite::set_texture(std::string const &entry_name, std::string const &atlas_id, bool resize = true);
+
+424 11 get_texture 0 4 515 22 LUISprite::get_texture 0 1 194 0
+51
+inline Texture *LUISprite::get_texture(void) const;
+
+425 14 print_vertices 0 4 515 25 LUISprite::print_vertices 0 1 195 0
+44
+inline void LUISprite::print_vertices(void);
+
+426 2 ls 0 6 515 13 LUISprite::ls 0 1 196 0
+43
+virtual void LUISprite::ls(int indent = 0);
+
+427 14 get_class_type 0 4 515 25 LUISprite::get_class_type 0 1 197 0
+50
+static TypeHandle LUISprite::get_class_type(void);
+
+428 8 __next__ 0 4 518 28 LUIElementIterator::__next__ 0 1 199 0
+58
+inline LUIBaseElement *LUIElementIterator::__next__(void);
+
+429 8 __iter__ 0 4 518 28 LUIElementIterator::__iter__ 0 1 200 0
+62
+inline LUIElementIterator &LUIElementIterator::__iter__(void);
+
+430 18 LUIElementIterator 0 4 518 38 LUIElementIterator::LUIElementIterator 0 1 198 0
+84
+inline LUIElementIterator::LUIElementIterator(LUIElementIterator const &) = default;
+
+431 3 add 0 4 519 18 LUIBaseLayout::add 0 2 201 202 0
+176
+void LUIBaseLayout::add(PointerTo< LUIBaseElement > object, std::string const &cell_mode = "?");
+void LUIBaseLayout::add(PointerTo< LUIBaseElement > object, float cell_height);
+
+432 5 reset 0 4 519 20 LUIBaseLayout::reset 0 1 203 0
+32
+void LUIBaseLayout::reset(void);
+
+433 11 remove_cell 0 4 519 26 LUIBaseLayout::remove_cell 0 1 204 0
+51
+void LUIBaseLayout::remove_cell(std::size_t index);
+
+434 4 cell 0 4 519 19 LUIBaseLayout::cell 0 3 205 206 207 0
+186
+PointerTo< LUIObject > LUIBaseLayout::cell(std::string const &cell_mode);
+PointerTo< LUIObject > LUIBaseLayout::cell(float cell_height);
+PointerTo< LUIObject > LUIBaseLayout::cell(void);
+
+435 11 set_spacing 0 4 519 26 LUIBaseLayout::set_spacing 0 1 208 0
+54
+inline void LUIBaseLayout::set_spacing(float spacing);
+
+436 11 get_spacing 0 4 519 26 LUIBaseLayout::get_spacing 0 1 209 0
+52
+inline float LUIBaseLayout::get_spacing(void) const;
+
+437 14 get_class_type 0 4 519 29 LUIBaseLayout::get_class_type 0 1 210 0
+54
+static TypeHandle LUIBaseLayout::get_class_type(void);
+
+438 14 ~LUIBaseLayout 0 4 519 29 LUIBaseLayout::~LUIBaseLayout 0 0 0
+36
+LUIBaseLayout::~LUIBaseLayout(void);
+
+439 17 LUIVerticalLayout 0 4 520 36 LUIVerticalLayout::LUIVerticalLayout 0 1 211 0
+93
+LUIVerticalLayout::LUIVerticalLayout(PyObject *self, LUIObject *parent, float spacing = 0.0);
+
+440 14 get_class_type 0 4 520 33 LUIVerticalLayout::get_class_type 0 1 212 0
+58
+static TypeHandle LUIVerticalLayout::get_class_type(void);
+
+441 18 ~LUIVerticalLayout 0 4 520 37 LUIVerticalLayout::~LUIVerticalLayout 0 0 0
+44
+LUIVerticalLayout::~LUIVerticalLayout(void);
+
+442 14 get_global_ptr 0 4 521 27 LUIFontPool::get_global_ptr 0 1 213 0
+54
+static LUIFontPool *LUIFontPool::get_global_ptr(void);
+
+443 9 load_font 0 4 521 22 LUIFontPool::load_font 0 1 214 0
+83
+void LUIFontPool::load_font(std::string const &name, std::string const &font_file);
+
+444 13 register_font 0 4 521 26 LUIFontPool::register_font 0 1 215 0
+92
+void LUIFontPool::register_font(std::string const &name, PointerTo< DynamicTextFont > font);
+
+445 8 has_font 0 4 521 21 LUIFontPool::has_font 0 1 216 0
+65
+inline bool LUIFontPool::has_font(std::string const &name) const;
+
+446 8 get_font 0 4 521 21 LUIFontPool::get_font 0 1 217 0
+77
+inline DynamicTextFont *LUIFontPool::get_font(std::string const &name) const;
+
+447 7 LUIText 0 4 522 16 LUIText::LUIText 0 1 218 0
+197
+LUIText::LUIText(PyObject *self, LUIObject *parent, std::wstring const &text, std::string const &font_name = "default", float font_size = 16.0, float x = 0.0, float y = 0.0, bool wordwrap = false);
+
+448 8 set_font 0 4 522 17 LUIText::set_font 0 1 219 0
+60
+inline void LUIText::set_font(std::string const &font_name);
+
+449 8 get_font 0 4 522 17 LUIText::get_font 0 1 220 0
+54
+inline DynamicTextFont *LUIText::get_font(void) const;
+
+450 8 set_text 0 4 522 17 LUIText::set_text 0 1 221 0
+56
+inline void LUIText::set_text(std::wstring const &text);
+
+451 8 get_text 0 4 522 17 LUIText::get_text 0 1 222 0
+57
+inline std::wstring const &LUIText::get_text(void) const;
+
+452 13 set_font_size 0 4 522 22 LUIText::set_font_size 0 1 223 0
+47
+inline void LUIText::set_font_size(float size);
+
+453 13 get_font_size 0 4 522 22 LUIText::get_font_size 0 1 224 0
+48
+inline float LUIText::get_font_size(void) const;
+
+454 12 set_wordwrap 0 4 522 21 LUIText::set_wordwrap 0 1 225 0
+45
+inline void LUIText::set_wordwrap(bool wrap);
+
+455 12 get_wordwrap 0 4 522 21 LUIText::get_wordwrap 0 1 226 0
+46
+inline bool LUIText::get_wordwrap(void) const;
+
+456 14 get_char_index 0 4 522 23 LUIText::get_char_index 0 1 227 0
+45
+int LUIText::get_char_index(float pos) const;
+
+457 12 get_char_pos 0 4 522 21 LUIText::get_char_pos 0 1 228 0
+50
+float LUIText::get_char_pos(int char_index) const;
+
+458 14 get_class_type 0 4 522 23 LUIText::get_class_type 0 1 229 0
+48
+static TypeHandle LUIText::get_class_type(void);
+
+459 22 upcast_to_CallbackData 0 12 528 36 LUIEventData::upcast_to_CallbackData 0 1 238 40
+upcast from LUIEventData to CallbackData
+57
+CallbackData *LUIEventData::upcast_to_CallbackData(void);
+
+460 24 downcast_to_LUIEventData 0 12 529 38 CallbackData::downcast_to_LUIEventData 0 1 239 42
+downcast from CallbackData to LUIEventData
+59
+LUIEventData *CallbackData::downcast_to_LUIEventData(void);
+
+461 24 upcast_to_ReferenceCount 0 12 528 38 LUIEventData::upcast_to_ReferenceCount 0 1 240 42
+upcast from LUIEventData to ReferenceCount
+61
+ReferenceCount *LUIEventData::upcast_to_ReferenceCount(void);
+
+462 24 downcast_to_LUIEventData 0 12 513 40 ReferenceCount::downcast_to_LUIEventData 0 1 241 44
+downcast from ReferenceCount to LUIEventData
+61
+LUIEventData *ReferenceCount::downcast_to_LUIEventData(void);
+
+463 8 get_name 0 4 528 22 LUIEventData::get_name 0 1 230 0
+54
+inline std::string LUIEventData::get_name(void) const;
+
+464 10 get_sender 0 4 528 24 LUIEventData::get_sender 0 1 231 0
+72
+inline PointerTo< LUIBaseElement > LUIEventData::get_sender(void) const;
+
+465 15 get_coordinates 0 4 528 29 LUIEventData::get_coordinates 0 1 232 0
+57
+inline LPoint2 LUIEventData::get_coordinates(void) const;
+
+466 11 get_message 0 4 528 25 LUIEventData::get_message 0 1 233 0
+58
+inline std::wstring LUIEventData::get_message(void) const;
+
+467 17 get_key_modifiers 0 4 528 31 LUIEventData::get_key_modifiers 0 1 234 0
+63
+inline std::size_t LUIEventData::get_key_modifiers(void) const;
+
+468 18 get_modifier_state 0 4 528 32 LUIEventData::get_modifier_state 0 2 235 236 33
+// Same as getModifierState in JS
+174
+inline bool LUIEventData::get_modifier_state(LUIEventData::KeyModifiers modifier) const;
+inline bool LUIEventData::get_modifier_state(std::string const &modifier_name) const;
+
+469 13 ~LUIEventData 0 6 528 27 LUIEventData::~LUIEventData 0 0 0
+42
+virtual LUIEventData::~LUIEventData(void);
+
+470 14 get_class_type 0 4 528 28 LUIEventData::get_class_type 0 1 237 0
+53
+static TypeHandle LUIEventData::get_class_type(void);
+
+471 7 LUIRoot 0 4 534 16 LUIRoot::LUIRoot 0 2 242 243 0
+96
+LUIRoot::LUIRoot(float width, float height);
+inline LUIRoot::LUIRoot(LUIRoot const &) = default;
+
+472 4 node 0 4 534 13 LUIRoot::node 0 1 244 0
+50
+inline PointerTo< LUIObject > LUIRoot::node(void);
+
+473 16 set_use_glsl_130 0 4 534 25 LUIRoot::set_use_glsl_130 0 1 245 272
+/**
+ * @brief Sets whether to use GLSL 1.30 instead of 1.20
+ * @details This controls whether GLSL 1.30 is used instead of 1.20. It can
+ *   provide a performance benefit although it also bumps the OpenGL requirement.
+ *
+ * @param use_glsl_130 Whether to use GLSL 1.30
+ */
+64
+static inline void LUIRoot::set_use_glsl_130(bool use_glsl_130);
+
+474 15 LUIInputHandler 0 4 535 32 LUIInputHandler::LUIInputHandler 0 1 246 0
+69
+LUIInputHandler::LUIInputHandler(std::string const &name = string());
+
+475 14 get_class_type 0 4 535 31 LUIInputHandler::get_class_type 0 1 247 0
+56
+static TypeHandle LUIInputHandler::get_class_type(void);
+
+476 14 LUIAtlasPacker 0 4 537 30 LUIAtlasPacker::LUIAtlasPacker 0 2 248 249 0
+122
+LUIAtlasPacker::LUIAtlasPacker(std::size_t size);
+inline LUIAtlasPacker::LUIAtlasPacker(LUIAtlasPacker const &) = default;
+
+477 13 find_position 0 4 537 29 LUIAtlasPacker::find_position 0 1 250 0
+70
+LVector2f LUIAtlasPacker::find_position(std::size_t w, std::size_t h);
+
+478 19 LUIHorizontalLayout 0 4 538 40 LUIHorizontalLayout::LUIHorizontalLayout 0 1 251 0
+97
+LUIHorizontalLayout::LUIHorizontalLayout(PyObject *self, LUIObject *parent, float spacing = 0.0);
+
+479 14 get_class_type 0 4 538 35 LUIHorizontalLayout::get_class_type 0 1 252 0
+60
+static TypeHandle LUIHorizontalLayout::get_class_type(void);
+
+480 20 ~LUIHorizontalLayout 0 4 538 41 LUIHorizontalLayout::~LUIHorizontalLayout 0 0 0
+48
+LUIHorizontalLayout::~LUIHorizontalLayout(void);
+
+481 4 make 0 4 539 15 LUIRegion::make 0 2 253 254 0
+226
+static inline LUIRegion *LUIRegion::make(std::string const &context_name, GraphicsOutput *window);
+static inline LUIRegion *LUIRegion::make(std::string const &context_name, GraphicsOutput *window, LVecBase4 const &dimensions);
+
+482 8 get_root 0 4 539 19 LUIRegion::get_root 0 1 255 0
+50
+inline LUIObject *LUIRegion::get_root(void) const;
+
+483 17 set_input_handler 0 4 539 28 LUIRegion::set_input_handler 0 1 256 0
+67
+inline void LUIRegion::set_input_handler(LUIInputHandler *handler);
+
+484 17 get_input_handler 0 4 539 28 LUIRegion::get_input_handler 0 1 257 0
+65
+inline LUIInputHandler *LUIRegion::get_input_handler(void) const;
+
+485 20 set_render_wireframe 0 4 539 31 LUIRegion::set_render_wireframe 0 1 258 0
+60
+inline void LUIRegion::set_render_wireframe(bool wireframe);
+
+486 23 toggle_render_wireframe 0 4 539 34 LUIRegion::toggle_render_wireframe 0 1 259 0
+53
+inline void LUIRegion::toggle_render_wireframe(void);
+
+487 14 get_class_type 0 4 539 25 LUIRegion::get_class_type 0 1 260 0
+50
+static TypeHandle LUIRegion::get_class_type(void);
+
+260
+1 0 0 4 2 543 0 0 8 // Color 2 4 this 3 541  5 color 1 542  
+2 0 0 4 2 543 0 0 0 2 4 this 3 541  3 rgb 1 544  
+3 0 0 4 2 543 0 0 0 5 4 this 3 541  1 r 1 493  1 g 1 493  1 b 1 493  1 a 1 493  
+4 0 0 4 3 543 0 0 0 2 4 this 3 541  1 r 1 493  
+5 0 0 4 4 543 0 0 0 2 4 this 3 541  1 g 1 493  
+6 0 0 4 5 543 0 0 0 2 4 this 3 541  1 b 1 493  
+7 0 0 4 6 543 0 0 0 2 4 this 3 541  1 a 1 493  
+8 0 0 6 7 493 0 0 0 1 4 this 3 548  
+9 0 0 6 8 493 0 0 0 1 4 this 3 548  
+10 0 0 6 9 493 0 0 0 1 4 this 3 548  
+11 0 0 6 10 493 0 0 0 1 4 this 3 548  
+12 0 0 6 11 542 0 0 0 1 4 this 3 548  
+13 0 0 6 12 542 0 0 0 1 4 this 3 548  
+14 0 0 7 25 550 283 0 0 0 
+15 0 0 7 25 550 283 0 0 1 6 param0 0 551  
+16 0 0 7 25 550 283 0 0 1 6 bounds 1 552  
+17 0 0 7 25 550 283 0 0 1 10 fill_value 1 493  
+18 0 0 7 25 550 283 0 0 4 3 top 1 493  5 right 1 493  6 bottom 1 493  4 left 1 493  
+19 0 0 6 26 493 0 0 0 1 4 this 3 551  
+20 0 0 6 27 493 0 0 0 1 4 this 3 551  
+21 0 0 6 28 493 0 0 0 1 4 this 3 551  
+22 0 0 6 29 493 0 0 0 1 4 this 3 551  
+23 0 0 4 30 543 0 0 0 2 4 this 3 550  3 top 1 493  
+24 0 0 4 31 543 0 0 0 2 4 this 3 550  5 right 1 493  
+25 0 0 4 32 543 0 0 0 2 4 this 3 550  6 bottom 1 493  
+26 0 0 4 33 543 0 0 0 2 4 this 3 550  4 left 1 493  
+27 0 0 4 34 543 0 0 0 2 4 this 3 550  6 bounds 1 552  
+28 0 0 4 34 543 0 0 0 5 4 this 3 550  3 top 1 493  5 right 1 493  6 bottom 1 493  4 left 1 493  
+29 0 0 6 35 552 0 0 0 1 4 this 3 551  
+30 0 0 7 42 556 297 0 0 0 
+31 0 0 7 42 556 297 0 0 1 6 param0 0 557  
+32 0 0 7 42 556 297 0 0 1 4 rect 1 552  
+33 0 0 7 42 556 297 0 0 4 1 x 1 493  1 y 1 493  1 w 1 493  1 h 1 493  
+34 0 0 6 43 493 0 0 0 1 4 this 3 557  
+35 0 0 6 44 493 0 0 0 1 4 this 3 557  
+36 0 0 6 45 493 0 0 0 1 4 this 3 557  
+37 0 0 6 46 493 0 0 0 1 4 this 3 557  
+38 0 0 7 47 559 0 0 0 1 4 this 3 557  
+39 0 0 7 48 559 0 0 0 1 4 this 3 557  
+40 0 0 4 49 543 0 0 0 2 4 this 3 556  1 x 1 493  
+41 0 0 4 50 543 0 0 0 2 4 this 3 556  1 y 1 493  
+42 0 0 4 51 543 0 0 0 2 4 this 3 556  1 w 1 493  
+43 0 0 4 52 543 0 0 0 2 4 this 3 556  1 h 1 493  
+44 0 0 4 53 543 0 0 0 3 4 this 3 556  2 xy 1 560  2 wh 1 560  
+45 0 0 4 53 543 0 0 0 2 4 this 3 556  4 rect 1 552  
+46 0 0 4 53 543 0 0 0 5 4 this 3 556  1 x 1 493  1 y 1 493  1 w 1 493  1 h 1 493  
+47 0 0 6 54 552 0 0 0 1 4 this 3 557  
+48 0 0 4 67 543 0 0 456 /**
+ * @brief Binds a new event handler for a given event
+ * @details This binds a given event handler (a function taking the event as the
+ *   first argument) to an event name. Whenever the event gets triggered, the
+ *   event handler will get invoked.
+ *
+ *   In case the event is already bound, a warning is printed.
+ *
+ * @param event_name Name of the event to bind to
+ * @param callback Event handler, a method taking only one argument (the event)
+ */ 3 4 this 3 562  10 event_name 1 563  8 callback 1 564  
+49 0 0 4 68 543 0 0 292 /**
+ * @brief Unbinds an event handler
+ * @details Unbinds a event handler, in case one is bound to the given event.
+ *   If there was no event handler for the given event, a warning is printed, and
+ *   nothing happens.
+ *
+ * @param event_name Name of the event to unbind the handler for
+ */ 2 4 this 3 562  10 event_name 1 563  
+50 0 0 4 69 543 0 0 263 /**
+ * @brief Unbinds all events
+ * @details This unbinds the element from all events, effectively calling unbind()
+ *   for every registered event. You should be careful on this, since most builtin
+ *   events will rely on certain events to be bound to them.
+ */ 1 4 this 3 562  
+51 0 0 6 70 503 0 0 336 /**
+ * @brief Checks whether an event handler is bound to the given event
+ * @details This checks whether there is a event handler for the event.
+ *   Returns true if there is a handler bound to the event, otherwise false.
+ *
+ * @param event_name Name of the evenet
+ * @return true if the event has an event handler, false otherwise
+ */ 2 4 this 3 562  10 event_name 1 563  
+52 0 0 4 71 543 0 0 0 2 4 this 3 562  4 data 1 566  
+53 0 0 4 71 543 0 0 0 4 4 this 3 562  10 event_name 1 563  7 message 1 563  6 coords 1 567  
+54 0 0 4 72 543 0 0 252 /**
+ * @brief Sets the elements name
+ * @details This sets the name of the element, which can get queried by get_name
+ *   later on. This does not expose any functionality, and only is a help for the
+ *   user.
+ *
+ * @param name Name of the element
+ */ 2 4 this 3 562  4 name 1 563  
+55 0 0 6 73 563 0 0 176 /**
+ * @brief Returns the name of the element
+ * @details Returns the name of the element, or an empty string if no name
+ *   was set yet.
+ *
+ * @return Name of the element
+ */ 1 4 this 3 569  
+56 0 0 4 74 543 0 0 197 /**
+ * @brief Sets the top left position
+ * @details This makes the element aligned top/left and sets its position relative
+ *   to that corner.
+ *
+ * @param pos Distance to the top-left corner
+ */ 2 4 this 3 562  3 pos 1 567  
+57 0 0 4 75 543 0 0 200 /**
+ * @brief Sets the top right position
+ * @details This makes the element aligned top/right and sets its position relative
+ *   to that corner.
+ *
+ * @param pos Distance to the top-right corner
+ */ 2 4 this 3 562  3 pos 1 567  
+58 0 0 4 76 543 0 0 207 /**
+ * @brief Sets the bottom left position
+ * @details This makes the element aligned bottom/left and sets its position relative
+ *   to that corner.
+ *
+ * @param pos Distance to the bottom-öeft corner
+ */ 2 4 this 3 562  3 pos 1 567  
+59 0 0 4 77 543 0 0 209 /**
+ * @brief Sets the bottom right position
+ * @details This makes the element aligned bottom/right and sets its position relative
+ *   to that corner.
+ *
+ * @param pos Distance to the bottom-right corner
+ */ 2 4 this 3 562  3 pos 1 567  
+60 0 0 7 78 571 0 0 244 /**
+ * @brief Returns the distance to the top left corner
+ * @details This returns the distance to the top left corner. The returned value
+ *   is only meaningful if the elment is aligned top left.
+ * @return Distance to the top left corner
+ */ 1 4 this 3 569  
+61 0 0 7 79 571 0 0 248 /**
+ * @brief Returns the distance to the top right corner
+ * @details This returns the distance to the top right corner. The returned value
+ *   is only meaningful if the elment is aligned top right.
+ * @return Distance to the top right corner
+ */ 1 4 this 3 569  
+62 0 0 7 80 571 0 0 256 /**
+ * @brief Returns the distance to the bottom left corner
+ * @details This returns the distance to the bottom left corner. The returned value
+ *   is only meaningful if the elment is aligned bottom left.
+ * @return Distance to the bottom left corner
+ */ 1 4 this 3 569  
+63 0 0 7 81 571 0 0 260 /**
+ * @brief Returns the distance to the bottom right corner
+ * @details This returns the distance to the bottom right corner. The returned value
+ *   is only meaningful if the elment is aligned bottom right.
+ * @return Distance to the bottom right corner
+ */ 1 4 this 3 569  
+64 0 0 4 82 543 0 0 160 /**
+ * @brief Sets the top left position
+ * @details This is an alias for LUIBaseElement::set_top_left()
+ *
+ * @param pos See LUIBaseElement::set_top_left()
+ */ 2 4 this 3 562  3 pos 1 567  
+65 0 0 4 82 543 0 0 205 /**
+ * @brief Sets the top left position
+ * @details This is an alias for LUIBaseElement::set_top_left()
+ *
+ * @param x See LUIBaseElement::set_top_left()
+ * @param y See LUIBaseElement::set_top_left()
+ */ 3 4 this 3 562  1 x 1 493  1 y 1 493  
+66 0 0 7 83 571 0 0 141 /**
+ * @brief Returns the top left position
+ * @details This is an alias for LUIBaseElement::get_top_left().
+ * @return Top left position
+ */ 1 4 this 3 569  
+67 0 0 7 84 571 0 0 323 /**
+ * @brief Returns the elements absolute position.
+ * @details This returns the last frame absolute position of the element.
+ *   You should not rely on this method to return correct values, since it is
+ *   only valid after at least one frame has been rendered.
+ * @return Absolute position in pixels of the element
+ */ 1 4 this 3 569  
+68 0 0 4 85 543 0 0 185 /**
+ * @brief Sets the top position of the element
+ * @details This makes the element aligned to the top, and sets the distance
+ *   to the top.
+ *
+ * @param top Distance to the top
+ */ 2 4 this 3 562  3 top 1 493  
+69 0 0 4 86 543 0 0 195 /**
+ * @brief Sets the right position of the element
+ * @details This makes the element aligned to the right, and sets the distance
+ *   to the right.
+ *
+ * @param right Distance to the right
+ */ 2 4 this 3 562  5 right 1 493  
+70 0 0 4 87 543 0 0 200 /**
+ * @brief Sets the bottom position of the element
+ * @details This makes the element aligned to the bottom, and sets the distance
+ *   to the bottom.
+ *
+ * @param bottom Distance to the bottom
+ */ 2 4 this 3 562  6 bottom 1 493  
+71 0 0 4 88 543 0 0 191 /**
+ * @brief Sets the left position of the element
+ * @details This makes the element aligned to the left, and sets the distance
+ *   to the left.
+ *
+ * @param left Distance to the right
+ */ 2 4 this 3 562  4 left 1 493  
+72 0 0 6 89 493 0 0 207 /**
+ * @brief Returns the distance to the top
+ * @details This returns the distance to the top. This value is only meaningful
+ *   if the element is aligned to the top.
+ *
+ * @return Distance to the top.
+ */ 1 4 this 3 569  
+73 0 0 6 90 493 0 0 215 /**
+ * @brief Returns the distance to the right
+ * @details This returns the distance to the right. This value is only meaningful
+ *   if the element is aligned to the right.
+ *
+ * @return Distance to the right.
+ */ 1 4 this 3 569  
+74 0 0 6 91 493 0 0 219 /**
+ * @brief Returns the distance to the bottom
+ * @details This returns the distance to the bottom. This value is only meaningful
+ *   if the element is aligned to the bottom.
+ *
+ * @return Distance to the bottom.
+ */ 1 4 this 3 569  
+75 0 0 6 92 493 0 0 211 /**
+ * @brief Returns the distance to the left
+ * @details This returns the distance to the left. This value is only meaningful
+ *   if the element is aligned to the left.
+ *
+ * @return Distance to the left.
+ */ 1 4 this 3 569  
+76 0 0 4 93 543 0 0 804 /**
+ * @brief Sets whether to center the element
+ * @details This method controls whether to center the element horizontally
+ *   or vertically. When passing false to either center_vert or center_horiz,
+ *   nothing in that direction happens.
+ *
+ *   For example:
+ *     set_centered(true, false) makes the element center vertically,
+ *     but keep its horizontal position.
+ *
+ *     set_centered(false, true) makes the element center horizontally,
+ *     but keep its vertical position.
+ *
+ *     set_centered(true, true) makes the element center in both dimensions
+ *
+ *   However, set_centered(false, false) emits a warning, since it effectively
+ *   does nothing.
+ *
+ * @param center_vert Whether to center the element vertically
+ * @param center_horiz Whether to center the element horizontally
+ */ 3 4 this 3 562  11 center_vert 1 503  12 center_horiz 1 503  
+77 0 0 4 94 543 0 0 419 /**
+ * @brief Sets whether to center the element vertically
+ * @details This makes the element center vertically. If centered is set to false,
+ *   a warning is printed. The centered parameter only exists to be able to do
+ *   element.center_vertical = True in python. The parameter should never be
+ *   false. To un-center an element, instead call set_top or set_bottom.
+ *
+ * @param centered Should always be true
+ */ 2 4 this 3 562  8 centered 1 503  
+78 0 0 4 95 543 0 0 425 /**
+ * @brief Sets whether to center the element horizontally
+ * @details This makes the element center horizontally. If centered is set to false,
+ *   a warning is printed. The centered parameter only exists to be able to do
+ *   element.center_horizontal = True in python. The parameter should never be
+ *   false. To un-center an element, instead call set_left or set_right.
+ *
+ * @param centered Should always be true
+ */ 2 4 this 3 562  8 centered 1 503  
+79 0 0 6 96 503 0 0 212 /**
+ * @brief Returns whether the element is centered
+ * @details This returns whether the element is horizontally and vertically
+ *   centered.
+ *
+ * @return true if the element is centered, false otherweise
+ */ 1 4 this 3 569  
+80 0 0 6 97 503 0 0 191 /**
+ * @brief Returns whether the element is vertically centered
+ * @details This returns whether the element is vertically centered.
+ * @return true if the element is vertically centered
+ */ 1 4 this 3 569  
+81 0 0 6 98 503 0 0 197 /**
+ * @brief Returns whether the element is horizontally centered
+ * @details This returns whether the element is horizontally centered.
+ * @return true if the element is horizontally centered
+ */ 1 4 this 3 569  
+82 0 0 4 99 543 0 0 335 /**
+ * @brief Sets the margin of the element
+ * @details This sets the margin of the element. The margin should be stored in
+ *   the order top, right, bottom, left (as in CSS, TRouBLe). The margin controls
+ *   the distance to the sides, and behaves just like in CSS.
+ *
+ * @param margin Margin in pixels, top, right, bottom, left
+ */ 2 4 this 3 562  6 margin 1 552  
+83 0 0 4 99 543 0 0 240 /**
+ * @brief Sets the margin of the element
+ * @details Sets an equal margin to all sides of the element, this is equal to
+ *   calling LUIBaseElement::set_margin(margin, margin, margin, margin).
+ *
+ * @param margin Margin to all sides
+ */ 2 4 this 3 562  6 margin 1 493  
+84 0 0 4 99 543 0 0 322 /**
+ * @brief Sets the margin of the element
+ * @details This sets the margin of the element. The margin controls the distance
+ *   to the sides, and behaves just like in CSS:
+ *
+ * @param top Margin to the top
+ * @param right Margin to the right
+ * @param bottom Margin to the bottom
+ * @param left Margin to the left
+ */ 5 4 this 3 562  3 top 1 493  5 right 1 493  6 bottom 1 493  4 left 1 493  
+85 0 0 4 100 543 0 0 148 /**
+ * @brief Sets the top-margin
+ * @details This sets only the top-margin, see LUIBaseElement::set_margin()
+ *
+ * @param top Margin to the top
+ */ 2 4 this 3 562  3 top 1 493  
+86 0 0 4 101 543 0 0 156 /**
+ * @brief Sets the right-margin
+ * @details This sets only the right-margin, see LUIBaseElement::set_margin()
+ *
+ * @param right Margin to the right
+ */ 2 4 this 3 562  5 right 1 493  
+87 0 0 4 102 543 0 0 160 /**
+ * @brief Sets the bottom-margin
+ * @details This sets only the bottom-margin, see LUIBaseElement::set_margin()
+ *
+ * @param bottom Margin to the bottom
+ */ 2 4 this 3 562  6 bottom 1 493  
+88 0 0 4 103 543 0 0 152 /**
+ * @brief Sets the left-margin
+ * @details This sets only the left-margin, see LUIBaseElement::set_margin()
+ *
+ * @param left Margin to the left
+ */ 2 4 this 3 562  4 left 1 493  
+89 0 0 6 104 493 0 0 123 /**
+ * @brief Returns the margin to the top
+ * @details This returns the margin to the top
+ * @return Margin to the top
+ */ 1 4 this 3 569  
+90 0 0 6 105 493 0 0 129 /**
+ * @brief Returns the margin to the right
+ * @details This returns the margin to the right
+ * @return Margin to the right
+ */ 1 4 this 3 569  
+91 0 0 6 106 493 0 0 132 /**
+ * @brief Returns the margin to the bottom
+ * @details This returns the margin to the bottom
+ * @return Margin to the bottom
+ */ 1 4 this 3 569  
+92 0 0 6 107 493 0 0 126 /**
+ * @brief Returns the margin to the left
+ * @details This returns the margin to the left
+ * @return Margin to the left
+ */ 1 4 this 3 569  
+93 0 0 6 108 550 0 0 338 /**
+ * @brief Returns the margin of the element.
+ * @details This returns the margin of the element. This method returns a non-const
+ *   reference, thus .get_margin().set_top(123) is perfectly fine. This is mainly
+ *   to support property chaining in python, so the user can do .margin.left = 5
+ * @return Handle to the margin bounds
+ */ 1 4 this 3 562  
+94 0 0 6 108 551 0 0 203 /**
+ * @brief Returns the margin of the element
+ * @details This returns the margin of the element, as const-version, so the bounds
+ *   are read-only.
+ * @return Readonly handle to the margin bounds
+ */ 1 4 this 3 569  
+95 0 0 4 109 543 0 0 341 /**
+ * @brief Sets the padding of the element
+ * @details This sets the padding of the element. The padding should be stored in
+ *   the order top, right, bottom, left (as in CSS, TRouBLe). The padding controls
+ *   the distance to the sides, and behaves just like in CSS.
+ *
+ * @param padding padding in pixels, top, right, bottom, left
+ */ 2 4 this 3 562  7 padding 1 552  
+96 0 0 4 109 543 0 0 249 /**
+ * @brief Sets the padding of the element
+ * @details Sets an equal padding to all sides of the element, this is equal to
+ *   calling LUIBaseElement::set_padding(padding, padding, padding, padding).
+ *
+ * @param padding padding to all sides
+ */ 2 4 this 3 562  7 padding 1 493  
+97 0 0 4 109 543 0 0 329 /**
+ * @brief Sets the padding of the element
+ * @details This sets the padding of the element. The padding controls the distance
+ *   to the sides, and behaves just like in CSS:
+ *
+ * @param top padding to the top
+ * @param right padding to the right
+ * @param bottom padding to the bottom
+ * @param left padding to the left
+ */ 5 4 this 3 562  3 top 1 493  5 right 1 493  6 bottom 1 493  4 left 1 493  
+98 0 0 4 110 543 0 0 152 /**
+ * @brief Sets the top-padding
+ * @details This sets only the top-padding, see LUIBaseElement::set_padding()
+ *
+ * @param top padding to the top
+ */ 2 4 this 3 562  3 top 1 493  
+99 0 0 4 111 543 0 0 160 /**
+ * @brief Sets the right-padding
+ * @details This sets only the right-padding, see LUIBaseElement::set_padding()
+ *
+ * @param right padding to the right
+ */ 2 4 this 3 562  5 right 1 493  
+100 0 0 4 112 543 0 0 164 /**
+ * @brief Sets the bottom-padding
+ * @details This sets only the bottom-padding, see LUIBaseElement::set_padding()
+ *
+ * @param bottom padding to the bottom
+ */ 2 4 this 3 562  6 bottom 1 493  
+101 0 0 4 113 543 0 0 156 /**
+ * @brief Sets the left-padding
+ * @details This sets only the left-padding, see LUIBaseElement::set_padding()
+ *
+ * @param left padding to the left
+ */ 2 4 this 3 562  4 left 1 493  
+102 0 0 6 114 493 0 0 126 /**
+ * @brief Returns the padding to the top
+ * @details This returns the padding to the top
+ * @return padding to the top
+ */ 1 4 this 3 569  
+103 0 0 6 115 493 0 0 132 /**
+ * @brief Returns the padding to the right
+ * @details This returns the padding to the right
+ * @return padding to the right
+ */ 1 4 this 3 569  
+104 0 0 6 116 493 0 0 135 /**
+ * @brief Returns the padding to the bottom
+ * @details This returns the padding to the bottom
+ * @return padding to the bottom
+ */ 1 4 this 3 569  
+105 0 0 6 117 493 0 0 129 /**
+ * @brief Returns the padding to the left
+ * @details This returns the padding to the left
+ * @return padding to the left
+ */ 1 4 this 3 569  
+106 0 0 6 118 550 0 0 343 /**
+ * @brief Returns the padding of the element.
+ * @details This returns the padding of the element. This method returns a non-const
+ *   reference, thus .get_padding().set_top(123) is perfectly fine. This is mainly
+ *   to support property chaining in python, so the user can do .padding.left = 5
+ * @return Handle to the padding bounds
+ */ 1 4 this 3 562  
+107 0 0 6 118 551 0 0 206 /**
+ * @brief Returns the padding of the element
+ * @details This returns the padding of the element, as const-version, so the bounds
+ *   are read-only.
+ * @return Readonly handle to the padding bounds
+ */ 1 4 this 3 569  
+108 0 0 4 119 543 0 0 254 /**
+ * @brief Sets the size of the element
+ * @details This sets the size of the element. Size can be either floats, determining
+ *  the size in pixels, or valid terms for a LUIExpression, e.g. "23%".
+ *
+ * @param size width and height of the element
+ */ 2 4 this 3 562  4 size 1 560  
+109 0 0 4 119 543 0 0 283 /**
+ * @brief Sets the size of the element
+ * @details This sets the size of the element. Size can be either floats, determining
+ *  the size in pixels, or valid terms for a LUIExpression, e.g. "23%".
+ *
+ * @param width width of the element
+ * @param height height of the element
+ */ 3 4 this 3 562  5 width 1 493  6 height 1 493  
+110 0 0 4 119 543 0 0 283 /**
+ * @brief Sets the size of the element
+ * @details This sets the size of the element. Size can be either floats, determining
+ *  the size in pixels, or valid terms for a LUIExpression, e.g. "23%".
+ *
+ * @param width width of the element
+ * @param height height of the element
+ */ 3 4 this 3 562  5 width 1 493  6 height 1 563  
+111 0 0 4 119 543 0 0 283 /**
+ * @brief Sets the size of the element
+ * @details This sets the size of the element. Size can be either floats, determining
+ *  the size in pixels, or valid terms for a LUIExpression, e.g. "23%".
+ *
+ * @param width width of the element
+ * @param height height of the element
+ */ 3 4 this 3 562  5 width 1 563  6 height 1 493  
+112 0 0 4 119 543 0 0 283 /**
+ * @brief Sets the size of the element
+ * @details This sets the size of the element. Size can be either floats, determining
+ *  the size in pixels, or valid terms for a LUIExpression, e.g. "23%".
+ *
+ * @param width width of the element
+ * @param height height of the element
+ */ 3 4 this 3 562  5 width 1 563  6 height 1 563  
+113 0 0 4 120 543 0 0 249 /**
+ * @brief Sets the width of the element
+ * @details This sets the width of the element, width can either be a float
+ *   determining the size in pixels, or a valid term for a LUIExpression, e.g. "23%".
+ *
+ * @param width Width of the element
+ */ 2 4 this 3 562  5 width 1 493  
+114 0 0 4 120 543 0 0 249 /**
+ * @brief Sets the width of the element
+ * @details This sets the width of the element, width can either be a float
+ *   determining the size in pixels, or a valid term for a LUIExpression, e.g. "23%".
+ *
+ * @param width Width of the element
+ */ 2 4 this 3 562  5 width 1 563  
+115 0 0 4 121 543 0 0 254 /**
+ * @brief Sets the height of the element
+ * @details This sets the height of the element, height can either be a float
+ *   determining the size in pixels, or a valid term for a LUIExpression, e.g. "23%".
+ *
+ * @param height Height of the element
+ */ 2 4 this 3 562  6 height 1 493  
+116 0 0 4 121 543 0 0 254 /**
+ * @brief Sets the height of the element
+ * @details This sets the height of the element, height can either be a float
+ *   determining the size in pixels, or a valid term for a LUIExpression, e.g. "23%".
+ *
+ * @param height Height of the element
+ */ 2 4 this 3 562  6 height 1 563  
+117 0 0 6 122 493 0 0 280 /**
+ * @brief Returns the width of the element
+ * @details This returns an approximated width of the element. In case a fixed
+ *   size was set on the element, it returns those. Otherwise it approximates
+ *   the width using the last-frame width.
+ * @return Approximated width
+ */ 1 4 this 3 569  
+118 0 0 6 123 493 0 0 284 /**
+ * @brief Returns the height of the element
+ * @details This returns an approximated height of the element. In case a fixed
+ *   size was set on the element, it returns those. Otherwise it approximates
+ *   the height using the last-frame height.
+ * @return Approximated width
+ */ 1 4 this 3 569  
+119 0 0 4 124 543 0 0 150 /**
+ * @brief Clears the elements width
+ * @details This clears the elements width expression, clearing anything set
+ *   with set_width() before.
+ */ 1 4 this 3 562  
+120 0 0 4 125 543 0 0 153 /**
+ * @brief Clears the elements height
+ * @details This clears the elements height expression, clearing anything set
+ *   with set_height() before.
+ */ 1 4 this 3 562  
+121 0 0 4 126 543 0 0 127 /**
+ * @brief Clears the elements size
+ * @details This clears the elements size, calling clear_width() and clear_height().
+ */ 1 4 this 3 562  
+122 0 0 6 127 503 0 0 267 /**
+ * @brief Returns whether the element has a width expression
+ * @details This checks whether there was a width set on the element, either
+ *   a fixed width in pixels, or a percentage width.
+ * @return true if the element has a width assigned, false otherwise
+ */ 1 4 this 3 569  
+123 0 0 6 128 503 0 0 271 /**
+ * @brief Returns whether the element has a height expression
+ * @details This checks whether there was a height set on the element, either
+ *   a fixed height in pixels, or a percentage height
+ * @return true if the element has a height assigned, false otherwise
+ */ 1 4 this 3 569  
+124 0 0 6 129 503 0 0 205 /**
+ * @brief Returns whether the element has a size assigned
+ * @details This returns whether has_width() and has_height() are both true.
+ * @return True if the element has a size for both dimensions.
+ */ 1 4 this 3 569  
+125 0 0 7 130 559 0 0 276 /**
+ * @brief Returns the size of the element
+ * @details This returns an approximated size of the element. In case a fixed
+ *   size was set on the element, it returns those. Otherwise it approximates
+ *   the size using the last-frame size.
+ * @return Approximated width
+ */ 1 4 this 3 569  
+126 0 0 4 131 543 0 0 401 /**
+ * @brief Sets whether the element is visible
+ * @details This sets the element visible. If visible is set to false, the element
+ *   will not be rendered anymore. If visible is set to true, the element
+ *   will be shown.
+ *
+ *   If any of the objects parents is hidden, this method has no effect, and the
+ *   element will always be hidden,
+ *
+ * @param visible Whether to render the element
+ */ 2 4 this 3 562  7 visible 1 503  
+127 0 0 6 132 503 0 0 398 /**
+ * @brief Returns whether the element is explicitly hidden or shown.
+ * @details This returns the value previously set by set_visible(). It does
+ *   *not* take into account whether any of the parents of the object is visible
+ *   or not, so you cannot use this to determine whether the element was actually
+ *   rendered or not.
+ * @return Whether the element was explicitly hidden / shown
+ */ 1 4 this 3 569  
+128 0 0 4 133 543 0 0 87 /**
+ * @brief Hides the element
+ * @details This is an alias for set_visible(false)
+ */ 1 4 this 3 562  
+129 0 0 4 134 543 0 0 86 /**
+ * @brief Shows the element
+ * @details This is an alias for set_visible(true)
+ */ 1 4 this 3 562  
+130 0 0 4 135 543 0 0 8 // Solid 2 4 this 3 562  5 solid 1 503  
+131 0 0 6 136 503 0 0 216 /**
+ * @brief Returns whether element is solid
+ * @details This returns the value previously set with set_solid(). See
+ *   LUIBaseElement::set_solid() for further information.
+ * @return Solidness of the element
+ */ 1 4 this 3 569  
+132 0 0 4 137 543 0 0 10 // Z-Index 2 4 this 3 562  8 z_offset 1 493  
+133 0 0 6 138 493 0 0 161 /**
+ * @brief Returns the z offset of the element
+ * @details This returns the z offset previously set with set_z_offset()
+ * @return z offset of the element
+ */ 1 4 this 3 569  
+134 0 0 6 139 503 0 0 213 /**
+ * @brief Returns whether the element is focused
+ * @details This method returns whether the element currently is focused.
+ *   This is usually true after a call to request_focus()
+ * @return [description]
+ */ 1 4 this 3 569  
+135 0 0 6 140 503 0 0 0 1 4 this 3 562  
+136 0 0 4 141 543 0 0 0 1 4 this 3 562  
+137 0 0 6 142 503 0 0 196 /**
+ * @brief Returns whether the element has a parent
+ * @details This method returns whether the element is currently parented to anything
+ * @return true if a parent is set, false otherwise
+ */ 1 4 this 3 569  
+138 0 0 4 143 543 0 0 0 1 4 this 3 562  
+139 0 0 4 144 543 0 0 0 2 4 this 3 562  6 parent 1 506  
+140 0 0 7 145 506 302 0 176 /**
+ * @brief Returns a handle to the parent
+ * @details This returns a handle to the elements parent, or NULL if no parent
+ *   is present.
+ * @return Handle to the parent
+ */ 1 4 this 3 569  
+141 0 0 6 146 503 0 0 436 /**
+ * @brief Checks if the element intersects with a point
+ * @details This checks if the element intersects with a given *absolute*
+ *   coordinate point. This is only valid after traversing the tree, since otherwise
+ *   the absolute position is not known.
+ *
+ * @param x absolute x-coordinate in pixels
+ * @param y absolute y-coordinate in pixels
+ *
+ * @return true if the coordinate intersects with the element, false otherwise
+ */ 3 4 this 3 569  1 x 1 493  1 y 1 493  
+142 0 0 4 147 543 0 0 169 /**
+ * @brief Clears the clip bounds
+ * @details This clears any clip bounds previously set with set_clip_bounds(),
+ *   and thus makes the element not clip anymore.
+ */ 1 4 this 3 562  
+143 0 0 4 148 543 0 0 392 /**
+ * @brief Sets the elements clip bounds
+ * @details This sets the elements clip bounds. This is equal to setting
+ *   'overflow: hidden' in CSS. In case the clip bounds are (0, 0, 0, 0),
+ *   the clipping will happen at the sides of the element. The bounds specify
+ *   the distance of the clipping rect from the sides.
+ *
+ * @param bounds Distance of the clipping rect from the sides
+ */ 2 4 this 3 562  6 bounds 1 551  
+144 0 0 4 148 543 0 0 570 /**
+ * @brief Sets the elements clip bounds
+ * @details This sets the elements clip bounds. This is equal to setting
+ *   'overflow: hidden' in CSS. In case the clip bounds are (0, 0, 0, 0),
+ *   the clipping will happen at the sides of the element. The bounds specify
+ *   the distance of the clipping rect from the sides.
+ *
+ * @param top Distance of the clipping rect from the top
+ * @param right Distance of the clipping rect from the right
+ * @param bottom Distance of the clipping rect from the bottom
+ * @param left Distance of the clipping rect from the left
+ */ 5 4 this 3 562  3 top 1 493  5 right 1 493  6 bottom 1 493  4 left 1 493  
+145 0 0 6 149 551 0 0 179 /**
+ * @brief Returns the clip bounds
+ * @details This returns the clip bounds. In case no clip bounds were set, this
+ *   returns (0, 0, 0, 0).
+ * @return Current clip bounds
+ */ 1 4 this 3 569  
+146 0 0 6 150 557 0 0 203 /**
+ * @brief Returns the clip rect
+ * @details This returns the clip region, in absolute coordinate space. This is only
+ *   valid after a frame has been rendered.
+ * @return Absolute clip rectangle
+ */ 1 4 this 3 569  
+147 0 0 6 151 503 0 0 301 /**
+ * @brief Returns whether the element is topmost
+ * @details This returns whether the element is set to topmost, and thus gets
+ *   rendered in front of all objects. This does not check if any parent of the
+ *   object is topmost.
+ *
+ * @return True if the element is explicitly set to topmost
+ */ 1 4 this 3 569  
+148 0 0 4 152 543 0 0 538 /**
+ * @brief Sets the element to render topmost
+ * @details This makes the element render in top of all other elements. This also
+ *   affects the children of the element in case it has some. Topmost elements are
+ *   rendered in a seperate render pass above all elements. They also recieve
+ *   events before regular events.
+ *
+ *   This does affect all children elements, too. Setting this too false will have
+ *   no effect if any parent of the element is set to topmost.
+ *
+ * @param topmost Whether to render the element topmost
+ */ 2 4 this 3 562  7 topmost 1 503  
+149 0 0 7 153 559 0 0 402 /**
+ * @brief Returns the relative position of an absolute point
+ * @details This returns the position of a point relative to this element. This is
+ *   only valid after a frame has been rendered, since it depends on the absolute
+ *   position. The relative position is computed by pos - element_pos.
+ *
+ * @param pos Absolute point position
+ * @return Vector to that point, relative to the element
+ */ 2 4 this 3 569  3 pos 1 567  
+150 0 0 4 154 543 0 0 282 /**
+ * @brief Sets the debugging name
+ * @details This sets the debug name, which is shown when calling
+ *   LUIBaseElement::ls(). It usually is set to the class name, but can be overriden
+ *   to provide additional information.
+ *
+ * @param debug_name Debug-Name of the object.
+ */ 2 4 this 3 562  10 debug_name 1 563  
+151 0 0 6 155 563 0 0 151 /**
+ * @brief Returns the debugging name
+ * @details This returns the debug name previously set with set_debug_name()
+ * 
+ * @return The debug name
+ */ 1 4 this 3 569  
+152 0 0 7 211 573 0 0 0 0 
+153 0 0 7 62 574 0 0 0 1 4 this 3 562  
+154 0 0 7 63 562 302 0 0 1 4 this 3 574  
+155 0 0 6 64 541 0 0 0 1 4 this 3 562  
+156 0 0 7 65 562 302 0 0 1 4 this 3 541  
+157 0 0 7 190 506 302 0 0 6 6 parent 1 506  1 x 1 493  1 y 1 493  1 w 1 493  1 h 1 493  5 solid 1 503  
+158 0 0 7 190 506 302 0 0 5 1 x 1 493  1 y 1 493  1 w 1 493  1 h 1 493  5 solid 1 503  
+159 0 0 7 191 577 0 0 0 1 4 this 3 575  
+160 0 0 7 192 562 302 0 0 2 4 this 3 575  5 index 1 532  
+161 0 0 7 193 562 302 0 0 2 4 this 3 506  5 child 1 562  
+162 0 0 4 194 543 0 0 0 2 4 this 3 506  5 child 1 562  
+163 0 0 4 195 543 0 0 0 1 4 this 3 506  
+164 0 0 6 196 509 0 0 0 1 4 this 3 575  
+165 0 0 4 197 543 0 0 0 2 4 this 3 506  12 content_node 1 506  
+166 0 0 7 198 506 302 0 0 1 4 this 3 575  
+167 0 0 4 199 543 0 0 0 2 4 this 3 506  6 indent 1 509  
+168 0 0 7 206 573 0 0 0 0 
+169 0 0 7 220 578 411 0 0 0 
+170 0 0 7 220 578 411 0 0 1 6 param0 0 579  
+171 0 0 6 214 503 0 0 0 2 4 this 3 578  15 descriptor_path 1 563  
+172 0 0 6 215 503 0 0 0 2 4 this 3 578  12 texture_path 1 563  
+173 0 0 7 216 516 0 0 176 /**
+ * @brief Returns the atlas texture
+ * @details This returns a handle to the atlas texture, which can be used for
+ *   rendering.
+ * @return Handle to the atlas texture
+ */ 1 4 this 3 579  
+174 0 0 6 217 503 0 0 311 /**
+ * @brief Checks whether an entry exists in the atlas.
+ * @details This methods checks if an entry with the given name exists in the
+ *   atlas. If an entry was found, true is returned, otherwise false.
+ *
+ * @param name Entry name, case sensitive
+ * @return true if the entry was found, false otherwise
+ */ 2 4 this 3 579  4 name 1 563  
+175 0 0 6 218 581 0 0 348 /**
+ * @brief Returns an atlas entry.
+ * @details This search for an atlas entry with the given name, and returns it.
+ *   If an entry was not found in the atlas, an assertion is raised.
+ *   This behaviour can be prevented by using LUIAtlas::has_entry() before.
+ *
+ * @param name Entry name, case sensitive
+ * @return Handle to the atlas entry
+ */ 2 4 this 3 579  4 name 1 563  
+176 0 0 6 219 509 0 0 241 /**
+ * @brief Returns the atlas size.
+ * @details Returns the atlas size in pixels, this is a convenience function for
+ *   Texture::get_x_size(). It assumes the atlas has the same width and height.
+ * @return Size of the atlas in pixels
+ */ 1 4 this 3 579  
+177 0 0 7 228 586 418 0 0 1 6 param0 0 584  
+178 0 0 6 223 586 0 0 0 0 
+179 0 0 4 224 543 0 0 0 4 4 this 3 586  8 atlas_id 1 563  15 atlas_desc_path 1 563  14 atlas_tex_path 1 563  
+180 0 0 6 225 503 0 0 310 /**
+ * @brief Checks whether an atlas exists
+ * @details This method checks if there was an atlas loaded with the given name.
+ *   If this is the case, the method returns true, otherwise false.
+ *
+ * @param atlas_id Name of the atlas, case sensitive
+ * @return true if the atlas was loaded, false otherwise
+ */ 2 4 this 3 584  8 atlas_id 1 563  
+181 0 0 7 226 578 411 0 272 /**
+ * @brief Returns an atlas by name
+ * @details This method returns an atlas with the given name. If the name was
+ *   not found, because the atlas was not loaded yet, null is returned.
+ *
+ * @param atlas_id Name of the atlas
+ * @return Handle to the atlas, or null
+ */ 2 4 this 3 584  8 atlas_id 1 563  
+182 0 0 7 227 588 0 0 522 /**
+ * @brief Returns a descriptor from a given atlas
+ * @details This returns a descriptor with the given name from the given atlas.
+ *   If there is no atlas with the given name, or no entry in that in that atlas
+ *   exists, an error is printed, and an assertion is raised.
+ *
+ *   The descriptor contains information about the atlas texture, size, and the
+ *   uv position of the referenced sprite.
+ *
+ * @param atlas_id Name of the atlas
+ * @param entry_id Name of the entry
+ *
+ * @return Descriptor of the sprite
+ */ 3 4 this 3 584  8 atlas_id 1 563  8 entry_id 1 563  
+183 0 0 7 231 589 302 0 35 // Initialize with a texture handle 7 6 parent 1 506  7 texture 1 516  1 x 1 493  1 y 1 493  1 w 1 493  1 h 1 493  5 color 1 542  
+184 0 0 7 231 589 302 0 37 // Initialize with a path to an image 7 6 parent 1 506  5 image 1 563  1 x 1 493  1 y 1 493  1 w 1 493  1 h 1 493  5 color 1 542  
+185 0 0 7 231 589 302 0 32 // Initialize with a atlas entry 8 6 parent 1 506  8 entry_id 1 563  8 atlas_id 1 563  1 x 1 493  1 y 1 493  1 w 1 493  1 h 1 493  5 color 1 542  
+186 0 0 4 232 543 0 0 11 // Texcoord 3 4 this 3 589  8 uv_begin 1 590  6 uv_end 1 590  
+187 0 0 4 232 543 0 0 0 5 4 this 3 589  2 u0 1 493  2 v0 1 493  2 u1 1 493  2 v1 1 493  
+188 0 0 6 233 590 0 0 0 1 4 this 3 594  
+189 0 0 6 234 590 0 0 0 1 4 this 3 594  
+190 0 0 4 235 543 0 0 0 3 4 this 3 589  10 descriptor 1 596  6 resize 1 503  
+191 0 0 4 235 543 0 0 10 // Texture 3 4 this 3 589  3 tex 1 516  6 resize 1 503  
+192 0 0 4 235 543 0 0 0 3 4 this 3 589  6 source 1 563  6 resize 1 503  
+193 0 0 4 235 543 0 0 0 4 4 this 3 589  10 entry_name 1 563  8 atlas_id 1 563  6 resize 1 503  
+194 0 0 7 236 516 0 0 0 1 4 this 3 594  
+195 0 0 4 237 543 0 0 0 1 4 this 3 589  
+196 0 0 4 238 543 0 0 0 2 4 this 3 589  6 indent 1 509  
+197 0 0 7 242 573 0 0 0 0 
+198 0 0 7 246 577 0 0 0 1 6 param0 0 598  
+199 0 0 7 244 562 302 0 0 1 4 this 3 577  
+200 0 0 7 245 577 0 0 0 1 4 this 3 577  
+201 0 0 4 248 543 0 0 0 3 4 this 3 600  6 object 1 562  11 cell_height 1 493  
+202 0 0 4 248 543 0 0 0 3 4 this 3 600  6 object 1 562  9 cell_mode 1 563  
+203 0 0 4 249 543 0 0 0 1 4 this 3 600  
+204 0 0 4 250 543 0 0 0 2 4 this 3 600  5 index 1 532  
+205 0 0 7 251 506 302 0 0 1 4 this 3 600  
+206 0 0 7 251 506 302 0 0 2 4 this 3 600  11 cell_height 1 493  
+207 0 0 7 251 506 302 0 0 2 4 this 3 600  9 cell_mode 1 563  
+208 0 0 4 252 543 0 0 0 2 4 this 3 600  7 spacing 1 493  
+209 0 0 6 253 493 0 0 0 1 4 this 3 601  
+210 0 0 7 255 573 0 0 0 0 
+211 0 0 7 258 603 441 0 0 2 6 parent 1 506  7 spacing 1 493  
+212 0 0 7 259 573 0 0 0 0 
+213 0 0 6 262 604 0 0 0 0 
+214 0 0 4 263 543 0 0 0 3 4 this 3 604  4 name 1 563  9 font_file 1 563  
+215 0 0 4 264 543 0 0 0 3 4 this 3 604  4 name 1 563  4 font 1 523  
+216 0 0 6 265 503 0 0 0 2 4 this 3 605  4 name 1 563  
+217 0 0 7 266 523 0 0 0 2 4 this 3 605  4 name 1 563  
+218 0 0 7 268 607 302 0 0 7 6 parent 1 506  4 text 1 563  9 font_name 1 563  9 font_size 1 493  1 x 1 493  1 y 1 493  8 wordwrap 1 503  
+219 0 0 4 269 543 0 0 0 2 4 this 3 607  9 font_name 1 563  
+220 0 0 7 270 523 0 0 0 1 4 this 3 608  
+221 0 0 4 271 543 0 0 0 2 4 this 3 607  4 text 1 563  
+222 0 0 6 272 563 0 0 0 1 4 this 3 608  
+223 0 0 4 273 543 0 0 0 2 4 this 3 607  4 size 1 493  
+224 0 0 6 274 493 0 0 0 1 4 this 3 608  
+225 0 0 4 275 543 0 0 0 2 4 this 3 607  4 wrap 1 503  
+226 0 0 6 276 503 0 0 0 1 4 this 3 608  
+227 0 0 6 277 509 0 0 0 2 4 this 3 608  3 pos 1 493  
+228 0 0 6 278 493 0 0 0 2 4 this 3 608  10 char_index 1 509  
+229 0 0 7 287 573 0 0 0 0 
+230 0 0 6 295 563 0 0 0 1 4 this 3 610  
+231 0 0 7 296 562 302 0 0 1 4 this 3 610  
+232 0 0 7 297 571 0 0 0 1 4 this 3 610  
+233 0 0 6 298 563 0 0 0 1 4 this 3 610  
+234 0 0 6 299 532 0 0 0 1 4 this 3 610  
+235 0 0 6 300 503 0 0 33 // Same as getModifierState in JS 2 4 this 3 610  8 modifier 1 530  
+236 0 0 6 300 503 0 0 0 2 4 this 3 610  13 modifier_name 1 563  
+237 0 0 7 310 573 0 0 0 0 
+238 0 0 6 290 612 0 0 0 1 4 this 3 566  
+239 0 0 7 291 566 469 0 0 1 4 this 3 612  
+240 0 0 7 292 613 0 0 0 1 4 this 3 566  
+241 0 0 7 293 566 469 0 0 1 4 this 3 613  
+242 0 0 7 312 616 0 0 0 1 6 param0 0 614  
+243 0 0 7 312 616 0 0 0 2 5 width 1 493  6 height 1 493  
+244 0 0 7 313 506 302 0 0 1 4 this 3 616  
+245 0 0 4 314 543 0 0 272 /**
+ * @brief Sets whether to use GLSL 1.30 instead of 1.20
+ * @details This controls whether GLSL 1.30 is used instead of 1.20. It can
+ *   provide a performance benefit although it also bumps the OpenGL requirement.
+ *
+ * @param use_glsl_130 Whether to use GLSL 1.30
+ */ 1 12 use_glsl_130 1 503  
+246 0 0 7 317 617 0 0 0 1 4 name 1 563  
+247 0 0 7 318 573 0 0 0 0 
+248 0 0 7 320 620 0 0 0 1 6 param0 0 618  
+249 0 0 7 320 620 0 0 0 1 4 size 1 532  
+250 0 0 7 321 621 0 0 0 3 4 this 3 620  1 w 1 532  1 h 1 532  
+251 0 0 7 323 622 480 0 0 2 6 parent 1 506  7 spacing 1 493  
+252 0 0 7 324 573 0 0 0 0 
+253 0 0 7 328 625 0 0 0 2 12 context_name 1 563  6 window 1 623  
+254 0 0 7 328 625 0 0 0 3 12 context_name 1 563  6 window 1 623  10 dimensions 1 626  
+255 0 0 7 329 506 302 0 0 1 4 this 3 629  
+256 0 0 4 331 543 0 0 0 2 4 this 3 625  7 handler 1 617  
+257 0 0 7 332 617 0 0 0 1 4 this 3 629  
+258 0 0 4 333 543 0 0 0 2 4 this 3 625  9 wireframe 1 503  
+259 0 0 4 334 543 0 0 0 1 4 this 3 625  
+260 0 0 7 335 573 0 0 0 0 
+143
+488 12 LUIColorable 0 43009 12 LUIColorable 12 LUIColorable 0 0 0 0 0 6 631 632 633 634 635 636 11 261 262 263 264 265 266 267 268 269 270 271 0 0 0 0 0 0
+
+489 12 LColor const 0 8832 12 LColor const 12 LColor const 0 0 490 0 0 0 0 0 0 0 0 0 0
+
+490 6 LColor 0 2105344 6 LColor 6 LColor 0 0 491 0 0 0 0 0 0 0 0 0 0
+
+491 7 LColorf 0 2105344 7 LColorf 7 LColorf 0 0 492 0 0 0 0 0 0 0 0 0 0
+
+492 10 LVecBase4f 0 2048 10 LVecBase4f 10 LVecBase4f 0 0 0 0 0 0 0 0 0 0 0 0 77
+/**
+ * This is the base class for all three-component vectors and points.
+ */
+
+493 5 float 0 8194 5 float 5 float 0 2 0 0 0 0 0 0 0 0 0 0 0
+
+494 9 LUIBounds 0 141313 9 LUIBounds 9 LUIBounds 0 0 0 1 272 283 4 637 638 639 640 10 273 274 275 276 277 278 279 280 281 282 0 0 0 0 0 0
+
+495 7 LUIRect 0 141313 7 LUIRect 7 LUIRect 0 0 0 1 284 297 4 641 642 643 644 12 285 286 287 288 289 290 291 292 293 294 295 296 0 0 0 0 0 0
+
+496 14 LUIBaseElement 0 26625 14 LUIBaseElement 14 LUIBaseElement 0 0 0 0 302 27 645 646 647 648 649 650 651 652 653 654 655 656 657 658 659 660 661 662 663 664 665 666 667 668 672 673 674 90 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343 344 345 346 347 348 349 350 351 352 353 354 355 356 357 358 359 360 361 362 363 364 365 366 367 368 369 370 371 372 373 374 375 376 377 378 379 380 381 382 383 384 385 386 387 388 389 390 391 403 0 0 2 3 497 298 299 3 488 300 301 0 0 228
+/**
+ * @brief Base class for all LUI objects
+ * @details This is the base class from which every LUI object derives. It stores
+ *   information like the position, alignment and size, and also defines a common
+ *   interface.
+ */
+
+497 19 TypedReferenceCount 0 2049 19 TypedReferenceCount 19 TypedReferenceCount 0 0 0 0 0 0 0 0 0 0 0 0 410
+/**
+ * A base class for things which need to inherit from both TypedObject and
+ * from ReferenceCount.  It's convenient to define this intermediate base
+ * class instead of multiply inheriting from the two classes each time they
+ * are needed, so that we can sensibly pass around pointers to things which
+ * are both TypedObjects and ReferenceCounters.
+ *
+ * See also TypedObject for detailed instructions.
+ */
+
+498 12 string const 0 8832 17 std::string const 17 std::string const 0 0 499 0 0 0 0 0 0 0 0 0 0
+
+499 6 string 0 2105344 11 std::string 11 std::string 0 0 500 0 0 0 0 0 0 0 0 0 0
+
+500 20 basic_string< char > 0 2048 25 std::basic_string< char > 25 std::basic_string< char > 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+501 7 LPoint2 0 2105344 7 LPoint2 7 LPoint2 0 0 502 0 0 0 0 0 0 0 0 0 0
+
+502 8 LPoint2f 0 2048 8 LPoint2f 8 LPoint2f 0 0 0 0 0 0 0 0 0 0 0 0 50
+/**
+ * This is a two-component point in space.
+ */
+
+503 4 bool 0 8194 4 bool 4 bool 0 4 0 0 0 0 0 0 0 0 0 0 0
+
+504 8 LVector2 0 2105344 8 LVector2 8 LVector2 0 0 505 0 0 0 0 0 0 0 0 0 0
+
+505 9 LVector2f 0 2048 9 LVector2f 9 LVector2f 0 0 0 0 0 0 0 0 0 0 0 0 49
+/**
+ * This is a two-component vector offset.
+ */
+
+506 11 LUIObject * 0 8576 11 LUIObject * 11 LUIObject * 0 0 507 0 0 0 0 0 0 0 0 0 0
+
+507 9 LUIObject 0 75777 9 LUIObject 9 LUIObject 0 0 0 1 392 302 3 669 670 671 10 393 394 395 396 397 398 399 400 401 402 0 0 1 0 496 0 0 0 0 0
+
+508 31 PointerTo< LUIElementIterator > 0 2048 31 PointerTo< LUIElementIterator > 31 PointerTo< LUIElementIterator > 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+509 3 int 0 8194 3 int 3 int 0 1 0 0 0 0 0 0 0 0 0 0 0
+
+510 22 PointerTo< LUIObject > 0 2048 22 PointerTo< LUIObject > 22 PointerTo< LUIObject > 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+511 15 LUIBounds const 0 8832 15 LUIBounds const 15 LUIBounds const 0 0 494 0 0 0 0 0 0 0 0 0 0
+
+512 8 LUIAtlas 0 141313 8 LUIAtlas 8 LUIAtlas 0 0 0 1 410 411 0 6 404 405 406 407 408 409 0 0 1 0 513 0 0 0 0 308
+/**
+ * @brief This is the container class for an atlas
+ * @details This class manages the storage of a single atlas texture, including
+ *   storing a reference to the atlas texture, the atlas size, and the atlas entries.
+ *   It provides functions to load atlas descriptions generated by LUIAtlasGen too.
+ */
+
+513 14 ReferenceCount 0 2049 14 ReferenceCount 14 ReferenceCount 0 0 0 0 0 0 0 0 0 0 0 0 203
+/**
+ * A base class for all things that want to be reference-counted.
+ * ReferenceCount works in conjunction with PointerTo to automatically delete
+ * objects when the last pointer to them goes away.
+ */
+
+514 12 LUIAtlasPool 0 141313 12 LUIAtlasPool 12 LUIAtlasPool 0 0 0 1 417 418 0 5 412 413 414 415 416 0 0 0 0 0 218
+/**
+ * @brief Globals storage for multiple atlases
+ * @details This class stores all atlases, and keeps a reference to them. It also
+ *   provides methods to get a descriptor from a given entry name and atlas name.
+ */
+
+515 9 LUISprite 0 75777 9 LUISprite 9 LUISprite 0 0 0 1 419 302 1 675 8 420 421 422 423 424 425 426 427 0 0 1 0 496 0 0 0 0 371
+////////////////////////////////////////////////////////////////////
+//       Class : LUISprite
+// Description : A LUISprite stores a single card, including position,
+//               scale, and uv coordinates. It also notifies the
+//               LUIVertexPool when any scalar or texture got changed.
+////////////////////////////////////////////////////////////////////
+
+516 9 Texture * 0 8576 9 Texture * 9 Texture * 0 0 517 0 0 0 0 0 0 0 0 0 0
+
+517 7 Texture 0 2048 7 Texture 7 Texture 0 0 0 0 0 0 0 0 0 0 0 0 688
+/**
+ * Represents a texture object, which is typically a single 2-d image but may
+ * also represent a 1-d or 3-d texture image, or the six 2-d faces of a cube
+ * map texture.
+ *
+ * A texture's image data might be stored in system RAM (see get_ram_image())
+ * or its image may be represented in texture memory on one or more
+ * GraphicsStateGuardians (see prepare()), or both.  The typical usage pattern
+ * is that a texture is loaded from an image file on disk, which copies its
+ * image data into system RAM; then the first time the texture is rendered its
+ * image data is copied to texture memory (actually, to the graphics API), and
+ * the system RAM image is automatically freed.
+ */
+
+518 18 LUIElementIterator 0 75777 18 LUIElementIterator 18 LUIElementIterator 0 0 0 1 430 0 0 2 428 429 0 0 1 0 513 0 0 0 0 0
+
+519 13 LUIBaseLayout 0 141313 13 LUIBaseLayout 13 LUIBaseLayout 0 0 0 0 438 1 676 7 431 432 433 434 435 436 437 0 0 1 0 507 0 0 0 0 0
+
+520 17 LUIVerticalLayout 0 141313 17 LUIVerticalLayout 17 LUIVerticalLayout 0 0 0 1 439 441 0 1 440 0 0 1 0 519 0 0 0 0 0
+
+521 11 LUIFontPool 0 43009 11 LUIFontPool 11 LUIFontPool 0 0 0 0 0 0 5 442 443 444 445 446 0 0 0 0 0 0
+
+522 7 LUIText 0 75777 7 LUIText 7 LUIText 0 0 0 1 447 302 3 677 678 679 11 448 449 450 451 452 453 454 455 456 457 458 0 0 1 0 507 0 0 0 0 0
+
+523 17 DynamicTextFont * 0 8576 17 DynamicTextFont * 17 DynamicTextFont * 0 0 524 0 0 0 0 0 0 0 0 0 0
+
+524 15 DynamicTextFont 0 2048 15 DynamicTextFont 15 DynamicTextFont 0 0 0 0 0 0 0 0 0 0 0 0 231
+/**
+ * A DynamicTextFont is a special TextFont object that rasterizes its glyphs
+ * from a standard font file (e.g.  a TTF file) on the fly.  It requires the
+ * FreeType 2.0 library (or any higher, backward-compatible version).
+ */
+
+525 13 wstring const 0 8832 18 std::wstring const 18 std::wstring const 0 0 526 0 0 0 0 0 0 0 0 0 0
+
+526 7 wstring 0 2105344 12 std::wstring 12 std::wstring 0 0 527 0 0 0 0 0 0 0 0 0 0
+
+527 23 basic_string< wchar_t > 0 2048 28 std::basic_string< wchar_t > 28 std::basic_string< wchar_t > 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+528 12 LUIEventData 0 26625 12 LUIEventData 12 LUIEventData 0 0 0 0 469 5 680 681 682 683 684 7 463 464 465 466 467 468 470 0 0 2 3 529 459 460 3 513 461 462 0 1 530 0
+
+529 12 CallbackData 0 2049 12 CallbackData 12 CallbackData 0 0 0 0 0 0 0 0 0 0 0 0 348
+/**
+ * This is a generic data block that is passed along to a CallbackObject when
+ * a callback is made.  It contains data specific to the particular callback
+ * type in question.
+ *
+ * This is actually an abstract base class and contains no data.
+ * Specializations of this class will contain the actual data relevant to each
+ * callback type.
+ */
+
+530 12 KeyModifiers 0 794624 26 LUIEventData::KeyModifiers 26 LUIEventData::KeyModifiers 528 0 0 0 0 0 0 0 0 0 3 8 KM_shift 22 LUIEventData::KM_shift 0
+1 6 KM_alt 20 LUIEventData::KM_alt 0
+2 7 KM_ctrl 21 LUIEventData::KM_ctrl 0
+4 0 30
+// All available key modifiers
+
+531 27 PointerTo< LUIBaseElement > 0 2048 27 PointerTo< LUIBaseElement > 27 PointerTo< LUIBaseElement > 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+532 6 size_t 0 2105344 11 std::size_t 11 std::size_t 0 0 533 0 0 0 0 0 0 0 0 0 0
+
+533 17 unsigned long int 0 8214 17 unsigned long int 17 unsigned long int 0 1 0 0 0 0 0 0 0 0 0 0 0
+
+534 7 LUIRoot 0 75777 7 LUIRoot 7 LUIRoot 0 0 0 1 471 0 0 2 472 473 0 0 1 0 513 0 0 0 0 0
+
+535 15 LUIInputHandler 0 75777 15 LUIInputHandler 15 LUIInputHandler 0 0 0 1 474 0 0 1 475 0 0 1 0 536 0 0 0 0 0
+
+536 8 DataNode 0 2049 8 DataNode 8 DataNode 0 0 0 0 0 0 0 0 0 0 0 0 422
+/**
+ * The fundamental type of node for the data graph.  The DataNode class is
+ * itself primarily intended as an abstract class; it defines no inputs and no
+ * outputs.  Most kinds of data nodes will derive from this to specify the
+ * inputs and outputs in the constructor.
+ *
+ * DataNode does not attempt to cycle its data with a PipelineCycler.  The
+ * data graph is intended to be used only within a single thread.
+ */
+
+537 14 LUIAtlasPacker 0 75777 14 LUIAtlasPacker 14 LUIAtlasPacker 0 0 0 1 476 0 0 1 477 0 0 1 0 513 0 0 0 0 228
+/**
+ * @brief Helper class used by the LUIAtlasPacker
+ * @details This is a helper class which is used by the LUIAtlasPacker to generate
+ *   an atlas. It provides functionality to find positions for sprites in a texture.
+ *
+ */
+
+538 19 LUIHorizontalLayout 0 141313 19 LUIHorizontalLayout 19 LUIHorizontalLayout 0 0 0 1 478 480 0 1 479 0 0 1 0 519 0 0 0 0 0
+
+539 9 LUIRegion 0 75777 9 LUIRegion 9 LUIRegion 0 0 0 0 0 1 685 7 481 482 483 484 485 486 487 0 0 1 0 540 0 0 0 0 0
+
+540 13 DisplayRegion 0 2049 13 DisplayRegion 13 DisplayRegion 0 0 0 0 0 0 0 0 0 0 0 0 399
+/**
+ * A rectangular subregion within a window for rendering into.  Typically,
+ * there is one DisplayRegion that covers the whole window, but you may also
+ * create smaller DisplayRegions for having different regions within the
+ * window that represent different scenes.  You may also stack up
+ * DisplayRegions like panes of glass, usually for layering 2-d interfaces on
+ * top of a 3-d scene.
+ */
+
+541 14 LUIColorable * 0 8576 14 LUIColorable * 14 LUIColorable * 0 0 488 0 0 0 0 0 0 0 0 0 0
+
+542 14 LColor const * 0 8576 14 LColor const * 14 LColor const * 0 0 489 0 0 0 0 0 0 0 0 0 0
+
+543 4 void 0 8194 4 void 4 void 0 6 0 0 0 0 0 0 0 0 0 0 0
+
+544 17 LVecBase3 const * 0 8576 17 LVecBase3 const * 17 LVecBase3 const * 0 0 545 0 0 0 0 0 0 0 0 0 0
+
+545 15 LVecBase3 const 0 8832 15 LVecBase3 const 15 LVecBase3 const 0 0 546 0 0 0 0 0 0 0 0 0 0
+
+546 9 LVecBase3 0 2105344 9 LVecBase3 9 LVecBase3 0 0 547 0 0 0 0 0 0 0 0 0 0
+
+547 10 LVecBase3f 0 2048 10 LVecBase3f 10 LVecBase3f 0 0 0 0 0 0 0 0 0 0 0 0 77
+/**
+ * This is the base class for all three-component vectors and points.
+ */
+
+548 20 LUIColorable const * 0 8576 20 LUIColorable const * 20 LUIColorable const * 0 0 549 0 0 0 0 0 0 0 0 0 0
+
+549 18 LUIColorable const 0 8832 18 LUIColorable const 18 LUIColorable const 0 0 488 0 0 0 0 0 0 0 0 0 0
+
+550 11 LUIBounds * 0 8576 11 LUIBounds * 11 LUIBounds * 0 0 494 0 0 0 0 0 0 0 0 0 0
+
+551 17 LUIBounds const * 0 8576 17 LUIBounds const * 17 LUIBounds const * 0 0 511 0 0 0 0 0 0 0 0 0 0
+
+552 16 LVector4 const * 0 8576 16 LVector4 const * 16 LVector4 const * 0 0 553 0 0 0 0 0 0 0 0 0 0
+
+553 14 LVector4 const 0 8832 14 LVector4 const 14 LVector4 const 0 0 554 0 0 0 0 0 0 0 0 0 0
+
+554 8 LVector4 0 2105344 8 LVector4 8 LVector4 0 0 555 0 0 0 0 0 0 0 0 0 0
+
+555 9 LVector4f 0 2048 9 LVector4f 9 LVector4f 0 0 0 0 0 0 0 0 0 0 0 0 52
+/**
+ * This is a four-component vector distance.
+ */
+
+556 9 LUIRect * 0 8576 9 LUIRect * 9 LUIRect * 0 0 495 0 0 0 0 0 0 0 0 0 0
+
+557 15 LUIRect const * 0 8576 15 LUIRect const * 15 LUIRect const * 0 0 558 0 0 0 0 0 0 0 0 0 0
+
+558 13 LUIRect const 0 8832 13 LUIRect const 13 LUIRect const 0 0 495 0 0 0 0 0 0 0 0 0 0
+
+559 10 LVector2 * 0 8576 10 LVector2 * 10 LVector2 * 0 0 504 0 0 0 0 0 0 0 0 0 0
+
+560 16 LVector2 const * 0 8576 16 LVector2 const * 16 LVector2 const * 0 0 561 0 0 0 0 0 0 0 0 0 0
+
+561 14 LVector2 const 0 8832 14 LVector2 const 14 LVector2 const 0 0 504 0 0 0 0 0 0 0 0 0 0
+
+562 16 LUIBaseElement * 0 8576 16 LUIBaseElement * 16 LUIBaseElement * 0 0 496 0 0 0 0 0 0 0 0 0 0
+
+563 13 atomic string 0 2 13 atomic string 13 atomic string 0 7 0 0 0 0 0 0 0 0 0 0 0
+
+564 16 CallbackObject * 0 8576 16 CallbackObject * 16 CallbackObject * 0 0 565 0 0 0 0 0 0 0 0 0 0
+
+565 14 CallbackObject 0 2048 14 CallbackObject 14 CallbackObject 0 0 0 0 0 0 0 0 0 0 0 0 276
+/**
+ * This is a generic object that can be assigned to a callback at various
+ * points in the rendering process.  This is actually a base class for a
+ * handful of specialized callback object types.  You can also subclass it
+ * yourself to make your own callback handler.
+ */
+
+566 14 LUIEventData * 0 8576 14 LUIEventData * 14 LUIEventData * 0 0 528 0 0 0 0 0 0 0 0 0 0
+
+567 15 LPoint2 const * 0 8576 15 LPoint2 const * 15 LPoint2 const * 0 0 568 0 0 0 0 0 0 0 0 0 0
+
+568 13 LPoint2 const 0 8832 13 LPoint2 const 13 LPoint2 const 0 0 501 0 0 0 0 0 0 0 0 0 0
+
+569 22 LUIBaseElement const * 0 8576 22 LUIBaseElement const * 22 LUIBaseElement const * 0 0 570 0 0 0 0 0 0 0 0 0 0
+
+570 20 LUIBaseElement const 0 8832 20 LUIBaseElement const 20 LUIBaseElement const 0 0 496 0 0 0 0 0 0 0 0 0 0
+
+571 9 LPoint2 * 0 8576 9 LPoint2 * 9 LPoint2 * 0 0 501 0 0 0 0 0 0 0 0 0 0
+
+572 10 TypeHandle 0 16779264 10 TypeHandle 10 TypeHandle 0 0 0 0 0 0 0 0 0 0 0 0 732
+/**
+ * TypeHandle is the identifier used to differentiate C++ class types.  Any
+ * C++ classes that inherit from some base class, and must be differentiated
+ * at run time, should store a static TypeHandle object that can be queried
+ * through a static member function named get_class_type().  Most of the time,
+ * it is also desirable to inherit from TypedObject, which provides some
+ * virtual functions to return the TypeHandle for a particular instance.
+ *
+ * At its essence, a TypeHandle is simply a unique identifier that is assigned
+ * by the TypeRegistry.  The TypeRegistry stores a tree of TypeHandles, so
+ * that ancestry of a particular type may be queried, and the type name may be
+ * retrieved for run-time display.
+ */
+
+573 12 TypeHandle * 0 8576 12 TypeHandle * 12 TypeHandle * 0 0 572 0 0 0 0 0 0 0 0 0 0
+
+574 21 TypedReferenceCount * 0 8576 21 TypedReferenceCount * 21 TypedReferenceCount * 0 0 497 0 0 0 0 0 0 0 0 0 0
+
+575 17 LUIObject const * 0 8576 17 LUIObject const * 17 LUIObject const * 0 0 576 0 0 0 0 0 0 0 0 0 0
+
+576 15 LUIObject const 0 8832 15 LUIObject const 15 LUIObject const 0 0 507 0 0 0 0 0 0 0 0 0 0
+
+577 20 LUIElementIterator * 0 8576 20 LUIElementIterator * 20 LUIElementIterator * 0 0 518 0 0 0 0 0 0 0 0 0 0
+
+578 10 LUIAtlas * 0 8576 10 LUIAtlas * 10 LUIAtlas * 0 0 512 0 0 0 0 0 0 0 0 0 0
+
+579 16 LUIAtlas const * 0 8576 16 LUIAtlas const * 16 LUIAtlas const * 0 0 580 0 0 0 0 0 0 0 0 0 0
+
+580 14 LUIAtlas const 0 8832 14 LUIAtlas const 14 LUIAtlas const 0 0 512 0 0 0 0 0 0 0 0 0 0
+
+581 21 LUIAtlasEntry const * 0 8576 21 LUIAtlasEntry const * 21 LUIAtlasEntry const * 0 0 582 0 0 0 0 0 0 0 0 0 0
+
+582 19 LUIAtlasEntry const 0 8832 19 LUIAtlasEntry const 19 LUIAtlasEntry const 0 0 583 0 0 0 0 0 0 0 0 0 0
+
+583 13 LUIAtlasEntry 0 1049600 13 LUIAtlasEntry 13 LUIAtlasEntry 0 0 0 0 0 0 0 0 0 0 0 0 175
+/**
+ * @brief Stores an entry in the atlas
+ * @details This is a container class for storing positions in the atlas.
+ *   It contains a start uv-coordinate and uv-size.
+ *
+ */
+
+584 20 LUIAtlasPool const * 0 8576 20 LUIAtlasPool const * 20 LUIAtlasPool const * 0 0 585 0 0 0 0 0 0 0 0 0 0
+
+585 18 LUIAtlasPool const 0 8832 18 LUIAtlasPool const 18 LUIAtlasPool const 0 0 514 0 0 0 0 0 0 0 0 0 0
+
+586 14 LUIAtlasPool * 0 8576 14 LUIAtlasPool * 14 LUIAtlasPool * 0 0 514 0 0 0 0 0 0 0 0 0 0
+
+587 18 LUIAtlasDescriptor 0 1050624 18 LUIAtlasDescriptor 18 LUIAtlasDescriptor 0 0 0 0 0 0 0 0 0 0 0 0 470
+/**
+ * @brief Class to store positions in a given atlas
+ * @details This is a container class to store a reference to a sprite in an
+ *   atlas. It stores a handle to the atlas texture, the size of the sprite
+ *   in the atlas, and the uv start and end coordinates. This is the required
+ *   information to render a sprite from that atlas.
+ *
+ *   The class is internally used by LUISprite to store the atlas position,
+ *   whenever a texture from the atlas is used.
+ */
+
+588 20 LUIAtlasDescriptor * 0 8576 20 LUIAtlasDescriptor * 20 LUIAtlasDescriptor * 0 0 587 0 0 0 0 0 0 0 0 0 0
+
+589 11 LUISprite * 0 8576 11 LUISprite * 11 LUISprite * 0 0 515 0 0 0 0 0 0 0 0 0 0
+
+590 17 LTexCoord const * 0 8576 17 LTexCoord const * 17 LTexCoord const * 0 0 591 0 0 0 0 0 0 0 0 0 0
+
+591 15 LTexCoord const 0 8832 15 LTexCoord const 15 LTexCoord const 0 0 592 0 0 0 0 0 0 0 0 0 0
+
+592 9 LTexCoord 0 2105344 9 LTexCoord 9 LTexCoord 0 0 593 0 0 0 0 0 0 0 0 0 0
+
+593 10 LTexCoordf 0 2105344 10 LTexCoordf 10 LTexCoordf 0 0 502 0 0 0 0 0 0 0 0 0 0
+
+594 17 LUISprite const * 0 8576 17 LUISprite const * 17 LUISprite const * 0 0 595 0 0 0 0 0 0 0 0 0 0
+
+595 15 LUISprite const 0 8832 15 LUISprite const 15 LUISprite const 0 0 515 0 0 0 0 0 0 0 0 0 0
+
+596 26 LUIAtlasDescriptor const * 0 8576 26 LUIAtlasDescriptor const * 26 LUIAtlasDescriptor const * 0 0 597 0 0 0 0 0 0 0 0 0 0
+
+597 24 LUIAtlasDescriptor const 0 8832 24 LUIAtlasDescriptor const 24 LUIAtlasDescriptor const 0 0 587 0 0 0 0 0 0 0 0 0 0
+
+598 26 LUIElementIterator const * 0 8576 26 LUIElementIterator const * 26 LUIElementIterator const * 0 0 599 0 0 0 0 0 0 0 0 0 0
+
+599 24 LUIElementIterator const 0 8832 24 LUIElementIterator const 24 LUIElementIterator const 0 0 518 0 0 0 0 0 0 0 0 0 0
+
+600 15 LUIBaseLayout * 0 8576 15 LUIBaseLayout * 15 LUIBaseLayout * 0 0 519 0 0 0 0 0 0 0 0 0 0
+
+601 21 LUIBaseLayout const * 0 8576 21 LUIBaseLayout const * 21 LUIBaseLayout const * 0 0 602 0 0 0 0 0 0 0 0 0 0
+
+602 19 LUIBaseLayout const 0 8832 19 LUIBaseLayout const 19 LUIBaseLayout const 0 0 519 0 0 0 0 0 0 0 0 0 0
+
+603 19 LUIVerticalLayout * 0 8576 19 LUIVerticalLayout * 19 LUIVerticalLayout * 0 0 520 0 0 0 0 0 0 0 0 0 0
+
+604 13 LUIFontPool * 0 8576 13 LUIFontPool * 13 LUIFontPool * 0 0 521 0 0 0 0 0 0 0 0 0 0
+
+605 19 LUIFontPool const * 0 8576 19 LUIFontPool const * 19 LUIFontPool const * 0 0 606 0 0 0 0 0 0 0 0 0 0
+
+606 17 LUIFontPool const 0 8832 17 LUIFontPool const 17 LUIFontPool const 0 0 521 0 0 0 0 0 0 0 0 0 0
+
+607 9 LUIText * 0 8576 9 LUIText * 9 LUIText * 0 0 522 0 0 0 0 0 0 0 0 0 0
+
+608 15 LUIText const * 0 8576 15 LUIText const * 15 LUIText const * 0 0 609 0 0 0 0 0 0 0 0 0 0
+
+609 13 LUIText const 0 8832 13 LUIText const 13 LUIText const 0 0 522 0 0 0 0 0 0 0 0 0 0
+
+610 20 LUIEventData const * 0 8576 20 LUIEventData const * 20 LUIEventData const * 0 0 611 0 0 0 0 0 0 0 0 0 0
+
+611 18 LUIEventData const 0 8832 18 LUIEventData const 18 LUIEventData const 0 0 528 0 0 0 0 0 0 0 0 0 0
+
+612 14 CallbackData * 0 8576 14 CallbackData * 14 CallbackData * 0 0 529 0 0 0 0 0 0 0 0 0 0
+
+613 16 ReferenceCount * 0 8576 16 ReferenceCount * 16 ReferenceCount * 0 0 513 0 0 0 0 0 0 0 0 0 0
+
+614 15 LUIRoot const * 0 8576 15 LUIRoot const * 15 LUIRoot const * 0 0 615 0 0 0 0 0 0 0 0 0 0
+
+615 13 LUIRoot const 0 8832 13 LUIRoot const 13 LUIRoot const 0 0 534 0 0 0 0 0 0 0 0 0 0
+
+616 9 LUIRoot * 0 8576 9 LUIRoot * 9 LUIRoot * 0 0 534 0 0 0 0 0 0 0 0 0 0
+
+617 17 LUIInputHandler * 0 8576 17 LUIInputHandler * 17 LUIInputHandler * 0 0 535 0 0 0 0 0 0 0 0 0 0
+
+618 22 LUIAtlasPacker const * 0 8576 22 LUIAtlasPacker const * 22 LUIAtlasPacker const * 0 0 619 0 0 0 0 0 0 0 0 0 0
+
+619 20 LUIAtlasPacker const 0 8832 20 LUIAtlasPacker const 20 LUIAtlasPacker const 0 0 537 0 0 0 0 0 0 0 0 0 0
+
+620 16 LUIAtlasPacker * 0 8576 16 LUIAtlasPacker * 16 LUIAtlasPacker * 0 0 537 0 0 0 0 0 0 0 0 0 0
+
+621 11 LVector2f * 0 8576 11 LVector2f * 11 LVector2f * 0 0 505 0 0 0 0 0 0 0 0 0 0
+
+622 21 LUIHorizontalLayout * 0 8576 21 LUIHorizontalLayout * 21 LUIHorizontalLayout * 0 0 538 0 0 0 0 0 0 0 0 0 0
+
+623 16 GraphicsOutput * 0 8576 16 GraphicsOutput * 16 GraphicsOutput * 0 0 624 0 0 0 0 0 0 0 0 0 0
+
+624 14 GraphicsOutput 0 2048 14 GraphicsOutput 14 GraphicsOutput 0 0 0 0 0 0 0 0 0 0 0 0 727
+/**
+ * This is a base class for the various different classes that represent the
+ * result of a frame of rendering.  The most common kind of GraphicsOutput is
+ * a GraphicsWindow, which is a real-time window on the desktop, but another
+ * example is GraphicsBuffer, which is an offscreen buffer.
+ *
+ * The actual rendering, and anything associated with the graphics context
+ * itself, is managed by the associated GraphicsStateGuardian (which might
+ * output to multiple GraphicsOutput objects).
+ *
+ * GraphicsOutputs are not actually writable to bam files, of course, but they
+ * may be passed as event parameters, so they inherit from
+ * TypedWritableReferenceCount instead of TypedReferenceCount for that
+ * convenience.
+ */
+
+625 11 LUIRegion * 0 8576 11 LUIRegion * 11 LUIRegion * 0 0 539 0 0 0 0 0 0 0 0 0 0
+
+626 17 LVecBase4 const * 0 8576 17 LVecBase4 const * 17 LVecBase4 const * 0 0 627 0 0 0 0 0 0 0 0 0 0
+
+627 15 LVecBase4 const 0 8832 15 LVecBase4 const 15 LVecBase4 const 0 0 628 0 0 0 0 0 0 0 0 0 0
+
+628 9 LVecBase4 0 2105344 9 LVecBase4 9 LVecBase4 0 0 492 0 0 0 0 0 0 0 0 0 0
+
+629 17 LUIRegion const * 0 8576 17 LUIRegion const * 17 LUIRegion const * 0 0 630 0 0 0 0 0 0 0 0 0 0
+
+630 15 LUIRegion const 0 8832 15 LUIRegion const 15 LUIRegion const 0 0 539 0 0 0 0 0 0 0 0 0 0
+
+0
+55
+631 5 color 0 6 0 270 261 0 0 0 0 0 0 19 LUIColorable::color 20
+// Python properties
+
+632 14 composed_color 0 2 0 271 0 0 0 0 0 0 0 28 LUIColorable::composed_color 0
+
+633 3 red 0 6 0 266 262 0 0 0 0 0 0 17 LUIColorable::red 0
+
+634 5 green 0 6 0 267 263 0 0 0 0 0 0 19 LUIColorable::green 0
+
+635 4 blue 0 6 0 268 264 0 0 0 0 0 0 18 LUIColorable::blue 0
+
+636 5 alpha 0 6 0 269 265 0 0 0 0 0 0 19 LUIColorable::alpha 0
+
+637 3 top 0 6 0 273 277 0 0 0 0 0 0 14 LUIBounds::top 0
+
+638 5 right 0 6 0 274 278 0 0 0 0 0 0 16 LUIBounds::right 0
+
+639 6 bottom 0 6 0 275 279 0 0 0 0 0 0 17 LUIBounds::bottom 0
+
+640 4 left 0 6 0 276 280 0 0 0 0 0 0 15 LUIBounds::left 0
+
+641 1 x 0 6 0 285 291 0 0 0 0 0 0 10 LUIRect::x 0
+
+642 1 y 0 6 0 286 292 0 0 0 0 0 0 10 LUIRect::y 0
+
+643 1 w 0 6 0 287 293 0 0 0 0 0 0 10 LUIRect::w 0
+
+644 1 h 0 6 0 288 294 0 0 0 0 0 0 10 LUIRect::h 0
+
+645 4 name 0 6 0 309 308 0 0 0 0 0 0 20 LUIBaseElement::name 24
+// Properties for python
+
+646 10 debug_name 0 6 0 391 390 0 0 0 0 0 0 26 LUIBaseElement::debug_name 0
+
+647 8 top_left 0 6 0 314 310 0 0 0 0 0 0 24 LUIBaseElement::top_left 0
+
+648 9 top_right 0 6 0 315 311 0 0 0 0 0 0 25 LUIBaseElement::top_right 0
+
+649 11 bottom_left 0 6 0 316 312 0 0 0 0 0 0 27 LUIBaseElement::bottom_left 0
+
+650 12 bottom_right 0 6 0 317 313 0 0 0 0 0 0 28 LUIBaseElement::bottom_right 0
+
+651 3 pos 0 6 0 319 318 0 0 0 0 0 0 19 LUIBaseElement::pos 0
+
+652 7 abs_pos 0 2 0 320 0 0 0 0 0 0 0 23 LUIBaseElement::abs_pos 0
+
+653 3 top 0 6 0 325 321 0 0 0 0 0 0 19 LUIBaseElement::top 0
+
+654 6 bottom 0 6 0 327 323 0 0 0 0 0 0 22 LUIBaseElement::bottom 0
+
+655 4 left 0 6 0 328 324 0 0 0 0 0 0 20 LUIBaseElement::left 0
+
+656 5 right 0 6 0 326 322 0 0 0 0 0 0 21 LUIBaseElement::right 0
+
+657 8 centered 0 6 0 332 329 0 0 0 0 0 0 24 LUIBaseElement::centered 0
+
+658 15 center_vertical 0 6 0 333 330 0 0 0 0 0 0 31 LUIBaseElement::center_vertical 0
+
+659 17 center_horizontal 0 6 0 334 331 0 0 0 0 0 0 33 LUIBaseElement::center_horizontal 0
+
+660 6 margin 0 6 0 344 335 0 0 0 0 0 0 22 LUIBaseElement::margin 0
+
+661 7 padding 0 6 0 354 345 0 0 0 0 0 0 23 LUIBaseElement::padding 0
+
+662 4 size 0 30 0 366 355 365 362 0 0 0 0 20 LUIBaseElement::size 0
+
+663 5 width 0 30 0 358 356 363 360 0 0 0 0 21 LUIBaseElement::width 0
+
+664 6 height 0 30 0 359 357 364 361 0 0 0 0 22 LUIBaseElement::height 0
+
+665 7 visible 0 6 0 368 367 0 0 0 0 0 0 23 LUIBaseElement::visible 0
+
+666 8 z_offset 0 6 0 374 373 0 0 0 0 0 0 24 LUIBaseElement::z_offset 0
+
+667 7 focused 0 2 0 375 0 0 0 0 0 0 0 23 LUIBaseElement::focused 8
+// Focus
+
+668 6 parent 0 30 0 381 380 378 379 0 0 0 0 22 LUIBaseElement::parent 0
+
+669 8 children 0 2 0 393 0 0 0 0 0 0 0 19 LUIObject::children 20
+// Python properties
+
+670 11 child_count 0 2 0 398 0 0 0 0 0 0 0 22 LUIObject::child_count 0
+
+671 12 content_node 0 6 0 400 399 0 0 0 0 0 0 23 LUIObject::content_node 0
+
+672 11 clip_bounds 0 6 0 385 384 0 0 0 0 0 0 27 LUIBaseElement::clip_bounds 0
+
+673 7 topmost 0 6 0 387 388 0 0 0 0 0 0 23 LUIBaseElement::topmost 0
+
+674 5 solid 0 6 0 372 371 0 0 0 0 0 0 21 LUIBaseElement::solid 0
+
+675 7 texture 0 2 0 424 0 0 0 0 0 0 0 18 LUISprite::texture 20
+// Python properties
+
+676 7 spacing 0 6 0 436 435 0 0 0 0 0 0 22 LUIBaseLayout::spacing 0
+
+677 4 font 0 6 0 449 448 0 0 0 0 0 0 13 LUIText::font 0
+
+678 4 text 0 6 0 451 450 0 0 0 0 0 0 13 LUIText::text 0
+
+679 9 font_size 0 6 0 453 452 0 0 0 0 0 0 18 LUIText::font_size 0
+
+680 4 name 0 2 0 463 0 0 0 0 0 0 0 18 LUIEventData::name 0
+
+681 6 sender 0 2 0 464 0 0 0 0 0 0 0 20 LUIEventData::sender 0
+
+682 11 coordinates 0 2 0 465 0 0 0 0 0 0 0 25 LUIEventData::coordinates 0
+
+683 7 message 0 2 0 466 0 0 0 0 0 0 0 21 LUIEventData::message 0
+
+684 13 key_modifiers 0 2 0 467 0 0 0 0 0 0 0 27 LUIEventData::key_modifiers 0
+
+685 4 root 0 2 0 482 0 0 0 0 0 0 0 15 LUIRegion::root 0
+
+0

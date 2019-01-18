@@ -1,0 +1,12 @@
+--- LUI/source/luiText.cxx	2019-01-16 21:27:45.096507118 +0100
++++ LUI-android/source/luiText.cxx	2019-01-17 04:27:02.625429515 +0100
+@@ -106,7 +106,8 @@
+ 
+     // Some characters have no texture (like space)
+     if (dynamic_glyph->get_page() == nullptr) {
+-      lui_cat.debug() << "Character '" << (char)char_code << "' (Code: " << char_code << ") has no texture page!" << endl;
++      if (char_code!=32)
++        lui_cat.debug() << "Character '" << (char)char_code << "' (Code: " << char_code << ") has no texture page!" << endl;
+       sprite->hide();
+ 
+     } else {

@@ -1,0 +1,428 @@
+#!/bin/bash
+
+SRC_URL="https://github.com/panda3d/panda3d/archive/v1.10.0.zip"
+SRC="panda3d-1.10.0"
+PYTHON="Python-3.7.2"
+FT2="freetype2-android-master"
+HB="harfbuzz-android-master"
+VB="libvorbis-libogg-android-master"
+OA="HelloOpenAL"
+__ANDROID_API__=19
+
+OPT_COMMON="--no-eigen --no-ffmpeg --no-gles --use-gles2 --use-zlib --threads 2 --override STDFLOAT_DOUBLE=1"
+
+if echo $ANDROID_ARCH|grep -q arm
+then
+    export PANDA_ARCH="armv7a"
+else
+    echo "Arch $ANDROID_ARCH not supported by this script"
+    read
+fi
+export NDK_ROOT=$ANDROID_NDK_HOME
+
+OPT_ANDROID="--arch $PANDA_ARCH --target android-${__ANDROID_API__} --no-pview --no-pandatool --use-neon --no-sse2"
+
+#==============================================================================
+
+. $SDK/build.functions
+. $SDK/build.${BITS}.functions
+
+set_source_tree 7200
+
+patch_me
+
+#reparse just in case python was built without reloading env
+. $SDK/built.${BITS}.env
+
+if $PDK_PYTHON -V | grep -q 3.7
+then
+    echo "Will use python 3.7 :  $PDK_PYTHON"
+    export PANDA_PYLIB=python3.7m
+else
+    echo "This script is for cpython 3.7 only"
+    read
+    exit
+fi
+
+#we need patchelf on steroids
+export PATH=$TOOLCHAIN/bin:$PATH
+
+
+if echo $ANDROID_API|grep -q 19
+then
+    echo "#FIXME: readline/sqlite won't fix : WITH_LIBRARIES==$WITH_LIBRARIES =>  "
+    export WITH_LIBRARIES="libffi,openssl,ncurses"
+    echo "using instead : WITH_LIBRARIES=$WITH_LIBRARIES"
+fi
+
+
+export LIB_PANDA3D=${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH/panda3d
+
+
+if [ -f $PDK_PYTHON ]
+then
+
+#    echo "sudo apt-get install build-essential checkinstall pkg-config python-dev libpng-dev libjpeg-dev libtiff-dev zlib1g-dev libssl-dev libx11-dev libgl1-mesa-dev libxrandr-dev # libxxf86dga-dev libxcursor-dev bison flex libfreetype6-dev libvorbis-dev libeigen3-dev libopenal-dev libode-dev libbullet-dev nvidia-cg-toolkit libgtk2.0-dev libgles2-mesa-dev"
+
+
+
+
+    echo "
+        * cleaning up thirdparties
+    "
+
+    rm -rf thirdparty
+
+    echo "
+        * Entering $(pwd)
+    "
+    mkdir -p thirdparty/android-libs-${PANDA_ARCH}
+
+    export TP=${ORIGIN}/thirdparty/android-libs-${PANDA_ARCH}
+
+    echo "
+        * Setting Host python ${TP}/python include+lib
+    "
+    mkdir -p ${TP}/python${PYVER}/{lib,include,include/python${PYDOT}${PYMODE}}
+    rm ${TP}/python || echo -n
+    ln -sf ${TP}/python${PYVER} ${TP}/python
+
+    cp -f ../${PYTHON}/Include/*.h ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE}/
+    cp -vf ../${PYTHON}/Android/build/python-native/pyconfig.h ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE}/
+    cp -vf ../${PYTHON}/Android/build/python-native/libpython${PYDOT}${PYMODE}.a  ${TP}/python${PYVER}/lib/
+
+    echo "
+        * Setting FT2 ${TP}/freetype2 include+lib
+    "
+
+    #mkdir -p ${TP}/freetype2 ${TP}/freetype2/lib
+    ln -s ${ROOT}/${FT2}/include ${TP}/freetype2
+    #cp -vf ${ROOT}/${FT2}/Android/obj/local/armeabi-v7a/libfreetype2-static.a ${TP}/libfreetype.a
+    #cp -vf ${ROOT}/${FT2}/Android/libs/armeabi/libfreetype.so ${TP}/
+    cp -f ${ROOT}/${FT2}/Android/libs/armeabi-v7a/libfreetype.so ${TP}/
+
+    TP_FT2="--use-freetype --freetype-incdir=${TP} --freetype-libdir=${TP}"
+    TP_HB="--use-harfbuzz --harfbuzz-incdir=${TP} --harfbuzz-libdir=${TP}"
+    TP_VB="--use-vorbis --vorbis-incdir=${TP} --vorbis-libdir=${TP}"
+
+    #VB="libvorbis-libogg-android-master"
+    ln -s ${ROOT}/${VB}/jni/include/vorbis ${TP}/
+    ln -s ${ROOT}/${VB}/jni/include/ogg ${TP}/
+
+    cp -vf ${ROOT}/${VB}/libs/armeabi-v7a/lib*.so ${TP}/
+
+    #HB=harfbuzz-android-master
+    mkdir -p ${TP}/harfbuzz/lib
+    ln -s ${ROOT}/${HB}/src/*.h ${TP}/harfbuzz/
+    cp -f ${ROOT}/${HB}/obj/local/armeabi-v7a/libharfbuzz.so ${TP}/
+
+    TP_OA="--use-openal --openal-incdir=${TP} --openal-libdir=${TP}"
+
+    #OA=HelloOpenAL
+    ln -s ${ROOT}/${OA}/openal/include/AL ${TP}/
+    cp -f ../HelloOpenAL/libs/armeabi/libopenal.so ${TP}/
+
+    TP_BUL="--use-bullet --bullet-incdir=${TP} --bullet-libdir=${TP}"
+    ln -s ${ROOT}/bullet3-master/src ${TP}/bullet
+    cp -f $(find ${ROOT}/bullet3-master/|grep /lib.*.a$) ${TP}/
+    TP_PYTHON="--use-python --python-incdir=${TP}/python${PYVER}/include --python-libdir=${TP}/python${PYVER}/lib"
+
+    TP_ALL="${TP_FT2} ${TP_HB} ${TP_OA} ${TP_VB} ${TP_BUL} ${TP_PYTHON}"
+
+    if [ -d host ]
+    then
+        echo "
+        * Host tools found
+    "
+    else
+        if $PDK_PYTHON makepanda/makepanda.py --everything $OPT_COMMON $TP_PYTHON "$@"
+        then
+            mv built host
+        else
+            echo Fatal unable to build panda host
+            read
+            exit 1
+        fi
+    fi
+
+    cp -vf ../${PYTHON}/Android/build/python${PYDOT}-android-${ANDROID_API}-${ANDROID_ARCH}/pyconfig.h ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE}/
+    export LD_LIBRARY_PATH=$(pwd)/host/lib
+    export PATH=$(pwd)/host/bin:$PATH
+
+    if echo $(which interrogate)|grep -q interrogate
+    then
+        echo "
+            * interrogate is $(which interrogate)
+        "
+    else
+        echo "
+FATAL: interrogate not found in host/bin build
+        "
+        read
+    fi
+
+
+    if echo $(which interrogate_module)|grep -q interrogate
+    then
+        echo "
+            * interrogate_module is $(which interrogate_module)
+        "
+    else
+        echo "
+FATAL: interrogate_module not found in host/bin build
+        "
+        read
+    fi
+
+
+    rm -vf ${TP}/python${PYVER}/lib/libpython${PYDOT}${PYMODE}.a
+    cp -vf ../${PYTHON}/Android/build/python${PYDOT}-android-${ANDROID_API}-${ANDROID_ARCH}/libpython${PYDOT}${PYMODE}.so ${TP}/python${PYVER}/lib/
+    rm -vf ${TP}/python${PYVER}/include/python${PYDOT}
+    ln -sf ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE} ${TP}/python${PYVER}/include/python${PYDOT}
+    mkdir -p built/libs/armeabi-v7a/
+    ( sleep 5  && mkdir -p built/libs/armeabi-v7a/ ) &
+    ( sleep 180 && mkdir -p built/libs/armeabi-v7a/ ) &
+
+    cmd="$PDK_PYTHON makepanda/makepanda.py $OPT_COMMON $OPT_ANDROID $TP_ALL"
+    cat > $ORIGIN.rebuild.sh <<END
+#!/bin/bash
+. $SDK/sdk.${BITS}.env
+cd $ORIGIN
+export LD_LIBRARY_PATH=$(pwd)/host/lib
+export PATH=$(pwd)/host/bin:$PATH
+NDK_ROOT=$NDK_ROOT PANDA_ARCH=$PANDA_ARCH $cmd "\$@"
+END
+    chmod +x $ORIGIN.rebuild.sh
+
+    if $cmd "$@"
+    then
+        echo build complete
+    else
+        echo "installation and LUI build aborted because of panda3d build system"
+        exit 1
+    fi
+else
+    echo "FATAL: Can't find static host cpython $PDK_PYTHON"
+fi
+
+echo "Installing to ${ROOT}/DEVICE/fs"
+
+mkdir -p "${ROOT}/DEVICE/fs/lib-${ANDROID_ARCH}/"
+mkdir -p "${ROOT}/DEVICE/fs/usr/lib-${ANDROID_ARCH}/panda3d/"
+
+export PDK_PYPANDA3D="${ROOT}/DEVICE/fs/usr/lib/python${PYDOT}/site-packages/panda3d"
+
+mkdir -p $PDK_PYPANDA3D
+
+touch $PDK_PYPANDA3D/__init__.py
+
+echo "
+    * installing python package in $PDK_PYPANDA3D/__init__.py
+    "
+
+if [ -f $PDK_PYPANDA3D/__init__.py ]
+then
+    cat > $PDK_PYPANDA3D/__init__.py <<END
+import sys, os
+from ctypes import CDLL
+#libgnustl_shared.so
+#libc++_shared.so
+LIBS = """
+libgnustl_shared.so
+libogg.so
+libvorbisfile.so
+libvorbis.so
+libfreetype.so
+libharfbuzz.so
+libopenal.so
+libp3dtool.so
+libp3dtoolconfig.so
+libpandaexpress.so
+libpanda.so
+libp3direct.so
+libp3dcparse.so
+libpandaphysics.so
+libmultify.so
+libp3framework.so
+libpzip.so
+libpandafx.so
+libp3interrogatedb.so
+libinterrogate.so
+libinterrogate_module.so
+libpunzip.so
+libppython.so
+libpandaskel.so
+libpandabullet.so
+libparse_file.so
+libpandagles2.so
+libpandaai.so
+libp3vision.so
+libpandaegg.so
+libtest_interrogate.so
+""".strip()
+
+DLLS = list( map(str.strip, LIBS.split('\n') ) )
+appdir = '/'.join(__file__.split('/',4)[:-1])
+print('APK/HOME: %s' % appdir )
+for lpass in range(4):
+    poplist = []
+    poppath = []
+    for dll in DLLS:
+        try:
+            dll_path = '%s'
+            for dll_path in [ "%s/lib/%s", "%s/usr/lib-armv7/panda3d/%s", "%s/lib-armv7/%s" ]:
+                dll_path = dll_path % (appdir, dll)
+                if os.access(dll_path, 0):
+                    #print(lpass,dll,file=sys.stderr)
+                    CDLL( dll_path )
+                    poplist.append(dll)
+                    poppath.append(dll_path)
+                    break
+        except Exception as e:
+            print(lpass,dll,e,file=sys.stderr)
+    while len(poplist):
+        dll = poplist.pop(0)
+        dll_path = poppath.pop(0)
+        #print("Loaded <%s>" % dll[3:-3],'from',dll_path, file=sys.stderr)
+        DLLS.remove(dll)
+
+import panda3d.core as core
+core.loadPrcFileData("", "notify-level info")
+core.loadPrcFileData("", "win-origin -2 -2")
+core.loadPrcFileData("", "win-size 848 480")
+core.loadPrcFileData("", "support-threads #f")
+core.loadPrcFileData("", "textures-power-2 down")
+core.loadPrcFileData("", "textures-square down")
+core.loadPrcFileData("", "show-frame-rate-meter #t")
+core.loadPrcFileData("", "load-display pandagles2")
+core.loadPrcFileData("", "plugin-path %s/lib" % appdir)
+core.loadPrcFileData("", "audio-library-name null")
+
+END
+
+#libp3android.so
+    pwd
+    if [ -d built/libs ]
+    then
+        # first move python libs and clean SONAME
+        echo "
+    * installing python support libs
+    "
+
+        PY_PANDA=${ROOT}/DEVICE/fs/usr/lib/python3.7/site-packages/panda3d
+        mkdir -p ${PY_PANDA}/
+
+        for pylib in built/panda3d/*.cpython-*.so
+        do
+                maybe=$(patchelf --print-needed $pylib|grep /lib/)
+                if echo $maybe|grep -q /lib/
+                then
+                    patchelf --remove-needed $maybe $pylib
+                fi
+            mv -vf $pylib ${PY_PANDA}/
+        done
+
+
+        echo "
+    * installing panda c++ support libs
+    "
+
+        for pandalib in built/*/*-*/lib*so built/lib/lib*so
+        do
+            mv -vf $pandalib $LIB_PANDA3D/
+        done
+
+        chmod 755 $LIB_PANDA3D/lib*.so
+
+        rmdir built/libs/* built/libs
+
+        export TARGET=${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH
+        mkdir -p $TARGET
+
+        cp -vf ../harfbuzz-android-master/libs/armeabi-v7a/libfreetype.so $TARGET/
+        cp -vf ../harfbuzz-android-master/libs/armeabi-v7a/libharfbuzz.so $TARGET/
+        cp -vf ../libvorbis-libogg-android-master/libs/armeabi-v7a/lib*so $TARGET/
+        cp -vf ../HelloOpenAL/libs/armeabi/libopenal.so $TARGET/
+        mv ${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH/panda3d/{libpython3.7m.so,libgnustl_shared.so,libc++_shared.so} $TARGET/
+    fi
+
+
+
+    echo "
+
+    Panda3d $ANDROID_ARCH port installed in [${ROOT}/DEVICE/${DEV_APPDIR}]
+    See gradle sample project to link both python and panda3d in your apk
+
+    $PDK_PANDA3D
+
+    Python support libs : $PDK_PYPANDA3D
+    C++ support libs : $LIB_PANDA3D
+
+"
+
+    register_pdk PDK_PANDA3D ${ORIGIN}
+    export PDK_PANDA3D=${ORIGIN}
+
+    register_pdk PDK_LIB_PANDA3D ${LIB_PANDA3D}
+    export PDK_LIB_PANDA3D=${LIB_PANDA3D}
+
+    if [ -d ../LUI-android ]
+    then
+        cd ../LUI-android
+        rm -rf linux_*_panda1.10.0_py37 android_*_panda1.10.0_py37 lui.so
+
+        $PDK_PANDA3D/pandahost.sh build.py --clean "$@"
+
+        cp -vf lui.so $PY_PANDA/
+
+    fi
+else
+    echo "PDK_PYPANDA3D: wrong target path '$PDK_PANDA3D'"
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
