@@ -1,12 +1,8 @@
 #!/bin/bash
-#SRC=cpython-3.7.1rc1
-#GHZIP=https://github.com/python/cpython/archive/v3.7.1rc1.zip
-
 export PYVER=3.7
-export SRC=Python-3.7.1
-SRC_URL=https://www.python.org/ftp/python/3.7.1/Python-3.7.1.tar.xz
-
-TARGET=Emscripten
+export SRC=Python-3.7.2
+export SRC_URL=https://www.python.org/ftp/python/3.7.2/Python-3.7.2.tar.xz
+export TARGET=Emscripten
 
 #
 export OPT_COMMON="--with-system-ffi --disable-ipv6 --without-ensurepip --with-c-locale-coercion --without-pymalloc"
@@ -20,9 +16,9 @@ export OPT_TARGET="--enable-shared --without-gcc --host=asmjs-unknown-emscripten
 if echo $OPT_TARGET|grep -q enable-shared
 then
     echo "WARNING: shared build mode is a non standard use and requires special js loaders"
-    export LIBPYTHON=libpython3.7.so
+    export LIBPYTHON=libpython${PYVER}.so
 else
-    export LIBPYTHON=libpython3.7.a
+    export LIBPYTHON=libpython${PYVER}.a
 fi
 
 
@@ -263,8 +259,8 @@ END
             echo "
     * Creating distribution in [$ORIGIN.${BITS}]
 "
-            mkdir -p $ORIGIN.host/lib/python3.7/config-3.7-x86_64-linux-gnu/Tools/scripts
-            cp -aRfxp $ORIGIN.host/bin/*  $ORIGIN.host/lib/python3.?/config-3.*-linux-gnu/Tools/scripts/
+            mkdir -p $ORIGIN.host/lib/python${PYVER}/config-${PYVER}-x86_64-linux-gnu/Tools/scripts
+            cp -aRfxp $ORIGIN.host/bin/*  $ORIGIN.host/lib/python${PYVER}/config-3.*-linux-gnu/Tools/scripts/
 
             if $EM_MAKE inclinstall libinstall $LIBPYTHON 2>&1 | pv -w 60  -p -l -s 7500 > install.${BITS}.log
             then

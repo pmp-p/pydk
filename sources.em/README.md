@@ -16,11 +16,11 @@ git pull
 
 # Download and install the latest SDK tools.
 
-./emsdk install latest
+./emsdk install --enable-wasm latest
 
 # Make the "latest" SDK "active" for the current user. (writes ~/.emscripten file)
 
-./emsdk activate latest
+./emsdk activate --embedded latest
 
 # get your emsdk_env.sh config path, and write it down
 # will call it EMSDK from now on

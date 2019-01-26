@@ -1,0 +1,13 @@
+--- Python-3.7.2/Modules/socketmodule.c	2018-12-23 22:37:36.000000000 +0100
++++ Python-3.7.2.em/Modules/socketmodule.c	2019-01-26 10:07:31.089632509 +0100
+@@ -1297,6 +1297,10 @@
+        }
+ #endif /* AF_NETLINK */
+ 
++#if defined(__EMSCRIPTEN__) && defined(AF_VSOCK)
++    #undef AF_VSOCK
++#endif
++
+ #if defined(AF_VSOCK)
+        case AF_VSOCK:
+        {
