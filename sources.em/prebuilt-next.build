@@ -1,9 +1,9 @@
 #!/bin/bash
 reset
-export DEFAULT_PYVER=3.7
+export DEFAULT_PYVER=3.8
 export DEFAULT_WEBROOT="/srv/www/html/p3d/lib"
-export DEFAULT_PY="../Python-3.7.2.${BITS}"
-export PY_INCLUDE="../Python-3.7.2.host/include/python3.7"
+export DEFAULT_PY="../cpython-3.8.0a1.${BITS}"
+export PY_INCLUDE="../cpython-3.8.0a1.host/include/python3.8"
 export DEFAULT_PANDA3D="../panda3d-webgl-port"
 export DEFAULT_HARFBUZZ="../harfbuzz-master.em/libharfbuzz.a"
 
@@ -133,7 +133,7 @@ else
     #-s EMULATE_FUNCTION_POINTER_CASTS=1 or initimport: can't import _frozen_importlib
     # rdb has patches but for py 2.7
     # watch for https://bugs.python.org/issue33012
-    PYOPTS="-I${PY}/include/python${PYVER} -s EMULATE_FUNCTION_POINTER_CASTS=1 -s EXPORT_ALL=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1"
+    PYOPTS="-I${PY}/include/python${PYVER} -s EXPORT_ALL=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1"
     # -s EXPORTED_FUNCTIONS=[\"_PyOS_InputHook\"]
     $EMCC ${PYOPTS} ${LIB}  -shared -o $TARGET ${BC}
 
@@ -165,7 +165,7 @@ then
         #plib="$plib $lib/libp3interrogatedb.bc $lib/libp3direct.bc"
         #
         # do not use  -s EMULATE_FUNCTION_POINTER_CASTS=1  !
-        time $EMCC -s "BINARYEN_TRAP_MODE='clamp'" -s EMULATE_FUNCTION_POINTER_CASTS=1 ${P3DOPTS} ${PRE} ${LIB} -s EXPORT_ALL=1 -shared -o $TARGET $plib
+        time $EMCC -s "BINARYEN_TRAP_MODE='clamp'"  -s FORCE_FILESYSTEM=1 ${P3DOPTS} ${PRE} ${LIB} -s EXPORT_ALL=1 -shared -o $TARGET $plib
         echo
         du -hs libpanda3d.js
         echo

@@ -1,0 +1,23 @@
+--- cpython-3.8.0a1/Lib/threading.py	2019-02-03 14:17:38.000000000 +0100
++++ cpython-3.8.0a1.wasm/Lib/threading.py	2019-02-04 20:22:02.118068098 +0100
+@@ -241,7 +241,8 @@
+         return self._lock.__enter__()
+ 
+     def __exit__(self, *args):
+-        return self._lock.__exit__(*args)
++        try:return self._lock.__exit__(*args)
++        except:pass
+ 
+     def __repr__(self):
+         return "<Condition(%s, %d)>" % (self._lock, len(self._waiters))
+@@ -343,7 +344,9 @@
+ 
+         """
+         if not self._is_owned():
+-            raise RuntimeError("cannot notify on un-acquired lock")
++            pass
++            #raise RuntimeError("cannot notify on un-acquired lock")
++
+         all_waiters = self._waiters
+         waiters_to_notify = _deque(_islice(all_waiters, n))
+         if not waiters_to_notify:

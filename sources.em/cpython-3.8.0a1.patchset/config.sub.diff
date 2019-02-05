@@ -1,0 +1,29 @@
+--- cpython-3.8.0a1/config.sub	2019-02-03 14:17:38.000000000 +0100
++++ cpython-3.8.0a1.wasm/config.sub	2019-02-04 20:22:02.086069811 +0100
+@@ -118,7 +118,8 @@
+   linux-musl* | linux-uclibc* | uclinux-uclibc* | uclinux-gnu* | kfreebsd*-gnu* | \
+   knetbsd*-gnu* | netbsd*-gnu* | netbsd*-eabi* | \
+   kopensolaris*-gnu* | cloudabi*-eabi* | \
+-  storm-chaos* | os2-emx* | rtmk-nova*)
++  storm-chaos* | os2-emx* | rtmk-nova* | \
++  emscripten)
+     os=-$maybe_os
+     basic_machine=`echo "$1" | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\1/'`
+     ;;
+@@ -250,6 +251,7 @@
+ 	| am33_2.0 \
+ 	| arc | arceb \
+ 	| arm | arm[bl]e | arme[lb] | armv[2-8] | armv[3-8][lb] | armv6m | armv[78][arm] \
++	| asmjs \
+ 	| avr | avr32 \
+ 	| ba \
+ 	| be32 | be64 \
+@@ -1522,6 +1524,8 @@
+ 			;;
+ 		esac
+ 		;;
++	-emscripten)
++		;;
+ 	-nacl*)
+ 		;;
+ 	-ios)

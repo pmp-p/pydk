@@ -1,0 +1,14 @@
+--- cpython-3.8.0a1/Parser/myreadline.c	2019-02-03 14:17:38.000000000 +0100
++++ cpython-3.8.0a1.wasm/Parser/myreadline.c	2019-02-04 20:22:02.142066814 +0100
+@@ -275,6 +275,11 @@
+         return NULL;
+     case -1: /* EOF */
+     case -2: /* Error */
++    case -3:
++        #ifdef __EMSCRIPTEN__
++        #warning ------------- no no no i won't go there --------------
++        #endif
++        break;
+     default: /* Shouldn't happen */
+         *p = '\0';
+         break;

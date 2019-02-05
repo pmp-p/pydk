@@ -1,12 +1,11 @@
 --- panda3d-webgl-port/panda/src/express/virtualFileSystem.cxx	2019-01-06 14:15:01.000000000 +0100
-+++ panda3d-webgl-port.em/panda/src/express/virtualFileSystem.cxx	2019-02-03 22:08:26.413839799 +0100
-@@ -1156,6 +1156,28 @@
++++ panda3d-webgl-port.em/panda/src/express/virtualFileSystem.cxx	2019-01-25 06:21:18.834058706 +0100
+@@ -1156,6 +1156,24 @@
    // Also transparently look for a regular file suffixed .pz.
    Filename strpath_pz = strpath + ".pz";
  
 +//PMPP
-+#ifdef __NOWASM__
-+ #if __NOWASM__
++#ifdef EMSCRIPTEN
 +    #ifdef CPPPARSER
 +        #warning vfs hack at virtualFileSystem.cxx:1155
 +    #else
@@ -20,9 +19,6 @@
 +            }
 +        }
 +    #endif
-+ #endif
-+#else
-+	#pragma message "============= __NOWASM__ is not defined assuming WASM=1 ==============="
 +#endif
 +//PMPP
 +

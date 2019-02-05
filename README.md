@@ -6,9 +6,9 @@ note that apk demo is a full python3.7 and does not require root at all.
 
 You only need root for building, not using.
 
-On the other hand the onboard sdk - called u.root.kit - will need it or at least a root adb shell ( though preferred way is ssh via dropbear)
+On the other hand the onboard sdk - called u.root - will need it or at least a root adb shell ( though preferred way is ssh via dropbear)
 
-Requirements : GNU/Linux os , NDK 14b and SDK
+Requirements : GNU/Linux os , NDK 14b/16b and SDK
 
 
 Usage for cross compile :

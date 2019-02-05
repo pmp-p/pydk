@@ -219,7 +219,9 @@ touch $PDK_PYPANDA3D/__init__.py
 echo "
     * installing python package in $PDK_PYPANDA3D/__init__.py
     "
-
+#
+#  https://github.com/KeepSafe/ReLinker ?
+#
 if [ -f $PDK_PYPANDA3D/__init__.py ]
 then
     cat > $PDK_PYPANDA3D/__init__.py <<END

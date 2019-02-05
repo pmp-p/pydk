@@ -1,0 +1,14 @@
+--- cpython-3.8.0a1/Modules/socketmodule.h	2019-02-03 14:17:38.000000000 +0100
++++ cpython-3.8.0a1.wasm/Modules/socketmodule.h	2019-02-04 20:22:02.138067029 +0100
+@@ -215,6 +215,11 @@
+ #ifdef AF_QIPCRTR
+     struct sockaddr_qrtr sq;
+ #endif
++
++#if defined(__EMSCRIPTEN__) && defined(AF_VSOCK)
++    #undef AF_VSOCK
++#endif
++
+ #ifdef AF_VSOCK
+     struct sockaddr_vm vm;
+ #endif

@@ -1,0 +1,291 @@
+#!/bin/bash
+export PYVER=3.8
+export SRC=cpython-3.8.0a1
+export SRC_URL=https://github.com/python/cpython/archive/v3.8.0a1.tar.gz
+export TARGET=Emscripten
+
+#
+export OPT_COMMON="--with-system-ffi --disable-ipv6 --without-ensurepip --with-c-locale-coercion --without-pymalloc"
+
+export OPT_HOST="--disable-shared"
+
+#unsupported: --with-computed-gotos --without-threads --without-gcc
+export OPT_TARGET="--with-cxx-main=em++ --enable-shared --host=asmjs-unknown-emscripten"
+
+
+if echo $OPT_TARGET|grep -q enable-shared
+then
+    echo "WARNING: shared build mode is a non standard use and requires special js loaders"
+    export LIBPYTHON=libpython${PYVER}.so
+else
+    export LIBPYTHON=libpython${PYVER}.a
+fi
+
+
+#==============================================================================
+#export ROOT=$(dirname $(realpath "$0") )
+
+. $SDK/build.functions
+. $SDK/build.${BITS}.functions
+
+set_source_tree 4243
+
+patch_me
+
+#
+#
+#
+#OK
+#export EMCC_FORCE_STDLIBS=1
+#
+#EM_FLAGS="-Os -g0 -s ASM_JS=1 -s USE_ZLIB=1 -s LINKABLE=1 -s EMULATE_FUNCTION_POINTER_CASTS=1"
+#EM_FLAGS="$EM_FLAGS -s AGGRESSIVE_VARIABLE_ELIMINATION=1 -s ELIMINATE_DUPLICATE_FUNCTIONS=1"
+#EM_FLAGS="$EM_FLAGS -s DISABLE_EXCEPTION_CATCHING=1 -s DEMANGLE_SUPPORT=0 -s ASSERTIONS=0"
+#EM_FLAGS="$EM_FLAGS -s ERROR_ON_MISSING_LIBRARIES=0 -s ERROR_ON_UNDEFINED_SYMBOLS=0"
+#EM_FLAGS="$EM_FLAGS -s SIDE_MODULE=1" # -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1"
+#
+export EM_FLAGS="-O3 -s EXPORT_ALL=1 " # -s LINKABLE=1
+
+if echo "$@" | grep -q asm
+then
+    echo "   ===== asm.js ========"
+    export EM_MODE="-s ASM_JS=1"
+
+else
+    echo "   ===== WASM ========"
+    export EM_MODE=""
+fi
+
+export EM_FLAGS="$EM_FLAGS -s ENVIRONMENT=web -s USE_ZLIB=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1 $EM_MODE"
+
+#
+echo Will build from $ORIGIN source tree
+
+echo "<enter> to continue"
+read
+
+
+#
+
+
+
+if echo "$@"|grep -q rebuild
+then
+    echo "CLEANING UP"
+    rm -vf $PDK_EM_PYTHON $ORIGIN/${TARGET}/build.host
+    unset PDK_EM_PYTHON_HOST
+fi
+
+
+if [ -n "$PDK_EM_PYTHON" ] && [ -f "$PDK_EM_PYTHON" ]
+then
+    echo "
+    * found TARGET $PDK_EM_PYTHON - skipping HOST + TARGET build
+"
+else
+
+    if [ -f $ROOT/$SRC.host/bin/python3 ]
+    then
+        export PDK_EM_PYTHON_HOST=$ROOT/$SRC.host/bin/python3
+        export PYTHON_FOR_BUILD=$ROOT/$SRC.host/bin/python3
+    fi
+
+    if [ -f "$PDK_EM_PYTHON_HOST" ]
+    then
+        echo "
+    * found HOST python [$PDK_EM_PYTHON_HOST]
+"
+    else
+        export PDK_EM_PYTHON_HOST=$ROOT/$SRC.host/bin/python3
+        if mkdir -p $ORIGIN/${TARGET}/build.host
+        then
+
+            echo "Building HOST $PDK_EM_PYTHON_HOST"
+
+            patch_me
+
+            echo "press <enter> to start build process"
+            read
+
+            cd $ORIGIN/${TARGET}/build.host
+            ../../configure --prefix=$ROOT/$SRC.host $OPT_COMMON $OPT_HOST
+            if make -j 4
+            then
+            echo "
+    * Creating host support distribution in [$ROOT/$SRC.host]
+"
+                if make install 2>&1 | pv -w 60  -p -l -s 7600 > install.host.log
+                then
+                    echo
+                else
+                    echo distribution failed, see $(pwd)/install.host.log
+                fi
+            else
+                echo Host compilation failed
+            fi
+            register_pdk PDK_EM_PYTHON_HOST $PDK_EM_PYTHON_HOST
+        else
+            echo "can't create build dir $ORIGIN/${TARGET}/build.host"
+            exit 1
+        fi
+    fi
+
+    export PDK_EM_PYTHON=${ROOT}/${SRC}.${BITS}/bin/python
+
+    echo Building TARGET [$PDK_EM_PYTHON]
+
+    . $TOOLCHAIN
+
+    if echo $(which emcc)|grep -q emcc$
+    then
+        export CC="emcc $EM_MODE -I/usr/include"
+        export GCC="emcc $EM_MODE -I/usr/include"
+        export CPP="emcc -E"
+        export CXX="em++ $EM_MODE -I/usr/include"
+
+
+        mkdir -p $ORIGIN/${TARGET}/build.${BITS}
+        cd $ORIGIN/${TARGET}/build.${BITS}
+        if [ -f config.done ]
+        then
+            echo emconfigure already done
+        else
+            #cp ../config.site ./
+            cat <<END >config.site
+ax_cv_c_float_words_bigendian=no
+ac_cv_little_endian_double=yes
+
+ac_cv_file__dev_ptmx=no
+ac_cv_file__dev_ptc=no
+ac_cv_func_plock=no
+ac_cv_func_getentropy=no
+ac_cv_have_chflags=no
+ac_cv_have_lchflags=no
+ac_cv_func_sigaltstack=no
+
+ac_cv_func_getgroups=no
+ac_cv_func_setgroups=no
+ac_cv_func_getpgrp=no
+ac_cv_func_setpgrp=no
+
+ac_cv_func_getresuid=no
+ac_cv_func_seteuid=no
+ac_cv_func_setresuid=no
+ac_cv_func_setreuid=no
+ac_cv_func_setuid=no
+
+ac_cv_func_wcsftime=no
+ac_cv_func_sigaction=no
+
+ac_cv_func_sigrtmin=no
+ac_cv_func_sigrtmax=no
+ac_cv_func_siginterrupt=no
+
+ac_cv_func_mknod=no
+
+ac_cv_func_pwrite=no
+ac_cv_func_pwritev=no
+ac_cv_func_pwritev2=no
+
+ac_cv_func_pread=no
+ac_cv_func_preadv=no
+ac_cv_func_preadv2=no
+
+ac_cv_func_dup3=no
+ac_cv_func_dlopen=yes
+
+END
+
+
+            echo ". $TOOLCHAIN" >  reconf.sh
+            echo "export CPPFLAGS='$EM_FLAGS'"  >> reconf.sh
+            echo "export CXXFLAGS='$EM_FLAGS'"  >> reconf.sh
+            echo "export CFLAGS='$EM_FLAGS'"  >> reconf.sh
+            echo export CONFIG_SITE=./config.site >> reconf.sh
+            echo export READELF=/bin/true >> reconf.sh
+            echo "emconfigure ../../configure $OPT_COMMON $OPT_TARGET --build=$(../../config.guess) --prefix=${ORIGIN}.${BITS}" >> reconf.sh
+            chmod +x reconf.sh
+            if ./reconf.sh
+            then
+                #cp -vf ../Setup.local Modules/Setup.local
+                cat <<END > Modules/Setup.local
+*static*
+
+array arraymodule.c # array objects
+cmath cmathmodule.c _math.c # -lm # complex math library functions
+math mathmodule.c _math.c # -lm # math library functions, e.g. sin()
+_contextvars _contextvarsmodule.c
+_struct _struct.c   # binary structure packing/unpacking
+_weakref _weakref.c
+time timemodule.c # -lm # time operations and variables
+_operator _operator.c   # operator.add() and similar goodies
+_random _randommodule.c # Random number generator
+_collections _collectionsmodule.c # Container types
+_functools _functoolsmodule.c   # Tools for working with functions and callable objects
+itertools itertoolsmodule.c    # Functions creating iterators for efficient looping
+_bisect _bisectmodule.c # Bisection algorithms
+_socket socketmodule.c
+_json _json.c
+binascii binascii.c
+
+#asyncio req
+select selectmodule.c
+fcntl fcntlmodule.c
+
+_sha1 sha1module.c
+_sha256 sha256module.c
+_sha512 sha512module.c
+_md5 md5module.c
+
+#
+termios termios.c
+#_sha3 _sha3/sha3module.c
+#_blake2 _blake2/blake2module.c _blake2/blake2b_impl.c _blake2/blake2s_impl.c
+
+#aiohttp
+unicodedata unicodedata.c
+zlib zlibmodule.c
+
+#future_builtins future_builtins.c
+END
+
+                touch config.done
+            fi
+        fi
+        EM_MAKE="emmake make HOSTPYTHON=$PDK_EM_PYTHON_HOST PYTHON_FOR_BUILD=$PDK_EM_PYTHON_HOST CROSS_COMPILE=yes"
+        echo "$EM_MAKE $LIBPYTHON"> rebuild.sh
+
+        sed -i -e 's/INSTSONAME=libpython\$(LDVERSION).so/INSTSONAME=libpython\$(LDVERSION).bc/' Makefile
+        sed -i -e 's/libinstall:.*/libinstall:/' Makefile
+
+        if $EM_MAKE $LIBPYTHON
+        then
+            echo "
+    * Creating distribution in [$ORIGIN.${BITS}]
+"
+            mkdir -p $ORIGIN.host/lib/python${PYVER}/config-${PYVER}-x86_64-linux-gnu/Tools/scripts
+            cp -aRfxp $ORIGIN.host/bin/*  $ORIGIN.host/lib/python${PYVER}/config-3.*-linux-gnu/Tools/scripts/
+
+            if $EM_MAKE inclinstall libinstall $LIBPYTHON 2>&1 | pv -w 60  -p -l -s 7500 > install.${BITS}.log
+            then
+                mkdir -p $ORIGIN.${BITS}/lib $ORIGIN.${BITS}/lib/python${PYVER}
+                #cp $LIBPYTHON $ORIGIN.${BITS}/lib/
+                SYSCF_HOST="$ORIGIN.host/lib/python${PYVER}/_sysconfigdata__linux_x86_64-linux-gnu.py"
+                SYSCF_EM="$ORIGIN.${BITS}/lib/python${PYVER}/_sysconfigdata__emscripten_x86_64-linux-gnu.py"
+                cp -vf $ORIGIN/Emscripten/build.em/libpython3*so $ORIGIN.${BITS}/lib/
+                cp -vf $SYSCF_HOST $SYSCF_EM
+            else
+                echo "======================================"
+                tail $(pwd)/install.${BITS}.log
+                echo "======================================"
+                echo distribution failed, see $(pwd)/install.${BITS}.log
+            fi
+        else
+            echo Target compilation failed
+        fi
+    else
+        echo emsdk toolchain not found in [$TOOLCHAIN]
+    fi
+fi
+
+
