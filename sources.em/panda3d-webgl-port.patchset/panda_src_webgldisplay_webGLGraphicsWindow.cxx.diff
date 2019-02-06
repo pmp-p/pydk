@@ -1,5 +1,5 @@
 --- panda3d-webgl-port/panda/src/webgldisplay/webGLGraphicsWindow.cxx	2019-01-06 14:15:01.000000000 +0100
-+++ panda3d-webgl-port.em/panda/src/webgldisplay/webGLGraphicsWindow.cxx	2019-02-03 23:05:33.257520670 +0100
++++ panda3d-webgl-port.em/panda/src/webgldisplay/webGLGraphicsWindow.cxx	2019-02-04 21:26:45.691552787 +0100
 @@ -169,7 +169,8 @@
    GraphicsWindow::set_properties_now(properties);
  

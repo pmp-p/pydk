@@ -1,5 +1,5 @@
 --- panda3d-webgl-port/panda/src/express/virtualFileSystem.cxx	2019-01-06 14:15:01.000000000 +0100
-+++ panda3d-webgl-port.em/panda/src/express/virtualFileSystem.cxx	2019-02-03 22:08:26.413839799 +0100
++++ panda3d-webgl-port.em/panda/src/express/virtualFileSystem.cxx	2019-02-04 21:26:45.687552700 +0100
 @@ -1156,6 +1156,28 @@
    // Also transparently look for a regular file suffixed .pz.
    Filename strpath_pz = strpath + ".pz";

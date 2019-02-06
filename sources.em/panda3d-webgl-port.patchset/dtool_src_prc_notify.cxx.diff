@@ -1,5 +1,5 @@
 --- panda3d-webgl-port/dtool/src/prc/notify.cxx	2019-01-06 14:15:01.000000000 +0100
-+++ panda3d-webgl-port.em/dtool/src/prc/notify.cxx	2019-02-03 23:07:52.116076400 +0100
++++ panda3d-webgl-port.em/dtool/src/prc/notify.cxx	2019-02-04 21:26:45.667552263 +0100
 @@ -401,7 +401,7 @@
  #elif defined(__EMSCRIPTEN__)
      // This should drop us into the browser's JavaScript debugger.

@@ -1,19 +1,35 @@
 --- panda3d-webgl-port/panda/src/webgldisplay/webGLGraphicsStateGuardian.cxx	2019-01-06 14:15:01.000000000 +0100
-+++ panda3d-webgl-port.em/panda/src/webgldisplay/webGLGraphicsStateGuardian.cxx	2019-01-26 14:06:41.827265672 +0100
-@@ -66,10 +66,16 @@
++++ panda3d-webgl-port.em/panda/src/webgldisplay/webGLGraphicsStateGuardian.cxx	2019-02-06 09:05:55.221442872 +0100
+@@ -66,10 +66,22 @@
    attribs.stencil = (properties.get_stencil_bits() > 0);
    attribs.majorVersion = 1;
    attribs.minorVersion = 0;
+-  attribs.enableExtensionsByDefault = false;
 +
-   attribs.enableExtensionsByDefault = false;
++  attribs.enableExtensionsByDefault = 0;
  
    EMSCRIPTEN_WEBGL_CONTEXT_HANDLE result;
    result = emscripten_webgl_create_context(target, &attribs);
 +  if (!result){
 +    webgldisplay_cat.error() << "Web GL1 Context creation failed, retrying with GL2.\n";
-+    attribs.majorVersion = 2;
-+    result = emscripten_webgl_create_context(target, &attribs);
++
++	EmscriptenWebGLContextAttributes attr;
++	emscripten_webgl_init_context_attributes(&attr);
++	attr.explicitSwapControl = EM_TRUE;
++	EMSCRIPTEN_WEBGL_CONTEXT_HANDLE ctx = emscripten_webgl_create_context(0, &attr);
++	printf("Created context with handle %u\n", (unsigned int)ctx);
++	emscripten_webgl_make_context_current(ctx);
++	result = ctx ;
 +  }
  
    if (result > 0) {
      _context = result;
+@@ -80,7 +92,7 @@
+     emscripten_set_webglcontextlost_callback(target, (void *)this, false, &on_context_event);
+     emscripten_set_webglcontextrestored_callback(target, (void *)this, false, &on_context_event);
+   } else {
+-    webgldisplay_cat.error() << "Context creation failed.\n";
++    webgldisplay_cat.error() << "FATAL: Web GL2 Context creation failed.\n";
+   }
+ }
+ 

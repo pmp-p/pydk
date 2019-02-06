@@ -1,0 +1,21 @@
+--- panda3d-webgl-port/direct/src/task/Task.py	2019-01-06 14:15:01.000000000 +0100
++++ panda3d-webgl-port.em/direct/src/task/Task.py	2019-02-06 17:22:17.712817230 +0100
+@@ -14,10 +14,14 @@
+ import random
+ import importlib
+ 
+-try:
+-    import signal
+-except ImportError:
+-    signal = None
++import sys
++signal = None
++if not sys.platform in ('emscripten', 'wasm'):
++	try:
++		import signal
++	except ImportError:
++		pass
++	
+ 
+ from panda3d.core import *
+ from direct.extensions_native import HTTPChannel_extensions
