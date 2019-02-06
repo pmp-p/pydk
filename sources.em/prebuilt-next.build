@@ -166,7 +166,8 @@ then
         plib="$plib $lib/libp3framework.bc"
 
         # do not use  -s EMULATE_FUNCTION_POINTER_CASTS=1  !
-        time $EMCC -s "BINARYEN_TRAP_MODE='clamp'"  -s FORCE_FILESYSTEM=1 ${P3DOPTS} ${PRE} ${LIB} -s EXPORT_ALL=1 -shared -o $TARGET $plib
+        #off   -s FORCE_FILESYSTEM=1
+        time $EMCC -s "BINARYEN_TRAP_MODE='clamp'" ${P3DOPTS} ${PRE} ${LIB} -shared -o $TARGET $plib
         echo
         du -hs $TARGET
         echo
@@ -195,7 +196,7 @@ then
 
         # $lib/libpandabullet.bc"
         #  -s EXPORTED_FUNCTIONS=[\"_PyInit_core\",\"_PyInit_direct\"]  not needed when EXPORT_ALL
-        $EMCC ${PRE} ${LIB} -shared -o $TARGET $plib
+        $EMCC -s "BINARYEN_TRAP_MODE='clamp'" ${PRE} ${LIB} -shared -o $TARGET $plib
         echo
         du -hs $TARGET
         echo
