@@ -1,0 +1,30 @@
+--- Python-3.8.0b3/Modules/posixmodule.c	2019-07-29 15:26:01.000000000 +0200
++++ Python-3.8.0b3.em/Modules/posixmodule.c	2019-08-29 10:16:32.878095194 +0200
+@@ -5285,9 +5285,13 @@
+ 
+    if (setsigmask) {
+         sigset_t set;
++		#if __EMSCRIPTEN__
++			#pragma message "HAVE_SIGSET_T // _Py_Sigset_Converter ?"
++		#else
+         if (!_Py_Sigset_Converter(setsigmask, &set)) {
+             goto fail;
+         }
++		#endif
+         errno = posix_spawnattr_setsigmask(attrp, &set);
+         if (errno) {
+             posix_error();
+@@ -5298,9 +5302,13 @@
+ 
+     if (setsigdef) {
+         sigset_t set;
++		#if __EMSCRIPTEN__
++			#pragma message "HAVE_SIGSET_T // _Py_Sigset_Converter ?"
++		#else
+         if (!_Py_Sigset_Converter(setsigdef, &set)) {
+             goto fail;
+         }
++		#endif
+         errno = posix_spawnattr_setsigdefault(attrp, &set);
+         if (errno) {
+             posix_error();

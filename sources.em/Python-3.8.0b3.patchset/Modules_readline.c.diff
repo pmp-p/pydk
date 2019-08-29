@@ -1,0 +1,14 @@
+--- Python-3.8.0b3/Modules/readline.c	2019-07-29 15:26:01.000000000 +0200
++++ Python-3.8.0b3.em/Modules/readline.c	2019-08-29 10:16:32.882095065 +0200
+@@ -1184,6 +1184,11 @@
+ 
+     completed_input_string = not_done_reading;
+ 
++    #ifdef __EMSCRIPTEN__
++        #error no no no i won't go there
++    #endif
++
++
+     while (completed_input_string == not_done_reading) {
+         int has_input = 0, err = 0;
+ 
