@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export PYVER=3.8 # and only !
-PYTHON=cpython-3.8.0a1
+PYTHON=Python-3.8.0b3
 
 SRC_URL="https://github.com/panda3d/panda3d/archive/webgl-port.zip"
 SRC=panda3d-webgl-port
@@ -10,13 +10,15 @@ FT2=FreeType-master
 HB=harfbuzz-master
 
 
-OPT_COMMON="--optimize 4 --use-freetype --use-gles --use-gles2 --use-bullet --use-zlib --use-python --use-direct --use-openssl --use-openal"
-OPT_COMMON="$OPT_COMMON --no-ffmpeg --no-png --no-jpeg --no-eigen --no-assimp --no-egg --no-x11"
+OPT_COMMON="--optimize 4 --use-freetype --use-gles --use-gles2 --use-bullet --use-zlib --no-openssl --no-eigen --use-python --use-direct --use-openal"
+OPT_COMMON="$OPT_COMMON --no-ffmpeg --no-png --no-tiff --no-jpeg --no-eigen --no-assimp --no-egg --no-x11"
 OPT_COMMON="$OPT_COMMON  --override STDFLOAT_DOUBLE=1 --override HAVE_THREADS=UNDEF"
 
 #--nothing
-OPT_TARGET="--target emscripten --no-pandatool --no-neon --no-sse2"
+OPT_TARGET="--nothing --target emscripten --no-pandatool --no-openssl --no-neon --no-sse2"
 OPT_TARGET="$OPT_TARGET --use-python --use-direct --no-pview --use-egl"
+OPT_TARGET="$OPT_TARGET --no-fftw --no-nvidiacg"
+OPT_TARGET="$OPT_TARGET --static --outputdir ../$SRC.em"
 
 #==============================================================================
 ROOT=$(dirname $(realpath "$0") )
@@ -44,7 +46,6 @@ fi
 export ORIGIN=$(pwd)
 
 EM_LIBS=""
-#EM_FLAGS="-O3 -s ASM_JS=1 -s USE_ZLIB=1 "
 
 if echo "$@" | grep -q asm
 then
@@ -52,7 +53,8 @@ then
     export EM_MODE="-s ASM_JS=1"
 else
     echo "   ===== WASM ========"
-    export EM_MODE="-s BINARYEN_TRAP_MODE=\"clamp\" -s WASM=1"
+    #export EM_MODE="-s BINARYEN_TRAP_MODE=\"clamp\" -s WASM=1"
+    export EM_MODE="-s WASM=1"
    # -s EMULATE_FUNCTION_POINTER_CASTS=1"  # to allow loading libpython ...
 fi
 
@@ -63,7 +65,7 @@ EM_LIBS="-s FULL_ES2=1 -s USE_WEBGL2=1"
 EM_LIBS="$EM_LIBS -s USE_HARFBUZZ=1 -s USE_FREETYPE=1 -s USE_OGG=1 -s USE_VORBIS=1 -s USE_BULLET=1 -s USE_ZLIB=1"
 
 #-s SIDE_MODULE=1 => NO
-EM_FLAGS="-O3 -fno-rtti -s LINKABLE=1 $EM_MODE"
+EM_FLAGS="-O3 -fno-rtti $EM_MODE -s EXPORT_ALL=1" #-s LINKABLE=1
 EM_FLAGS="$EM_FLAGS -s ASSERTIONS=1 -s DEMANGLE_SUPPORT=0 -s DISABLE_EXCEPTION_CATCHING=1"
 
 #popen
@@ -142,7 +144,7 @@ then
     "
     else
 
-        $PDK_EM_PYTHON_HOST makepanda/makepanda.py --everything $OPT_COMMON $TP_PYTHON "$@"
+        $PDK_EM_PYTHON_HOST makepanda/makepanda.py --outputdir ../$SRC.host $OPT_COMMON $TP_PYTHON "$@"
         mv built host
     fi
 
@@ -151,13 +153,13 @@ then
     echo $(which em++)
 
 
-    export LD_LIBRARY_PATH=$(pwd)/host/lib
-    export PATH=$(pwd)/host/bin:$PATH
+    export LD_LIBRARY_PATH=${ROOT}/${SRC}.host/lib
+    export PATH=${ROOT}/${SRC}.host/bin:$PATH
 
     if echo $(which interrogate)|grep -q interrogate
     then
         echo "
-            * interrogate is $(which interrogate)
+            * interrogate is $(which interrogate) with $LD_LIBRARY_PATH
         "
     else
         echo "
@@ -175,8 +177,8 @@ FATAL: interrogate not found in host/bin build
 
     export CXXFLAGS="-std=c++11 -fno-exceptions $EM_FLAGS $EM_LIBS"
 
-    echo export LD_LIBRARY_PATH=$(pwd)/host/lib > rebuild.sh
-    echo export PATH=$(pwd)/host/bin:$PATH >> rebuild.sh
+    echo export LD_LIBRARY_PATH=${ROOT}/${SRC}.host/lib > rebuild.sh
+    echo export PATH=${ROOT}/${SRC}.host/bin:$PATH >> rebuild.sh
     echo "export CXXFLAGS='-std=c++11 -fno-exceptions $EM_FLAGS $EM_LIBS'" >> rebuild.sh
     echo $PDK_EM_PYTHON_HOST makepanda/makepanda.py $OPT_COMMON $OPT_TARGET $TP_ALL "$@" >> rebuild.sh
     chmod +x rebuild.sh
