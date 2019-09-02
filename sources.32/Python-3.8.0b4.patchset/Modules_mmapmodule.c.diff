@@ -1,5 +1,5 @@
---- cpython-master/Modules/mmapmodule.c	2018-01-23 22:26:07.000000000 +0100
-+++ cpython-master.api19/Modules/mmapmodule.c	2018-01-23 23:55:20.000000000 +0100
+--- Python-3.8.0b4/Modules/mmapmodule.c	2019-08-29 23:59:20.000000000 +0200
++++ Python-3.8.0b4.32/Modules/mmapmodule.c	2019-08-31 11:57:53.541672005 +0200
 @@ -79,6 +79,12 @@
  #  define MAP_ANONYMOUS MAP_ANON
  #endif

@@ -3,14 +3,14 @@
 SRC_URL="https://github.com/panda3d/panda3d/archive/master.zip"
 SRC=panda3d-master
 
-PYTHON="Python-3.7.2"
+PYTHON="Python-3.8.0b4"
 FT2="freetype2-android-master"
 HB="harfbuzz-android-master"
 VB="libvorbis-libogg-android-master"
 OA="HelloOpenAL"
 __ANDROID_API__=19
 
-OPT_COMMON="--no-eigen --no-gles --use-gles2 --use-zlib --threads 4 --override STDFLOAT_DOUBLE=1"
+OPT_COMMON="--use-direct --no-eigen --no-gles --use-gles2 --use-zlib --threads 4 --override STDFLOAT_DOUBLE=1"
 
 if echo $ANDROID_ARCH|grep -q arm
 then
@@ -35,12 +35,12 @@ patch_me
 #reparse just in case python was built without reloading env
 . $SDK/built.${BITS}.env
 
-if $PDK_PYTHON -V | grep -q 3.7
+if $PDK_PYTHON -V | grep -q 3.8
 then
-    echo "Will use python 3.7 :  $PDK_PYTHON"
-    export PANDA_PYLIB=python3.7m
+    echo "Will use python 3.8 :  $PDK_PYTHON"
+    export PANDA_PYLIB=python3.8
 else
-    echo "This script is for cpython 3.7 only"
+    echo "This script is for cpython 3.8 only"
     read
     exit
 fi
@@ -82,7 +82,7 @@ then
     rm ${TP}/python || echo -n
     ln -sf ${TP}/python${PYVER} ${TP}/python
 
-    cp -f ../${PYTHON}/Include/*.h ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE}/
+    cp -rf ../${PYTHON}/Include/* ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE}/
     cp -vf ../${PYTHON}/Android/build/python-native/pyconfig.h ${TP}/python${PYVER}/include/python${PYDOT}${PYMODE}/
     cp -vf ../${PYTHON}/Android/build/python-native/libpython${PYDOT}${PYMODE}.a  ${TP}/python${PYVER}/lib/
 
@@ -90,10 +90,7 @@ then
         * Setting FT2 ${TP}/freetype2 include+lib
     "
 
-    #mkdir -p ${TP}/freetype2 ${TP}/freetype2/lib
     ln -s ${ROOT}/${FT2}/include ${TP}/freetype2
-    #cp -vf ${ROOT}/${FT2}/Android/obj/local/armeabi-v7a/libfreetype2-static.a ${TP}/libfreetype.a
-    #cp -vf ${ROOT}/${FT2}/Android/libs/armeabi/libfreetype.so ${TP}/
     cp -f ${ROOT}/${FT2}/Android/libs/armeabi-v7a/libfreetype.so ${TP}/
 
     TP_FT2="--use-freetype --freetype-incdir=${TP} --freetype-libdir=${TP}"
@@ -113,9 +110,16 @@ then
 
     TP_OA="--use-openal --openal-incdir=${TP} --openal-libdir=${TP}"
 
+    if false
+    then
     #OA=HelloOpenAL
     ln -s ${ROOT}/${OA}/openal/include/AL ${TP}/
-    cp -f ../HelloOpenAL/libs/armeabi/libopenal.so ${TP}/
+    #cp -f ../HelloOpenAL/libs/armeabi/libopenal.so ${TP}/
+    cp -f ../HelloOpenAL/libs/armeabi-v7a/libopenal.so ${TP}/
+    else
+        echo "OpenAL support DISABLED"
+        TP_OA="--no-openal"
+    fi
 
     TP_BUL="--use-bullet --bullet-incdir=${TP} --bullet-libdir=${TP}"
     ln -s ${ROOT}/bullet3-master/src ${TP}/bullet
@@ -182,33 +186,40 @@ fi
 
 echo "Installing to ${ROOT}/DEVICE/${DEV_APPDIR}"
 
-mkdir -p "${ROOT}/DEVICE/${DEV_APPDIR}/lib-${ANDROID_ARCH}/"
-mkdir -p "${ROOT}/DEVICE/${DEV_APPDIR}/usr/lib-${ANDROID_ARCH}/panda3d/"
+# for maybe a support apk
+#mkdir -p "${ROOT}/DEVICE/${DEV_APPDIR}/lib-${ANDROID_ARCH}/"
+#mkdir -p "${ROOT}/DEVICE/${DEV_APPDIR}/usr/lib-${ANDROID_ARCH}/panda3d/"
+#export PDK_PANDA3D=${ROOT}/DEVICE/${DEV_APPDIR}/usr/lib-$ANDROID_ARCH/panda3d
+#export PDK_PYPANDA3D="${ROOT}/DEVICE/${DEV_APPDIR}/usr/lib/python${PYDOT}/site-packages/panda3d"
 
-#if [ -f panda3d/built/lib/libpython3.7m.so ]
-#then
-#    mv -vf panda3d/built/lib/libpython3.7m.so "${ROOT}/DEVICE/${DEV_APPDIR}/lib-${ANDROID_ARCH}/"
-#fi
+export PDK_PANDA3D=${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH
+export PDK_PYPANDA3D="${ROOT}/DEVICE/fs/usr/lib/python${PYDOT}/site-packages/panda3d"
 
-export PDK_PANDA3D=${ROOT}/DEVICE/${DEV_APPDIR}/usr/lib-$ANDROID_ARCH/panda3d
+mkdir -p ${PDK_PANDA3D} ${PDK_PYPANDA3D}
 
-export PDK_PYPANDA3D="${ROOT}/DEVICE/${DEV_APPDIR}/usr/lib/python${PYDOT}/site-packages/panda3d"
-
-mkdir -p $PDK_PYPANDA3D
-
-touch $PDK_PYPANDA3D/__init__.py
+touch ${PDK_PYPANDA3D}/__init__.py
 
 echo "
-    * installing python package in $PDK_PYPANDA3D/__init__.py
+    * installing Python packages in $PDK_PYPANDA3D/
     "
 
 if [ -f $PDK_PYPANDA3D/__init__.py ]
 then
     cat > $PDK_PYPANDA3D/__init__.py <<END
+"Python bindings for the Panda3D libraries"
+
+__version__ = '1.11.0'
+
+if __debug__:
+    import sys
+    if sys.version_info < (3, 0):
+        sys.stderr.write("WARNING: Python 2.7 will reach EOL after December 31, 2019.\n")
+        sys.stderr.write("To suppress this warning, upgrade to Python 3.\n")
+        sys.stderr.flush()
+
 import sys, os
 from ctypes import CDLL
-#libgnustl_shared.so
-#libc++_shared.so
+# libgnustl_shared.so libc++_shared.so
 LIBS = """
 libgnustl_shared.so
 libogg.so
@@ -253,7 +264,7 @@ for lpass in range(4):
     for dll in DLLS:
         try:
             dll_path = '%s'
-            for dll_path in [ "%s/lib/%s", "%s/usr/lib-armv7/panda3d/%s", "%s/lib-armv7/%s" ]:
+            for dll_path in [ "%s/lib/%s", "%s/lib-armv7/%s" ]:
                 dll_path = dll_path % (appdir, dll)
                 if os.access(dll_path, 0):
                     #print(lpass,dll,file=sys.stderr)
@@ -268,7 +279,7 @@ for lpass in range(4):
         dll_path = poppath.pop(0)
         print("Loaded <%s>" % dll[3:-3],'from',dll_path, file=sys.stderr)
         DLLS.remove(dll)
-
+del sys, os, CDLL, lpass, DLLS, appdir
 END
 
     pwd
@@ -279,16 +290,16 @@ END
     * installing python support libs
     "
 
-        mkdir -p ${ROOT}/DEVICE/${DEV_APPDIR}/usr/lib/python3.7/site-packages/panda3d/
+        mkdir -p ${PDK_PYPANDA3D}
 
         for pylib in built/panda3d/*.cpython-*.so
         do
-                maybe=$(patchelf --print-needed $pylib|grep /lib/)
+                maybe=$($PDK_PATCHELF --print-needed $pylib|grep /lib/)
                 if echo $maybe|grep -q /lib/
                 then
-                    patchelf --remove-needed $maybe $pylib
+                    $PDK_PATCHELF --remove-needed $maybe $pylib
                 fi
-            mv -vf $pylib ${ROOT}/DEVICE/${DEV_APPDIR}/usr/lib/python3.7/site-packages/panda3d/
+            mv -vf $pylib ${PDK_PYPANDA3D}/
         done
 
         # then panda
@@ -296,13 +307,16 @@ END
     * installing panda c++ support libs
     "
 
+        cp -vf thirdparty/android-libs-${PANDA_ARCH}/lib*so ${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH/
+
         for pandalib in built/*/*-*/lib*so built/lib/lib*so
         do
-            mv -vf $pandalib ${ROOT}/DEVICE/${DEV_APPDIR}/usr/lib-$ANDROID_ARCH/panda3d/
+            mv -vf $pandalib ${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH/
+            #panda3d/
         done
-        rmdir built/libs/* built/libs
+        rmdir built/libs/* built/libs built/lib
 
-        rm ${ROOT}/DEVICE/${DEV_APPDIR}/usr/lib-$ANDROID_ARCH/panda3d/{libpython3.7m.so,libgnustl_shared.so}
+        rm ${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH/panda3d/{libpython3.8.so,libgnustl_shared.so}
 
     fi
 
@@ -310,11 +324,13 @@ END
 
     echo "
 
-    Panda3d $ANDROID_ARCH port installed in [${ROOT}/DEVICE/${DEV_APPDIR}]
+
+    Panda3d $ANDROID_ARCH port installed in [${ROOT}/DEVICE/fs]
     See gradle sample project to link both python and panda3d in your apk
 
     Python support libs : $PDK_PYPANDA3D
     C++ support libs : $PDK_PANDA3D
+
 
 "
 
@@ -324,17 +340,19 @@ END
     if [ -d ../LUI-android ]
     then
         cd ../LUI-android
-        rm -rf linux_*_panda1.10.0_py37 android_*_panda1.10.0_py37 lui.so
+        rm -rf linux_*_panda1.10.0_py38 android_*_panda1.10.0_py38 lui.so
 
         $PDK_PANDA3D/pandahost.sh build.py --clean "$@"
 
-        cp -vf lui.so /data/data/u.r/usr/lib/python3.7/site-packages/panda3d/
+        # onboard
+        #cp -vf lui.so /data/data/u.r/usr/lib/python3.8/site-packages/panda3d/
 
         if [ -f /data/data/DEV ]
         then
 
-            cp -vf lui.so ${ROOT}/DEVICE/${DEV_APPDIR}/u.r/usr/lib/python3.7/site-packages/panda3d/
-            cp -vf lui.so /data/target/u.r/usr/lib/python3.7/site-packages/panda3d/
+            cp -vf lui.so ${ROOT}/DEVICE/fs/usr/lib/python3.8/site-packages/panda3d/
+            # onboard
+            #cp -vf lui.so /data/target/u.r/usr/lib/python3.8/site-packages/panda3d/
         fi
     fi
 else

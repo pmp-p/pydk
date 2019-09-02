@@ -1,5 +1,5 @@
---- panda3d-1.10.0/panda/metalibs/pandagles2/pandagles2.cxx	2019-01-03 16:01:10.000000000 +0100
-+++ panda3d-1.10.0.armv7a-androideabi/panda/metalibs/pandagles2/pandagles2.cxx	2019-01-18 09:02:41.748956435 +0100
+--- panda3d-master/panda/metalibs/pandagles2/pandagles2.cxx	2019-08-26 10:07:58.000000000 +0200
++++ panda3d-master.32/panda/metalibs/pandagles2/pandagles2.cxx	2019-09-01 19:10:51.007187022 +0200
 @@ -9,8 +9,20 @@
  #define OPENGLES_2
  #include "config_gles2gsg.h"
@@ -23,11 +23,13 @@
  
  /**
   * Initializes the library.  This must be called at least once before any of
-@@ -20,8 +32,14 @@
+@@ -20,8 +32,16 @@
   */
  void
  init_libpandagles2() {
++#if __ANDROID__
 +  LOG_INFO("35: init_libpandagles2");
++#endif
    init_libgles2gsg();
 +
 +#if __ANDROID__
@@ -38,7 +40,7 @@
  }
  
  /**
-@@ -30,5 +48,10 @@
+@@ -30,5 +50,10 @@
   */
  int
  get_pipe_type_pandagles2() {

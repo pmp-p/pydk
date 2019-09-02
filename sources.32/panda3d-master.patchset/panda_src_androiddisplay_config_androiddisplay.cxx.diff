@@ -1,5 +1,5 @@
---- panda3d-1.10.0/panda/src/androiddisplay/config_androiddisplay.cxx	2019-01-03 16:01:10.000000000 +0100
-+++ panda3d-1.10.0.armv7a-androideabi/panda/src/androiddisplay/config_androiddisplay.cxx	2019-01-18 09:01:37.899950528 +0100
+--- panda3d-master/panda/src/androiddisplay/config_androiddisplay.cxx	2019-08-26 10:07:58.000000000 +0200
++++ panda3d-master.32/panda/src/androiddisplay/config_androiddisplay.cxx	2019-09-01 19:10:51.019186589 +0200
 @@ -21,10 +21,17 @@
  
  #include "config_display.h"

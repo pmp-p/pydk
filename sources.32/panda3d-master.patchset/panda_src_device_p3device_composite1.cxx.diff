@@ -1,5 +1,5 @@
---- panda3d-master/panda/src/device/p3device_composite1.cxx	2018-02-24 03:52:48.000000000 +0100
-+++ panda3d-master.api19/panda/src/device/p3device_composite1.cxx	2018-02-24 04:31:42.177274363 +0100
+--- panda3d-master/panda/src/device/p3device_composite1.cxx	2019-08-26 10:07:58.000000000 +0200
++++ panda3d-master.32/panda/src/device/p3device_composite1.cxx	2019-09-01 19:10:51.023186445 +0200
 @@ -1,3 +1,17 @@
 +#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
 +    #include <linux/input.h>

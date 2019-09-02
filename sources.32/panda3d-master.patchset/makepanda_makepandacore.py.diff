@@ -1,6 +1,6 @@
---- panda3d-master/makepanda/makepandacore.py	2018-02-24 03:52:48.000000000 +0100
-+++ panda3d-master.api19/makepanda/makepandacore.py	2018-02-24 04:30:35.298275912 +0100
-@@ -458,12 +458,16 @@
+--- panda3d-master/makepanda/makepandacore.py	2019-08-26 10:07:58.000000000 +0200
++++ panda3d-master.32/makepanda/makepandacore.py	2019-09-01 19:10:50.995187455 +0200
+@@ -479,12 +479,16 @@
  
  def GetCC():
      if TARGET in ('darwin', 'freebsd', 'android'):
@@ -17,20 +17,24 @@
          return os.environ.get('CXX', TOOLCHAIN_PREFIX + 'clang++')
      else:
          return os.environ.get('CXX', TOOLCHAIN_PREFIX + 'g++')
-@@ -2103,10 +2107,10 @@
+@@ -2144,10 +2148,14 @@
          if GetTarget() == 'darwin':
              py_libs = glob.glob(tp_python + "/lib/libpython[0-9].[0-9].dylib")
          else:
 -            py_libs = glob.glob(tp_python + "/lib/libpython[0-9].[0-9].so")
 +            py_libs = glob.glob(tp_python + "/lib/libpython[0-9].[0-9]%sm.so" % '')
++            if len(py_libs) == 0:
++                py_libs = glob.glob(tp_python + "/lib/libpython[0-9].[0-9]%s.so" % '')
  
          if len(py_libs) == 0:
 -            py_libs = glob.glob(tp_python + "/lib/libpython[0-9].[0-9].a")
 +            py_libs = glob.glob(tp_python + "/lib/libpython[0-9].[0-9]%sm.a" % '')
++            if len(py_libs) == 0:
++                py_libs = glob.glob(tp_python + "/lib/libpython[0-9].[0-9]%s.a" % '')
  
          if len(py_libs) == 0:
              exit("Could not find the Python library in %s." % (tp_python))
-@@ -2114,7 +2118,8 @@
+@@ -2155,7 +2163,8 @@
              exit("Found multiple Python libraries in %s." % (tp_python))
  
          py_lib = os.path.basename(py_libs[0])
@@ -40,7 +44,7 @@
          SDK["PYTHONEXEC"] = tp_python + "/bin/" + SDK["PYTHONVERSION"]
          SDK["PYTHON"] = tp_python + "/include/" + SDK["PYTHONVERSION"]
  
-@@ -3200,11 +3205,13 @@
+@@ -3376,11 +3385,12 @@
      ORIG_EXT[x] = v
  
  def GetExtensionSuffix():
@@ -48,9 +52,9 @@
      if sys.version_info >= (3, 0):
 +        if target == "android":
 +            return ".cpython-%s.so" % ( os.getenv('PANDA_PYLIB','37m').replace('python','').replace('.','') )
-         suffix = sysconfig.get_config_var('EXT_SUFFIX')
-         if suffix:
-             return suffix
+         import _imp
+         return _imp.extension_suffixes()[0]
+-
 -    target = GetTarget()
      if target == 'windows':
          return '.pyd'

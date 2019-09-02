@@ -1,21 +1,29 @@
---- cpython-master/Modules/posixmodule.c	2018-01-23 22:26:07.000000000 +0100
-+++ cpython-master.api19/Modules/posixmodule.c	2018-01-23 23:55:20.000000000 +0100
-@@ -394,6 +393,11 @@
- #define MODNAME "posix"
+--- Python-3.8.0b4/Modules/posixmodule.c	2019-08-29 23:59:20.000000000 +0200
++++ Python-3.8.0b4.32/Modules/posixmodule.c	2019-08-31 11:57:53.549671698 +0200
+@@ -63,7 +63,6 @@
+ disguised Unix interface).  Refer to the library manual and\n\
+ corresponding Unix manual entries for more information on calls.");
+ 
+-
+ #ifdef HAVE_SYS_UIO_H
+ #include <sys/uio.h>
  #endif
-
+@@ -497,6 +496,11 @@
+ #endif
+ }
+ 
 +//PMPP API<21
 +#if __ANDROID_API__ < 21
 +    extern ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
 +#endif
 +//PMPP API<21
-
- #ifdef HAVE_FORK
- static void
-@@ -5885,6 +5889,51 @@
+ 
+ #ifdef MS_WINDOWS
+ /* defined in fileutils.c */
+@@ -6560,6 +6564,51 @@
  for both the master and slave ends.
  [clinic start generated code]*/
-
+ 
 +#ifdef __ANDROID__
 +    static PyObject *
 +    os_openpty_impl(PyObject *module)
@@ -64,12 +72,24 @@
  static PyObject *
  os_openpty_impl(PyObject *module)
  /*[clinic end generated code: output=98841ce5ec9cef3c input=f3d99fd99e762907]*/
-@@ -5973,7 +6022,7 @@
+@@ -6648,7 +6697,7 @@
      return NULL;
  }
  #endif /* defined(HAVE_OPENPTY) || defined(HAVE__GETPTY) || defined(HAVE_DEV_PTMX) */
 -
 +#endif
-
+ 
  #ifdef HAVE_FORKPTY
  /*[clinic input]
+@@ -9799,7 +9848,11 @@
+             errno = result;
+     }
+ #else
++    #if __ANDROID_API__ < 21
++        result = ftruncate(path->narrow, length);
++    #else
+     result = truncate(path->narrow, length);
++    #endif
+ #endif
+     _Py_END_SUPPRESS_IPH
+     Py_END_ALLOW_THREADS

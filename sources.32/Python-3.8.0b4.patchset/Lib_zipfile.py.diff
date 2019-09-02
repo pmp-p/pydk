@@ -1,0 +1,11 @@
+--- Python-3.8.0b4/Lib/zipfile.py	2019-08-29 23:59:20.000000000 +0200
++++ Python-3.8.0b4.32/Lib/zipfile.py	2019-08-31 09:14:19.331179000 +0200
+@@ -1570,7 +1570,7 @@
+         zinfo.compress_size = 0
+         zinfo.CRC = 0
+ 
+-        zinfo.flag_bits = 0x00
++        #zinfo.flag_bits = 0x00
+         if zinfo.compress_type == ZIP_LZMA:
+             # Compressed data includes an end-of-stream (EOS) marker
+             zinfo.flag_bits |= 0x02

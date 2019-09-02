@@ -1,0 +1,12 @@
+--- Python-3.8.0b4/Lib/ctypes/__init__.py	2019-08-29 23:59:20.000000000 +0200
++++ Python-3.8.0b4.32/Lib/ctypes/__init__.py	2019-08-31 12:37:41.115992690 +0200
+@@ -453,6 +453,9 @@
+     pythonapi = PyDLL("python dll", None, _sys.dllhandle)
+ elif _sys.platform == "cygwin":
+     pythonapi = PyDLL("libpython%d.%d.dll" % _sys.version_info[:2])
++elif _sys.platform in ("android","bionic"):
++    print('444:bionic',_sys.version_info,file=_sys.stderr)
++    pythonapi = PyDLL("libpython%d.%d.so" % _sys.version_info[:2] )
+ else:
+     pythonapi = PyDLL(None)
+ 

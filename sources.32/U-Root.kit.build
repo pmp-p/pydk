@@ -5,16 +5,17 @@ APK=u.root.kit
 SRC=U-Root.kit
 APK_FILE=./build/outputs/apk/U-Root.kit-debug.apk
 ROOT=$(dirname $(realpath "$0") )
-PYTHON=Python-3.7.2
+PYTHON=Python-3.8.0b4
 
-export PYTHON_ABI=python3.7-android-19-armv7
-export P3D=panda3d-1.10.0
+export PYTHON_ABI=python3.8-android-19-armv7
+export P3D=panda3d-master
 export TARGET_ARCH_ABI=armeabi-v7a
 export JAVA_HOME=/opt/sdk/jdk
 export USE_PYTHON=true
 export USE_P3D=true
 
-if java -version 2>&1 |grep -q 10.0
+#java -version 2>&1 |grep -q 10.0
+if false
 then
     export PATH=$JAVA_HOME/bin:$PATH
     echo -n "java found at : "
@@ -27,7 +28,6 @@ then
         java -version
     fi
 fi
-
 
 
 . $SDK/build.functions
@@ -67,13 +67,14 @@ then
         echo "    * moving panda3d support into prebuild"
         mv ${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH/lib*.so prebuilt/${TARGET_ARCH_ABI}/
 
-        echo "    * moving panda3d into prebuild"
-        mv ${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH/panda3d/lib*.so prebuilt/${TARGET_ARCH_ABI}/
+        #echo "    * moving panda3d into prebuild"
+        #mv ${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH/panda3d/lib*.so prebuilt/${TARGET_ARCH_ABI}/
 
         #============================================== TEMP ========================================
         #============================================== TEMP ========================================
-        rmdir ${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH/panda3d ${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH
-        rmdir ${ROOT}/DEVICE/fs/lib-$ANDROID_ARCH
+        #rmdir ${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH/panda3d
+        rmdir ${ROOT}/DEVICE/fs/usr/lib-$ANDROID_ARCH
+        #rmdir ${ROOT}/DEVICE/fs/lib-$ANDROID_ARCH
         #============================================== TEMP ========================================
         #============================================== TEMP ========================================
 
@@ -84,23 +85,29 @@ then
     if ${USE_PYTHON}
     then
         echo "    * adding [$PYTHON_ABI] from [$PYTHON] to build"
-        cp -f $ROOT/$PYTHON/Android/build/${PYTHON_ABI}/libpython3.7m.so prebuilt/${TARGET_ARCH_ABI}/
+        cp -f $ROOT/$PYTHON/Android/build/${PYTHON_ABI}/libpython3.8.so prebuilt/${TARGET_ARCH_ABI}/
     fi
 
-    #sanity check
-    echo "Comparing libpython"
-    if cmp prebuilt/${TARGET_ARCH_ABI}/libpython3.7m.so /data/data/armhf/u.r/lib-armv7/libpython3.7m.so
+    #sanity check for mounted devices SDK
+
+    if [ -f /data/data/armhf/u.r/lib-armv7/libpython3.8.so ]
     then
-        echo 'done'
+        echo "Comparing onboard sdk libpython"
+        if cmp prebuilt/${TARGET_ARCH_ABI}/libpython3.8m.so /data/data/armhf/u.r/lib-armv7/libpython3.8.so
+        then
+            echo 'done'
+        else
+            echo ERROR
+            read
+        fi
     else
-        echo ERROR
-        read
+        echo "no onboard sdk libpython"
     fi
 
     if cd ${ROOT}/DEVICE/fs
     then
-        rm $ROOT/$SRC/src/main/assets/python37.zip
-        zip $ROOT/$SRC/src/main/assets/python37.zip -q -r .
+        rm $ROOT/$SRC/src/main/assets/python38.zip
+        zip $ROOT/$SRC/src/main/assets/python38.zip -q -r .
         cd $ROOT/$SRC
     else
             echo "ERROR can't pack python/panda native lib"
@@ -132,7 +139,7 @@ then
         if grep -q obj/local \$fixlib
         then
             echo
-            $PDK_PATCHELF --replace-needed ./obj/local/${TARGET_ARCH_ABI}/libpython3.7m.so libpython3.7m.so \$fixlib
+            $PDK_PATCHELF --replace-needed ./obj/local/${TARGET_ARCH_ABI}/libpython3.8.so libpython3.8.so \$fixlib
         else
             echo "Linking was OK"
         fi

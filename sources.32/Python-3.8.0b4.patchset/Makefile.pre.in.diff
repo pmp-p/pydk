@@ -1,6 +1,6 @@
---- cpython-master/Makefile.pre.in	2018-01-23 22:26:07.000000000 +0100
-+++ cpython-master.api19/Makefile.pre.in	2018-01-23 23:55:20.000000000 +0100
-@@ -215,7 +215,7 @@
+--- Python-3.8.0b4/Makefile.pre.in	2019-08-29 23:59:20.000000000 +0200
++++ Python-3.8.0b4.32/Makefile.pre.in	2019-08-31 11:57:53.529672465 +0200
+@@ -225,7 +225,7 @@
  PY3LIBRARY=     @PY3LIBRARY@
  DLLLIBRARY=	@DLLLIBRARY@
  LDLIBRARYDIR=   @LDLIBRARYDIR@

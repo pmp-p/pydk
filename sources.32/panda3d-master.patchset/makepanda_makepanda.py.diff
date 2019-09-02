@@ -1,20 +1,6 @@
---- panda3d-1.10.0/makepanda/makepanda.py	2019-01-03 16:01:10.000000000 +0100
-+++ panda3d-1.10.0.armv7a-androideabi/makepanda/makepanda.py	2019-01-18 10:46:22.092905590 +0100
-@@ -468,12 +468,11 @@
-     else:
-         # We're not cross-compiling; just take the host arch.
-         PLATFORM = get_platform()
--
- else:
-     target_arch = GetTargetArch()
-     if target_arch == 'amd64':
-         target_arch = 'x86_64'
--    PLATFORM = '{0}-{1}' % (target, target_arch)
-+    PLATFORM = '{0}-{1}'.format(target, target_arch)
- 
- 
- print("Platform: %s" % PLATFORM)
-@@ -1050,6 +1049,8 @@
+--- panda3d-master/makepanda/makepanda.py	2019-08-26 10:07:58.000000000 +0200
++++ panda3d-master.32/makepanda/makepanda.py	2019-09-01 19:10:51.003187167 +0200
+@@ -1037,6 +1037,8 @@
          LibName("ALWAYS", '-llog')
          LibName("ANDROID", '-landroid')
          LibName("JNIGRAPHICS", '-ljnigraphics')
@@ -23,7 +9,7 @@
  
      for pkg in MAYAVERSIONS:
          if (PkgSkip(pkg)==0 and (pkg in SDK)):
-@@ -1896,7 +1897,7 @@
+@@ -1884,7 +1886,7 @@
                  cmd += ' -target i686-none-linux-android'
              elif arch == 'x86_64':
                  cmd += ' -target x86_64-none-linux-android'
@@ -32,7 +18,7 @@
          else:
              cmd += " -pthread"
  
-@@ -2052,7 +2053,8 @@
+@@ -2043,7 +2045,8 @@
      cmd += "-cp " + GetOutputDir() + "/classes "
      cmd += "-d " + GetOutputDir() + "/classes "
      cmd += BracketNameWithQuotes(src)
@@ -42,7 +28,7 @@
  
  ##########################################################################################
  #
-@@ -5220,19 +5222,50 @@
+@@ -5181,19 +5184,50 @@
  # DIRECTORY: panda/src/androiddisplay/
  #
  

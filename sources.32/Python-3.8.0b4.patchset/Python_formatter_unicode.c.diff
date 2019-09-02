@@ -1,0 +1,35 @@
+--- Python-3.8.0b4/Python/formatter_unicode.c	2019-08-29 23:59:20.000000000 +0200
++++ Python-3.8.0b4.32/Python/formatter_unicode.c	2019-08-31 11:57:53.573670780 +0200
+@@ -690,6 +690,10 @@
+ 
+ static const char no_grouping[1] = {CHAR_MAX};
+ 
++#if __ANDROID__ && (__ANDROID_API__ < 21)
++extern _Py_GetLocaleconvNumeric19(PyObject **decimal_point, PyObject **thousands_sep);
++#endif
++
+ /* Find the decimal point character(s?), thousands_separator(s?), and
+    grouping description, either for the current locale if type is
+    LT_CURRENT_LOCALE, a hard-coded locale if LT_DEFAULT_LOCALE or
+@@ -699,6 +703,13 @@
+ {
+     switch (type) {
+     case LT_CURRENT_LOCALE: {
++#if __ANDROID__ && (__ANDROID_API__ < 21)
++         if (_Py_GetLocaleconvNumeric19(&locale_info->decimal_point,
++                                      &locale_info->thousands_sep) < 0) {
++             locale_info->grouping = no_grouping;
++             return -1;
++         }
++#else
+         struct lconv *lc = localeconv();
+         if (_Py_GetLocaleconvNumeric(lc,
+                                      &locale_info->decimal_point,
+@@ -716,6 +727,7 @@
+         }
+         locale_info->grouping = locale_info->grouping_buffer;
+         break;
++#endif
+     }
+     case LT_DEFAULT_LOCALE:
+     case LT_UNDERSCORE_LOCALE:
