@@ -2,11 +2,11 @@
 reset
 export DEFAULT_PYVER=3.8
 export DEFAULT_WEBROOT="/srv/www/html/p3d/lib"
-export DEFAULT_PY="../cpython-3.8.0a1.${BITS}"
+export DEFAULT_PY="../Python-3.8.0b4.${BITS}"
 export DEFAULT_PANDA3D="../panda3d-webgl-port"
 export DEFAULT_HARFBUZZ="../harfbuzz-master.em/libharfbuzz.a"
 
-export PY_INCLUDE="../cpython-3.8.0a1.host/include/python3.8"
+export PY_INCLUDE="../Python-3.8.0b4.host/include/python3.8"
 
 
 . $SDK/build.functions
@@ -14,11 +14,6 @@ export PY_INCLUDE="../cpython-3.8.0a1.host/include/python3.8"
 
 
 arg_parse
-
-
-
-. $SDK/build.functions
-. $SDK/build.${BITS}.functions
 
 
 if . $TOOLCHAIN >/dev/null
@@ -45,22 +40,22 @@ else
 fi
 
 
-if false
+if true
 then
     EM_FLAGS="$EM_BASE -Os -Oz -g0" #OK
-    EM_FLAGS="$EM_FLAGS -s ERROR_ON_MISSING_LIBRARIES=0 -s ERROR_ON_UNDEFINED_SYMBOLS=0"
+    #EM_FLAGS="$EM_FLAGS -s ERROR_ON_MISSING_LIBRARIES=0 -s ERROR_ON_UNDEFINED_SYMBOLS=0"
 
     echo fast run, slow comp, no debug
     EM_FLAGS="$EM_FLAGS -s ASSERTIONS=1"
     EM_FLAGS="$EM_FLAGS -s DISABLE_EXCEPTION_CATCHING=1"
-    EM_FLAGS="$EM_FLAGS -s DEMANGLE_SUPPORT=0"
+    EM_FLAGS="$EM_FLAGS -s DEMANGLE_SUPPORT=1"
 
     EM_FLAGS="$EM_FLAGS -s AGGRESSIVE_VARIABLE_ELIMINATION=1"
 
 else
 
     EM_FLAGS="$EM_BASE -O3 -g0  --memory-init-file 0" #OK
-    EM_FLAGS="$EM_FLAGS -s ERROR_ON_MISSING_LIBRARIES=0 -s ERROR_ON_UNDEFINED_SYMBOLS=0"
+    #EM_FLAGS="$EM_FLAGS -s ERROR_ON_MISSING_LIBRARIES=0 -s ERROR_ON_UNDEFINED_SYMBOLS=0"
 
     echo avg comp, debug, slow run
     EM_FLAGS="$EM_FLAGS -s ASSERTIONS=2"

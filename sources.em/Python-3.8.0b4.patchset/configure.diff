@@ -1,0 +1,99 @@
+--- Python-3.8.0b4/configure	2019-08-29 23:59:20.000000000 +0200
++++ Python-3.8.0b4.em/configure	2019-09-17 20:08:46.000510077 +0200
+@@ -3264,6 +3264,9 @@
+ 	*-*-cygwin*)
+ 		ac_sys_system=Cygwin
+ 		;;
++	asmjs-*-*)
++		_host_cpu=
++		;;
+ 	*-*-vxworks*)
+ 	    ac_sys_system=VxWorks
+ 	    ;;
+@@ -3317,6 +3320,9 @@
+ 	*-*-vxworks*)
+ 		_host_cpu=$host_cpu
+ 		;;
++	asmjs-*-*)
++		ac_sys_system=Emscripten
++		;;
+ 	*)
+ 		# for now, limit cross builds to known configurations
+ 		MACHDEP="unknown"
+@@ -9332,8 +9338,9 @@
+ # -- usually .so, .sl on HP-UX, .dll on Cygwin
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking the extension of shared libraries" >&5
+ $as_echo_n "checking the extension of shared libraries... " >&6; }
++
+ if test -z "$SHLIB_SUFFIX"; then
+-	case $ac_sys_system in
++    case $ac_sys_system in
+ 	hp*|HP*)
+ 		case `uname -m` in
+ 			ia64) SHLIB_SUFFIX=.so;;
+@@ -9344,6 +9351,12 @@
+ 	*)	   SHLIB_SUFFIX=.so;;
+ 	esac
+ fi
++
++case $ac_sys_system in
++Emscripten)
++    SHLIB_SUFFIX=.wasm;;
++esac
++
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $SHLIB_SUFFIX" >&5
+ $as_echo "$SHLIB_SUFFIX" >&6; }
+ 
+@@ -11706,6 +11719,9 @@
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ #include <sys/epoll.h>
++#ifdef __EMSCRIPTEN__
++#error unsupported
++#endif
+ int
+ main ()
+ {
+@@ -11731,6 +11747,9 @@
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ #include <sys/epoll.h>
++#ifdef __EMSCRIPTEN__
++#error unsupported
++#endif
+ int
+ main ()
+ {
+@@ -12413,7 +12432,9 @@
+ #ifdef HAVE_GRP_H
+ #include <grp.h>
+ #endif
+-
++#ifdef __EMSCRIPTEN__
++    #error setgroups
++#endif
+ int
+ main ()
+ {
+@@ -13095,7 +13116,9 @@
+ #else
+ #include <sys/types.h>
+ #endif
+-
++#ifdef __EMSCRIPTEN__
++    #error makedev
++#endif
+ int
+ main ()
+ {
+@@ -15177,6 +15200,10 @@
+ case $ac_sys_system in
+     Linux*|GNU*|Darwin|VxWorks)
+ 	EXT_SUFFIX=.${SOABI}${SHLIB_SUFFIX};;
++    Emscripten)
++        SOABI="cpython-${VERSION}-emscripten"
++        EXT_SUFFIX=".wasm"
++        ;;
+     *)
+ 	EXT_SUFFIX=${SHLIB_SUFFIX};;
+ esac

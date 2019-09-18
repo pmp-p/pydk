@@ -108,18 +108,11 @@ then
     ln -s ${ROOT}/${HB}/src/*.h ${TP}/harfbuzz/
     cp -f ${ROOT}/${HB}/obj/local/armeabi-v7a/libharfbuzz.so ${TP}/
 
-    TP_OA="--use-openal --openal-incdir=${TP} --openal-libdir=${TP}"
 
-    if false
-    then
-    #OA=HelloOpenAL
+    echo "OpenAL support TESTING"
+    TP_OA="--use-openal --openal-incdir=${TP} --openal-libdir=${TP}"
     ln -s ${ROOT}/${OA}/openal/include/AL ${TP}/
-    #cp -f ../HelloOpenAL/libs/armeabi/libopenal.so ${TP}/
-    cp -f ../HelloOpenAL/libs/armeabi-v7a/libopenal.so ${TP}/
-    else
-        echo "OpenAL support DISABLED"
-        TP_OA="--no-openal"
-    fi
+    cp -f ../TESTING/build/libopenal.so ${TP}/
 
     TP_BUL="--use-bullet --bullet-incdir=${TP} --bullet-libdir=${TP}"
     ln -s ${ROOT}/bullet3-master/src ${TP}/bullet
