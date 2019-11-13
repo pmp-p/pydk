@@ -31,7 +31,7 @@ function panda3d_build () {
 
 
 function panda3d_crosscompile () {
-    export STEP=True
+    #export STEP=True
 #set(CMAKE_MODULE_PATH \${CMAKE_MODULE_PATH} "${ORIGIN}/thirdparty.aosp/modules/")
 #set(OPENALDIR ${OPENALDIR})
 
@@ -40,7 +40,6 @@ function panda3d_crosscompile () {
      echo " * building Panda3D for target ${ANDROID_ABI}"
 
     cat ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/toolchain.cmake > ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/panda3d.toolchain.cmake
-
 
 
     cat >> ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/panda3d.toolchain.cmake <<END
@@ -67,14 +66,7 @@ set(ZLIB_DIR \${CMAKE_SYSROOT})
 set(OPENAL_INCLUDE_DIR ${APKUSR}/include)
 set(OPENAL_LIBRARY openal)
 
-#set(HAVE_OPENAL YES)
-
 #set(BUILD_MODELS OFF)
-
-
-
-#set(HAVE_EGL_AVAILABLE YES)
-#set(HAVE_EGL YES)
 
 string(APPEND CMAKE_MODULE_LINKER_FLAGS " -L${APKUSR}/lib -lpython${PYMAJOR}.${PYMINOR}")
 
@@ -85,14 +77,19 @@ END
     export LD_LIBRARY_PATH
     export PATH
 
-    $CMAKE ${BUILD_SRC}/panda3d-prefix/src/panda3d \
+    reCMAKE="$CMAKE ${BUILD_SRC}/panda3d-prefix/src/panda3d \
  -DANDROID_ABI=${ANDROID_NDK_ABI_NAME}\
  -DHAVE_PYTHON=YES -DHAVE_OPENAL=YES\
  -DHAVE_GL=NO -DHAVE_GLX=NO -DHAVE_X11=NO \
  -DHAVE_GLES1=NO  -DHAVE_GLES2=NO -DHAVE_EGL=NO \
  -DHAVE_EGG=NO -DHAVE_SSE2=NO \
  -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/panda3d.toolchain.cmake\
- -DCMAKE_INSTALL_PREFIX=${APKUSR} && make -j 4
+ -DCMAKE_INSTALL_PREFIX=${APKUSR}"
+
+    # will fail once on Python export
+    $reCMAKE
+
+    $reCMAKE && make -j 4
 
 }
 

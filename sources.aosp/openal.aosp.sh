@@ -21,7 +21,7 @@ function openal_crosscompile () {
     then
         echo "    -> OpenAL already built for $ANDROID_NDK_ABI_NAME"
     else
-        STEP=True
+        #STEP=True
         PrepareBuild ${unit}
         echo " * building OpenAL for target ${ANDROID_ABI}"
         $CMAKE ${SUPPORT}/openal-soft-aosp\

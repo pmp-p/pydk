@@ -15,6 +15,13 @@ jobs:
       run: |
         echo ---------------------
         python3 -V
-        clang --version
-        gcc --version
-        env
+        echo
+        clang --version | head -n 1
+        echo
+        gcc --version | head -n 1
+        echo
+        env|grep ANDROID
+        echo
+        grep "^Pkg.Revision =" ${ANDROID_HOME}/ndk-bundle/source.properties
+        echo
+        pwd
