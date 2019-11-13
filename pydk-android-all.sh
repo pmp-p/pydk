@@ -75,6 +75,8 @@ else
     SQLITE_URL="https://www.sqlite.org/2019/sqlite-autoconf-3300100.tar.gz"
 fi
 
+UNITS="$UNITS openal panda3d"
+
 
 if grep "^Pkg.Revision = 20" $NDK_HOME/source.properties
 then
@@ -91,8 +93,8 @@ press <enter> to continue anyway
     read cont
 fi
 
-OLD_PATH=$PATH
 
+OLD_PATH=$PATH
 ORIGIN=$(pwd)
 ROOT="${ORIGIN}/${ENV}"
 HOST="${ORIGIN}/${ENV}/host"
@@ -105,8 +107,6 @@ PYSRC="${BUILD_SRC}/python3-prefix/src/python3"
 PATCHELF_SRC="${BUILD_SRC}/patchelf-prefix/src/patchelf"
 ADBFS_SRC="${BUILD_SRC}/adbfs-prefix/src/adbfs"
 LZMA_SRC="${BUILD_SRC}/lzma-prefix/src/lzma"
-
-export CMAKE_INSTALL_PREFIX=$HOST
 
 export APK=/data/data/${DN}.${APP}
 
@@ -161,8 +161,11 @@ fi
 export UNITS
 
 function step () {
-    echo "$1: paused in $3-$2  press <enter> to continue"
-    read cont
+    if echo  $STEP|grep -q rue
+    then
+        echo "$1: paused in $3-$2  press <enter> to continue"
+        read cont
+    fi
 }
 
 function do_steps () {
@@ -235,10 +238,8 @@ END
 
     cd ${BUILD_SRC}
     ${ROOT}/bin/cmake .. && make
-    echo "  -> host tools now in ${CMAKE_INSTALL_PREFIX}"
+    echo "  -> host tools now in CMAKE_INSTALL_PREFIX=${HOST}"
 fi
-
-unset CMAKE_INSTALL_PREFIX
 
 
 # == can't save space here with patching an existing host source python tree after a cleanup
@@ -249,16 +250,18 @@ do_steps patch
 
 cd ${ROOT}
 
-
-Building () {
+PrepareBuild () {
     cd ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}
 
     echo " * configure target==$1 ${PLATFORM_TRIPLET}"
 
     mkdir -p $1-${ANDROID_NDK_ABI_NAME}
     cd $1-${ANDROID_NDK_ABI_NAME}
-    /bin/cp -aRfxp ${BUILD_SRC}/$1-prefix/src/$1/. ./
+}
 
+Building () {
+    PrepareBuild $1
+    /bin/cp -aRfxp ${BUILD_SRC}/$1-prefix/src/$1/. ./
 }
 
 
@@ -308,7 +311,6 @@ do
     esac
 
     export APKUSR=${ROOT}/apkroot-${ANDROID_NDK_ABI_NAME}/usr
-    export CMAKE_INSTALL_PREFIX=${APKUSR}
 
     # for disposal of things we don't want to land in prebuilt folder
     export DISPOSE=${ROOT}/apkroot-${ANDROID_NDK_ABI_NAME}-discard
@@ -391,5 +393,4 @@ END
 
     do_steps crosscompile
 done
-
 

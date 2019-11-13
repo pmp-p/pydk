@@ -1,7 +1,14 @@
 # pydk : Android generic ( 4.4/32 api19 , 5+/64 api21)
 
-Requirements: python 3.7/8 installed, clang/clang++ 8+ full build env
-clone this repo, add android-sdk and android-sdk/ndk-bundle (ndk20) in the folder
+ARCHITECTURES="armeabi-v7a arm64-v8a x86 x86_64"
+
+Requirements:
+    * python 3.7/8 installed
+    * clang/clang++ 8+ full build env
+    * android-sdk + android-ndk
+
+clone this repo and go into folder pydk
+add sdk as "android-sdk" and ndk as "android-sdk/ndk-bundle" (ndk20) in the folder
 launch ./pydk-android-all.sh
 
 
