@@ -13,6 +13,8 @@ jobs:
       run: python -V
     - name: Run a multi-line script
       run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
+        echo ---------------------
+        python3 -V
+        clang --version
+        gcc --version
 

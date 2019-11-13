@@ -185,7 +185,8 @@ function do_steps () {
 cd "${ROOT}"
 
 # because libpython is shared
-export LD_LIBRARY_PATH=${HOST}/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=${HOST}/lib64:${HOST}/lib:$LD_LIBRARY_PATH
+export PATH=${HOST}/bin:${ROOT}/bin:$PATH
 
 
 for unit in $UNITS
@@ -358,7 +359,7 @@ export CXX=$CXX
 export CC=$CC
 export RANLIB=$RANLIB
 
-export PATH=/bin:/usr/bin:/usr/local/bin
+export PATH=/bin:/usr/bin:/usr/local/bin:${HOST}/bin
 
 END
 
@@ -376,6 +377,12 @@ set(ANDROID_ABI ${ANDROID_NDK_ABI_NAME})
 set(CMAKE_CROSSCOMPILING ON)
 set(CMAKE_FIND_LIBRARY_PREFIXES lib)
 set(CMAKE_FIND_LIBRARY_SUFFIXES .so)
+
+unset(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES)
+unset(CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES)
+
+set(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES "${APKUSR}/include" "${APKUSR}/include/python${PYMAJOR}.${PYMINOR}")
+set(CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES "${APKUSR}/include" "${APKUSR}/include/python${PYMAJOR}.${PYMINOR}")
 
 
 END
