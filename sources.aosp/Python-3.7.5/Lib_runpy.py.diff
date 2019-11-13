@@ -1,0 +1,11 @@
+--- python3/Lib/runpy.py	2019-10-15 00:32:36.000000000 +0200
++++ python3-android/Lib/runpy.py	2019-10-23 18:50:36.851527362 +0200
+@@ -133,7 +133,7 @@
+         msg = "Error while finding module specification for {!r} ({}: {})"
+         raise error(msg.format(mod_name, type(ex).__name__, ex)) from ex
+     if spec is None:
+-        raise error("No module named %s" % mod_name)
++        raise error("No module named5 %s" % mod_name)
+     if spec.submodule_search_locations is not None:
+         if mod_name == "__main__" or mod_name.endswith(".__main__"):
+             raise error("Cannot use package as __main__ module")

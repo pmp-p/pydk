@@ -1,0 +1,12 @@
+
+set(OPENSSL_ROOT_DIR "${CMAKE_INSTALL_PREFIX}")
+set(OPENSSL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
+set(OPENSSL_CRYPTO_LIBRARY "${CMAKE_INSTALL_PREFIX}/lib")
+set(OPENSSL_FOUND 1)
+set(OpenSSL_SSL_FOUND 1)
+set(OpenSSL_Crypto_FOUND 1)
+set(HAVE_OPENSSL 1)
+
+message(">>>>>>>> openssl ${OPENSSL_ROOT_DIR} <<<<<<<<<<<<")
+
+

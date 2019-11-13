@@ -1,0 +1,19 @@
+--- python3/Lib/importlib/_bootstrap.py	2019-10-15 00:32:36.000000000 +0200
++++ python3-android/Lib/importlib/_bootstrap.py	2019-10-24 06:24:16.069450319 +0200
+@@ -432,6 +432,7 @@
+ 
+ def spec_from_loader(name, loader, *, origin=None, is_package=None):
+     """Return a module spec based on various loader methods."""
++    print("435:",name,loader,origin,is_package)
+     if hasattr(loader, 'get_filename'):
+         if _bootstrap_external is None:
+             raise NotImplementedError
+@@ -942,7 +943,7 @@
+         raise ValueError('Empty module name')
+ 
+ 
+-_ERR_MSG_PREFIX = 'No module named '
++_ERR_MSG_PREFIX = 'No module named0 '
+ _ERR_MSG = _ERR_MSG_PREFIX + '{!r}'
+ 
+ def _find_and_load_unlocked(name, import_):

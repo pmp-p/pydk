@@ -1,4 +1,12 @@
-# pydk : Android
+# pydk : Android generic ( 4.4/32 api19 , 5+/64 api21)
+
+Requirements: python 3.7/8 installed, clang/clang++ 8+ full build env
+clone this repo, add android-sdk and android-sdk/ndk-bundle (ndk20) in the folder
+launch ./pydk-android-all.sh
+
+
+
+# pydk : H3Droid ( and most kitkat devices )
 
 While helping to cross-compile, the script also try to prepare a onboard sdk (armv7 currently).
 
@@ -9,6 +17,8 @@ You only need root for building, not using.
 On the other hand the onboard sdk - called u.root - will need it or at least a root adb shell ( though preferred way is ssh via dropbear)
 
 Requirements : GNU/Linux os , NDK 14b/16b and SDK
+
+Note: /dev/pts support may vary on non-h3droid devices, sudo is only supported on h3droid.
 
 
 Usage for cross compile :

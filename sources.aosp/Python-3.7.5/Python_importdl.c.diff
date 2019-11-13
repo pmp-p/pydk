@@ -1,0 +1,12 @@
+--- python3/Python/importdl.c	2019-10-15 00:32:36.000000000 +0200
++++ python3-android/Python/importdl.c	2019-10-24 04:57:49.353858586 +0200
+@@ -126,6 +126,9 @@
+     pathbytes = PyUnicode_EncodeFSDefault(path);
+     if (pathbytes == NULL)
+         goto error;
++#if __ANDROID__
++#warning "FIXME: supress lib from "PyInit_lib"
++#endif
+     exportfunc = _PyImport_FindSharedFuncptr(hook_prefix, name_buf,
+                                              PyBytes_AS_STRING(pathbytes),
+                                              fp);
