@@ -9,7 +9,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Run a one-line script
+    - name: Get Python2 version
       run: python -V
     - name: Run a multi-line script
       run: |
@@ -17,4 +17,4 @@ jobs:
         python3 -V
         clang --version
         gcc --version
-
+        env

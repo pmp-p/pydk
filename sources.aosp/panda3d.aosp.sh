@@ -53,23 +53,9 @@ set(PYTHON_EXECUTABLE ${HOST}/bin/python${PYMAJOR}.${PYMINOR})
 
 set(Python_DIR "${SUPPORT}/config")
 
+add_definitions(-DOPENGLES_2=1)
+include_directories("${APKUSR}/include" "${APKUSR}/include/python${PYMAJOR}.${PYMINOR}")
 
-set(Python_VERSION "${PYMAJOR}.${PYMINOR}")
-set(PYTHON_VERSION_STRING "${PYMAJOR}.${PYMINOR}")
-set(PYTHON_EXTENSION_SUFFIX ".so")
-set(PYTHON_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include/python${PYMAJOR}.${PYMINOR}")
-set(PYTHON_LIBRARY_DIRS "${CMAKE_INSTALL_PREFIX}/lib")
-set(PYTHON_ARCH_INSTALL_DIR "${ASSETS}/python${Python_VERSION}")
-set(PYTHON_LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib/python${Python_VERSION}")
-set(PYTHON_FOUND YES)
-
-
-
-#set(host_pzip ${HOST}/bin/pzip)
-#set(host_interrogate ${HOST}/bin/interrogate)
-#set(host_interrogate_module ${HOST}/bin/interrogate_module)
-
-#set(OPENSSL_DIR "\${CMAKE_INSTALL_PREFIX}")
 set(OPENSSL_ROOT_DIR "\${CMAKE_INSTALL_PREFIX}")
 set(OPENSSL_INCLUDE_DIR "\${CMAKE_INSTALL_PREFIX}/include")
 set(OPENSSL_SSL_LIBRARY "\${CMAKE_INSTALL_PREFIX}/lib/libsslpython.so")
@@ -85,19 +71,21 @@ set(OPENAL_LIBRARY openal)
 
 #set(BUILD_MODELS OFF)
 
-add_definitions(-DOPENGLES_2=1)
+
 
 #set(HAVE_EGL_AVAILABLE YES)
 #set(HAVE_EGL YES)
 
-string(APPEND CMAKE_MODULE_LINKER_FLAGS " -L${APKUSR}/lib")
+string(APPEND CMAKE_MODULE_LINKER_FLAGS " -L${APKUSR}/lib -lpython${PYMAJOR}.${PYMINOR}")
 
 END
 
- export LD_LIBRARY_PATH
- export PATH
 
- $CMAKE ${BUILD_SRC}/panda3d-prefix/src/panda3d \
+    # for pandatools
+    export LD_LIBRARY_PATH
+    export PATH
+
+    $CMAKE ${BUILD_SRC}/panda3d-prefix/src/panda3d \
  -DANDROID_ABI=${ANDROID_NDK_ABI_NAME}\
  -DHAVE_PYTHON=YES -DHAVE_OPENAL=YES\
  -DHAVE_GL=NO -DHAVE_GLX=NO -DHAVE_X11=NO \
