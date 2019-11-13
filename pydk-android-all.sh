@@ -312,6 +312,8 @@ do
 
     export APKUSR=${ROOT}/apkroot-${ANDROID_NDK_ABI_NAME}/usr
 
+    export PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig
+
     # for disposal of things we don't want to land in prebuilt folder
     export DISPOSE=${ROOT}/apkroot-${ANDROID_NDK_ABI_NAME}-discard
 
