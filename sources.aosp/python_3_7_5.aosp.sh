@@ -157,9 +157,9 @@ ExternalProject_Add(
 
     CONFIGURE_COMMAND sh -c "cd ${PYSRC} && CC=clang ./configure --prefix=${HOST} --with-cxx-main=clang $PYOPTS >/dev/null"
 
-    BUILD_COMMAND sh -c "cd ${PYSRC} && make -j 4"
+    BUILD_COMMAND sh -c "cd ${PYSRC} && make ${JFLAGS}"
 
-    INSTALL_COMMAND sh -c "cd ${PYSRC} && make install >/dev/null 2>&1"
+    INSTALL_COMMAND sh -c "cd ${PYSRC} && make ${JFLAGS} install >/dev/null 2>&1"
 )
 END
 
@@ -214,17 +214,15 @@ python_3_7_5_patch () {
 END
             if $CI
             then
-                make -j 4 regen-importlib
-                make clean
+                make ${JFLAGS} regen-importlib
+                make ${JFLAGS} clean
             else
-                make -j 4 regen-importlib >/dev/null
-                make clean >/dev/null
+                make ${JFLAGS} regen-importlib >/dev/null
+                make ${JFLAGS} clean >/dev/null
             fi
         fi
     fi
 }
-
-
 
 
 
@@ -259,9 +257,14 @@ then
 #define HAVE_FORK 1
 #endif
 DEF
-    TERM=linux reset
-    #make libpython3.so libinstall inclinstall
-    make install
+    if $CI
+    then
+        echo building cpython
+    else
+        TERM=linux reset
+    fi
+
+    make ${JFLAGS} install | egrep -v "install|Creating|copying|renaming"
 
     mv -vf ${PYLIB}/_sysconfigdata__linux_${ARCH}-linux-${ABI}.py ${PYASSETS}/_sysconfigdata__android_${ARCH}-linux-${ABI}.py
 else
@@ -308,8 +311,6 @@ python_3_7_5_crosscompile () {
         mkdir -p Modules
 
         python_module_setup_local Modules/Setup.local
-
-
 
         [ -f Makefile ] && make clean && rm Makefile
 

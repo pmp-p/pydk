@@ -38,9 +38,9 @@ openssl_1_0_2t_crosscompile () {
         Building openssl
         unset CFLAGS
         # no-ssl2 no-ssl3 no-comp
-        CROSS_COMPILE="" ./Configure android shared no-hw --prefix=${APKUSR} && CROSS_COMPILE="" make depend && CROSS_COMPILE="" make install
-        ln -sf . lib
+        CROSS_COMPILE="" ./Configure android shared no-hw --prefix=${APKUSR} >/dev/null && CROSS_COMPILE="" make -s -j1 depend >/dev/null && CROSS_COMPILE="" make -s -j1 install >/dev/null
 
+        ln -sf . lib
 
         # == fix android libraries are not version numbered
 
@@ -61,7 +61,17 @@ openssl_1_0_2t_crosscompile () {
             ${HOST}/bin/patchelf --set-soname libcryptopython.so ${APKUSR}/lib/libcryptopython.so
         fi
 
+        if [ -f  ${APKUSR}/lib/libsslpython.so ]
+        then
+            echo "    -> openssl-${OPENSSL_VERSION}  built for $ANDROID_NDK_ABI_NAME"
+        else
+            echo "ERROR: openssl-${OPENSSL_VERSION}  $ANDROID_NDK_ABI_NAME"
+            exit 1
+        fi
+
     fi
+
+
 }
 
 

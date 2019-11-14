@@ -47,7 +47,6 @@ panda3d_crosscompile () {
 
     cat ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/toolchain.cmake > ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/panda3d.toolchain.cmake
 
-
     cat >> ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/panda3d.toolchain.cmake <<END
 set(ASSETS ${ORIGIN}/assets)
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG YES)
@@ -88,10 +87,23 @@ END
  -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/panda3d.toolchain.cmake\
  -DCMAKE_INSTALL_PREFIX=${APKUSR} ${PANDA3D_CMAKE_ARGS}"
 
-    # will fail once on Python export
-    $reCMAKE
-
-    $reCMAKE && make -j 4
+    # could fail once on Python export
+    if $reCMAKE
+    then
+        if $CI
+        then
+            make ${JFLAGS} install >/dev/null
+        else
+            make ${JFLAGS} install
+        fi
+    else
+        if $CI
+        then
+            $reCMAKE >/dev/null && make ${JFLAGS} install
+        else
+            $reCMAKE >/dev/null && make ${JFLAGS} install >/dev/null
+        fi
+    fi
 
 }
 

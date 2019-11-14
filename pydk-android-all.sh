@@ -104,13 +104,16 @@ PATCHELF_SRC="${BUILD_SRC}/patchelf-prefix/src/patchelf"
 ADBFS_SRC="${BUILD_SRC}/adbfs-prefix/src/adbfs"
 LZMA_SRC="${BUILD_SRC}/lzma-prefix/src/lzma"
 
+export CMAKE=${ROOT}/bin/cmake
+
 export APK=/data/data/${DN}.${APP}
 
 export PYTHONDONTWRITEBYTECODE=1
 
 if echo $CI|grep -q true
 then
-    echo CI-test force python3.6
+    echo "CI-force-test python3.6, ncpu=4"
+    JOBS=4
     export PYTHON=/usr/local/bin/python3.6
 else
     for py in 8 7 6 5
@@ -123,24 +126,35 @@ else
     done
 fi
 
-if [ -d ${ENV} ]
-then
-    echo " * using previous build dir ${ROOT}"
-else
 
-    if echo $PYTHON |grep -q python3.6
+if echo $PYTHON |grep -q python3.6
+then
+    CI=true
+    JOBS=${JOBS:-8}
+    JFLAGS="-s -j $JOBS"
+    if [ -d ${ENV} ]
     then
-        CI=true
+        echo " * using previous build dir ${ROOT} (CI)"
+    else
         echo " * create venv ${ROOT} (CI)"
         #pclinuxos 3.6.5 --without-pip  ?
         $PYTHON -m venv --prompt pydk-${ENV} ${ENV}
+        touch ${ENV}/new_env
+    fi
+else
+    CI=false
+    JOBS=${JOBS:-4}
+    JFLAGS="-j $JOBS"
+    if [ -d ${ENV} ]
+    then
+        echo " * using previous build dir ${ROOT}"
     else
-        CI=false
         echo " * create venv ${ROOT}"
         $PYTHON -m venv --prompt pydk-${ENV} ${ENV}
+        touch ${ENV}/new_env
     fi
-    touch ${ENV}/new_env
 fi
+
 
 cd ${ROOT}
 
@@ -176,6 +190,8 @@ then
 fi
 
 export UNITS
+export JFLAGS
+
 
 #function step {
 step () {
@@ -272,9 +288,9 @@ END
     cd ${BUILD_SRC}
     if $CI
     then
-        ${ROOT}/bin/cmake .. >/dev/null && make -j 4 >/dev/null
+        $CMAKE .. >/dev/null && make ${JFLAGS} >/dev/null
     else
-        ${ROOT}/bin/cmake .. && make -j 4
+        $CMAKE .. && make ${JFLAGS}
     fi
     echo "  -> host tools now in CMAKE_INSTALL_PREFIX=${HOST}"
 fi
@@ -314,12 +330,18 @@ do
     fi
     unset NDK_PREFIX
 
-
     export TOOLCHAIN=$NDK_HOME/toolchains/llvm/prebuilt/$HOST_TAG
 
-
+    cd ${ROOT}
     mkdir -p ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}
-    cd ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}
+
+    if cd ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}
+    then
+        echo "Current architecture : $ANDROID_NDK_ABI_NAME"
+    else
+        echo "bad arch"
+        continue
+    fi
 
     TARGET_ARCH_ABI=$ANDROID_NDK_ABI_NAME
 
@@ -364,7 +386,6 @@ do
 
     mkdir -p ${APKUSR} ${DISPOSE}
 
-
     export CC=$TOOLCHAIN/bin/${PLATFORM_TRIPLET}${API}-clang
     export CXX=$TOOLCHAIN/bin/${PLATFORM_TRIPLET}${API}-clang++
 
@@ -408,7 +429,7 @@ export PATH=/bin:/usr/bin:/usr/local/bin:${HOST}/bin
 END
 
     # == set up the basic cmake toolchain
-    export CMAKE=${ROOT}/bin/cmake
+
 
     cat > ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/toolchain.cmake <<END
 set(ANDROID_NDK_ROOT ${NDK_HOME})

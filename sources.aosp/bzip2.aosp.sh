@@ -33,7 +33,7 @@ bzip2_crosscompile () {
         Building bz2
 
         unset CFLAGS
-        make CC=$CC AR=$AR RANLIB=$RANLIB PREFIX=${APKUSR} bzip2 install
+        make ${JFLAGS} CC=$CC AR=$AR RANLIB=$RANLIB PREFIX=${APKUSR} bzip2 install
         unset CFLAGS
 
     fi
