@@ -129,9 +129,12 @@ else
 
     if echo $PYTHON |grep -q python3.6
     then
+        CI=true
         echo " * create venv ${ROOT} (CI)"
-        $PYTHON -m venv --without-pip --prompt pydk-${ENV} ${ENV}
+        #--without-pip  ?
+        $PYTHON -m venv --prompt pydk-${ENV} ${ENV}
     else
+        CI=false
         echo " * create venv ${ROOT}"
         $PYTHON -m venv --prompt pydk-${ENV} ${ENV}
     fi
@@ -151,7 +154,12 @@ env >> ${BUILD_SRC}/build.log
 echo  >> ${BUILD_SRC}/build.log
 echo  >> ${BUILD_SRC}/build.log
 
-pip3 install --upgrade pip
+if $CI
+then
+    echo CI - no pip upgrade
+else
+    pip3 install --upgrade pip
+fi
 
 if [ -f new_env ]
 then
