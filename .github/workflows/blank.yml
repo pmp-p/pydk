@@ -14,8 +14,6 @@ jobs:
         echo ---------------------
         python3 -V
         echo
-        python3 -m venv -h
-        echo
         clang --version | head -n 1
         echo
         gcc --version | head -n 1
@@ -26,7 +24,6 @@ jobs:
         echo
         pwd
         git pull
-
     - name: Run PyDK Android build
       run: |
         ls -al
