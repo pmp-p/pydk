@@ -6,42 +6,31 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-        - uses: actions/checkout@v1
-        - name: Prepare PyDK Android build HOST
-            env:
-                ARCHITECTURES: hostonly
-            run: |
-                echo ---------------------
-                python3 -V
-                echo
-                clang --version | head -n 1
-                echo
-                gcc --version | head -n 1
-                echo
-                env|grep ANDROID
-                echo
-                grep "^Pkg.Revision =" ${ANDROID_HOME}/ndk-bundle/source.properties
-                echo
-                sudo apt-get install python3-venv
-                sh pydk-android-all.sh
-
+    - uses: actions/checkout@v1
+    - name: Prepare PyDK Android build HOST
+       run: |
+            echo ---------------------
+            python3 -V
+            echo
+            clang --version | head -n 1
+            echo
+            gcc --version | head -n 1
+            echo
+            env|grep ANDROID
+            echo
+            grep "^Pkg.Revision =" ${ANDROID_HOME}/ndk-bundle/source.properties
+            echo
+            sudo apt-get install python3-venv
+            time sh -c "ARCHITECTURES=hostonly  pydk-android-all.sh"
     - name: build for armeabi-v7a
-        env:
-            ARCHITECTURES: armeabi-v7a
-        run: time sh pydk-android-all.sh
+        run: time sh -c "ARCHITECTURES=armeabi-v7a pydk-android-all.sh"
 
     - name: build for arm64-v8a
-        env:
-            ARCHITECTURES: arm64-v8a
-        run: time sh pydk-android-all.sh
+        run: time sh -c "ARCHITECTURES=arm64-v8a  pydk-android-all.sh"
 
     - name: build for x86
-        env:
-            ARCHITECTURES: x86
-        run: time sh pydk-android-all.sh
+        run: time sh -c "ARCHITECTURES=x86  pydk-android-all.sh"
 
     - name: build for x86_64
-        env:
-            ARCHITECTURES: x86_64
-        run: time sh pydk-android-all.sh
+        run: time sh -c "ARCHITECTURES=x86_64  pydk-android-all.sh"
 
