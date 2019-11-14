@@ -7,6 +7,8 @@ ExternalProject_Add(
     URL ${OPENSSL_URL}
     URL_HASH SHA256=${OPENSSL_HASH}
 
+    DOWNLOAD_NO_PROGRESS ${CI}
+
     PATCH_COMMAND patch -p1 < ${SUPPORT}/openssl-${OPENSSL_VERSION}/Configure.diff
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""

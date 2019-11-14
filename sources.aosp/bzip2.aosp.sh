@@ -7,6 +7,8 @@ ExternalProject_Add(
     URL ${BZ2_URL}
     URL_HASH SHA256=${BZ2_HASH}
 
+    DOWNLOAD_NO_PROGRESS ${CI}
+
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""

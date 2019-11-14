@@ -148,6 +148,8 @@ ExternalProject_Add(
     #GIT_REPOSITORY https://github.com/python/cpython.git
     #GIT_TAG 4082f600a5bd69c8f4a36111fa5eb197d7547756 # 3.7.5rc1
 
+    DOWNLOAD_NO_PROGRESS ${CI}
+
     URL ${PYTHON3_URL}
     URL_HASH SHA256=${PYTHON3_HASH}
 
@@ -155,7 +157,7 @@ ExternalProject_Add(
 
     CONFIGURE_COMMAND sh -c "cd ${PYSRC} && CC=clang ./configure --prefix=${HOST} --with-cxx-main=clang $PYOPTS >/dev/null"
 
-    BUILD_COMMAND sh -c "cd ${PYSRC} && make"
+    BUILD_COMMAND sh -c "cd ${PYSRC} && make -j 4"
 
     INSTALL_COMMAND sh -c "cd ${PYSRC} && make install >/dev/null 2>&1"
 )
@@ -210,8 +212,14 @@ python_3_7_5_patch () {
 #undef HAVE_CRYPT_H
 #endif
 END
-            make regen-importlib
-            make clean
+            if $CI
+            then
+                make -j 4 regen-importlib
+                make clean
+            else
+                make -j 4 regen-importlib >/dev/null
+                make clean >/dev/null
+            fi
         fi
     fi
 }

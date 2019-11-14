@@ -3,16 +3,12 @@ export HOST_TRIPLET=x86_64-linux-gnu
 export HOST_TAG=linux-x86_64
 export ENV=aosp
 export CMAKE_VERSION=3.10.3
-export ARCHITECTURES="armeabi-v7a arm64-v8a x86 x86_64"
-
+export ARCHITECTURES=${ARCHITECTURES:-"armeabi-v7a arm64-v8a x86 x86_64"}
 
 export ANDROID_HOME=${ANDROID_HOME:-$(pwd)/android-sdk}
 export NDK_HOME=${NDK_HOME:-${ANDROID_HOME}/ndk-bundle}
 
-
 export DN=org.${DN}
-
-
 
 export PYMAJOR=3
 
@@ -112,15 +108,20 @@ export APK=/data/data/${DN}.${APP}
 
 export PYTHONDONTWRITEBYTECODE=1
 
-for py in 8 7 6 5
-do
-    if command -v python3.${py}
-    then
-        export PYTHON=$(command -v python3.${py})
-        break
-    fi
-done
-
+if echo $CI|grep -q true
+then
+    echo CI-test force python3.6
+    export PYTHON=/usr/local/bin/python3.6
+else
+    for py in 8 7 6 5
+    do
+        if command -v python3.${py}
+        then
+            export PYTHON=$(command -v python3.${py})
+            break
+        fi
+    done
+fi
 
 if [ -d ${ENV} ]
 then
@@ -131,7 +132,7 @@ else
     then
         CI=true
         echo " * create venv ${ROOT} (CI)"
-        #--without-pip  ?
+        #pclinuxos 3.6.5 --without-pip  ?
         $PYTHON -m venv --prompt pydk-${ENV} ${ENV}
     else
         CI=false
@@ -157,6 +158,7 @@ echo  >> ${BUILD_SRC}/build.log
 if $CI
 then
     echo CI - no pip upgrade
+    export QUIET="1>/dev/null"
 else
     pip3 install --upgrade pip
 fi
@@ -179,7 +181,9 @@ export UNITS
 step () {
     if $CI
     then
-        echo CI
+        echo
+        echo "== CI $1: now in $3-$2 =="
+        echo
     else
         if echo  $STEP|grep -q rue
         then
@@ -194,7 +198,7 @@ do_steps () {
     for unit in ${UNITS}
     do
         step ${unit} $1 pre
-        ${unit}_$1
+        ${unit}_$1 $QUIET
         step ${unit} $1 post
     done
 }
@@ -237,6 +241,9 @@ ExternalProject_Add(
     patchelf
     URL ${PATCHELF_URL}
     URL_HASH SHA256=${PATCHELF_HASH}
+
+    DOWNLOAD_NO_PROGRESS ${CI}
+
     PATCH_COMMAND "./bootstrap.sh"
     CONFIGURE_COMMAND sh -c "cd ${PATCHELF_SRC} && ./configure --prefix=${HOST}"
     BUILD_COMMAND sh -c "cd ${PATCHELF_SRC} && make"
@@ -249,6 +256,9 @@ ExternalProject_Add(
     adbfs
     GIT_REPOSITORY https://github.com/spion/adbfs-rootless.git
     GIT_TAG ba64c22dbd373499eea9c9a9d2a9dd1cd25c33e1 # 14 july 2019
+
+    DOWNLOAD_NO_PROGRESS ${CI}
+
     CONFIGURE_COMMAND sh -c "mkdir -p ${HOST}/bin"
     BUILD_COMMAND sh -c "cd ${ADBFS_SRC} && make"
     INSTALL_COMMAND sh -c "cd ${ADBFS_SRC} && cp -vf adbfs ${HOST}/bin/"
@@ -260,7 +270,12 @@ END
     do_steps host_cmake
 
     cd ${BUILD_SRC}
-    ${ROOT}/bin/cmake .. && make
+    if $CI
+    then
+        ${ROOT}/bin/cmake .. >/dev/null && make -j 4 >/dev/null
+    else
+        ${ROOT}/bin/cmake .. && make -j 4
+    fi
     echo "  -> host tools now in CMAKE_INSTALL_PREFIX=${HOST}"
 fi
 
@@ -287,9 +302,16 @@ Building () {
     /bin/cp -aRfxp ${BUILD_SRC}/$1-prefix/src/$1/. ./
 }
 
+echo
+echo "ARCHITECTURES=[$ARCHITECTURES]"
+echo
 
 for ANDROID_NDK_ABI_NAME in $ARCHITECTURES
 do
+    if echo $ARCHITECTURES|grep -q hostonly
+    then
+        break
+    fi
     unset NDK_PREFIX
 
 

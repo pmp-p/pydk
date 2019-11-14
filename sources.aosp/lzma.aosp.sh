@@ -7,6 +7,8 @@ ExternalProject_Add(
     URL ${LZMA_URL}
     URL_HASH SHA256=${LZMA_HASH}
 
+    DOWNLOAD_NO_PROGRESS ${CI}
+
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
