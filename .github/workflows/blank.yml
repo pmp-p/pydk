@@ -2,13 +2,12 @@ name: CI
 
 on: [push]
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: PyDK Android build
+    - name: PyDK prepare
       run: |
             python3 -V
             echo
@@ -19,16 +18,23 @@ jobs:
             grep "^Pkg.Revision =" ${ANDROID_HOME}/ndk-bundle/source.properties
             echo
             sudo apt-get install -y python3-venv libfuse-dev >/dev/null 2>&1
-            pwd
-            ls -al
+    - name: PyDK Android build HOST
+      run: |
+            cd /home/runner/work/pydk/pydk
             ARCHITECTURES=hostonly time sh pydk-android-all.sh
-    - name: PyDK Android build TARGETS
+    - name: PyDK Android build arm32
       run: |
             cd /home/runner/work/pydk/pydk
             ARCHITECTURES=armeabi-v7a time sh pydk-android-all.sh
+    - name: PyDK Android build arm64
+      run: |
             cd /home/runner/work/pydk/pydk
             ARCHITECTURES=arm64-v8a time sh pydk-android-all.sh
+    - name: PyDK Android build x86
+      run: |
             cd /home/runner/work/pydk/pydk
             ARCHITECTURES=x86  time sh pydk-android-all.sh
+    - name: PyDK Android build x86_64
+      run: |
             cd /home/runner/work/pydk/pydk
             ARCHITECTURES=x86_64 time sh pydk-android-all.sh
