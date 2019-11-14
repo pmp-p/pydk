@@ -11,7 +11,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Get Python2 version
       run: python -V
-    - name: Run a multi-line script
+    - name: Run PyDK Android build
       run: |
         echo ---------------------
         python3 -V
@@ -25,3 +25,5 @@ jobs:
         grep "^Pkg.Revision =" ${ANDROID_HOME}/ndk-bundle/source.properties
         echo
         pwd
+        ls -al
+        #time sh pydk-android-all.sh

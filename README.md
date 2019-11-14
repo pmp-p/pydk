@@ -2,10 +2,14 @@
 
 ARCHITECTURES="armeabi-v7a arm64-v8a x86 x86_64"
 
+```
 Requirements:
     * python 3.7/8 installed
     * clang/clang++ 8+ full build env
     * android-sdk + android-ndk
+    * about 16 GiB free disk space
+    * 4 GiB MEM-SWAP for panda3d linking
+```
 
 clone this repo and go into folder pydk
 add sdk as "android-sdk" and ndk as "android-sdk/ndk-bundle" (ndk20) in the folder
