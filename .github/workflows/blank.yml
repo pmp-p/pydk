@@ -8,23 +8,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Prepare PyDK
+    - name: PyDK Android build
       run: |
-            echo ---------------------
             python3 -V
             echo
             clang --version | head -n 1
             echo
             gcc --version | head -n 1
             echo
-            env|grep ANDROID
-            echo
             grep "^Pkg.Revision =" ${ANDROID_HOME}/ndk-bundle/source.properties
             echo
-            sudo apt-get install python3-venv
+            sudo apt-get install python3-venv >/dev/null 2>&1
             pwd
-            time sh -c "ARCHITECTURES=hostonly  pydk-android-all.sh"
-            time sh -c "ARCHITECTURES=armeabi-v7a pydk-android-all.sh"
-            time sh -c "ARCHITECTURES=arm64-v8a  pydk-android-all.sh"
-            time sh -c "ARCHITECTURES=x86  pydk-android-all.sh"
-            time sh -c "ARCHITECTURES=x86_64  pydk-android-all.sh"
+            ls -al
+            ARCHITECTURES=hostonly time pydk-android-all.sh
+            cd /home/runner/work/pydk/pydk
+            ARCHITECTURES=armeabi-v7a time pydk-android-all.sh
+            cd /home/runner/work/pydk/pydk
+            ARCHITECTURES=arm64-v8a time pydk-android-all.sh
+            cd /home/runner/work/pydk/pydk
+            ARCHITECTURES=x86  time pydk-android-all.sh
+            cd /home/runner/work/pydk/pydk
+            ARCHITECTURES=x86_64 time pydk-android-all.sh"
