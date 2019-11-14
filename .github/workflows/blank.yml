@@ -9,12 +9,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Get Python2 version
-      run: python -V
-    - name: Run PyDK Android build
+    - name: Prepare PyDK Android build
       run: |
         echo ---------------------
         python3 -V
+        echo
+        python3 -m venv -h
         echo
         clang --version | head -n 1
         echo
@@ -25,5 +25,9 @@ jobs:
         grep "^Pkg.Revision =" ${ANDROID_HOME}/ndk-bundle/source.properties
         echo
         pwd
+        git pull
+
+    - name: Run PyDK Android build
+      run: |
         ls -al
         #time sh pydk-android-all.sh

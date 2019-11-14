@@ -105,12 +105,17 @@ ENV/
 # mypy
 .mypy_cache/
 
-
 .eric4project
-DroidPyDK.e4p
+.eric6project/
+PyDK.e4p
 __init__.py
-sources.32/termegl/.gradle
+
 CACHE_URL
 CONFIG
+
 aosp
 android-sdk
+assets
+prebuilt
+testing
+ATTIC
