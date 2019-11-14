@@ -22,8 +22,9 @@ jobs:
             grep "^Pkg.Revision =" ${ANDROID_HOME}/ndk-bundle/source.properties
             echo
             sudo apt-get install python3-venv
+
     - name: Android build HOST
-       run: time sh -c "ARCHITECTURES=hostonly  pydk-android-all.sh"
+      run: time sh -c "ARCHITECTURES=hostonly  pydk-android-all.sh"
 
     - name: build for armeabi-v7a
       run: time sh -c "ARCHITECTURES=armeabi-v7a pydk-android-all.sh"
