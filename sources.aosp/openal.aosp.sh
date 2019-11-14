@@ -1,21 +1,21 @@
 export OPENALDIR=${APKUSR}
 
 
-function openal_host_cmake () {
+openal_host_cmake () {
     cat >> CMakeLists.txt <<END
 #${unit}
 END
 }
 
-function openal_patch () {
+openal_patch () {
     echo
 }
 
-function openal_build () {
+openal_build () {
     echo
 }
 
-function openal_crosscompile () {
+openal_crosscompile () {
 
     if [ -f  ${APKUSR}/lib/libopenal.so ]
     then

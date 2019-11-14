@@ -1,18 +1,18 @@
-function unit_host_cmake () {
+unit_host_cmake () {
     cat >> CMakeLists.txt <<END
 #${unit}
 END
 }
 
-function unit_patch () {
+unit_patch () {
     echo
 }
 
-function unit_build () {
+unit_build () {
     echo
 }
 
-function unit_crosscompile () {
+unit_crosscompile () {
     echo
 }
 

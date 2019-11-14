@@ -166,7 +166,7 @@ then
 
     if pip3 install scikit-build
     then
-        if pip3 install cmake==${CMAKE_VERSION}
+        if pip3 install "cmake==${CMAKE_VERSION}"
         then
             rm new_env
         fi
@@ -175,15 +175,22 @@ fi
 
 export UNITS
 
-function step () {
-    if echo  $STEP|grep -q rue
+#function step {
+step () {
+    if $CI
     then
-        echo "$1: paused in $3-$2  press <enter> to continue"
-        read cont
+        echo CI
+    else
+        if echo  $STEP|grep -q rue
+        then
+            echo "$1: paused in $3-$2  press <enter> to continue"
+            read cont
+        fi
     fi
 }
 
-function do_steps () {
+#function do_steps {
+do_steps () {
     for unit in ${UNITS}
     do
         step ${unit} $1 pre

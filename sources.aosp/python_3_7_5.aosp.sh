@@ -135,7 +135,7 @@ END
 }
 
 
-function python_3_7_5_host_cmake () {
+python_3_7_5_host_cmake () {
 
 cat >> CMakeLists.txt <<END
 ExternalProject_Add(

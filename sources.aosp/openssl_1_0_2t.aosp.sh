@@ -1,4 +1,4 @@
-function openssl_1_0_2t_host_cmake () {
+openssl_1_0_2t_host_cmake () {
     cat >> CMakeLists.txt <<END
 #${unit}
 ExternalProject_Add(
@@ -16,15 +16,15 @@ END
 
 }
 
-function openssl_1_0_2t_patch () {
+openssl_1_0_2t_patch () {
     echo " -> was done in cmake_host step"
 }
 
-function openssl_1_0_2t_build () {
+openssl_1_0_2t_build () {
     echo
 }
 
-function openssl_1_0_2t_crosscompile () {
+openssl_1_0_2t_crosscompile () {
 
 
     # poc https://github.com/ph4r05/android-openssl

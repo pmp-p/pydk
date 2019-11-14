@@ -1,4 +1,4 @@
-function lzma_host_cmake () {
+lzma_host_cmake () {
     cat >> CMakeLists.txt <<END
 
 #${unit}
@@ -15,15 +15,15 @@ ExternalProject_Add(
 END
 }
 
-function lzma_patch () {
+lzma_patch () {
     echo
 }
 
-function lzma_build () {
+lzma_build () {
     echo
 }
 
-function lzma_crosscompile () {
+lzma_crosscompile () {
 
     if [ -f ${APKUSR}/lib/liblzma.a ]
     then

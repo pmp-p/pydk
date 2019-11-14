@@ -1,4 +1,4 @@
-function libffi_host_cmake () {
+libffi_host_cmake () {
     cat >> CMakeLists.txt <<END
 
 #${unit}
@@ -16,15 +16,15 @@ ExternalProject_Add(
 END
 }
 
-function libffi_patch () {
+libffi_patch () {
     echo
 }
 
-function libffi_build () {
+libffi_build () {
     echo
 }
 
-function libffi_crosscompile () {
+libffi_crosscompile () {
     if [ -f ${APKUSR}/lib/libffi.so ]
     then
         echo "    -> libffi already built for $ANDROID_NDK_ABI_NAME"

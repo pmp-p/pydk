@@ -1,4 +1,4 @@
-function bzip2_host_cmake () {
+bzip2_host_cmake () {
     cat >> CMakeLists.txt <<END
 
 #${unit}
@@ -15,15 +15,15 @@ ExternalProject_Add(
 END
 }
 
-function bzip2_patch () {
+bzip2_patch () {
     echo
 }
 
-function bzip2_build () {
+bzip2_build () {
     echo
 }
 
-function bzip2_crosscompile () {
+bzip2_crosscompile () {
     if [ -f ${APKUSR}/lib/libbz2.a ]
     then
         echo "    -> libbz2 already built for $ANDROID_NDK_ABI_NAME"

@@ -3,7 +3,7 @@ PANDA3D_URL=${PANDA3D_URL:-https://github.com/panda3d/panda3d/archive/cmake.zip}
 #PANDA3D_HASH=07f537fd2125aaaa871bbf0686f78a2c8fb1ab7e8f04cd5d72badcd91822240a
 
 
-function panda3d_host_cmake () {
+panda3d_host_cmake () {
     cat >> CMakeLists.txt <<END
 
 ExternalProject_Add(
@@ -21,16 +21,16 @@ END
 }
 
 
-function panda3d_patch () {
+panda3d_patch () {
     echo
 }
 
-function panda3d_build () {
+panda3d_build () {
     echo
 }
 
 
-function panda3d_crosscompile () {
+panda3d_crosscompile () {
     #export STEP=True
 #set(CMAKE_MODULE_PATH \${CMAKE_MODULE_PATH} "${ORIGIN}/thirdparty.aosp/modules/")
 #set(OPENALDIR ${OPENALDIR})
