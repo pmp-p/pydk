@@ -2,13 +2,14 @@ name: CI
 
 on: [push]
 
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - name: Prepare PyDK Android build HOST
-       run: |
+      run: |
             echo ---------------------
             python3 -V
             echo
@@ -23,14 +24,14 @@ jobs:
             sudo apt-get install python3-venv
             time sh -c "ARCHITECTURES=hostonly  pydk-android-all.sh"
     - name: build for armeabi-v7a
-        run: time sh -c "ARCHITECTURES=armeabi-v7a pydk-android-all.sh"
+      run: time sh -c "ARCHITECTURES=armeabi-v7a pydk-android-all.sh"
 
     - name: build for arm64-v8a
-        run: time sh -c "ARCHITECTURES=arm64-v8a  pydk-android-all.sh"
+      run: time sh -c "ARCHITECTURES=arm64-v8a  pydk-android-all.sh"
 
     - name: build for x86
-        run: time sh -c "ARCHITECTURES=x86  pydk-android-all.sh"
+      run: time sh -c "ARCHITECTURES=x86  pydk-android-all.sh"
 
     - name: build for x86_64
-        run: time sh -c "ARCHITECTURES=x86_64  pydk-android-all.sh"
+      run: time sh -c "ARCHITECTURES=x86_64  pydk-android-all.sh"
 
