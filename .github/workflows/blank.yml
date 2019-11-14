@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Prepare PyDK Android build HOST
+    - name: Prepare PyDK
       run: |
             echo ---------------------
             python3 -V
@@ -22,7 +22,9 @@ jobs:
             grep "^Pkg.Revision =" ${ANDROID_HOME}/ndk-bundle/source.properties
             echo
             sudo apt-get install python3-venv
-            time sh -c "ARCHITECTURES=hostonly  pydk-android-all.sh"
+    - name: Android build HOST
+       run: time sh -c "ARCHITECTURES=hostonly  pydk-android-all.sh"
+
     - name: build for armeabi-v7a
       run: time sh -c "ARCHITECTURES=armeabi-v7a pydk-android-all.sh"
 
