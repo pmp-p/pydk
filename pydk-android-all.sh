@@ -126,8 +126,15 @@ if [ -d ${ENV} ]
 then
     echo " * using previous build dir ${ROOT}"
 else
-    echo " * create venv ${ROOT}"
-    $PYTHON -m venv --prompt pydk-${ENV} ${ENV}
+
+    if echo $PYTHON |grep -q python3.6
+    then
+        echo " * create venv ${ROOT} (CI)"
+        $PYTHON -m venv --without-pip --prompt pydk-${ENV} ${ENV}
+    else
+        echo " * create venv ${ROOT}"
+        $PYTHON -m venv --prompt pydk-${ENV} ${ENV}
+    fi
     touch ${ENV}/new_env
 fi
 
@@ -144,14 +151,14 @@ env >> ${BUILD_SRC}/build.log
 echo  >> ${BUILD_SRC}/build.log
 echo  >> ${BUILD_SRC}/build.log
 
-pip install --upgrade pip
+pip3 install --upgrade pip
 
 if [ -f new_env ]
 then
 
-    if pip install scikit-build
+    if pip3 install scikit-build
     then
-        if pip install cmake==${CMAKE_VERSION}
+        if pip3 install cmake==${CMAKE_VERSION}
         then
             rm new_env
         fi
