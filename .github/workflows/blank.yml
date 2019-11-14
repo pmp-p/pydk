@@ -23,6 +23,7 @@ jobs:
         grep "^Pkg.Revision =" ${ANDROID_HOME}/ndk-bundle/source.properties
         echo
         pwd
+        pip3 install python3-venv
     - name: Run PyDK Android build
       run: |
         ls -al
