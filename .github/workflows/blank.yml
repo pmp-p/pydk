@@ -23,8 +23,7 @@ jobs:
         grep "^Pkg.Revision =" ${ANDROID_HOME}/ndk-bundle/source.properties
         echo
         pwd
-        git pull
     - name: Run PyDK Android build
       run: |
         ls -al
-        #time sh pydk-android-all.sh
+        time sh pydk-android-all.sh
