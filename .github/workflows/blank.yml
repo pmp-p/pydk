@@ -20,7 +20,7 @@ jobs:
             echo pydk support
             sudo apt-get install -y python3-venv libfuse-dev >/dev/null
             echo python3 support
-            sudo apt-get install -y  sqlite3-dev
+            sudo apt-get install -y  sqlite-dev
             echo panda3d support
             sudo apt-get install -y libbullet-dev  ninja-build bison flex libfreetype6-dev libgl1-mesa-dev libjpeg-dev libode-dev libopenal-dev libpng-dev libssl-dev libvorbis-dev zlib1g-dev >/dev/null
             echo emscripten support
