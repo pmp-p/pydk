@@ -1,19 +1,28 @@
+#  PARALLEL BUILD WILL BREAK : always use -j1 !
+
+export OPENSSL_URL=${OPENSSL_URL:-"URL https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"}
+export OPENSSL_HASH=${OPENSSL_HASH:-}
+
+
 openssl_1_0_2t_host_cmake () {
     cat >> CMakeLists.txt <<END
+
 #${unit}
+
 ExternalProject_Add(
     openssl
     DEPENDS patchelf
-    URL ${OPENSSL_URL}
-    URL_HASH SHA256=${OPENSSL_HASH}
+    ${OPENSSL_URL}
+    ${OPENSSL_HASH}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
     PATCH_COMMAND patch -p1 < ${SUPPORT}/openssl-${OPENSSL_VERSION}/Configure.diff
-    CONFIGURE_COMMAND ""
+    CONFIGURE_COMMAND sh -c "echo 1>&1;echo external.configure ${unit} 1>&2"
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
 )
+
 END
 
 }

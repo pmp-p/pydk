@@ -1,4 +1,6 @@
 #!/bin/sh
+
+
 export HOST_TRIPLET=x86_64-linux-gnu
 export HOST_TAG=linux-x86_64
 export ENV=aosp
@@ -14,40 +16,29 @@ export PYMAJOR=3
 
 #UNITS="unit"
 
-UNITS="bzip2 lzma libffi"
+UNITS="bzip2 lzma libffi sqlite3"
 
-
-if true
-then
+if true; then
     export PYMINOR=7
     export PYVER=${PYMAJOR}.${PYMINOR}.5
-    UNITS="${UNITS} openssl_1_0_2t python_${PYMAJOR}_${PYMINOR}_5"
-    PYTHON3_HASH=349ac7b4a9d399302542163fdf5496e1c9d1e5d876a4de771eec5acde76a1f8a
-
-    export OPENSSL_VERSION="1.0.2t"
-    OPENSSL_HASH=14cb464efe7ac6b54799b34456bd69558a749a4931ecfd9cf9f71d7881cac7bc
 else
     export PYMINOR=8
     export PYVER=${PYMAJOR}.${PYMINOR}.0
-    UNITS="${UNITS} openssl_1_1_1d python_${PYMAJOR}_${PYMINOR}_0"
-
-    PYTHON3_HASH=fc00204447b553c2dd7495929411f567cc480be00c49b11a14aee7ea18750981
-
-    export OPENSSL_VERSION="1.1.1d"
-    OPENSSL_HASH=1e3a91bc1f9dfce01af26026f856e064eab4c8ee0a8f457b5ae30b40b8b711f2
 fi
+
+if true; then
+    UNITS="${UNITS} openssl_1_0_2t"
+    export OPENSSL_VERSION="1.0.2t"
+    OPENSSL_HASH="URL_HASH SHA256=14cb464efe7ac6b54799b34456bd69558a749a4931ecfd9cf9f71d7881cac7bc"
+else
+    UNITS="${UNITS} openssl_1_1_1d"
+    export OPENSSL_VERSION="1.1.1d"
+    OPENSSL_HASH="URL_HASH SHA256=1e3a91bc1f9dfce01af26026f856e064eab4c8ee0a8f457b5ae30b40b8b711f2"
+fi
+
 
 export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.so
 
-
-
-
-
-LIBFFI_HASH=403d67aabf1c05157855ea2b1d9950263fb6316536c8c333f5b9ab1eb2f20ecf
-BZ2_HASH=ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269
-PATCHELF_HASH=b3cb6bdedcef5607ce34a350cf0b182eb979f8f7bc31eae55a93a70a3f020d13
-LZMA_HASH=3313fd2a95f43d88e44264e6b015e7d03053e681860b0d5d3f9baca79c57b7bf
-SQLITE_HASH=8c5a50db089bd2a1b08dbc5b00d2027602ca7ff238ba7658fabca454d4298e60
 
 # above are the defaults, can be overridden via CONFIG
 
@@ -57,22 +48,21 @@ pwd
     . $(pwd)/CONFIG
 fi
 
+
+PATCHELF_URL="URL https://github.com/NixOS/patchelf/archive/0.10.tar.gz"
+PATCHELF_HASH="URL_HASH SHA256=b3cb6bdedcef5607ce34a350cf0b182eb979f8f7bc31eae55a93a70a3f020d13"
+
+ADBFS_URL="GIT_REPOSITORY https://github.com/spion/adbfs-rootless.git"
+ADBFS_HASH="GIT_TAG ba64c22dbd373499eea9c9a9d2a9dd1cd25c33e1 # 14 july 2019"
+
+
 # optionnal urls for sources packages
 if [ -f "CACHE_URL" ]
 then
     . $(pwd)/CACHE_URL
-else
-    LIBFFI_URL="https://github.com/libffi/libffi/releases/download/v3.3-rc0/libffi-3.3-rc0.tar.gz"
-    OPENSSL_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"
-    BZ2_URL="https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz"
-    PYTHON3_URL="https://github.com/python/cpython/archive/v${PYVER}.tar.gz"
-    PATCHELF_URL="https://github.com/NixOS/patchelf/archive/0.10.tar.gz"
-    LZMA_URL="https://tukaani.org/xz/xz-5.2.4.tar.bz2"
-    SQLITE_URL="https://www.sqlite.org/2019/sqlite-autoconf-3300100.tar.gz"
 fi
 
-UNITS="$UNITS openal panda3d"
-
+UNITS="$UNITS python3 freetype2 harfbuzz ft2_hb bullet3 openal panda3d"
 
 if grep "^Pkg.Revision = 20" $NDK_HOME/source.properties
 then
@@ -132,6 +122,7 @@ then
     CI=true
     JOBS=${JOBS:-8}
     JFLAGS="-s -j $JOBS"
+    CNF="--silent"
     if [ -d ${ENV} ]
     then
         echo " * using previous build dir ${ROOT} (CI)"
@@ -145,6 +136,7 @@ else
     CI=false
     JOBS=${JOBS:-4}
     JFLAGS="-j $JOBS"
+    CNF=""
     if [ -d ${ENV} ]
     then
         echo " * using previous build dir ${ROOT}"
@@ -189,9 +181,14 @@ then
     fi
 fi
 
+# build order
 export UNITS
+
+# "gmake" args for CI
 export JFLAGS
 
+#"configure" args for CI
+export CNF
 
 #function step {
 step () {
@@ -233,7 +230,9 @@ export PATH=${HOST}/bin:${ROOT}/bin:$PATH
 
 for unit in $UNITS
 do
-    echo "  + adding $unit"
+    echo -n "  +  $unit from : "
+    egrep 'URL |GIT' ${SUPPORT}/${unit}.aosp.sh |cut -d' ' -f 3-|cut -f1 -d\"
+    #echo
     . ${SUPPORT}/${unit}.aosp.sh
 done
 
@@ -255,8 +254,8 @@ set(_downloadOptions SHOW_PROGRESS)
 
 ExternalProject_Add(
     patchelf
-    URL ${PATCHELF_URL}
-    URL_HASH SHA256=${PATCHELF_HASH}
+    ${PATCHELF_URL}
+    ${PATCHELF_HASH}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
@@ -270,8 +269,8 @@ ExternalProject_Add(
 
 ExternalProject_Add(
     adbfs
-    GIT_REPOSITORY https://github.com/spion/adbfs-rootless.git
-    GIT_TAG ba64c22dbd373499eea9c9a9d2a9dd1cd25c33e1 # 14 july 2019
+    ${ADBFS_URL}
+    ${ADBFS_HASH}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
@@ -288,9 +287,21 @@ END
     cd ${BUILD_SRC}
     if $CI
     then
-        $CMAKE .. >/dev/null && make ${JFLAGS} >/dev/null
+        if $CMAKE .. >/dev/null && make ${JFLAGS} >/dev/null
+        then
+            echo
+        else
+            echo "ERROR : cmake externals"
+            exit 1
+        fi
     else
-        $CMAKE .. && make ${JFLAGS}
+        if $CMAKE .. && make ${JFLAGS}
+        then
+            echo
+        else
+            echo "ERROR : cmake externals"
+            exit 1
+        fi
     fi
     echo "  -> host tools now in CMAKE_INSTALL_PREFIX=${HOST}"
 fi
@@ -307,7 +318,7 @@ cd ${ROOT}
 PrepareBuild () {
     cd ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}
 
-    echo " * configure target==$1 ${PLATFORM_TRIPLET}"
+    echo " * building $1 for target ${PLATFORM_TRIPLET}"
 
     mkdir -p $1-${ANDROID_NDK_ABI_NAME}
     cd $1-${ANDROID_NDK_ABI_NAME}
@@ -316,6 +327,16 @@ PrepareBuild () {
 Building () {
     PrepareBuild $1
     /bin/cp -aRfxp ${BUILD_SRC}/$1-prefix/src/$1/. ./
+}
+
+std_make () {
+    if make ${JFLAGS} install |egrep -v "libtool|install"
+    then
+        echo "make $1 : installed"
+    else
+        echo "ERROR: make $1"
+        exit 1
+    fi
 }
 
 echo
@@ -333,6 +354,7 @@ do
     export TOOLCHAIN=$NDK_HOME/toolchains/llvm/prebuilt/$HOST_TAG
 
     cd ${ROOT}
+
     mkdir -p ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}
 
     if cd ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}
@@ -409,27 +431,9 @@ do
 
     export PLATFORM_TRIPLET=${BUILD_TYPE}
 
-
-
-    # == that env file can be handy for debugging compile failures.
-
-    cat > $ROOT/${ANDROID_NDK_ABI_NAME}.sh <<END
-#!/bin/sh
-export STRIP=$STRIP
-export READELF=$READELF
-export AR=$AR
-export AS=$AS
-export LD=$LD
-export CXX=$CXX
-export CC=$CC
-export RANLIB=$RANLIB
-
-export PATH=/bin:/usr/bin:/usr/local/bin:${HOST}/bin
-
-END
-
     # == set up the basic cmake toolchain
 
+#TODO: ANDROID_ARM_NEON
 
     cat > ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/toolchain.cmake <<END
 set(ANDROID_NDK_ROOT ${NDK_HOME})
@@ -446,7 +450,60 @@ set(CMAKE_FIND_LIBRARY_SUFFIXES .so)
 #unset(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES)
 #unset(CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES)
 
+set(BZIP2_LIBRARIES "${APKUSR}/lib/libbz2.a")
+set(BZIP2_INCLUDE_DIR "${APKUSR}/include")
+
+set(HARFBUZZ_INCLUDE_DIRS "${APKUSR}/include/harfbuzz")
+set(HARFBUZZ_LIBRARIES "${APKUSR}/lib/libharfbuzz.so")
+
+set(HARFBUZZ_INCLUDE_DIR "${APKUSR}/include/harfbuzz")
+set(HARFBUZZ_LIBRARY "${APKUSR}/lib/libharfbuzz.so")
+
+set(CMAKE_CONFIGURATION_TYPES "Release")
+set(CMAKE_BUILD_TYPE "Release")
 END
+
+
+    # == that env file can be handy for debugging compile failures.
+    export ACMAKE="$CMAKE -DANDROID_ABI=${ANDROID_NDK_ABI_NAME}\
+ -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/toolchain.cmake\
+ -DCMAKE_INSTALL_PREFIX=${APKUSR}"
+
+    cat > $ROOT/${ANDROID_NDK_ABI_NAME}.sh <<END
+#!/bin/sh
+export STRIP=$STRIP
+export READELF=$READELF
+export AR=$AR
+export AS=$AS
+export LD=$LD
+export CXX=$CXX
+export CC=$CC
+export RANLIB=$RANLIB
+
+export PATH=${HOST}/bin:${ROOT}/bin:/bin:/usr/bin:/usr/local/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+
+END
+
+    # == a shell for one arch, with a ready to use cmake cross compile command
+    cat > $ORIGIN/shell.${ANDROID_NDK_ABI_NAME}.sh <<END
+#!/bin/sh
+. $ROOT/${ANDROID_NDK_ABI_NAME}.sh
+
+. ${ROOT}/bin/activate
+
+export PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig
+
+export PS1="[PyDK:$ANDROID_NDK_ABI_NAME] \w \$ "
+
+acmake () {
+        reset
+        echo "  == cmake for target ${ANDROID_NDK_ABI_NAME} =="
+        ${ACMAKE} "\$@"
+}
+
+END
+
 
 
     grep -v 'Using custom NDK path'  ${NDK_HOME}/build/cmake/android.toolchain.cmake >> ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/toolchain.cmake

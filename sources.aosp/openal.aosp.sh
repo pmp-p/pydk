@@ -1,9 +1,20 @@
 export OPENALDIR=${APKUSR}
 
-
 openal_host_cmake () {
     cat >> CMakeLists.txt <<END
 #${unit}
+
+ExternalProject_Add(
+    openal
+    GIT_REPOSITORY https://github.com/pmp-p/pydk-openal-soft.git
+
+    DOWNLOAD_NO_PROGRESS ${CI}
+
+    CONFIGURE_COMMAND sh -c "echo 1>&1;echo external.configure ${unit} 1>&2"
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+)
+
 END
 }
 
@@ -21,13 +32,15 @@ openal_crosscompile () {
     then
         echo "    -> OpenAL already built for $ANDROID_NDK_ABI_NAME"
     else
-        #STEP=True
+
         PrepareBuild ${unit}
-        echo " * building OpenAL for target ${ANDROID_ABI}"
-        $CMAKE ${SUPPORT}/openal-soft-aosp\
- -DANDROID_ABI=${ANDROID_NDK_ABI_NAME}\
- -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/toolchain.cmake\
- -DCMAKE_INSTALL_PREFIX=${APKUSR} && make install
+        if $ACMAKE ${BUILD_SRC}/${unit}-prefix/src/${unit} >/dev/null
+        then
+            std_make ${unit}
+        else
+            echo "ERROR $unit"
+            exit 1
+        fi
     fi
 }
 

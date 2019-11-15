@@ -9,15 +9,24 @@ jobs:
     - uses: actions/checkout@v1
     - name: PyDK prepare
       run: |
+            WD=$(pwd)
             python3 -V
-            echo
+            echo $WD
             clang --version | head -n 1
             echo
             gcc --version | head -n 1
             echo
             grep "^Pkg.Revision =" ${ANDROID_HOME}/ndk-bundle/source.properties
-            echo
-            sudo apt-get install -y python3-venv libfuse-dev >/dev/null 2>&1
+            echo pydk support
+            sudo apt-get install -y python3-venv libfuse-dev >/dev/null
+            echo python3 support
+            sudo apt-get install -y  sqlite3-dev
+            echo panda3d support
+            sudo apt-get install -y libbullet-dev  ninja-build bison flex libfreetype6-dev libgl1-mesa-dev libjpeg-dev libode-dev libopenal-dev libpng-dev libssl-dev libvorbis-dev zlib1g-dev >/dev/null
+            echo emscripten support
+            git clone https://github.com/emscripten-core/emsdk.git
+            cd emsdk && ./emsdk update-tags && ./emsdk install --embedded tot && ./emsdk activate --embedded tot
+            cd $WD
     - name: PyDK Android build HOST
       run: |
             cd /home/runner/work/pydk/pydk

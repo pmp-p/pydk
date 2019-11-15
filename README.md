@@ -15,6 +15,21 @@ clone this repo and go into folder pydk
 add sdk as "android-sdk" and ndk as "android-sdk/ndk-bundle" (ndk20) in the folder
 launch ./pydk-android-all.sh
 
+```
+sources used:
+  +  bzip2 from : https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
+  +  lzma from : https://tukaani.org/xz/xz-5.2.4.tar.bz2
+  +  libffi from : https://github.com/libffi/libffi/releases/download/v3.3-rc0/libffi-3.3-rc0.tar.gz
+  +  sqlite3 from : https://github.com/azadkuh/sqlite-amalgamation.git
+  +  openssl_1_0_2t from : https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz
+  +  python_3_7_5 from : https://github.com/python/cpython/archive/v${PYVER}.tar.gz
+  +  freetype2 from : https://download.savannah.gnu.org/releases/freetype/freetype-2.10.0.tar.bz2
+  +  harfbuzz from : https://github.com/harfbuzz/harfbuzz.git
+  +  ft2_hb from : https://download.savannah.gnu.org/releases/freetype/freetype-2.10.0.tar.bz2
+  +  bullet3 from : https://github.com/bulletphysics/bullet3.git
+  +  openal from :   GIT_REPOSITORY https://github.com/pmp-p/pydk-openal-soft.git
+  +  panda3d from : https://github.com/panda3d/panda3d/archive/cmake.zip
+```
 
 
 # pydk : H3Droid ( and most kitkat devices )

@@ -1,5 +1,22 @@
 #!/bin/sh
 
+export PYTHON3_URL=${PYTHON3_URL:-"URL https://github.com/python/cpython/archive/v${PYVER}.tar.gz"}
+
+
+if [ "$PYVER" == "3.7.5" ]; then
+    export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=349ac7b4a9d399302542163fdf5496e1c9d1e5d876a4de771eec5acde76a1f8a"}
+fi
+
+if [ "$PYVER" == "3.8.0" ]; then
+    export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=fc00204447b553c2dd7495929411f567cc480be00c49b11a14aee7ea18750981"}
+fi
+
+
+#REPOSITORY https://github.com/python/cpython.git
+#TAG 4082f600a5bd69c8f4a36111fa5eb197d7547756 # 3.7.5rc1
+
+
+
 export PYDROID="${BUILD_SRC}/python3-android"
 
 export PYOPTS="--without-gcc --without-pymalloc --without-pydebug\
@@ -9,7 +26,6 @@ export PYOPTS="--without-gcc --without-pymalloc --without-pydebug\
 
 #for arm: ac_cv_mixed_endian_double=yes
 # ac_cv_little_endian_double=yes
-
 
 
 
@@ -135,7 +151,7 @@ END
 }
 
 
-python_3_7_5_host_cmake () {
+python3_host_cmake () {
 
 cat >> CMakeLists.txt <<END
 ExternalProject_Add(
@@ -144,14 +160,11 @@ ExternalProject_Add(
     DEPENDS libffi
     DEPENDS bz2
     DEPENDS lzma
-
-    #GIT_REPOSITORY https://github.com/python/cpython.git
-    #GIT_TAG 4082f600a5bd69c8f4a36111fa5eb197d7547756 # 3.7.5rc1
+    DEPENDS sqlite3
+    ${PYTHON3_URL}
+    ${PYTHON3_HASH}
 
     DOWNLOAD_NO_PROGRESS ${CI}
-
-    URL ${PYTHON3_URL}
-    URL_HASH SHA256=${PYTHON3_HASH}
 
     PATCH_COMMAND sh -c "/bin/cp -aRfxp ${PYSRC} ${PYDROID}"
 
@@ -166,7 +179,7 @@ END
 }
 
 
-python_3_7_5_patch () {
+python3_patch () {
 
     cd ${PYDROID}
 
@@ -279,7 +292,7 @@ END
 }
 
 
-python_3_7_5_crosscompile () {
+python3_crosscompile () {
 
     # prebuilt/<arch>/ is the final place for libpython
     # but prefix is set to <apk>/usr
@@ -291,10 +304,10 @@ python_3_7_5_crosscompile () {
     if [ -f ${APKUSR}/lib/$LIBPYTHON ]
     then
 
-        echo "    -> python3 already built for $ANDROID_NDK_ABI_NAME"
+        echo "    -> $LIBPYTHON already built for $ANDROID_NDK_ABI_NAME"
 
     else
-        echo " * configure target==python $PLATFORM_TRIPLET"
+        echo " * configure target==$LIBPYTHON $PLATFORM_TRIPLET"
 
         cd ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}
 

@@ -1,15 +1,19 @@
+
+export BZ2_URL=${BZ2_URL:-"URL https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz"}
+export BZ2_HASH=${BZ2_HASH:-"URL_HASH SHA256=ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269"}
+
 bzip2_host_cmake () {
     cat >> CMakeLists.txt <<END
 
 #${unit}
 ExternalProject_Add(
     bz2
-    URL ${BZ2_URL}
-    URL_HASH SHA256=${BZ2_HASH}
+    ${BZ2_URL}
+    ${BZ2_HASH}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
-    CONFIGURE_COMMAND ""
+    CONFIGURE_COMMAND sh -c "echo 1>&1;echo external.configure ${unit} 1>&2"
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
 )
