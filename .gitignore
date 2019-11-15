@@ -119,3 +119,9 @@ assets
 prebuilt
 testing
 ATTIC
+
+shell.armeabi-v7a.sh
+shell.arm64-v8a.sh
+shell.x86.sh
+shell.x86_64.sh
+

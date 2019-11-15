@@ -3,18 +3,18 @@
 export PYTHON3_URL=${PYTHON3_URL:-"URL https://github.com/python/cpython/archive/v${PYVER}.tar.gz"}
 
 
-if [ "$PYVER" == "3.7.5" ]; then
+if echo "$PYVER" |grep -q "3.7.5$"
+then
     export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=349ac7b4a9d399302542163fdf5496e1c9d1e5d876a4de771eec5acde76a1f8a"}
 fi
 
-if [ "$PYVER" == "3.8.0" ]; then
+if echo "$PYVER" |grep -q "3.8.0$"
+then
     export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=fc00204447b553c2dd7495929411f567cc480be00c49b11a14aee7ea18750981"}
 fi
 
-
 #REPOSITORY https://github.com/python/cpython.git
 #TAG 4082f600a5bd69c8f4a36111fa5eb197d7547756 # 3.7.5rc1
-
 
 
 export PYDROID="${BUILD_SRC}/python3-android"
