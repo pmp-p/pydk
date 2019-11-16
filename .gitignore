@@ -125,3 +125,7 @@ shell.arm64-v8a.sh
 shell.x86.sh
 shell.x86_64.sh
 
+#alpha project for extension cross compilation
+repo
+cross-modules.sh
+sources.aosp/cross_pip.aosp.sh

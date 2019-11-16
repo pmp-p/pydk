@@ -2,16 +2,20 @@
 
 export PYTHON3_URL=${PYTHON3_URL:-"URL https://github.com/python/cpython/archive/v${PYVER}.tar.gz"}
 
+case "${PYVER}" in
+    "3.7.5" )  export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=349ac7b4a9d399302542163fdf5496e1c9d1e5d876a4de771eec5acde76a1f8a"};;
+    "3.8.0" )  export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=fc00204447b553c2dd7495929411f567cc480be00c49b11a14aee7ea18750981"};;
+esac
 
-if echo "$PYVER" |grep -q "3.7.5$"
-then
-    export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=349ac7b4a9d399302542163fdf5496e1c9d1e5d876a4de771eec5acde76a1f8a"}
-fi
-
-if echo "$PYVER" |grep -q "3.8.0$"
-then
-    export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=fc00204447b553c2dd7495929411f567cc480be00c49b11a14aee7ea18750981"}
-fi
+#if echo "$PYVER" |grep -q "3.7.5$"
+#then
+#    export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=349ac7b4a9d399302542163fdf5496e1c9d1e5d876a4de771eec5acde76a1f8a"}
+#fi
+#
+#if echo "$PYVER" |grep -q "3.8.0$"
+#then
+#    export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=fc00204447b553c2dd7495929411f567cc480be00c49b11a14aee7ea18750981"}
+#fi
 
 #REPOSITORY https://github.com/python/cpython.git
 #TAG 4082f600a5bd69c8f4a36111fa5eb197d7547756 # 3.7.5rc1
@@ -413,16 +417,6 @@ python3_crosscompile () {
     fi
 
 
-
-    #export JAVA_HOME=/opt/sdk/jdk
-    #export CROSS_COMPILE=armv7a-linux-androideabi
-    #. ${ROOT}/${ANDROID_ABI}.sh
-    #export _PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata__android_armv7a-linux-androideabi
-    #export __ANDROID__=1
-
-    #export ANDROID_NDK_HOME=${NDK_HOME}
-
-    . ${ORIGIN}/cross-build.sh
 
 }
 

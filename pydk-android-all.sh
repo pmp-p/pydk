@@ -64,6 +64,18 @@ fi
 
 UNITS="$UNITS python3 freetype2 harfbuzz ft2_hb bullet3 openal panda3d"
 
+if [ -f "${SUPPORT}/cross_pip.aosp.sh" ]
+then
+    UNITS="$UNITS cross_pip"
+else
+    echo "
+    *************************************************************
+    * *           cross-pip and cross-modules not found                 **
+    *************************************************************
+    "
+fi
+
+
 if grep "^Pkg.Revision = 20" $NDK_HOME/source.properties
 then
     echo NDK 20+ found
