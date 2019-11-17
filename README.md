@@ -21,15 +21,27 @@ sources used:
   +  lzma from : https://tukaani.org/xz/xz-5.2.4.tar.bz2
   +  libffi from : https://github.com/libffi/libffi/releases/download/v3.3-rc0/libffi-3.3-rc0.tar.gz
   +  sqlite3 from : https://github.com/azadkuh/sqlite-amalgamation.git
-  +  openssl_1_0_2t from : https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz
-  +  python_3_7_5 from : https://github.com/python/cpython/archive/v${PYVER}.tar.gz
+  +  openssl from : https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz
+  +  python3 from : https://github.com/python/cpython/archive/v${PYVER}.tar.gz
   +  freetype2 from : https://download.savannah.gnu.org/releases/freetype/freetype-2.10.0.tar.bz2
   +  harfbuzz from : https://github.com/harfbuzz/harfbuzz.git
   +  ft2_hb from : https://download.savannah.gnu.org/releases/freetype/freetype-2.10.0.tar.bz2
   +  bullet3 from : https://github.com/bulletphysics/bullet3.git
   +  openal from :   GIT_REPOSITORY https://github.com/pmp-p/pydk-openal-soft.git
+  +  ogg from : http://downloads.xiph.org/releases/ogg/libogg-1.3.4.tar.xz
+  +  vorbis from : https://github.com/xiph/vorbis.git
   +  panda3d from : https://github.com/panda3d/panda3d/archive/cmake.zip
 ```
+
+NOTE: there's a warning about a cross pip module not provided.
+it is not because not well tested  and  making use of cpython internals.
+but be aware that any demo provided may use prebuilt made with that module.
+
+Beerware : [![PayPayl](https://img.shields.io/badge/Paypal-Me-yellow.svg)](http://paypal.me/pmpp)
+
+
+[![la rache](https://www.la-rache.com/img/kro.jpg)](https://www.la-rache.com)
+
 
 
 # pydk : H3Droid ( and most kitkat devices )

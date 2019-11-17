@@ -5,8 +5,9 @@ export LIBFFI_HASH=${LIBFFI_HASH:-"URL_HASH SHA256=403d67aabf1c05157855ea2b1d995
 libffi_host_cmake () {
     cat >> CMakeLists.txt <<END
 
-#${unit}
-
+if(1)
+    message("")
+    message(" processing unit : ${unit}")
 ExternalProject_Add(
     libffi
     ${LIBFFI_URL}
@@ -18,6 +19,11 @@ ExternalProject_Add(
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
 )
+else()
+    message(" ********************************************************************")
+    message("  No cmake ExternalProject_Add defined for unit : ${unit}")
+    message(" ********************************************************************")
+endif()
 
 END
 }

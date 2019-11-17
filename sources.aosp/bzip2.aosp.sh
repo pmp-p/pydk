@@ -5,7 +5,9 @@ export BZ2_HASH=${BZ2_HASH:-"URL_HASH SHA256=ab5a03176ee106d3f0fa90e381da478ddae
 bzip2_host_cmake () {
     cat >> CMakeLists.txt <<END
 
-#${unit}
+if(1)
+    message("")
+    message(" processing unit : ${unit}")
 ExternalProject_Add(
     bz2
     ${BZ2_URL}
@@ -17,6 +19,11 @@ ExternalProject_Add(
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
 )
+else()
+    message(" ********************************************************************")
+    message("  No cmake ExternalProject_Add defined for unit : ${unit}")
+    message(" ********************************************************************")
+endif()
 
 END
 }

@@ -9,7 +9,9 @@ export BULLET_HASH=${BULLET_HASH:-}
 
 bullet3_host_cmake () {
     cat >> CMakeLists.txt <<END
-#${unit}
+if(1)
+    message("")
+    message(" processing unit : ${unit}")
 
 ExternalProject_Add(
     bullet3
@@ -23,7 +25,11 @@ ExternalProject_Add(
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
 )
-
+else()
+    message(" ********************************************************************")
+    message("  No cmake ExternalProject_Add defined for unit : ${unit}")
+    message(" ********************************************************************")
+endif()
 
 END
 }

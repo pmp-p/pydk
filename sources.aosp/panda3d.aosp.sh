@@ -4,15 +4,24 @@ export PANDA3D_HASH=${PANDA3D_HASH:-}
 
 export PANDA3D_CMAKE_ARGS="-DHAVE_PYTHON=YES\
  -DHAVE_GL=NO -DHAVE_GLX=NO -DHAVE_X11=NO\
- -DHAVE_GLES1=NO  -DHAVE_GLES2=NO -DHAVE_EGL=NO\
+ -DHAVE_GLES1=NO -DHAVE_GLES2=NO -DHAVE_EGL=NO\
  -DHAVE_EGG=NO -DHAVE_SSE2=NO"
 
 panda3d_host_cmake () {
     cat >> CMakeLists.txt <<END
 
+if(1)
+    message("")
+    message(" processing unit : ${unit}")
 ExternalProject_Add(
     panda3d
     DEPENDS python3
+    DEPENDS openal
+    DEPENDS harfbuzz
+    DEPENDS freetype2
+    DEPENDS vorbis
+    DEPENDS openssl
+
     ${PANDA3D_URL}
     ${PANDA3D_HASH}
 
@@ -21,6 +30,12 @@ ExternalProject_Add(
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${HOST} -DPYTHON_EXECUTABLE=${HOST}/bin/python${PYMAJOR}.${PYMINOR} ${PANDA3D_CMAKE_ARGS}
 
 )
+else()
+    message(" ********************************************************************")
+    message("  No cmake ExternalProject_Add defined for unit : ${unit}")
+    message(" ********************************************************************")
+endif()
+
 
 END
 
@@ -37,9 +52,6 @@ panda3d_build () {
 
 
 panda3d_crosscompile () {
-    #export STEP=True
-#set(CMAKE_MODULE_PATH \${CMAKE_MODULE_PATH} "${ORIGIN}/thirdparty.aosp/modules/")
-#set(OPENALDIR ${OPENALDIR})
 
     PrepareBuild ${unit}
 
@@ -81,24 +93,14 @@ include_directories("${APKUSR}/include/freetype2")
 
 set(HARFBUZZ_INCLUDE_DIRS "${APKUSR}/include/harfbuzz")
 set(HARFBUZZ_LIBRARIES "${APKUSR}/lib/libharfbuzz.so")
-
 set(HARFBUZZ_INCLUDE_DIR "${APKUSR}/include/harfbuzz")
 set(HARFBUZZ_LIBRARY "${APKUSR}/lib/libharfbuzz.so")
-
 set(HARFBUZZ_FOUND YES)
 
 set(BULLET_ROOT ${APKUSR})
-
 set(BULLET_DYNAMICS_LIBRARY BulletDynamics)
-#set(BULLET_DYNAMICS_LIBRARY ${APKUSR}/lib/libBulletDynamics.so)
-
-#set(BULLET_COLLISION_LIBRARY ${APKUSR}/lib/libBulletCollision.so)
 set(BULLET_COLLISION_LIBRARY BulletCollision)
-
-#set(BULLET_MATH_LIBRARY ${APKUSR}/lib/libLinearMath.so)
 set(BULLET_MATH_LIBRARY LinearMath)
-
-#set(BULLET_SOFTBODY_LIBRARY ${APKUSR}/lib/libBulletSoftBody.so)
 set(BULLET_SOFTBODY_LIBRARY BulletSoftBody)
 
 set(BULLET_INCLUDE_DIR ${APKUSR}/include/bullet)
@@ -114,13 +116,13 @@ END
     export LD_LIBRARY_PATH
     export PATH
 
-    #set(BUILD_MODELS OFF)
-
     PANDA3D_ACMAKE="$CMAKE ${BUILD_SRC}/${unit}-prefix/src/${unit} \
  -DANDROID_ABI=${ANDROID_NDK_ABI_NAME}\
- -DHAVE_OPENAL=Yes -DHAVE_HARFBUZZ=Yes\
+ -DHAVE_OPENAL=Yes -DHAVE_VORBIS=Yes -DHAVE_HARFBUZZ=Yes -DHAVE_FREETYPE=Yes -DHAVE_BULLET=Yes\
  -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/${unit}.toolchain.cmake\
  -DCMAKE_INSTALL_PREFIX=${APKUSR} ${PANDA3D_CMAKE_ARGS}"
+
+    #HAVE_ASSIMP
 
     echo "$PANDA3D_ACMAKE \"\$@\""> ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/${unit}.rebuild
 
@@ -136,9 +138,9 @@ END
     else
         if $CI
         then
-            $PANDA3D_ACMAKE >/dev/null && make ${JFLAGS} install
-        else
             $PANDA3D_ACMAKE >/dev/null && make ${JFLAGS} install >/dev/null
+        else
+            $PANDA3D_ACMAKE >/dev/null && make ${JFLAGS} install
         fi
     fi
 

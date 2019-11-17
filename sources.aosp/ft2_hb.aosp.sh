@@ -9,7 +9,7 @@
 
 ft2_hb_host_cmake () {
     cat >> CMakeLists.txt <<END
-#${unit}
+#${unit} : this unit is virtual to fix circular deps beetween harfbuzz and freetype2
 END
 }
 

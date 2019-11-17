@@ -1,16 +1,18 @@
-export SQLITE3_URL=${SQLITE3_URL:-"GIT_REPOSITORY https://github.com/azadkuh/sqlite-amalgamation.git"}
-export SQLITE3_HASH=${SQLITE3_HASH:-}
 
-sqlite3_host_cmake () {
+export VORBIS_URL=${VORBIS_URL:-"GIT_REPOSITORY https://github.com/xiph/vorbis.git"}
+export VORBIS_HASH=${VORBIS_HASH:-}
+
+
+vorbis_host_cmake () {
     cat >> CMakeLists.txt <<END
 
 if(1)
     message("")
     message(" processing unit : ${unit}")
 ExternalProject_Add(
-    sqlite3
-    ${SQLITE3_URL}
-    ${SQLITE3_HASH}
+    ${unit}
+    ${VORBIS_URL}
+    ${VORBIS_HASH}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
@@ -27,21 +29,27 @@ endif()
 END
 }
 
-sqlite3_patch () {
+vorbis_patch () {
     echo
 }
 
-sqlite3_build () {
+vorbis_build () {
     echo
 }
 
-sqlite3_crosscompile () {
-    if [ -f  ${APKUSR}/lib/libsqlite3.a ]
+vorbis_crosscompile () {
+    if [ -f  ${APKUSR}/lib/libvorbis.so ]
     then
-        echo "    -> sqlite3 already built for $ANDROID_NDK_ABI_NAME"
+        echo "    -> vorbis already built for $ANDROID_NDK_ABI_NAME"
     else
         PrepareBuild ${unit}
-        $ACMAKE ${BUILD_SRC}/${unit}-prefix/src/${unit} && make -s install
+        if $ACMAKE -DBUILD_SHARED_LIBS=Yes ${BUILD_SRC}/${unit}-prefix/src/${unit} >/dev/null
+        then
+            std_make ${unit}
+        else
+            echo "ERROR $unit"
+            exit 1
+        fi
     fi
 }
 

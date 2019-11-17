@@ -7,8 +7,9 @@ export HARFBUZZ_HASH=${HARFBUZZ_HASH:-}
 
 harfbuzz_host_cmake () {
     cat >> CMakeLists.txt <<END
-#${unit}
-
+if(1)
+    message("")
+    message(" processing unit : ${unit}")
 ExternalProject_Add(
     harfbuzz
     ${HARFBUZZ_URL}
@@ -16,13 +17,15 @@ ExternalProject_Add(
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
-    #PATCH_COMMAND patch -p1 < ${SUPPORT}/harfbuzz_freetype_fix.patch
-
     CONFIGURE_COMMAND sh -c "echo 1>&1;echo external.configure ${unit} 1>&2"
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
 )
-
+else()
+    message(" ********************************************************************")
+    message("  No cmake ExternalProject_Add defined for unit : ${unit}")
+    message(" ********************************************************************")
+endif()
 END
 }
 

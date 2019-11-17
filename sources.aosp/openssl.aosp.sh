@@ -1,14 +1,20 @@
 #  PARALLEL BUILD WILL BREAK : always use -j1 !
 
 export OPENSSL_URL=${OPENSSL_URL:-"URL https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"}
-export OPENSSL_HASH=${OPENSSL_HASH:-}
+
+case "$OPENSSL_VERSION" in
+    "1.0.2t" ) OPENSSL_HASH="URL_HASH SHA256=14cb464efe7ac6b54799b34456bd69558a749a4931ecfd9cf9f71d7881cac7bc";;
+    "1.1.1d" ) OPENSSL_HASH="URL_HASH SHA256=1e3a91bc1f9dfce01af26026f856e064eab4c8ee0a8f457b5ae30b40b8b711f2";;
+esac
 
 
-openssl_1_0_2t_host_cmake () {
+
+openssl_host_cmake () {
     cat >> CMakeLists.txt <<END
 
-#${unit}
-
+if(1)
+    message("")
+    message(" processing unit : ${unit}")
 ExternalProject_Add(
     openssl
     DEPENDS patchelf
@@ -22,20 +28,26 @@ ExternalProject_Add(
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
 )
+else()
+    message(" ********************************************************************")
+    message("  No cmake ExternalProject_Add defined for unit : ${unit}")
+    message(" ********************************************************************")
+endif()
+
 
 END
 
 }
 
-openssl_1_0_2t_patch () {
+openssl_patch () {
     echo " -> was done in cmake_host step"
 }
 
-openssl_1_0_2t_build () {
+openssl_build () {
     echo
 }
 
-openssl_1_0_2t_crosscompile () {
+openssl_crosscompile () {
 
 
     # poc https://github.com/ph4r05/android-openssl

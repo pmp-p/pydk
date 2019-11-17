@@ -1,5 +1,5 @@
 --- python3/setup.py	2019-10-15 00:32:36.000000000 +0200
-+++ python3-android/setup.py	2019-10-23 18:14:08.023612024 +0200
++++ python3-android/setup.py	2019-11-17 05:22:16.444189423 +0100
 @@ -774,7 +774,7 @@
          # pwd(3)
          exts.append( Extension('pwd', ['pwdmodule.c']) )
@@ -28,6 +28,15 @@
  
          # CSV files
          exts.append( Extension('_csv', ['_csv.c']) )
+@@ -1179,7 +1179,7 @@
+                              '/usr/local/include/sqlite3',
+                              ]
+         if cross_compiling:
+-            sqlite_inc_paths = []
++            sqlite_inc_paths = [f'{os.environ["APKUSR"]}/include/sqlite3']
+         MIN_SQLITE_VERSION_NUMBER = (3, 3, 9)
+         MIN_SQLITE_VERSION = ".".join([str(x)
+                                     for x in MIN_SQLITE_VERSION_NUMBER])
 @@ -1450,37 +1450,12 @@
          # You can upgrade zlib to version 1.1.4 yourself by going to
          # http://www.gzip.org/zlib/

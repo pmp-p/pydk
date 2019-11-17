@@ -16,7 +16,7 @@ export PYMAJOR=3
 
 #UNITS="unit"
 
-UNITS="bzip2 lzma libffi sqlite3"
+UNITS=""
 
 if true; then
     export PYMINOR=7
@@ -27,13 +27,9 @@ else
 fi
 
 if true; then
-    UNITS="${UNITS} openssl_1_0_2t"
     export OPENSSL_VERSION="1.0.2t"
-    OPENSSL_HASH="URL_HASH SHA256=14cb464efe7ac6b54799b34456bd69558a749a4931ecfd9cf9f71d7881cac7bc"
 else
-    UNITS="${UNITS} openssl_1_1_1d"
     export OPENSSL_VERSION="1.1.1d"
-    OPENSSL_HASH="URL_HASH SHA256=1e3a91bc1f9dfce01af26026f856e064eab4c8ee0a8f457b5ae30b40b8b711f2"
 fi
 
 
@@ -62,34 +58,12 @@ then
     . $(pwd)/CACHE_URL
 fi
 
-UNITS="$UNITS python3 freetype2 harfbuzz ft2_hb bullet3 openal panda3d"
+#base python
+UNITS="unit bzip2 lzma libffi sqlite3 openssl python3"
 
-if [ -f "${SUPPORT}/cross_pip.aosp.sh" ]
-then
-    UNITS="$UNITS cross_pip"
-else
-    echo "
-    *************************************************************
-    * *           cross-pip and cross-modules not found                 **
-    *************************************************************
-    "
-fi
+#extra
+UNITS="$UNITS freetype2 harfbuzz ft2_hb bullet3 openal ogg vorbis panda3d"
 
-
-if grep "^Pkg.Revision = 20" $NDK_HOME/source.properties
-then
-    echo NDK 20+ found
-else
-    echo "
-WARNING:
-
-Only NDK 20 has been tested and is expected to be found in :
-   NDK_HOME=$NDK_HOME or ANDROID_HOME=${ANDROID_HOME} + ndk-bundle
-
-press <enter> to continue anyway
-"
-    read cont
-fi
 
 
 OLD_PATH=$PATH
@@ -110,54 +84,39 @@ export CMAKE=${ROOT}/bin/cmake
 
 export APK=/data/data/${DN}.${APP}
 
-export PYTHONDONTWRITEBYTECODE=1
 
-if echo $CI|grep -q true
+if [ -f "${SUPPORT}/cross_pip.aosp.sh" ]
 then
-    echo "CI-force-test python3.6, ncpu=4"
-    JOBS=4
-    export PYTHON=/usr/local/bin/python3.6
+    UNITS="$UNITS cross_pip"
 else
-    for py in 8 7 6 5
-    do
-        if command -v python3.${py}
-        then
-            export PYTHON=$(command -v python3.${py})
-            break
-        fi
-    done
+    echo "
+    ***************************************************************************
+    cross-pip not found ${SUPPORT}/cross_pip.aosp.sh
+    cross-modules wont't run, that means disabling *any* extra dynamic python dmodules
+    ****************************************************************************
+    "
 fi
 
 
-if echo $PYTHON |grep -q python3.6
+
+
+if grep "^Pkg.Revision = 20" $NDK_HOME/source.properties
 then
-    CI=true
-    JOBS=${JOBS:-8}
-    JFLAGS="-s -j $JOBS"
-    CNF="--silent"
-    if [ -d ${ENV} ]
-    then
-        echo " * using previous build dir ${ROOT} (CI)"
-    else
-        echo " * create venv ${ROOT} (CI)"
-        #pclinuxos 3.6.5 --without-pip  ?
-        $PYTHON -m venv --prompt pydk-${ENV} ${ENV}
-        touch ${ENV}/new_env
-    fi
+    echo NDK 20+ found
 else
-    CI=false
-    JOBS=${JOBS:-4}
-    JFLAGS="-j $JOBS"
-    CNF=""
-    if [ -d ${ENV} ]
-    then
-        echo " * using previous build dir ${ROOT}"
-    else
-        echo " * create venv ${ROOT}"
-        $PYTHON -m venv --prompt pydk-${ENV} ${ENV}
-        touch ${ENV}/new_env
-    fi
+    echo "
+WARNING:
+
+Only NDK 20 has been tested and is expected to be found in :
+   NDK_HOME=$NDK_HOME or ANDROID_HOME=${ANDROID_HOME} + ndk-bundle
+
+press <enter> to continue anyway
+"
+    read cont
 fi
+
+. sources/python_host.sh
+
 
 
 cd ${ROOT}
@@ -208,7 +167,6 @@ step () {
     then
         echo
         echo "== CI $1: now in $3-$2 =="
-        echo
     else
         if echo  $STEP|grep -q rue
         then
@@ -470,6 +428,9 @@ set(HARFBUZZ_LIBRARIES "${APKUSR}/lib/libharfbuzz.so")
 
 set(HARFBUZZ_INCLUDE_DIR "${APKUSR}/include/harfbuzz")
 set(HARFBUZZ_LIBRARY "${APKUSR}/lib/libharfbuzz.so")
+
+set(OGG_INCLUDE_DIRS "${APKUSR}/include")
+set(OGG_LIBRARIES "${APKUSR}/lib/libogg.so")
 
 set(CMAKE_CONFIGURATION_TYPES "Release")
 set(CMAKE_BUILD_TYPE "Release")

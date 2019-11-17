@@ -9,8 +9,10 @@ export FREETYPE2_HASH=${FREETYPE2_HASH:-"URL_HASH SHA256=fccc62928c65192fff6c988
 
 freetype2_host_cmake () {
     cat >> CMakeLists.txt <<END
-#${unit}
 
+if(1)
+    message("")
+    message(" processing unit : ${unit}")
 ExternalProject_Add(
     freetype2
     ${FREETYPE2_URL}
@@ -22,6 +24,11 @@ ExternalProject_Add(
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
 )
+else()
+    message(" ********************************************************************")
+    message("  No cmake ExternalProject_Add defined for unit : ${unit}")
+    message(" ********************************************************************")
+endif()
 
 END
 }
