@@ -44,16 +44,20 @@ freetype2_build () {
 freetype2_crosscompile () {
     # force rebuild for removing circular deps with harfbuzz build as a static lib for hb
     PrepareBuild ${unit}
-
-    FRETYPE2_CMAKE_ARGS="-DBUILD_SHARED_LIBS=NO \
+    if [ -f ${APKUSR}/lib/libfreetype.a ]
+    then
+        echo "    -> freetype2-static already built for $ANDROID_NDK_ABI_NAME"
+    else
+        FRETYPE2_CMAKE_ARGS="-DBUILD_SHARED_LIBS=NO \
  -DFT_WITH_BZIP2=ON -DFT_WITH_ZLIB=ON -DFT_WITH_PNG=NO\
  -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz=Yes"
-    if $ACMAKE $FRETYPE2_CMAKE_ARGS ${BUILD_SRC}/${unit}-prefix/src/${unit} >/dev/null
-    then
-        std_make $unit
-    else
-        echo "ERROR: cmake $unit"
-        exit 1
+        if $ACMAKE $FRETYPE2_CMAKE_ARGS ${BUILD_SRC}/${unit}-prefix/src/${unit} >/dev/null
+        then
+            std_make $unit
+        else
+            echo "ERROR: cmake $unit"
+            exit 1
+        fi
     fi
 }
 

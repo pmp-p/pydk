@@ -40,7 +40,7 @@ END
 }
 
 openssl_patch () {
-    echo " -> was done in cmake_host step"
+    echo " -> openssl patch is made in cmake_host step"
 }
 
 openssl_build () {

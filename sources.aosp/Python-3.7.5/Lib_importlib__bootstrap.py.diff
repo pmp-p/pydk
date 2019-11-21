@@ -1,14 +1,17 @@
 --- python3/Lib/importlib/_bootstrap.py	2019-10-15 00:32:36.000000000 +0200
-+++ python3-android/Lib/importlib/_bootstrap.py	2019-10-24 06:24:16.069450319 +0200
-@@ -432,6 +432,7 @@
++++ python3-android/Lib/importlib/_bootstrap.py	2019-11-21 06:04:16.889140184 +0100
+@@ -432,6 +432,10 @@
  
  def spec_from_loader(name, loader, *, origin=None, is_package=None):
      """Return a module spec based on various loader methods."""
-+    print("435:",name,loader,origin,is_package)
++    try:
++        print("435:",name,loader,origin,is_package)
++    except RuntimeError:
++        pass #stdout not avail
      if hasattr(loader, 'get_filename'):
          if _bootstrap_external is None:
              raise NotImplementedError
-@@ -942,7 +943,7 @@
+@@ -942,7 +946,7 @@
          raise ValueError('Empty module name')
  
  

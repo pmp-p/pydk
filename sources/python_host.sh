@@ -12,7 +12,8 @@ then
     JOBS=4
     export PYTHON=/usr/local/bin/python3.6
 else
-    for py in 8 7 6 5
+    #restrict $PYMINOR for env so host pip can work for populating android projects
+    for py in ${PYMINOR} 7 6 5
     do
         if command -v python3.${py}
         then
@@ -49,6 +50,41 @@ else
     else
         echo " * create venv ${ROOT}"
         $PYTHON -m venv --prompt pydk-${ENV} ${ENV}
+        ln -s ${ANDROID_HOME}/platform-tools/adb ${ENV}/bin/adb
         touch ${ENV}/new_env
+    fi
+fi
+
+
+cd ${ROOT}
+
+. bin/activate
+
+cd ${ROOT}
+
+mkdir -p ${BUILD_SRC}
+
+date > ${BUILD_SRC}/build.log
+env >> ${BUILD_SRC}/build.log
+echo  >> ${BUILD_SRC}/build.log
+echo  >> ${BUILD_SRC}/build.log
+
+if $CI
+then
+    echo CI - no pip upgrade
+    export QUIET="1>/dev/null"
+else
+    pip3 install --upgrade pip
+fi
+
+if [ -f new_env ]
+then
+
+    if pip3 install scikit-build
+    then
+        if pip3 install "cmake==${CMAKE_VERSION}"
+        then
+            rm new_env
+        fi
     fi
 fi

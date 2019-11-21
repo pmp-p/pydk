@@ -98,8 +98,6 @@ else
 fi
 
 
-
-
 if grep "^Pkg.Revision = 20" $NDK_HOME/source.properties
 then
     echo NDK 20+ found
@@ -117,40 +115,6 @@ fi
 
 . sources/python_host.sh
 
-
-
-cd ${ROOT}
-
-. bin/activate
-
-cd ${ROOT}
-
-mkdir -p ${BUILD_SRC}
-
-date > ${BUILD_SRC}/build.log
-env >> ${BUILD_SRC}/build.log
-echo  >> ${BUILD_SRC}/build.log
-echo  >> ${BUILD_SRC}/build.log
-
-if $CI
-then
-    echo CI - no pip upgrade
-    export QUIET="1>/dev/null"
-else
-    pip3 install --upgrade pip
-fi
-
-if [ -f new_env ]
-then
-
-    if pip3 install scikit-build
-    then
-        if pip3 install "cmake==${CMAKE_VERSION}"
-        then
-            rm new_env
-        fi
-    fi
-fi
 
 # build order
 export UNITS
