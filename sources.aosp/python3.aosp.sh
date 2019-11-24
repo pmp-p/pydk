@@ -16,21 +16,27 @@ export PYOPTS="--without-gcc --without-pymalloc --without-pydebug\
 
 #for arm: ac_cv_mixed_endian_double=yes
 # ac_cv_little_endian_double=yes
-
+# ac_cv_func_forkpty=no ?
 
 python_ac_cv_patch () {
     cat >$1 <<END
+ac_cv_broken_mbstowcs=yes
+ac_cv_func_mbrtowc=no
+ac_cv_func_wcscoll=no
+ac_cv_func_wcsftime=no
+ac_cv_func_wcsxfrm=no
+ac_cv_func_gethostbyname_r=no
+
+ac_cv_func_clock_gettime=yes
+ac_cv_func_openpty=yes
+
 ac_cv_little_endian_double=yes
 ac_cv_file__dev_ptmx=yes
 ac_cv_file__dev_ptc=no
 
-
 ac_cv_func_pwrite=no
 ac_cv_func_pwritev=no
 ac_cv_func_pwritev2=no
-
-
-ac_cv_lib_util_forkpty=no
 
 ac_cv_func_getspnam=no
 ac_cv_func_getspent=no

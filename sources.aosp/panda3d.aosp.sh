@@ -84,6 +84,17 @@ set(ZLIB_DIR \${CMAKE_SYSROOT})
 set(OPENAL_INCLUDE_DIR ${APKUSR}/include)
 set(OPENAL_LIBRARY openal)
 
+
+#set(VORBIS_vorbis_LIBRARY "${APKUSR}/lib/libvorbis.so")
+#set(VORBIS_vorbisfile_LIBRARY "${APKUSR}/lib/libvorbisfile.so")
+#set(VORBISFILE_INCLUDE_DIRS "${APKUSR}/include/vorbis" "${APKUSR}/include/ogg")
+#set(VorbisFile_DIR "${APKUSR}")
+#set(VORBIS_INCLUDE_DIR "${APKUSR}/include/vorbis")
+#set(VORBIS_FOUND YES)
+# ?????????????
+set(Ogg_FOUND YES)
+set(VORBISFILE_FOUND YES)
+
 set(FREETYPE_DIR ${APKUSR})
 set(FREETYPE_INCLUDE_DIRS "${APKUSR}/include")
 set(FREETYPE_LIBRARY "${APKUSR}/lib/libfreetype.so" "${APKUSR}/lib/libbz2.a" "z")
@@ -118,7 +129,7 @@ END
 
     PANDA3D_ACMAKE="$CMAKE ${BUILD_SRC}/${unit}-prefix/src/${unit} \
  -DANDROID_ABI=${ANDROID_NDK_ABI_NAME}\
- -DHAVE_OPENAL=Yes -DHAVE_VORBIS=Yes -DHAVE_HARFBUZZ=Yes -DHAVE_FREETYPE=Yes -DHAVE_BULLET=Yes\
+ -DHAVE_OPENAL=Yes -DHAVE_VORBIS=No -DHAVE_HARFBUZZ=Yes -DHAVE_FREETYPE=Yes -DHAVE_BULLET=Yes\
  -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/${unit}.toolchain.cmake\
  -DCMAKE_INSTALL_PREFIX=${APKUSR} ${PANDA3D_CMAKE_ARGS}"
 
