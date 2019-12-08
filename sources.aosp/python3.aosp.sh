@@ -283,8 +283,11 @@ DEF
     fi
 
     make ${JFLAGS} install | egrep -v "install|Creating|copying|renaming"
-
-    mv -vf ${PYLIB}/_sysconfigdata__linux_${ARCH}-linux-${ABI}.py ${PYASSETS}/_sysconfigdata__android_${ARCH}-linux-${ABI}.py
+    if [ -f ${PYLIB}/_sysconfigdata__linux_${ARCH}-linux-${ABI}.py ]
+    then
+        cp -vf ${PYLIB}/_sysconfigdata__linux_${ARCH}-linux-${ABI}.py ${PYLIB}/_sysconfigdata__android_${ARCH}-linux-${ABI}.py
+        cp -vf ${PYLIB}/_sysconfigdata__*_${ARCH}-linux-${ABI}.py ${PYASSETS}/
+    fi
 else
     echo ================== ${BUILD_SRC}/build.log ===================
     tail -n 30 ${BUILD_SRC}/build.log

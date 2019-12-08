@@ -1,14 +1,18 @@
 APK=$1
 PYVER="3.7"
 
+
+. $(echo -n ../*/bin/activate)
+
+
 export ROOT=$(pwd)
 export PYDK=${PYDK:-$(realpath $ROOT/..)}
 export ANDROID_HOME=${ANDROID_HOME:-$(realpath ${PYDK}/android-sdk)}
 
 
-    reset
-    echo " Building $1 with ${ANDROID_HOME} and ${PYDK} from ${ROOT}"
-    echo "----------------------"
+reset
+echo " Building $1 with ${ANDROID_HOME} and ${PYDK} from ${ROOT}"
+echo "----------------------"
 
 
 FILE=./app/build/outputs/apk/release/app-release-unsigned.apk
@@ -45,6 +49,7 @@ function do_pip
 {
     echo " * processing pip requirement for application [$1]"
     pip install -r requirements.txt
+    # pip download --dest ../*/src/pip --no-binary :all: -r requirements-jni.txt
     mkdir -p assets/packages
     /bin/cp -Rfxpvu ${PYDK}/assets/python$PYVER/* assets/python$PYVER/
     echo "==========================================================="
@@ -52,7 +57,7 @@ function do_pip
     echo "==========================================================="
     for req in $(find ${PYDK}/*/lib/python3.?/site-packages/ -maxdepth 1 -type d|egrep -v '/$|/skbuild$|/cmake$|/setuptools$|/pkg_resources$|/packaging$|/__pycache__$|-info$')
     do
-        if find $req -type d|grep so$
+        if find $req -type f|grep so$
         then
             echo " * can't add package : $(basename $req) not pure python"
         else
@@ -104,7 +109,9 @@ then
         do_clean
 
         # go deeper.
-        rm -rf app/build app/.externalNativeBuild prebuilt assets/python3.?
+        echo "<ctrl+C> to abort, i WILL destroy : prebuilt" assets/python3.? assets/packages
+        read cont
+        rm -rf app/build app/.externalNativeBuild prebuilt assets/python3.? assets/packages
 
     else
         echo " * syncing stdlib for $PYVER"
@@ -112,7 +119,7 @@ then
         mkdir -p assets/python$PYVER/
 
         # cleanup
-        #rm -rf $(find ../beeware/src/python3-android/Lib/|grep __pycache__$)
+
 
         # todo move test folder with binary cmdline support into separate archive
         # until testsuite is fixed.

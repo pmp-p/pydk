@@ -55,11 +55,15 @@ panda3d_crosscompile () {
 
     PrepareBuild ${unit}
 
-     echo " * building Panda3D for target ${ANDROID_ABI}"
+    if [ -f  ${APKUSR}/lib/libpanda.so ]
+    then
+        echo "    -> ${unit} already built for $ANDROID_NDK_ABI_NAME"
+    else
+        echo " * building Panda3D for target ${ANDROID_ABI}"
 
-    cat ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/toolchain.cmake > ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/${unit}.toolchain.cmake
+        cat ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/toolchain.cmake > ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/${unit}.toolchain.cmake
 
-    cat >> ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/${unit}.toolchain.cmake <<END
+        cat >> ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/${unit}.toolchain.cmake <<END
 
 set(ASSETS ${ORIGIN}/assets)
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG YES)
@@ -123,38 +127,38 @@ string(APPEND CMAKE_MODULE_LINKER_FLAGS " -L${APKUSR}/lib -lpython${PYMAJOR}.${P
 
 END
 
-    # for pandatools
-    export LD_LIBRARY_PATH
-    export PATH
+        # for pandatools
+        export LD_LIBRARY_PATH
+        export PATH
 
-    PANDA3D_ACMAKE="$CMAKE ${BUILD_SRC}/${unit}-prefix/src/${unit} \
- -DANDROID_ABI=${ANDROID_NDK_ABI_NAME}\
- -DHAVE_OPENAL=Yes -DHAVE_VORBIS=No -DHAVE_HARFBUZZ=Yes -DHAVE_FREETYPE=Yes -DHAVE_BULLET=Yes\
- -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/${unit}.toolchain.cmake\
- -DCMAKE_INSTALL_PREFIX=${APKUSR} ${PANDA3D_CMAKE_ARGS}"
+        PANDA3D_ACMAKE="$CMAKE ${BUILD_SRC}/${unit}-prefix/src/${unit} \
+     -DANDROID_ABI=${ANDROID_NDK_ABI_NAME}\
+     -DHAVE_OPENAL=Yes -DHAVE_VORBIS=No -DHAVE_HARFBUZZ=Yes -DHAVE_FREETYPE=Yes -DHAVE_BULLET=Yes\
+     -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/${unit}.toolchain.cmake\
+     -DCMAKE_INSTALL_PREFIX=${APKUSR} ${PANDA3D_CMAKE_ARGS}"
 
-    #HAVE_ASSIMP
+        #HAVE_ASSIMP
 
-    echo "$PANDA3D_ACMAKE \"\$@\""> ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/${unit}.rebuild
+        echo "$PANDA3D_ACMAKE \"\$@\""> ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/${unit}.rebuild
 
-    # could fail once on Python export
-    if $PANDA3D_ACMAKE
-    then
-        if $CI
+        # could fail once on Python export
+        if $PANDA3D_ACMAKE
         then
-            make ${JFLAGS} install >/dev/null
+            if $CI
+            then
+                make ${JFLAGS} install >/dev/null
+            else
+                make ${JFLAGS} install
+            fi
         else
-            make ${JFLAGS} install
-        fi
-    else
-        if $CI
-        then
-            $PANDA3D_ACMAKE >/dev/null && make ${JFLAGS} install >/dev/null
-        else
-            $PANDA3D_ACMAKE >/dev/null && make ${JFLAGS} install
+            if $CI
+            then
+                $PANDA3D_ACMAKE >/dev/null && make ${JFLAGS} install >/dev/null
+            else
+                $PANDA3D_ACMAKE >/dev/null && make ${JFLAGS} install
+            fi
         fi
     fi
-
 }
 
 
