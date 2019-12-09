@@ -90,10 +90,10 @@ then
     UNITS="$UNITS cross_pip"
 else
     echo "
-    ***************************************************************************
+    ********************************************************************************
     cross-pip not found ${SUPPORT}/cross_pip.aosp.sh
-    cross-modules wont't run, that means disabling *any* extra dynamic python dmodules
-    ****************************************************************************
+    cross-modules wont't run, that means disabling *any* extra dynamic python module
+    ********************************************************************************
     "
 fi
 

@@ -70,7 +70,7 @@ function do_pip
 
 function do_stdlib
 {
-    /bin/cp -Rfxpvu ${PYDK}/aosp/src/python3-android/Lib/. assets/python$PYVER/|egrep -v "test/|lib2to3"
+    /bin/cp -Rfxpvu ${PYDK}/*/src/python3-android/Lib/. assets/python$PYVER/|egrep -v "test/|lib2to3"
     rm -rf assets/python$PYVER/test assets/python$PYVER/unittest assets/python$PYVER/lib2to3 assets/python$PYVER/site-packages
 }
 

@@ -123,21 +123,7 @@ It behaves like a virtualenv : your prompt will reflect that fact.
 
 In the build folder you'll find various .build files which are recipes to download / patch / build some software for your presets.
 
-[demo, basic python with emscripten loader](http://pmpp.pagesperso-orange.fr/python_em.html)
-
---
-
-[demo, vt100 python + nanotui3](http://pmpp.pagesperso-orange.fr/python_vt100.html)
-
-* [xtermjs](https://github.com/xtermjs/xtermjs.org)
-
---
-
-[demo, xterm.js python + nanotui3 + panda3d](http://pmpp.pagesperso-orange.fr/python_em.html)
-
-* [Panda3D WebGL port](https://github.com/panda3d/panda3d/tree/webgl-port)
-
-
+[basic demo  cpython, xterm, dom access, custom emscripten loader](https://pmp-p.github.io/python-next/test.html)
 
 --
 
