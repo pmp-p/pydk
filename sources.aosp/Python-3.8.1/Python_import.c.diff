@@ -1,0 +1,13 @@
+--- Python-3.8.1rc1/Python/import.c	2019-12-09 18:47:55.000000000 +0100
++++ Python-3.8.1rc1.pydk/Python/import.c	2019-12-13 12:44:30.163039605 +0100
+@@ -2197,7 +2197,9 @@
+         Py_DECREF(name);
+         return NULL;
+     }
+-
++#if __ANDROID__
++    printf("2151: name: %s, path:%s\n",PyUnicode_AsUTF8(name),PyUnicode_AsUTF8(path));
++#endif
+     mod = _PyImport_FindExtensionObject(name, path);
+     if (mod != NULL || PyErr_Occurred()) {
+         Py_DECREF(name);

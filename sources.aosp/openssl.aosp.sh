@@ -58,8 +58,23 @@ openssl_crosscompile () {
     else
         Building openssl
         unset CFLAGS
+
+        case "$OPENSSL_VERSION" in
+            "1.0.2t" ) V11=false;;
+            "1.1.1d" ) V11=true;;
+        esac
+
         # no-ssl2 no-ssl3 no-comp
-        CROSS_COMPILE="" ./Configure android shared no-hw --prefix=${APKUSR} >/dev/null && CROSS_COMPILE="" make -s -j1 depend >/dev/null && CROSS_COMPILE="" make -s -j1 install >/dev/null
+
+        if $V11
+        then
+            CROSS_COMPILE="" ARCH=${ARCH} API=${API} ./Configure -D__ANDROID_API__=${API} shared no-hw --prefix=${APKUSR} android-${ARCH}\
+ >/dev/null && CROSS_COMPILE="" make -s -j1 depend >/dev/null && CROSS_COMPILE="" make -s -j1 install >/dev/null
+            SOVER="1.1"
+        else
+            CROSS_COMPILE="" ./Configure android shared no-hw --prefix=${APKUSR} >/dev/null && CROSS_COMPILE="" make -s -j1 depend >/dev/null && CROSS_COMPILE="" make -s -j1 install >/dev/null
+            SOVER="1.0.0"
+        fi
 
         ln -sf . lib
 
@@ -70,15 +85,15 @@ openssl_crosscompile () {
         if [ -L ${APKUSR}/lib/libssl.so ]
         then
             rm ${APKUSR}/lib/libssl.so
-            mv ${APKUSR}/lib/libssl.so.1.0.0 ${APKUSR}/lib/libsslpython.so
+            mv ${APKUSR}/lib/libssl.so.${SOVER} ${APKUSR}/lib/libsslpython.so
             ${HOST}/bin/patchelf --set-soname libsslpython.so ${APKUSR}/lib/libsslpython.so
-            ${HOST}/bin/patchelf --replace-needed libcrypto.so.1.0.0 libcryptopython.so ${APKUSR}/lib/libsslpython.so
+            ${HOST}/bin/patchelf --replace-needed libcrypto.so.${SOVER} libcryptopython.so ${APKUSR}/lib/libsslpython.so
         fi
 
         if [ -L ${APKUSR}/lib/libcrypto.so ]
         then
             rm ${APKUSR}/lib/libcrypto.so
-            mv ${APKUSR}/lib/libcrypto.so.1.0.0 ${APKUSR}/lib/libcryptopython.so
+            mv ${APKUSR}/lib/libcrypto.so.${SOVER} ${APKUSR}/lib/libcryptopython.so
             ${HOST}/bin/patchelf --set-soname libcryptopython.so ${APKUSR}/lib/libcryptopython.so
         fi
 

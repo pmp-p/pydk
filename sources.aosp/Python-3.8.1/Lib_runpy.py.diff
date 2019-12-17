@@ -1,0 +1,11 @@
+--- Python-3.8.1rc1/Lib/runpy.py	2019-12-09 18:47:55.000000000 +0100
++++ Python-3.8.1rc1.pydk/Lib/runpy.py	2019-12-13 12:32:19.686307116 +0100
+@@ -134,7 +134,7 @@
+         msg = "Error while finding module specification for {!r} ({}: {})"
+         raise error(msg.format(mod_name, type(ex).__name__, ex)) from ex
+     if spec is None:
+-        raise error("No module named %s" % mod_name)
++        raise error("No module named5 %s" % mod_name)
+     if spec.submodule_search_locations is not None:
+         if mod_name == "__main__" or mod_name.endswith(".__main__"):
+             raise error("Cannot use package as __main__ module")

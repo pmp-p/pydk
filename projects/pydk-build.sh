@@ -1,5 +1,6 @@
 APK=$1
-PYVER="3.7"
+PYVER=${PYVER:-"3.7"}
+
 
 
 . $(echo -n ../*/bin/activate)
@@ -48,7 +49,7 @@ function install_run
 function do_pip
 {
     echo " * processing pip requirement for application [$1]"
-    pip install -r requirements.txt
+    # pip install -r requirements.txt
     # pip download --dest ../*/src/pip --no-binary :all: -r requirements-jni.txt
     mkdir -p assets/packages
     /bin/cp -Rfxpvu ${PYDK}/assets/python$PYVER/* assets/python$PYVER/

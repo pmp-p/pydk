@@ -1,0 +1,31 @@
+--- Python-3.8.1rc1/Modules/_localemodule.c	2019-12-09 18:47:55.000000000 +0100
++++ Python-3.8.1rc1.pydk/Modules/_localemodule.c	2019-12-13 12:34:33.870037007 +0100
+@@ -97,6 +97,10 @@
+         PyErr_SetString(Error, "invalid locale category");
+         return NULL;
+     }
++#else
++#ifdef __ANDROID__
++    return PyUnicode_FromFormat("%s", "C");
++#endif
+ #endif
+ 
+     if (locale) {
+@@ -214,7 +218,16 @@
+     }
+ 
+     /* if LC_NUMERIC is different in the C library, use saved value */
+-    lc = localeconv();
++//PMPP API<21
++#if __ANDROID__ && (__ANDROID_API__ < 21)
++    /* Don't even try on Android's broken locale.h. */
++    /* maybe can use c++ stdlib to implement */
++     lc = broken_localeconv();
++#else
++     /* if LC_NUMERIC is different in the C library, use saved value */
++     lc = localeconv(); //PATCHED
++#endif
++//PMPP API<21
+ 
+     /* hopefully, the localeconv result survives the C library calls
+        involved herein */

@@ -9,6 +9,7 @@ export ARCHITECTURES=${ARCHITECTURES:-"armeabi-v7a arm64-v8a x86 x86_64"}
 
 export ANDROID_HOME=${ANDROID_HOME:-$(pwd)/android-sdk}
 export NDK_HOME=${NDK_HOME:-${ANDROID_HOME}/ndk-bundle}
+export ANDROID_NDK_HOME=${NDK_HOME}
 
 export DN=org.${DN}
 
@@ -18,20 +19,19 @@ export PYMAJOR=3
 
 UNITS=""
 
-if true; then
+if false; then
     export PYMINOR=7
     export PYVER=${PYMAJOR}.${PYMINOR}.5
 else
     export PYMINOR=8
-    export PYVER=${PYMAJOR}.${PYMINOR}.0
+    export PYVER=${PYMAJOR}.${PYMINOR}.1
 fi
 
-if true; then
+if false; then
     export OPENSSL_VERSION="1.0.2t"
 else
     export OPENSSL_VERSION="1.1.1d"
 fi
-
 
 export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.so
 
@@ -410,6 +410,7 @@ END
 
     cat > $ROOT/${ANDROID_NDK_ABI_NAME}.sh <<END
 #!/bin/sh
+export ANDROID_NDK_HOME=${NDK_HOME}
 export STRIP=$STRIP
 export READELF=$READELF
 export AR=$AR

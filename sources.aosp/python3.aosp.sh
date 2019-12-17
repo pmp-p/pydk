@@ -4,12 +4,14 @@ export PYTHON3_URL=${PYTHON3_URL:-"URL https://github.com/python/cpython/archive
 
 case "${PYVER}" in
     "3.7.5" )  export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=349ac7b4a9d399302542163fdf5496e1c9d1e5d876a4de771eec5acde76a1f8a"};;
-    "3.8.0" )  export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=fc00204447b553c2dd7495929411f567cc480be00c49b11a14aee7ea18750981"};;
+    "3.8.1" )  export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=7fdcf02c3bedf68c839b035b0c2603083534ffc5767d2cc1ca961ccb0ebba760"};;
 esac
 
 export PYDROID="${BUILD_SRC}/python3-android"
 
-export PYOPTS="--without-gcc --without-pymalloc --without-pydebug\
+#3.8 : --without-gcc is gone
+
+export PYOPTS="--without-pymalloc --without-pydebug\
  --disable-ipv6 --without-ensurepip --with-c-locale-coercion\
  --enable-shared --with-computed-gotos"
 
@@ -48,6 +50,8 @@ ac_cv_header_uuid_uuid_h=no
 ac_cv_func_wcsftime=no
 ac_cv_func_crypt_r=no
 ac_cv_search_crypt_r=no
+
+ac_cv_func_getpid=yes
 END
 
 }
@@ -197,6 +201,19 @@ python3_patch () {
             echo " * applying ${PATCH}"
             patch -p1 < ${PATCH}
         done
+
+        cat >> Lib/os.py <<END
+
+try:
+    getpid
+except:
+    import sys
+    print("210: os.getpid() is broken",file=sys.stderr)
+    def getpid():
+        return int(open('/proc/self/stat').read().split(' ')[0])
+
+END
+
         touch Patched
 
         # prevent __pycache__ filling up everywhere
@@ -273,6 +290,9 @@ then
     cat >>pyconfig.h <<DEF
 #ifndef HAVE_FORK
 #define HAVE_FORK 1
+#endif
+#ifndef HAVE_GETPID
+#define HAVE_GETPID 1
 #endif
 DEF
     if $CI
