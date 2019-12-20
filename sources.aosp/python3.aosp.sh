@@ -4,7 +4,7 @@ export PYTHON3_URL=${PYTHON3_URL:-"URL https://github.com/python/cpython/archive
 
 case "${PYVER}" in
     "3.7.5" )  export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=349ac7b4a9d399302542163fdf5496e1c9d1e5d876a4de771eec5acde76a1f8a"};;
-    "3.8.1" )  export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=7fdcf02c3bedf68c839b035b0c2603083534ffc5767d2cc1ca961ccb0ebba760"};;
+    "3.8.1" )  export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=48af0a22d12523bfe3c4f2e35497aa5d3dc069ad0828d4768ecc38aae8b9cf08"};;
 esac
 
 export PYDROID="${BUILD_SRC}/python3-android"

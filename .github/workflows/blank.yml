@@ -17,6 +17,7 @@ jobs:
             gcc --version | head -n 1
             echo
             grep "^Pkg.Revision =" ${ANDROID_HOME}/ndk-bundle/source.properties
+            sudo apt-get update
             echo pydk support
             sudo apt-get install -y python3-venv libfuse-dev >/dev/null
             echo python3 support
