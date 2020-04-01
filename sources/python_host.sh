@@ -30,7 +30,7 @@ then
     JOBS=${JOBS:-8}
     JFLAGS="-s -j $JOBS"
     CNF="--silent"
-    if [ -d ${ENV} ]
+    if [ -f ${ENV}/bin/activate ]
     then
         echo " * using previous build dir ${ROOT} (CI)"
     else
