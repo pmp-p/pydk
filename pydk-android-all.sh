@@ -102,14 +102,14 @@ else
 fi
 
 
-if grep "^Pkg.Revision = 20" $NDK_HOME/source.properties
+if grep "^Pkg.Revision = 21" $NDK_HOME/source.properties
 then
-    echo NDK 20+ found
+    echo NDK 21+ found
 else
     echo "
 WARNING:
 
-Only NDK 20 has been tested and is expected to be found in :
+Only NDK 21 has been tested and is expected to be found in :
    NDK_HOME=$NDK_HOME or ANDROID_HOME=${ANDROID_HOME} + ndk-bundle
 
 press <enter> to continue anyway
