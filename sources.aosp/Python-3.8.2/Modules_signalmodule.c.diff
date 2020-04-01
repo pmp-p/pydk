@@ -1,0 +1,16 @@
+--- python3/Modules/signalmodule.c	2020-02-24 22:36:25.000000000 +0100
++++ python3-android/Modules/signalmodule.c	2020-03-29 18:49:07.043978450 +0200
+@@ -44,6 +44,13 @@
+ #define SIG_ERR ((PyOS_sighandler_t)(-1))
+ #endif
+ 
++//PMPP API<21
++#if __ANDROID_API__ < 21
++    #define SIGRTMIN 32
++    #define SIGRTMAX _NSIG
++#endif
++//PMPP API<21
++
+ #ifndef NSIG
+ # if defined(_NSIG)
+ #  define NSIG _NSIG            /* For BSD/SysV */

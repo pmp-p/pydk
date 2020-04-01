@@ -1,0 +1,13 @@
+--- python3/Python/import.c	2020-02-24 22:36:25.000000000 +0100
++++ python3-android/Python/import.c	2020-03-29 18:49:07.053978268 +0200
+@@ -2197,7 +2197,9 @@
+         Py_DECREF(name);
+         return NULL;
+     }
+-
++#if __ANDROID__
++    printf("2151: name: %s, path:%s\n",PyUnicode_AsUTF8(name),PyUnicode_AsUTF8(path));
++#endif
+     mod = _PyImport_FindExtensionObject(name, path);
+     if (mod != NULL || PyErr_Occurred()) {
+         Py_DECREF(name);

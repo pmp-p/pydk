@@ -1,0 +1,25 @@
+--- python3/Lib/importlib/_bootstrap_external.py	2020-02-24 22:36:25.000000000 +0100
++++ python3-android/Lib/importlib/_bootstrap_external.py	2020-03-29 18:49:07.021978850 +0200
+@@ -1390,6 +1390,7 @@
+     refreshed when the directory the finder is handling has been modified.
+ 
+     """
++    PATCHED = 1
+ 
+     def __init__(self, path, *loader_details):
+         """Initialize with the path to search on and a variable number of
+@@ -1461,9 +1462,14 @@
+                 # If a namespace package, return the path if we don't
+                 #  find a module in the next section.
+                 is_namespace = _path_isdir(base_path)
++
+         # Check for a file w/ a proper suffix exists.
+         for suffix, loader_class in self._loaders:
+             full_path = _path_join(self.path, tail_module + suffix)
++            try:
++                print("1394: trying", full_path)
++            except:
++                pass
+             _bootstrap._verbose_message('trying {}', full_path, verbosity=2)
+             if cache_module + suffix in cache:
+                 if _path_isfile(full_path):

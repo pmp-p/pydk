@@ -1,5 +1,17 @@
 #!/bin/sh
 
+if false; then
+# python 3.7.x
+    export PYMINOR=7
+    export PYVER=${PYMAJOR}.${PYMINOR}.5
+    export OPENSSL_VERSION="1.0.2t"
+else
+# python 3.8.x
+    export PYMINOR=8
+    export PYVER=${PYMAJOR}.${PYMINOR}.2
+    export OPENSSL_VERSION="1.1.1d"
+fi
+
 
 export HOST_TRIPLET=x86_64-linux-gnu
 export HOST_TAG=linux-x86_64
@@ -19,19 +31,6 @@ export PYMAJOR=3
 
 UNITS=""
 
-if false; then
-    export PYMINOR=7
-    export PYVER=${PYMAJOR}.${PYMINOR}.5
-else
-    export PYMINOR=8
-    export PYVER=${PYMAJOR}.${PYMINOR}.1
-fi
-
-if false; then
-    export OPENSSL_VERSION="1.0.2t"
-else
-    export OPENSSL_VERSION="1.1.1d"
-fi
 
 export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.so
 
@@ -72,6 +71,11 @@ ROOT="${ORIGIN}/${ENV}"
 HOST="${ORIGIN}/${ENV}/host"
 BUILD_PREFIX="${ROOT}/build"
 BUILD_SRC=${ROOT}/src
+
+
+export PYTHONPYCACHEPREFIX=${ROOT}/pycache
+mkdir -p ${PYTHONPYCACHEPREFIX}
+
 
 export SUPPORT=${ORIGIN}/sources.${ENV}
 
@@ -165,7 +169,7 @@ export PATH=${HOST}/bin:${ROOT}/bin:$PATH
 for unit in $UNITS
 do
     echo -n "  +  $unit from : "
-    egrep 'URL |GIT' ${SUPPORT}/${unit}.aosp.sh |cut -d' ' -f 3-|cut -f1 -d\"
+    egrep 'URL |GIT' ${SUPPORT}/${unit}.aosp.sh|grep -v ^# |cut -d' ' -f 3-|cut -f1 -d\"
     #echo
     . ${SUPPORT}/${unit}.aosp.sh
 done

@@ -1,5 +1,5 @@
 APK=$1
-PYVER=${PYVER:-"3.7"}
+PYVER=${PYVER:-"3.8"}
 
 
 
@@ -19,7 +19,7 @@ echo "----------------------"
 FILE=./app/build/outputs/apk/release/app-release-unsigned.apk
 FILE=./app/build/outputs/apk/debug/app-debug.apk
 ADB=$ANDROID_HOME/platform-tools/adb
-
+echo " * adb is $ADB"
 echo " * un-installing any previous version on test device"
 $ADB uninstall $APK
 
@@ -54,9 +54,10 @@ function do_pip
     mkdir -p assets/packages
     /bin/cp -Rfxpvu ${PYDK}/assets/python$PYVER/* assets/python$PYVER/
     echo "==========================================================="
-    echo "${PYDK}/*/lib/python3.?/site-packages/ *filtered* => assets/packages/ "
+    echo "${APKUSR}/lib/python${PYVER}/site-packages/ *filtered* => assets/packages/ "
     echo "==========================================================="
-    for req in $(find ${PYDK}/*/lib/python3.?/site-packages/ -maxdepth 1 -type d|egrep -v '/$|/skbuild$|/cmake$|/setuptools$|/pkg_resources$|/packaging$|/__pycache__$|-info$')
+
+    for req in $(find ${PYDK}/assets/packages/ -maxdepth 1  | egrep -v 'info$|egg$|pth$|txt$|/$')
     do
         if find $req -type f|grep so$
         then
@@ -66,7 +67,7 @@ function do_pip
             cp -ru $req assets/packages/
         fi
     done
-    cp -u ${PYDK}/*/lib/python3.?/site-packages/*.py assets/packages/
+
 }
 
 function do_stdlib

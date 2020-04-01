@@ -44,9 +44,9 @@ else
     JOBS=${JOBS:-4}
     JFLAGS="-j $JOBS"
     CNF=""
-    if [ -d ${ENV} ]
+    if [ -f ${ENV}/bin/activate ]
     then
-        echo " * using previous build dir ${ROOT}"
+        echo " * using previous build dir ${ROOT} because found ${ENV}"
     else
         echo " * create venv ${ROOT}"
         $PYTHON -m venv --prompt pydk-${ENV} ${ENV}
@@ -75,6 +75,8 @@ then
     export QUIET="1>/dev/null"
 else
     pip3 install --upgrade pip
+    pip3 install --upgrade setuptools
+    pip3 install --upgrade Cython
 fi
 
 if [ -f new_env ]

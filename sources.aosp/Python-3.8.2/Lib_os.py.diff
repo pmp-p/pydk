@@ -1,0 +1,15 @@
+--- python3/Lib/os.py	2020-02-24 22:36:25.000000000 +0100
++++ python3-android/Lib/os.py	2020-03-29 18:49:07.061978123 +0200
+@@ -1112,3 +1112,12 @@
+             cookie,
+             nt._remove_dll_directory
+         )
++
++try:
++    getpid
++except:
++    import sys
++    print("210: os.getpid() is broken",file=sys.stderr)
++    def getpid():
++        return int(open('/proc/self/stat').read().split(' ')[0])
++
