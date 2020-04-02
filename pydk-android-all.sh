@@ -1,13 +1,15 @@
 #!/bin/sh
 
-if false; then
+export PYMAJOR=3
+export PYMINOR={$PYMINOR:-8}
+
+if echo $PYMINOR |grep -q 7
+then
 # python 3.7.x
-    export PYMINOR=7
     export PYVER=${PYMAJOR}.${PYMINOR}.5
     export OPENSSL_VERSION="1.0.2t"
 else
 # python 3.8.x
-    export PYMINOR=8
     export PYVER=${PYMAJOR}.${PYMINOR}.2
     export OPENSSL_VERSION="1.1.1d"
 fi
@@ -24,8 +26,6 @@ export NDK_HOME=${NDK_HOME:-${ANDROID_HOME}/ndk-bundle}
 export ANDROID_NDK_HOME=${NDK_HOME}
 
 export DN=org.${DN}
-
-export PYMAJOR=3
 
 #UNITS="unit"
 
