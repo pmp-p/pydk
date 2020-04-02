@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export PYMAJOR=3
-export PYMINOR={$PYMINOR:-8}
+export PYMINOR=${$PYMINOR:-8}
 
 if echo $PYMINOR |grep -q 7
 then
