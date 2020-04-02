@@ -1,7 +1,11 @@
 #!/bin/sh
 
+sh -version
+
+PYMINOR_DEFAULT=8
+
 export PYMAJOR=3
-export PYMINOR=${$PYMINOR:-8}
+export PYMINOR=${PYMINOR:-$PYMINOR_DEFAULT}
 
 if echo $PYMINOR |grep -q 7
 then
