@@ -1,14 +1,11 @@
 #  PARALLEL BUILD WILL BREAK : always use -j1 !
 
-#export OPENSSL_URL=${OPENSSL_URL:-"URL https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"}
+export OPENSSL_URL=${OPENSSL_URL:-"URL https://ftp.openssl.org/source/openssl-1.1.1f.tar.gz"}
 
 case "$OPENSSL_VERSION" in
     "1.0.2t" ) OPENSSL_HASH="URL_HASH SHA256=14cb464efe7ac6b54799b34456bd69558a749a4931ecfd9cf9f71d7881cac7bc";;
-    "1.1.1d" ) OPENSSL_HASH="URL_HASH SHA256=1e3a91bc1f9dfce01af26026f856e064eab4c8ee0a8f457b5ae30b40b8b711f2";;
+    "1.1.1f" ) OPENSSL_HASH="URL_HASH SHA256=186c6bfe6ecfba7a5b48c47f8a1673d0f3b0e5ba2e25602dd23b629975da3f35";;
 esac
-
-export OPENSSL_URL=${OPENSSL_URL:-"URL https://github.com/openssl/openssl/archive/OpenSSL_1_1_1d.tar.gz"}
-export OPENSSL_HASH="URL_HASH SHA256=23011a5cc78e53d0dc98dfa608c51e72bcd350aa57df74c5d5574ba4ffb62e74"
 
 openssl_host_cmake () {
     cat >> CMakeLists.txt <<END
@@ -63,6 +60,7 @@ openssl_crosscompile () {
         case "$OPENSSL_VERSION" in
             "1.0.2t" ) V11=false;;
             "1.1.1d" ) V11=true;;
+            "1.1.1f" ) V11=true;;
         esac
 
         # no-ssl2 no-ssl3 no-comp

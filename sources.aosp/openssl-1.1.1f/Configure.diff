@@ -1,0 +1,127 @@
+--- openssl-1.1.1d/Configurations/10-main.conf	2019-09-10 15:13:07.000000000 +0200
++++ openssl-1.1.1d.pydk/Configurations/10-main.conf	2019-12-16 18:48:37.644606094 +0100
+@@ -642,10 +642,10 @@
+         CXXFLAGS         => picker(default => "-Wall",
+                                    debug   => "-O0 -g",
+                                    release => "-O3"),
+-        cflags           => threads("-pthread"),
+-        cxxflags         => combine("-std=c++11", threads("-pthread")),
++        cflags           => "",
++        cxxflags         => combine("-std=c++11"),
+         lib_cppflags     => "-DOPENSSL_USE_NODELETE",
+-        ex_libs          => add("-ldl", threads("-pthread")),
++        ex_libs          => add("-ldl"),
+         bn_ops           => "BN_LLONG RC4_CHAR",
+         thread_scheme    => "pthreads",
+         dso_scheme       => "dlfcn",
+--- openssl-1.1.1d/Configurations/15-android.conf	2019-09-10 15:13:07.000000000 +0200
++++ openssl-1.1.1d.pydk/Configurations/15-android.conf	2019-12-17 14:03:43.824378919 +0100
+@@ -62,15 +62,9 @@
+             } elsif (-f "$ndk/AndroidVersion.txt") {
+                 $sysroot = "$ndk/sysroot";
+             } else {
+-                $api = "*";
++                $api = $ENV{API};
++                $arch = $ENV{ARCH};
+ 
+-                # see if user passed -D__ANDROID_API__=N
+-                foreach (@{$useradd{CPPDEFINES}}, @{$user{CPPFLAGS}}) {
+-                    if (m|__ANDROID_API__=([0-9]+)|) {
+-                        $api = $1;
+-                        last;
+-                    }
+-                }
+ 
+                 # list available platforms (numerically)
+                 my @platforms = sort { $a =~ m/-([0-9]+)$/; my $aa = $1;
+@@ -82,7 +76,7 @@
+                 $sysroot =~ m|/android-([0-9]+)/arch-$arch|;
+                 $api = $1;
+             }
+-            die "no sysroot=$sysroot"   if (!-d $sysroot);
++            warn "no sysroot=$sysroot"   if (!-d $sysroot);
+ 
+             my $triarch = $triplet{$arch};
+             my $cflags;
+@@ -121,10 +115,13 @@
+                 die "no NDK clang on \$PATH";
+             } else {
+                 if (which("$triarch-gcc") !~ m|^$ndk/.*/prebuilt/([^/]+)/|) {
+-                    die "no NDK $triarch-gcc on \$PATH";
++                    warn "no NDK $triarch-gcc on \$PATH";
++                    # $cflags .= " -mandroid";
++                    $user{CROSS_COMPILE} = "";
++                } else {
++                    $cflags .= " -mandroid";
++                    $user{CROSS_COMPILE} = "$triarch-";
+                 }
+-                $cflags .= " -mandroid";
+-                $user{CROSS_COMPILE} = "$triarch-";
+             }
+ 
+             if (!-d "$sysroot/usr/include") {
+@@ -139,7 +136,7 @@
+ 
+             $sysroot =~ s|^$ndk/||;
+             $android_ndk = {
+-                cflags   => "$cflags --sysroot=\$($ndk_var)/$sysroot",
++                cflags   => "", #--sysroot=\$($ndk_var)/$sysroot",
+                 cppflags => $cppflags,
+                 bn_ops   => $arch =~ m/64$/ ? "SIXTY_FOUR_BIT_LONG"
+                                             : "BN_LLONG",
+@@ -171,7 +168,7 @@
+         bin_cflags       => "-pie",
+         enable           => [ ],
+     },
+-    "android-arm" => {
++    "android-armv7a" => {
+         ################################################################
+         # Contemporary Android applications can provide multiple JNI
+         # providers in .apk, targeting multiple architectures. Among
+@@ -188,7 +185,7 @@
+         # just generic eabi would do. But in latter case it would be
+         # appropriate to
+         #
+-        #   ./Configure android-arm -D__ARM_MAX_ARCH__=8
++        #   ./Configure android-armv7a -D__ARM_MAX_ARCH__=8
+         #
+         # in order to build "universal" binary and allow OpenSSL take
+         # advantage of NEON when it's available.
+@@ -202,7 +199,7 @@
+         inherit_from     => [ "android", asm("armv4_asm") ],
+         bn_ops           => add("RC4_CHAR"),
+     },
+-    "android-arm64" => {
++    "android-aarch64" => {
+         inherit_from     => [ "android", asm("aarch64_asm") ],
+         bn_ops           => add("RC4_CHAR"),
+         perlasm_scheme   => "linux64",
+@@ -234,6 +231,12 @@
+         bn_ops           => add("RC4_INT"),
+         perlasm_scheme   => "android",
+     },
++    "android-i686" => {
++        inherit_from     => [ "android", asm("x86_asm") ],
++        CFLAGS           => add(picker(release => "-fomit-frame-pointer")),
++        bn_ops           => add("RC4_INT"),
++        perlasm_scheme   => "android",
++    },
+     "android-x86_64" => {
+         inherit_from     => [ "android", asm("x86_64_asm") ],
+         bn_ops           => add("RC4_INT"),
+@@ -244,13 +247,13 @@
+     # Backward compatible targets, (might) requre $CROSS_SYSROOT
+     #
+     "android-armeabi" => {
+-        inherit_from     => [ "android-arm" ],
++        inherit_from     => [ "android-armv7a" ],
+     },
+     "android64" => {
+         inherit_from     => [ "android" ],
+     },
+     "android64-aarch64" => {
+-        inherit_from     => [ "android-arm64" ],
++        inherit_from     => [ "android-aarch64" ],
+     },
+     "android64-x86_64" => {
+         inherit_from     => [ "android-x86_64" ],

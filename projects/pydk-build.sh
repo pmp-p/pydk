@@ -128,11 +128,17 @@ then
         echo " * Copy/Update prebuilt from ${PYDK}/prebuilt for local project"
         /bin/cp -Rfxpvu ${PYDK}/prebuilt ./ |wc -l
 
+        echo " * Copy/Update prebuilt from ${PYDK}/prebuilt.aosp for local project (pip+thirdparty modules)"
+        /bin/cp -Rfxpvu ${PYDK}/prebuilt.aosp ./ |wc -l
 
         for ARCH in $(ls ${PYDK}/prebuilt)
         do
             echo " * Copy/Update include from $(echo ${PYDK}/*/apkroot-$ARCH/usr) for local project"
-            /bin/cp -Rfxpvu ${PYDK}/*/apkroot-${ARCH}/usr/include  ./prebuilt/$ARCH/ |wc -l
+            /bin/cp -Rfxpvu ${PYDK}/*/apkroot-${ARCH}/usr/include ./prebuilt/$ARCH/ |wc -l
+
+            echo " * Copy/Update prebuilt thirdparty libs from $(echo ${PYDK}/*/apkroot-$ARCH/usr) for local project"
+            /bin/cp -Rfxpvu ${PYDK}/*/apkroot-${ARCH}/usr/lib/lib*.so ./prebuilt/$ARCH/ |wc -l
+
         done
 
         do_pip ${APK}

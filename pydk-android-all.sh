@@ -15,7 +15,7 @@ then
 else
 # python 3.8.x
     export PYVER=${PYMAJOR}.${PYMINOR}.2
-    export OPENSSL_VERSION="1.1.1d"
+    export OPENSSL_VERSION="1.1.1f"
 fi
 
 
