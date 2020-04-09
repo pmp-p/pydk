@@ -1,0 +1,12 @@
+--- panda3d/panda/src/glstuff/CMakeLists.txt	2020-03-20 15:48:21.000000000 +0100
++++ panda3d.android/panda/src/glstuff/CMakeLists.txt	2020-04-08 01:50:42.708408918 +0200
+@@ -1,6 +1,9 @@
++if(ANDROID)
++else()
+ if(NOT HAVE_GL)
+   return()
+ endif()
++endif()
+ 
+ set(P3GLSTUFF_HEADERS
+   glGeomContext_src.I

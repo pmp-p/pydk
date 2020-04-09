@@ -1,0 +1,21 @@
+--- panda3d/panda/metalibs/pandagl/CMakeLists.txt	2020-03-20 15:48:21.000000000 +0100
++++ panda3d.android/panda/metalibs/pandagl/CMakeLists.txt	2020-04-08 02:35:38.189276979 +0200
+@@ -1,3 +1,10 @@
++if(ANDROID)
++  list(APPEND PANDAGL_LINK_TARGETS p3viewdisplay_gles2)
++  set(PANDAGL_PIPE_TYPE "viewGraphicsPipe")
++    return()
++endif()
++
++
+ if(NOT HAVE_GL)
+   return()
+ endif()
+@@ -16,7 +23,6 @@
+   list(APPEND PANDAGL_LINK_TARGETS p3cocoadisplay)
+   set(PANDAGL_PIPE_TYPE "CocoaGraphicsPipe")
+   set(PANDAGL_PIPE_INCLUDE "cocoaGraphicsPipe.h")
+-
+ else()
+   message("") # Add extra line before error
+   message(SEND_ERROR

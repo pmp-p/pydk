@@ -1,0 +1,15 @@
+--- panda3d/panda/src/viewdisplay/viewGraphicsWindow.I	2020-04-08 07:03:04.336798665 +0200
++++ panda3d.android/panda/src/viewdisplay/viewGraphicsWindow.I	2020-04-07 18:16:08.878999077 +0200
+@@ -0,0 +1,12 @@
++/**
++ * PANDA 3D SOFTWARE
++ * Copyright (c) Carnegie Mellon University.  All rights reserved.
++ *
++ * All use of this software is subject to the terms of the revised BSD
++ * license.  You should have received a copy of this license along
++ * with this source code in a file named "LICENSE."
++ *
++ * @file viewGraphicsWindow.I
++ * @author pmp-p
++ * @date 2020-04-07
++ */

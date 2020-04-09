@@ -1,0 +1,49 @@
+--- panda3d/panda/src/viewdisplay/config_viewdisplay.h	2020-04-08 07:03:04.334798695 +0200
++++ panda3d.android/panda/src/viewdisplay/config_viewdisplay.h	2020-04-08 02:22:08.181004101 +0200
+@@ -0,0 +1,46 @@
++/**
++ * PANDA 3D SOFTWARE
++ * Copyright (c) Carnegie Mellon University.  All rights reserved.
++ *
++ * All use of this software is subject to the terms of the revised BSD
++ * license.  You should have received a copy of this license along
++ * with this source code in a file named "LICENSE."
++ *
++ * @file config_viewdisplay.h
++ * @author pmp-p
++ * @date 2020-04-07
++ */
++
++#ifndef CONFIG_VIEWDISPLAY_H
++#define CONFIG_VIEWDISPLAY_H
++
++#include "pandabase.h"
++#include "filename.h"
++#include "notifyCategoryProxy.h"
++#include "configVariableString.h"
++#include "configVariableBool.h"
++#include "configVariableInt.h"
++
++
++#if defined(OPENGLES_1) && defined(OPENGLES_2)
++  #error OPENGLES_1 and OPENGLES_2 cannot be defined at the same time!
++#endif
++#if !defined(OPENGLES_1) && !defined(OPENGLES_2)
++  #error Either OPENGLES_1 or OPENGLES_2 must be defined when compiling viewdisplay!
++#endif
++
++#ifdef OPENGLES_2
++  NotifyCategoryDecl(viewdisplay, EXPCL_PANDAGLES2, EXPTP_PANDAGLES2);
++
++  extern EXPCL_PANDAGLES2 void init_libviewdisplay();
++  extern EXPCL_PANDAGLES2 const std::string get_egl_error_string(int error);
++#else
++    #error GLES1 dropped
++  NotifyCategoryDecl(viewdisplay, EXPCL_PANDAGLES, EXPTP_PANDAGLES);
++
++  extern EXPCL_PANDAGLES void init_libviewdisplay();
++  extern EXPCL_PANDAGLES const std::string get_egl_error_string(int error);
++#endif
++
++
++#endif

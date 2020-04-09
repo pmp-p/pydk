@@ -1,0 +1,15 @@
+--- panda3d/panda/src/display/graphicsOutput.cxx	2020-03-20 15:48:21.000000000 +0100
++++ panda3d.android/panda/src/display/graphicsOutput.cxx	2020-04-08 09:26:29.333561325 +0200
+@@ -100,8 +100,11 @@
+     // If we're tracking the host size, we assume we'll be nonzero eventually.
+     _is_nonzero_size = true;
+   }
+-
++#if __ANDROID__
++  _is_valid = true;
++#else
+   _is_valid = false;
++#endif
+   _flip_ready = false;
+   _target_tex_page = -1;
+   _prev_page_dr = nullptr;

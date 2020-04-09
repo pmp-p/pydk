@@ -1,0 +1,227 @@
+--- panda3d/panda/src/viewdisplay/viewGraphicsPipe.cxx	2020-04-08 07:03:04.334798695 +0200
++++ panda3d.android/panda/src/viewdisplay/viewGraphicsPipe.cxx	2020-04-08 23:27:18.258252815 +0200
+@@ -0,0 +1,224 @@
++/**
++ * PANDA 3D SOFTWARE
++ * Copyright (c) Carnegie Mellon University.  All rights reserved.
++ *
++ * All use of this software is subject to the terms of the revised BSD
++ * license.  You should have received a copy of this license along
++ * with this source code in a file named "LICENSE."
++ *
++ * @file viewGraphicsPipe.cxx
++ * @author pmp-p
++ * @date 2020-04-07
++ */
++
++// #include "viewGraphicsBuffer.h"
++#include "viewGraphicsPipe.h"
++// #include "viewGraphicsPixmap.h"
++#include "viewGraphicsWindow.h"
++//#include "viewGraphicsStateGuardian.h"
++#include "config_viewdisplay.h"
++#include "frameBufferProperties.h"
++
++#include <android/log.h>
++#define LOG_TAG "DEBUG:viewGraphicsPipe.cxx"
++#define LOG_I(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
++#define LOG_E(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
++
++TypeHandle ViewGraphicsPipe::_type_handle;
++
++/**
++ *
++ */
++ViewGraphicsPipe::
++ViewGraphicsPipe() {
++  _is_valid = false;
++  _supported_types = OT_window | OT_buffer | OT_texture_buffer;
++  _egl_display = nullptr;
++
++  _display_width = 0;
++  _display_height = 0;
++
++  _egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
++  if (!eglInitialize(_egl_display, nullptr, nullptr)) {
++    viewdisplay_cat.error()
++      << "Couldn't initialize the EGL display: "
++      << get_egl_error_string(eglGetError()) << "\n";
++  }
++
++  if (!eglBindAPI(EGL_OPENGL_ES_API)) {
++    viewdisplay_cat.error()
++      << "Couldn't bind EGL to the OpenGL ES API: "
++      << get_egl_error_string(eglGetError()) << "\n";
++  }
++
++  _is_valid = true;
++}
++
++/**
++ *
++ */
++ViewGraphicsPipe::
++~ViewGraphicsPipe() {
++  if (_egl_display) {
++    if (!eglTerminate(_egl_display)) {
++      viewdisplay_cat.error() << "Failed to terminate EGL display: "
++        << get_egl_error_string(eglGetError()) << "\n";
++    }
++  }
++}
++
++/**
++ * Returns the name of the rendering interface associated with this
++ * GraphicsPipe.  This is used to present to the user to allow him/her to
++ * choose between several possible GraphicsPipes available on a particular
++ * platform, so the name should be meaningful and unique for a given platform.
++ */
++std::string ViewGraphicsPipe::
++get_interface_name() const {
++  return "OpenGL ES";
++}
++
++/**
++ * This function is passed to the GraphicsPipeSelection object to allow the
++ * user to make a default ViewGraphicsPipe.
++ */
++PT(GraphicsPipe) ViewGraphicsPipe::
++pipe_constructor() {
++  return new ViewGraphicsPipe;
++}
++
++/**
++ * Returns an indication of the thread in which this GraphicsPipe requires its
++ * window processing to be performed: typically either the app thread (e.g.
++ * X) or the draw thread (Windows).
++ */
++GraphicsPipe::PreferredWindowThread
++ViewGraphicsPipe::get_preferred_window_thread() const {
++  // Most of the View NDK window functions can be called from any thread.
++  // Since we're creating the context at open_window time, let's choose
++  // "draw".
++  return PWT_app;
++}
++
++/**
++ * Creates a new window on the pipe, if possible.
++ */
++PT(GraphicsOutput) ViewGraphicsPipe::
++make_output(const std::string &name,
++            const FrameBufferProperties &fb_prop,
++            const WindowProperties &win_prop,
++            int flags,
++            GraphicsEngine *engine,
++            GraphicsStateGuardian *gsg,
++            GraphicsOutput *host,
++            int retry,
++            bool &precertify) {
++LOG_E("ViewGraphicsPipe::make_output begin");
++  if (!_is_valid) {
++    LOG_E("ViewGraphicsPipe::make_output invalid");
++    return nullptr;
++  }
++#pragma message "i have no idea what i'm doing"
++//  View
++  GraphicsStateGuardian *viewgsg = 0;
++  if (gsg != 0) {
++    DCAST_INTO_R(viewgsg, gsg, nullptr);
++  }
++
++  // First thing to try: an eglGraphicsWindow
++
++  if (retry == 0) {
++    if (((flags&BF_require_parasite)!=0)||
++        ((flags&BF_refuse_window)!=0)||
++        ((flags&BF_resizeable)!=0)||
++        ((flags&BF_size_track_host)!=0)||
++        ((flags&BF_rtt_cumulative)!=0)||
++        ((flags&BF_can_bind_color)!=0)||
++        ((flags&BF_can_bind_every)!=0)) {
++        LOG_E("ViewGraphicsPipe::make_output bad flags");
++      return nullptr;
++    }
++    LOG_I("ViewGraphicsPipe::make_output returning new instance of ViewGraphicsWindow");
++    return new ViewGraphicsWindow(engine, this, name, fb_prop, win_prop, flags, gsg, host);
++  }
++        LOG_E("ViewGraphicsPipe::make_output total fail");
++  // Second thing to try: a GLES(2)GraphicsBuffer
++  /*if (retry == 1) {
++    if ((host==0)||
++  // (!gl_support_fbo)||
++        ((flags&BF_require_parasite)!=0)||
++        ((flags&BF_require_window)!=0)) {
++      return NULL;
++    }
++    // Early failure - if we are sure that this buffer WONT meet specs, we can
++    // bail out early.
++    if ((flags & BF_fb_props_optional)==0) {
++      if ((fb_prop.get_indexed_color() > 0)||
++          (fb_prop.get_back_buffers() > 0)||
++          (fb_prop.get_accum_bits() > 0)||
++          (fb_prop.get_multisamples() > 0)) {
++        return NULL;
++      }
++    }
++    // Early success - if we are sure that this buffer WILL meet specs, we can
++    // precertify it.
++    if ((eglgsg != 0) &&
++        (eglgsg->is_valid()) &&
++        (!eglgsg->needs_reset()) &&
++        (eglgsg->_supports_framebuffer_object) &&
++        (eglgsg->_glDrawBuffers != 0)&&
++        (fb_prop.is_basic())) {
++      precertify = true;
++    }
++#ifdef OPENGLES_2
++    return new GLES2GraphicsBuffer(engine, this, name, fb_prop, win_prop,
++                                  flags, gsg, host);
++#else
++    return new GLESGraphicsBuffer(engine, this, name, fb_prop, win_prop,
++                                  flags, gsg, host);
++#endif
++  }
++
++  // Third thing to try: a eglGraphicsBuffer
++  if (retry == 2) {
++    if (((flags&BF_require_parasite)!=0)||
++        ((flags&BF_require_window)!=0)||
++        ((flags&BF_resizeable)!=0)||
++        ((flags&BF_size_track_host)!=0)) {
++      return NULL;
++    }
++
++    if (!support_rtt) {
++      if (((flags&BF_rtt_cumulative)!=0)||
++          ((flags&BF_can_bind_every)!=0)) {
++        // If we require Render-to-Texture, but can't be sure we support it,
++        // bail.
++        return NULL;
++      }
++    }
++
++    return new eglGraphicsBuffer(engine, this, name, fb_prop, win_prop,
++                                 flags, gsg, host);
++  }
++
++  // Fourth thing to try: an eglGraphicsPixmap.
++  if (retry == 3) {
++    if (((flags&BF_require_parasite)!=0)||
++        ((flags&BF_require_window)!=0)||
++        ((flags&BF_resizeable)!=0)||
++        ((flags&BF_size_track_host)!=0)) {
++      return NULL;
++    }
++
++    if (((flags&BF_rtt_cumulative)!=0)||
++        ((flags&BF_can_bind_every)!=0)) {
++      return NULL;
++    }
++
++    return new eglGraphicsPixmap(engine, this, name, fb_prop, win_prop,
++                                 flags, gsg, host);
++  }*/
++
++  // Nothing else left to try.
++  return nullptr;
++}

@@ -1,0 +1,15 @@
+--- panda3d/panda/src/display/graphicsEngine.cxx	2020-03-20 15:48:21.000000000 +0100
++++ panda3d.android/panda/src/display/graphicsEngine.cxx	2020-04-08 09:40:23.607494904 +0200
+@@ -964,8 +964,11 @@
+  */
+ void GraphicsEngine::
+ open_windows() {
+-  Thread *current_thread = Thread::get_current_thread();
++#if __ANDROID__
++    return;
++#endif
+ 
++  Thread *current_thread = Thread::get_current_thread();
+   ReMutexHolder holder(_lock, current_thread);
+ 
+   pvector<PT(GraphicsOutput)> new_windows;

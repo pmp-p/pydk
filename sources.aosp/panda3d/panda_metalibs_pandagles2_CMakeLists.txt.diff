@@ -1,0 +1,39 @@
+--- panda3d/panda/metalibs/pandagles2/CMakeLists.txt	2020-03-20 15:48:21.000000000 +0100
++++ panda3d.android/panda/metalibs/pandagles2/CMakeLists.txt	2020-04-08 06:34:11.527848017 +0200
+@@ -1,7 +1,27 @@
++
++if(ANDROID)
++    set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "OpenGLES2Devel")
++    add_metalib(pandagles2 ${MODULE_TYPE}
++      INCLUDE viewGraphicsPipe.h
++      INIT init_libpandagles2 pandagles2.h
++      EXPORT int get_pipe_type_pandagles2 "ViewGraphicsPipe::get_class_type().get_index()"
++      COMPONENTS p3viewdisplay_gles2 p3gles2gsg p3glstuff)
++    unset(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME)
++
++    install(TARGETS pandagles2
++      EXPORT OpenGLES2 COMPONENT OpenGLES2
++      DESTINATION ${MODULE_DESTINATION}
++      ARCHIVE COMPONENT OpenGLES2Devel)
++
++    export_targets(OpenGLES2 COMPONENT OpenGLES2Devel)
++
++endif()
++
+ if(NOT HAVE_GLES2 OR NOT HAVE_EGL)
+   return()
+ endif()
+ 
++
+ set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "OpenGLES2Devel")
+ add_metalib(pandagles2 ${MODULE_TYPE}
+   INCLUDE eglGraphicsPipe.h
+@@ -10,6 +30,8 @@
+   COMPONENTS p3egldisplay_gles2 p3gles2gsg p3glstuff p3x11display)
+ unset(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME)
+ 
++
++
+ install(TARGETS pandagles2
+   EXPORT OpenGLES2 COMPONENT OpenGLES2
+   DESTINATION ${MODULE_DESTINATION}

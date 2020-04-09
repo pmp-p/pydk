@@ -8,8 +8,8 @@ export PANDA3D_HASH=${PANDA3D_HASH:-"URL_HASH SHA256=6745d430f34b6d6f84f88a36f51
 
 export PANDA3D_CMAKE_ARGS="-DHAVE_PYTHON=YES\
  -DHAVE_GL=NO -DHAVE_GLX=NO -DHAVE_X11=NO\
- -DHAVE_GLES1=NO -DHAVE_GLES2=NO -DHAVE_EGL=NO\
- -DHAVE_EGG=NO -DHAVE_SSE2=NO"
+ -DHAVE_GLES1=NO -DHAVE_GLES2=YES -DHAVE_EGL=NO\
+ -DHAVE_EGG=YES -DHAVE_SSE2=NO"
 
 panda3d_host_cmake () {
     cat >> CMakeLists.txt <<END
@@ -28,6 +28,8 @@ ExternalProject_Add(
 
     ${PANDA3D_URL}
     ${PANDA3D_HASH}
+
+    PATCH_COMMAND patch -p1 < ${SUPPORT}/panda3d/*.diff
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
@@ -152,7 +154,12 @@ END
             then
                 make ${JFLAGS} install >/dev/null
             else
-                make ${JFLAGS} install
+                if make ${JFLAGS} install
+                then
+                    echo
+                else
+                    exit 1
+                fi
             fi
         else
             if $CI

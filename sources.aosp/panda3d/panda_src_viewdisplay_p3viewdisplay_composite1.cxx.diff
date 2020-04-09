@@ -1,0 +1,9 @@
+--- panda3d/panda/src/viewdisplay/p3viewdisplay_composite1.cxx	2020-04-08 07:03:04.334798695 +0200
++++ panda3d.android/panda/src/viewdisplay/p3viewdisplay_composite1.cxx	2020-04-08 01:30:13.571829378 +0200
+@@ -0,0 +1,6 @@
++#include "config_viewdisplay.cxx"
++//#include "viewGraphicsBuffer.cxx"
++#include "viewGraphicsPipe.cxx"
++//#include "viewGraphicsPixmap.cxx"
++#include "viewGraphicsStateGuardian.cxx"
++#include "viewGraphicsWindow.cxx"
