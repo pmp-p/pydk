@@ -1,15 +1,30 @@
 --- panda3d/panda/src/display/graphicsOutput.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d.android/panda/src/display/graphicsOutput.cxx	2020-04-08 09:26:29.333561325 +0200
-@@ -100,8 +100,11 @@
-     // If we're tracking the host size, we assume we'll be nonzero eventually.
-     _is_nonzero_size = true;
++++ panda3d.android/panda/src/display/graphicsOutput.cxx	2020-04-10 00:16:14.645669275 +0200
+@@ -34,6 +34,11 @@
+ #include "throw_event.h"
+ #include "config_gobj.h"
+ 
++#include <android/log.h>
++#define LOG_TAG "DEBUG:graphicsOutput.cxx"
++#define LOG_I(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
++#define LOG_E(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
++
+ using std::string;
+ 
+ TypeHandle GraphicsOutput::_type_handle;
+@@ -869,13 +874,13 @@
+       tex->get_texture_type() == Texture::TT_cube_map) {
+     flags |= GraphicsPipe::BF_size_square;
    }
 -
-+#if __ANDROID__
-+  _is_valid = true;
-+#else
-   _is_valid = false;
-+#endif
-   _flip_ready = false;
-   _target_tex_page = -1;
-   _prev_page_dr = nullptr;
++LOG_I("make_texture_buffer::make_output-> begin");
+   GraphicsOutput *buffer = get_gsg()->get_engine()->
+     make_output(get_gsg()->get_pipe(),
+                 name, get_child_sort(),
+                 *fbp, WindowProperties::size(x_size, y_size),
+                 flags, get_gsg(), get_host());
+-
++LOG_I("make_texture_buffer::make_output-> end");
+   if (buffer != nullptr) {
+     if (buffer->get_gsg() == nullptr ||
+         buffer->get_gsg()->get_prepared_objects() != get_gsg()->get_prepared_objects()) {

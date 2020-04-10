@@ -1,0 +1,23 @@
+--- panda3d/panda/src/display/graphicsStateGuardian.cxx	2020-03-20 15:48:21.000000000 +0100
++++ panda3d.android/panda/src/display/graphicsStateGuardian.cxx	2020-04-10 00:35:55.850113034 +0200
+@@ -61,6 +61,11 @@
+ 
+ #include <limits.h>
+ 
++#include <android/log.h>
++#define LOG_TAG "DEBUG:gsg"
++#define LOG_I(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
++#define LOG_E(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
++
+ using std::string;
+ 
+ PStatCollector GraphicsStateGuardian::_vertex_buffer_switch_pcollector("Buffer switch:Vertex");
+@@ -3511,7 +3516,7 @@
+   if (is_point) {
+     flags |= GraphicsPipe::BF_size_square;
+   }
+-
++LOG_I("make_shadow_buffer->make_output");
+   // Create the buffer.  This is a bit tricky because make_output() can only
+   // be called from the app thread, but it won't cause issues as long as the
+   // pipe can precertify the buffer, which it can in most cases.

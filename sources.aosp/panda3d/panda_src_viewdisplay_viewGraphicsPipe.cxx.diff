@@ -1,6 +1,6 @@
 --- panda3d/panda/src/viewdisplay/viewGraphicsPipe.cxx	2020-04-08 07:03:04.334798695 +0200
-+++ panda3d.android/panda/src/viewdisplay/viewGraphicsPipe.cxx	2020-04-08 23:27:18.258252815 +0200
-@@ -0,0 +1,224 @@
++++ panda3d.android/panda/src/viewdisplay/viewGraphicsPipe.cxx	2020-04-10 00:03:37.004930187 +0200
+@@ -0,0 +1,225 @@
 +/**
 + * PANDA 3D SOFTWARE
 + * Copyright (c) Carnegie Mellon University.  All rights reserved.
@@ -120,7 +120,8 @@
 +  if (!_is_valid) {
 +    LOG_E("ViewGraphicsPipe::make_output invalid");
 +    return nullptr;
-+  }
++  } else
++    LOG_E("ViewGraphicsPipe::make_output seems valid");
 +#pragma message "i have no idea what i'm doing"
 +//  View
 +  GraphicsStateGuardian *viewgsg = 0;
