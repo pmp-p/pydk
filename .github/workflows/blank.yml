@@ -21,9 +21,11 @@ jobs:
             echo pydk support
             sudo apt-get install -y python3-venv libfuse-dev >/dev/null
             echo python3 support
-            sudo apt-get install -y  libsqlite3-dev
+            sudo apt-get install -y  libsqlite3-dev ninja-build bison flex  zlib1g-dev >/dev/null
+            echo gl-gles-gles2 dev
+            sudo apt-get install -y  libgl1-mesa-dev libgles2-mesa-dev libglapi-mesa mesa-common-dev libegl1-mesa-dev >/dev/null
             echo panda3d support
-            sudo apt-get install -y libbullet-dev  ninja-build bison flex libfreetype6-dev libgl1-mesa-dev libgles2-mesa-dev libjpeg-dev libode-dev libopenal-dev libpng-dev libssl-dev libvorbis-dev zlib1g-dev >/dev/null
+            sudo apt-get install -y libbullet-dev libfreetype6-dev libjpeg-dev libode-dev libopenal-dev libpng-dev libssl-dev  libvorbis-dev  >/dev/null
             echo emscripten support
             git clone https://github.com/emscripten-core/emsdk.git
             cd emsdk && ./emsdk update-tags && ./emsdk install --embedded tot && ./emsdk activate --embedded tot

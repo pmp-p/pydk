@@ -1,6 +1,6 @@
 --- panda3d/panda/src/viewdisplay/viewGraphicsWindow.cxx	2020-04-08 07:03:04.336798665 +0200
-+++ panda3d.android/panda/src/viewdisplay/viewGraphicsWindow.cxx	2020-04-12 08:29:48.202203076 +0200
-@@ -0,0 +1,959 @@
++++ panda3d.android/panda/src/viewdisplay/viewGraphicsWindow.cxx	2020-04-12 12:12:14.240426076 +0200
+@@ -0,0 +1,960 @@
 +/**
 + * PANDA 3D SOFTWARE
 + * Copyright (c) Carnegie Mellon University.  All rights reserved.
@@ -258,8 +258,9 @@
 +set_properties_now(WindowProperties &properties) {
 +#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
 +    #warning fixme set_properties
-+    LOG_E("STUB: ViewGraphicsWindow::set_properties_now(WindowProperties &properties)");
-+    return;
++    LOG_E("STUB: ViewGraphicsWindow::set_properties_now(WindowProperties &properties) -> open_window()+gsg");
++    if (open_window())
++        _is_valid = true;
 +#else
 +
 +  if (_pipe == nullptr) {

@@ -1,5 +1,5 @@
 --- panda3d/panda/src/display/graphicsEngine.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d.android/panda/src/display/graphicsEngine.cxx	2020-04-12 11:01:58.858561869 +0200
++++ panda3d-android/panda/src/display/graphicsEngine.cxx	2020-04-13 00:48:38.198119572 +0200
 @@ -50,6 +50,14 @@
  #include "depthTestAttrib.h"
  #include "unionBoundingVolume.h"
@@ -26,23 +26,27 @@
    int x_size = 0, y_size = 0;
    if (win_prop.has_size()) {
      x_size = win_prop.get_x_size();
-@@ -307,6 +317,7 @@
+@@ -307,6 +317,9 @@
    if (host == nullptr) {
      if (gsg != nullptr) {
        if ((!gsg->is_valid())||(gsg->needs_reset())) {
++#if __ANDROID__
 +LOG_E("320:open_windows");
++#endif
          open_windows();
        }
        if ((!gsg->is_valid())||(gsg->needs_reset())) {
-@@ -318,6 +329,7 @@
+@@ -318,6 +331,9 @@
          (!host->is_valid())||
          (!host->get_gsg()->is_valid())||
          (host->get_gsg()->needs_reset())) {
++#if __ANDROID__
 +LOG_E("332:open_windows");
++#endif
        open_windows();
      }
      if ((host->get_gsg()==nullptr)||
-@@ -410,7 +422,12 @@
+@@ -410,7 +426,12 @@
  
    // Ask the pipe to create a window.
  
@@ -55,58 +59,66 @@
      bool precertify = false;
      PT(GraphicsOutput) window =
        pipe->make_output(name, fb_prop, win_prop, flags, this, gsg, host, retry, precertify);
-@@ -422,7 +439,9 @@
+@@ -422,6 +443,10 @@
            << "Created output of type " << window->get_type() << "\n";
          return window;
        }
++#if __ANDROID__
 +LOG_E("442:do_add_window()");
-       do_add_window(window);
 +LOG_E("444:open_windows");
++#endif
+       do_add_window(window);
        open_windows();
        if (window->is_valid()) {
-         display_cat.info()
-@@ -446,6 +465,7 @@
-             << "  got: " << window->get_fb_properties() << "\n";
-         }
-       } else {
-+LOG_E("466: !window->is_valid()!");
-         display_cat.info()
-           << window->get_type() << " wouldn't open; abandoning.\n";
-         display_cat.debug(false)
-@@ -724,6 +744,7 @@
+@@ -724,7 +749,11 @@
    // that we don't render a frame before the offscreen buffers are ready
    // (which might result in a frame going by without some textures having
    // been rendered).
-+LOG_E("744:open_windows");
++#if __ANDROID__
++    #pragma message "744:open_windows removed"
++#else
    open_windows();
++#endif
  
    ClockObject *global_clock = ClockObject::get_global_clock();
-@@ -964,6 +985,7 @@
+ 
+@@ -964,17 +993,20 @@
   */
  void GraphicsEngine::
  open_windows() {
-+LOG_I("988:open_windows");
++
    Thread *current_thread = Thread::get_current_thread();
  
    ReMutexHolder holder(_lock, current_thread);
-@@ -972,6 +994,7 @@
+-
+   pvector<PT(GraphicsOutput)> new_windows;
    {
      MutexHolder new_windows_holder(_new_windows_lock, current_thread);
++
      if (_new_windows.empty()) {
-+LOG_I("988:open_windows->empty");
        return;
      }
+-
++#if __ANDROID__
++LOG_I("1002:open_windows-> good ! not empty");
++#endif
+     for (auto it = _new_windows.begin(); it != _new_windows.end(); ++it) {
+       GraphicsOutput *window = *it;
  
-@@ -1044,9 +1067,12 @@
-   // Now go through the list again to check whether they opened successfully.
-   for (auto it = new_windows.begin(); it != new_windows.end(); ++it) {
+@@ -1046,7 +1078,16 @@
      GraphicsOutput *window = *it;
-+    if (!window->get_gsg())
-+LOG_I("1071:open_windows-> window->get_gsg nullptr !");
      if (window->is_valid()) {
        do_add_gsg(window->get_gsg(), window->get_pipe());
++#if __ANDROID__
++        if (is_empty())
++            LOG_E("1077:no window");
++        else
++            LOG_I("1077: filled up");
++#endif
      } else {
-+LOG_I("988:open_windows->remove !");
++#if __ANDROID__
++LOG_E("988:open_windows->remove !");
++#endif
        remove_window(window);
      }
    }

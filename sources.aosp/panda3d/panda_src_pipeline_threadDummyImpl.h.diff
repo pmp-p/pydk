@@ -1,5 +1,5 @@
 --- panda3d/panda/src/pipeline/threadDummyImpl.h	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d.android/panda/src/pipeline/threadDummyImpl.h	2020-04-10 14:53:28.728198654 +0200
++++ panda3d-android/panda/src/pipeline/threadDummyImpl.h	2020-04-13 00:17:30.437728566 +0200
 @@ -31,6 +31,10 @@
  #include <windows.h>  // For Sleep().
  #endif

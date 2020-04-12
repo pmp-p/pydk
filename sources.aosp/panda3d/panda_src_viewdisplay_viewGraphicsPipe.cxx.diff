@@ -1,6 +1,6 @@
 --- panda3d/panda/src/viewdisplay/viewGraphicsPipe.cxx	2020-04-08 07:03:04.334798695 +0200
-+++ panda3d.android/panda/src/viewdisplay/viewGraphicsPipe.cxx	2020-04-12 10:22:27.676788272 +0200
-@@ -0,0 +1,235 @@
++++ panda3d.android/panda/src/viewdisplay/viewGraphicsPipe.cxx	2020-04-12 11:39:18.050329412 +0200
+@@ -0,0 +1,237 @@
 +/**
 + * PANDA 3D SOFTWARE
 + * Copyright (c) Carnegie Mellon University.  All rights reserved.
@@ -153,6 +153,8 @@
 +    }
 +  }
 +    LOG_I("ViewGraphicsPipe::make_output returning new instance of ViewGraphicsWindow");
++if (!gsg)
++    LOG_E("ViewGraphicsPipe::make_output gsg == nullptr !");
 +    return new ViewGraphicsWindow(engine, this, name, fb_prop, win_prop, flags, gsg, host);
 +
 +    LOG_E("ViewGraphicsPipe::make_output total fail");
