@@ -1,6 +1,6 @@
 --- panda3d/panda/src/viewdisplay/viewGraphicsWindow.cxx	2020-04-08 07:03:04.336798665 +0200
-+++ panda3d.android/panda/src/viewdisplay/viewGraphicsWindow.cxx	2020-04-10 00:49:18.528182765 +0200
-@@ -0,0 +1,954 @@
++++ panda3d.android/panda/src/viewdisplay/viewGraphicsWindow.cxx	2020-04-12 08:29:48.202203076 +0200
+@@ -0,0 +1,959 @@
 +/**
 + * PANDA 3D SOFTWARE
 + * Copyright (c) Carnegie Mellon University.  All rights reserved.
@@ -324,6 +324,26 @@
 +bool ViewGraphicsWindow::
 +open_window() {
 +
++  // GSG CreationInitialization
++
++    LOG_I("open_window: GSG");
++  ViewGraphicsStateGuardian *viewgsg;
++  if (_gsg == 0) {
++    // There is no old gsg.  Create a new one.
++    viewgsg = new ViewGraphicsStateGuardian(_engine, _pipe, nullptr);
++    viewgsg->choose_pixel_format(_fb_properties, false, false);
++    _gsg = viewgsg;
++  } else {
++    // If the old gsg has the wrong pixel format, create a new one that shares
++    // with the old gsg.
++    DCAST_INTO_R(viewgsg, _gsg, false);
++    if (!viewgsg->get_fb_properties().subsumes(_fb_properties)) {
++      viewgsg = new ViewGraphicsStateGuardian(_engine, _pipe, viewgsg);
++      viewgsg->choose_pixel_format(_fb_properties, false, false);
++      _gsg = viewgsg;
++    }
++  }
++
 +#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
 +    char* senv;
 +    senv= getenv("PANDA_NATIVE_WINDOW");
@@ -341,25 +361,7 @@
 +    _properties.set_origin(100, -100);
 +    _properties.set_undecorated(true);
 +#else
-+  // GSG CreationInitialization
 +
-+
-+  ViewGraphicsStateGuardian *viewgsg;
-+  if (_gsg == 0) {
-+    // There is no old gsg.  Create a new one.
-+    viewgsg = new ViewGraphicsStateGuardian(_engine, _pipe, nullptr);
-+    viewgsg->choose_pixel_format(_fb_properties, false, false);
-+    _gsg = viewgsg;
-+  } else {
-+    // If the old gsg has the wrong pixel format, create a new one that shares
-+    // with the old gsg.
-+    DCAST_INTO_R(viewgsg, _gsg, false);
-+    if (!viewgsg->get_fb_properties().subsumes(_fb_properties)) {
-+      viewgsg = new ViewGraphicsStateGuardian(_engine, _pipe, viewgsg);
-+      viewgsg->choose_pixel_format(_fb_properties, false, false);
-+      _gsg = viewgsg;
-+    }
-+  }
 +
 +  // Register the callbacks
 +  assert(_app != nullptr);
@@ -382,6 +384,8 @@
 +  _properties.set_cursor_hidden(true);
 +  _properties.set_undecorated(true);
 +
++
++
 +  if (!viewgsg->get_fb_properties().verify_hardware_software
 +      (_fb_properties, viewgsg->get_gl_renderer())) {
 +    close_window();
@@ -389,6 +393,7 @@
 +  }
 +
 +  _fb_properties = viewgsg->get_fb_properties();
++
 +#endif
 +
 +  create_surface();
@@ -403,7 +408,7 @@
 +destroy_surface() {
 +
 +#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
-+    #warning fixme viewgsg->destroy_context()
++    LOG_E("fixme viewgsg->destroy_context()");
 +    _egl_surface = EGL_NO_SURFACE;
 +#else
 +  if (_egl_surface != EGL_NO_SURFACE) {

@@ -1,40 +1,61 @@
 --- panda3d/panda/src/viewdisplay/CMakeLists.txt	2020-04-08 07:03:04.334798695 +0200
-+++ panda3d.android/panda/src/viewdisplay/CMakeLists.txt	2020-04-08 06:56:10.630903136 +0200
-@@ -0,0 +1,37 @@
++++ panda3d.android/panda/src/viewdisplay/CMakeLists.txt	2020-04-12 07:21:55.454908938 +0200
+@@ -0,0 +1,58 @@
 +set(P3VIEWDISPLAY_HEADERS
 +  config_viewdisplay.h
 +  viewGraphicsPipe.h viewGraphicsPipe.I
 +  viewGraphicsStateGuardian.h viewGraphicsStateGuardian.I
 +  viewGraphicsWindow.h viewGraphicsWindow.I
++
 +)
 +
 +set(P3VIEWDISPLAY_SOURCES
 +  config_viewdisplay.cxx
 +  viewGraphicsPipe.cxx
++  viewGraphicsStateGuardian.cxx
 +  viewGraphicsWindow.cxx
-+#  viewGraphicsStateGuardian.cxx
 +)
 +
-+add_component_library(p3viewdisplay_gles2 SYMBOL BUILDING_PANDAGLES2
-+    INIT init_libviewdisplay config_viewdisplay.h
-+    ${P3VIEWDISPLAY_HEADERS} ${P3VIEWDISPLAY_SOURCES})
-+target_compile_definitions(p3viewdisplay_gles2 PUBLIC OPENGLES_2)
-+# panda from p3x11display
-+# p3glstuff ?
++composite_sources(p3viewdisplay P3VIEWDISPLAY_SOURCES)
 +
-+target_link_libraries(p3viewdisplay_gles2 p3gles2gsg panda p3glstuff PKG::EGL PKG::GLES2)
++if(HAVE_GLES1)
++    add_component_library(p3viewdisplay_gles1 SYMBOL BUILDING_PANDAGLES
++        INIT init_libviewdisplay config_viewdisplay.h
++        ${P3VIEWDISPLAY_HEADERS} ${P3VIEWDISPLAY_SOURCES})
++    target_compile_definitions(p3viewdisplay_gles1 PUBLIC OPENGLES_1)
++    target_link_libraries(p3viewdisplay_gles2 p3glesgsg p3glstuff EGL PKG::GLES)
 +
 +
-+if(NOT BUILD_METALIBS)
-+    install(TARGETS p3viewdisplay_gles2
-+        EXPORT OpenGLES2 COMPONENT OpenGLES2
-+        DESTINATION ${CMAKE_INSTALL_LIBDIR}
-+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/panda3d
-+        ARCHIVE COMPONENT OpenGLES2Devel)
++    if(NOT BUILD_METALIBS)
++        install(TARGETS p3viewdisplay_gles2
++            EXPORT OpenGLES2 COMPONENT OpenGLES2
++            DESTINATION ${CMAKE_INSTALL_LIBDIR}
++            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/panda3d
++            ARCHIVE COMPONENT OpenGLES2Devel)
++    endif()
++
++    install(FILES ${P3VIEWDISPLAY_HEADERS} COMPONENT OpenGLES2Devel DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/panda3d)
 +endif()
 +
-+install(FILES ${P3VIEWDISPLAY_HEADERS} COMPONENT OpenGLES2Devel DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/panda3d)
++if(HAVE_GLES2)
++    add_component_library(p3viewdisplay_gles2 SYMBOL BUILDING_PANDAGLES2
++        INIT init_libviewdisplay config_viewdisplay.h
++        ${P3VIEWDISPLAY_HEADERS} ${P3VIEWDISPLAY_SOURCES})
++    target_compile_definitions(p3viewdisplay_gles2 PUBLIC OPENGLES_2)
++    # panda from p3x11display ?
++    target_link_libraries(p3viewdisplay_gles2 p3gles2gsg EGL PKG::GLES2)
 +
 +
++    if(NOT BUILD_METALIBS)
++        install(TARGETS p3viewdisplay_gles2
++            EXPORT OpenGLES2 COMPONENT OpenGLES2
++            DESTINATION ${CMAKE_INSTALL_LIBDIR}
++            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/panda3d
++            ARCHIVE COMPONENT OpenGLES2Devel)
++    endif()
++
++    install(FILES ${P3VIEWDISPLAY_HEADERS} COMPONENT OpenGLES2Devel DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/panda3d)
++
++endif()
 +
 +

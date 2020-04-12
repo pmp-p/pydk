@@ -1,9 +1,7 @@
 --- panda3d/panda/src/gles2gsg/gles2gsg.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d.android/panda/src/gles2gsg/gles2gsg.cxx	2020-04-07 18:40:20.406236529 +0200
-@@ -16,4 +16,6 @@
- // library.
++++ panda3d.android/panda/src/gles2gsg/gles2gsg.cxx	2020-04-12 08:17:53.627789606 +0200
+@@ -17,3 +17,4 @@
  
  #include "gles2gsg.h"
-+#ifndef __ANDROID__
  #include "glstuff_src.cxx"
-+#endif
++

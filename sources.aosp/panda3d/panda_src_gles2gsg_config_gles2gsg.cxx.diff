@@ -1,13 +1,9 @@
 --- panda3d/panda/src/gles2gsg/config_gles2gsg.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d.android/panda/src/gles2gsg/config_gles2gsg.cxx	2020-04-07 18:37:35.561458806 +0200
-@@ -40,6 +40,9 @@
++++ panda3d.android/panda/src/gles2gsg/config_gles2gsg.cxx	2020-04-12 06:53:15.264227662 +0200
+@@ -40,6 +40,5 @@
      return;
    }
    initialized = true;
 -
-+#ifndef __ANDROID__
    GLES2init_classes();
-+#else
-+    #pragma message "GLES2init_classes() skipped"
-+#endif
  }

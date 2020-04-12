@@ -1,5 +1,5 @@
 --- panda3d/panda/src/gles2gsg/CMakeLists.txt	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d.android/panda/src/gles2gsg/CMakeLists.txt	2020-04-08 06:46:03.935557088 +0200
++++ panda3d.android/panda/src/gles2gsg/CMakeLists.txt	2020-04-12 06:52:11.171104480 +0200
 @@ -13,10 +13,13 @@
  )
  
@@ -11,7 +11,7 @@
 +add_component_library(p3gles2gsg SYMBOL BUILDING_PANDAGLES2 ${P3GLE2SGSG_HEADERS} ${P3GLES2GSG_SOURCES})
 +
 +if (ANDROID)
-+    target_link_libraries(p3gles2gsg p3glstuff panda EGL PKG::GLES2)
++    target_link_libraries(p3gles2gsg p3glstuff panda PKG::GLES2)
 +else()
 +    target_link_libraries(p3gles2gsg p3glstuff panda PKG::GLES2)
 +endif()

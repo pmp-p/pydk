@@ -1,6 +1,6 @@
 --- panda3d/panda/src/viewdisplay/viewGraphicsStateGuardian.cxx	2020-04-08 07:03:04.336798665 +0200
-+++ panda3d.android/panda/src/viewdisplay/viewGraphicsStateGuardian.cxx	2020-04-08 06:55:09.797766762 +0200
-@@ -0,0 +1,393 @@
++++ panda3d.android/panda/src/viewdisplay/viewGraphicsStateGuardian.cxx	2020-04-12 07:06:17.141633260 +0200
+@@ -0,0 +1,397 @@
 +/**
 + * PANDA 3D SOFTWARE
 + * Copyright (c) Carnegie Mellon University.  All rights reserved.
@@ -285,12 +285,16 @@
 + */
 +void ViewGraphicsStateGuardian::
 +reset() {
-+#ifdef OPENGLES_2
-+  GLES2GraphicsStateGuardian::reset();
++#if __ANDROID__
++    #pragma message "GLES2GraphicsStateGuardian::reset();"
 +#else
-+  //GLESGraphicsStateGuardian::reset();
-+#endif
++#ifdef OPENGLES_2
++      GLES2GraphicsStateGuardian::reset();
 +
++#else
++  GLESGraphicsStateGuardian::reset();
++#endif
++#endif
 +  // If "PixelFlinger" is present, assume software.
 +/*  if (_gl_renderer.find("PixelFlinger") != std::string::npos) {
 +    _fbprops.set_force_software(1);

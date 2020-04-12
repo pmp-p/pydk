@@ -10,7 +10,7 @@ if echo $CI|grep -q true
 then
     echo "CI-force-test python3.6, ncpu=4"
     JOBS=4
-    export PYTHON=/usr/local/bin/python3.6
+    export PYTHON=python3
 else
     #restrict $PYMINOR for env so host pip can work for populating android projects
     for py in ${PYMINOR} 7 6 5

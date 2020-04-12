@@ -1,6 +1,6 @@
 --- panda3d/panda/src/viewdisplay/viewGraphicsStateGuardian.h	2020-04-08 07:03:04.336798665 +0200
-+++ panda3d.android/panda/src/viewdisplay/viewGraphicsStateGuardian.h	2020-04-08 05:34:40.768018007 +0200
-@@ -0,0 +1,100 @@
++++ panda3d.android/panda/src/viewdisplay/viewGraphicsStateGuardian.h	2020-04-12 07:06:40.669314705 +0200
+@@ -0,0 +1,99 @@
 +/**
 + * PANDA 3D SOFTWARE
 + * Copyright (c) Carnegie Mellon University.  All rights reserved.
@@ -18,10 +18,10 @@
 +#define ViewGRAPHICSSTATEGUARDIAN_H
 +
 +#include "pandabase.h"
++
++//  gles2gsg.h or glesgsg are selected from viewGraphicsPipe.h
 +#include "viewGraphicsPipe.h"
 +
-+#pragma message "i have no idea what i'm doing"
-+#define GLES2GraphicsStateGuardian GraphicsStateGuardian
 +
 +/**
 + * A tiny specialization on GLESGraphicsStateGuardian to add some egl-specific
@@ -43,8 +43,7 @@
 +  bool create_context();
 +  void destroy_context();
 +
-+  ViewGraphicsStateGuardian(GraphicsEngine *engine, GraphicsPipe *pipe,
-+         ViewGraphicsStateGuardian *share_with);
++  ViewGraphicsStateGuardian(GraphicsEngine *engine, GraphicsPipe *pipe, ViewGraphicsStateGuardian *share_with);
 +
 +  virtual ~ViewGraphicsStateGuardian();
 +
@@ -81,7 +80,7 @@
 +#ifdef OPENGLES_2
 +    GLES2GraphicsStateGuardian::init_type();
 +    register_type(_type_handle, "ViewGraphicsStateGuardian",
-+                  GraphicsStateGuardian::get_class_type());
++                  GLES2GraphicsStateGuardian::get_class_type());
 +#else
 +    #error GLES1 dropped
 +    GLESGraphicsStateGuardian::init_type();

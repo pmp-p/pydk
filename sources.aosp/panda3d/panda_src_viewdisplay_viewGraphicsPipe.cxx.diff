@@ -1,6 +1,6 @@
 --- panda3d/panda/src/viewdisplay/viewGraphicsPipe.cxx	2020-04-08 07:03:04.334798695 +0200
-+++ panda3d.android/panda/src/viewdisplay/viewGraphicsPipe.cxx	2020-04-10 00:03:37.004930187 +0200
-@@ -0,0 +1,225 @@
++++ panda3d.android/panda/src/viewdisplay/viewGraphicsPipe.cxx	2020-04-10 18:02:06.735977654 +0200
+@@ -0,0 +1,234 @@
 +/**
 + * PANDA 3D SOFTWARE
 + * Copyright (c) Carnegie Mellon University.  All rights reserved.
@@ -41,19 +41,28 @@
 +  _display_width = 0;
 +  _display_height = 0;
 +
++#if __ANDROID__
++    char* denv;
++    denv= getenv("PANDA_NATIVE_DISPLAY");
++    LOG_I(" >>>>> display env %s found <<<<< ", denv);
++    sscanf( denv, "%p", &_egl_display );
++    LOG_I(" >>>>> display pointer %p found <<<<< ", _egl_display);
++
++#else
 +  _egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 +  if (!eglInitialize(_egl_display, nullptr, nullptr)) {
 +    viewdisplay_cat.error()
 +      << "Couldn't initialize the EGL display: "
 +      << get_egl_error_string(eglGetError()) << "\n";
 +  }
++#endif
 +
 +  if (!eglBindAPI(EGL_OPENGL_ES_API)) {
 +    viewdisplay_cat.error()
 +      << "Couldn't bind EGL to the OpenGL ES API: "
 +      << get_egl_error_string(eglGetError()) << "\n";
 +  }
-+
++  LOG_I("_is_valid = true");
 +  _is_valid = true;
 +}
 +
