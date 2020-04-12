@@ -1,0 +1,29 @@
+--- panda3d/panda/src/display/graphicsWindow.cxx	2020-03-20 15:48:21.000000000 +0100
++++ panda3d.android/panda/src/display/graphicsWindow.cxx	2020-04-12 11:07:29.456095980 +0200
+@@ -21,6 +21,14 @@
+ #include "throw_event.h"
+ #include "string_utils.h"
+ 
++#if __ANDROID__
++#include <android/log.h>
++#undef LOG_TAG
++#define LOG_TAG "DEBUG:graphicsWindow"
++#define LOG_I(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
++#define LOG_E(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
++#endif
++
+ using std::string;
+ 
+ TypeHandle GraphicsWindow::_type_handle;
+@@ -471,7 +479,11 @@
+       if (properties.is_any_specified()) {
+         display_cat.info()
+           << "Unable to set window properties: " << properties << "\n";
++#if __ANDROID__
++LOG_E("_rejected_properties.add_properties(properties)");
++#else
+         _rejected_properties.add_properties(properties);
++#endif
+       }
+     }
+   }

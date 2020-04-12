@@ -1,6 +1,6 @@
 --- panda3d/panda/src/viewdisplay/viewGraphicsPipe.cxx	2020-04-08 07:03:04.334798695 +0200
-+++ panda3d.android/panda/src/viewdisplay/viewGraphicsPipe.cxx	2020-04-10 18:02:06.735977654 +0200
-@@ -0,0 +1,234 @@
++++ panda3d.android/panda/src/viewdisplay/viewGraphicsPipe.cxx	2020-04-12 10:22:27.676788272 +0200
+@@ -0,0 +1,235 @@
 +/**
 + * PANDA 3D SOFTWARE
 + * Copyright (c) Carnegie Mellon University.  All rights reserved.
@@ -151,10 +151,11 @@
 +        LOG_E("ViewGraphicsPipe::make_output bad flags");
 +      return nullptr;
 +    }
++  }
 +    LOG_I("ViewGraphicsPipe::make_output returning new instance of ViewGraphicsWindow");
 +    return new ViewGraphicsWindow(engine, this, name, fb_prop, win_prop, flags, gsg, host);
-+  }
-+        LOG_E("ViewGraphicsPipe::make_output total fail");
++
++    LOG_E("ViewGraphicsPipe::make_output total fail");
 +  // Second thing to try: a GLES(2)GraphicsBuffer
 +  /*if (retry == 1) {
 +    if ((host==0)||

@@ -123,151 +123,146 @@
 +
 +#endif
 --- panda3d/panda/src/display/graphicsEngine.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d.android/panda/src/display/graphicsEngine.cxx	2020-04-10 13:25:45.324429299 +0200
-@@ -63,6 +63,15 @@
-   #include <sys/time.h>
- #endif
++++ panda3d.android/panda/src/display/graphicsEngine.cxx	2020-04-12 11:01:58.858561869 +0200
+@@ -50,6 +50,14 @@
+ #include "depthTestAttrib.h"
+ #include "unionBoundingVolume.h"
  
++#if __ANDROID__
 +#include <android/log.h>
-+
-+
-+#include <stdlib.h>
-+
-+#define LOG_TAG "DEBUG:graphicsEngine.cxx"
++#undef LOG_TAG
++#define LOG_TAG "DEBUG:graphicsEngine"
 +#define LOG_I(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 +#define LOG_E(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
++#endif
 +
- using std::string;
+ #if defined(_WIN32) && defined(HAVE_THREADS) && defined(SIMPLE_THREADS)
+ #include "winInputDeviceManager.h"
+ #endif
+@@ -287,7 +295,9 @@
+  */
  
- PT(GraphicsEngine) GraphicsEngine::_global_ptr;
-@@ -409,6 +418,29 @@
-   }
+   // Simplify the input parameters.
+-
++#if __ANDROID__
++LOG_I("291: make_output");
++#endif
+   int x_size = 0, y_size = 0;
+   if (win_prop.has_size()) {
+     x_size = win_prop.get_x_size();
+@@ -307,6 +317,7 @@
+   if (host == nullptr) {
+     if (gsg != nullptr) {
+       if ((!gsg->is_valid())||(gsg->needs_reset())) {
++LOG_E("320:open_windows");
+         open_windows();
+       }
+       if ((!gsg->is_valid())||(gsg->needs_reset())) {
+@@ -318,6 +329,7 @@
+         (!host->is_valid())||
+         (!host->get_gsg()->is_valid())||
+         (host->get_gsg()->needs_reset())) {
++LOG_E("332:open_windows");
+       open_windows();
+     }
+     if ((host->get_gsg()==nullptr)||
+@@ -410,7 +422,12 @@
  
    // Ask the pipe to create a window.
+ 
 +#if __ANDROID__
-+    LOG_I("make_output : skipping do_add_window/open_windows -> ?");
-+    bool precertify = false;
-+    PT(GraphicsOutput) window = pipe->make_output(name, fb_prop, win_prop, flags, this, gsg, host, 0, precertify);
-+
-+
-+    if (window != nullptr) {
-+      window->_sort = sort;
-+
-+        LOG_I("do_add_window");
-+        do_add_window(window);
-+        //    open_windows();
-+        display_cat.warning() << "Created output of type " << window->get_type() << "\n";
-+
-+
-+        if (window->is_valid())
-+            LOG_I("make_output : got a valid window");
-+        else
-+            LOG_I("make_output : got an invalid window");
-+        return window;
-+    }
-+    LOG_I("make_output : NO window");
++  for (int retry=0; retry<1; retry++) {
++    LOG_E("425: make_output");
 +#else
- 
    for (int retry=0; retry<10; retry++) {
-     bool precertify = false;
-@@ -457,6 +489,7 @@
-     }
-   }
- 
-+
-   // Parasite buffers were not preferred, but the pipe could not create a
-   // window to the user's specs.  Try a parasite as a last hope.
- 
-@@ -470,7 +503,7 @@
-   }
- 
-   // Could not create a window to the user's specs.
--
 +#endif
-   return nullptr;
- }
+     bool precertify = false;
+     PT(GraphicsOutput) window =
+       pipe->make_output(name, fb_prop, win_prop, flags, this, gsg, host, retry, precertify);
+@@ -422,7 +439,9 @@
+           << "Created output of type " << window->get_type() << "\n";
+         return window;
+       }
++LOG_E("442:do_add_window()");
+       do_add_window(window);
++LOG_E("444:open_windows");
+       open_windows();
+       if (window->is_valid()) {
+         display_cat.info()
+@@ -446,6 +465,7 @@
+             << "  got: " << window->get_fb_properties() << "\n";
+         }
+       } else {
++LOG_E("466: !window->is_valid()!");
+         display_cat.info()
+           << window->get_type() << " wouldn't open; abandoning.\n";
+         display_cat.debug(false)
+@@ -724,6 +744,7 @@
+   // that we don't render a frame before the offscreen buffers are ready
+   // (which might result in a frame going by without some textures having
+   // been rendered).
++LOG_E("744:open_windows");
+   open_windows();
  
-@@ -964,8 +997,11 @@
+   ClockObject *global_clock = ClockObject::get_global_clock();
+@@ -964,6 +985,7 @@
   */
  void GraphicsEngine::
  open_windows() {
--  Thread *current_thread = Thread::get_current_thread();
-+#if __ANDROID__
-+    LOG_I("open_windows -> ?");
-+#endif
++LOG_I("988:open_windows");
+   Thread *current_thread = Thread::get_current_thread();
  
-+  Thread *current_thread = Thread::get_current_thread();
    ReMutexHolder holder(_lock, current_thread);
+@@ -972,6 +994,7 @@
+   {
+     MutexHolder new_windows_holder(_new_windows_lock, current_thread);
+     if (_new_windows.empty()) {
++LOG_I("988:open_windows->empty");
+       return;
+     }
  
-   pvector<PT(GraphicsOutput)> new_windows;
-@@ -1044,9 +1080,14 @@
+@@ -1044,9 +1067,12 @@
    // Now go through the list again to check whether they opened successfully.
    for (auto it = new_windows.begin(); it != new_windows.end(); ++it) {
      GraphicsOutput *window = *it;
-+    #if __ANDROID__
-+        window->_is_valid = true;
-+    #endif
++    if (!window->get_gsg())
++LOG_I("1071:open_windows-> window->get_gsg nullptr !");
      if (window->is_valid()) {
-+        LOG_I("open_windows -> OK");
        do_add_gsg(window->get_gsg(), window->get_pipe());
      } else {
-+        LOG_E("open_windows -> is_valid FALSE !");
++LOG_I("988:open_windows->remove !");
        remove_window(window);
      }
    }
---- panda3d/panda/src/display/graphicsOutput.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d.android/panda/src/display/graphicsOutput.cxx	2020-04-10 00:16:14.645669275 +0200
-@@ -34,6 +34,11 @@
+--- panda3d/panda/src/display/graphicsWindow.cxx	2020-03-20 15:48:21.000000000 +0100
++++ panda3d.android/panda/src/display/graphicsWindow.cxx	2020-04-12 11:07:29.456095980 +0200
+@@ -21,6 +21,14 @@
  #include "throw_event.h"
- #include "config_gobj.h"
+ #include "string_utils.h"
  
++#if __ANDROID__
 +#include <android/log.h>
-+#define LOG_TAG "DEBUG:graphicsOutput.cxx"
++#undef LOG_TAG
++#define LOG_TAG "DEBUG:graphicsWindow"
 +#define LOG_I(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 +#define LOG_E(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
++#endif
 +
  using std::string;
  
- TypeHandle GraphicsOutput::_type_handle;
-@@ -869,13 +874,13 @@
-       tex->get_texture_type() == Texture::TT_cube_map) {
-     flags |= GraphicsPipe::BF_size_square;
+ TypeHandle GraphicsWindow::_type_handle;
+@@ -471,7 +479,11 @@
+       if (properties.is_any_specified()) {
+         display_cat.info()
+           << "Unable to set window properties: " << properties << "\n";
++#if __ANDROID__
++LOG_E("_rejected_properties.add_properties(properties)");
++#else
+         _rejected_properties.add_properties(properties);
++#endif
+       }
+     }
    }
--
-+LOG_I("make_texture_buffer::make_output-> begin");
-   GraphicsOutput *buffer = get_gsg()->get_engine()->
-     make_output(get_gsg()->get_pipe(),
-                 name, get_child_sort(),
-                 *fbp, WindowProperties::size(x_size, y_size),
-                 flags, get_gsg(), get_host());
--
-+LOG_I("make_texture_buffer::make_output-> end");
-   if (buffer != nullptr) {
-     if (buffer->get_gsg() == nullptr ||
-         buffer->get_gsg()->get_prepared_objects() != get_gsg()->get_prepared_objects()) {
---- panda3d/panda/src/display/graphicsStateGuardian.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d.android/panda/src/display/graphicsStateGuardian.cxx	2020-04-10 00:35:55.850113034 +0200
-@@ -61,6 +61,11 @@
- 
- #include <limits.h>
- 
-+#include <android/log.h>
-+#define LOG_TAG "DEBUG:gsg"
-+#define LOG_I(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
-+#define LOG_E(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
-+
- using std::string;
- 
- PStatCollector GraphicsStateGuardian::_vertex_buffer_switch_pcollector("Buffer switch:Vertex");
-@@ -3511,7 +3516,7 @@
-   if (is_point) {
-     flags |= GraphicsPipe::BF_size_square;
-   }
--
-+LOG_I("make_shadow_buffer->make_output");
-   // Create the buffer.  This is a bit tricky because make_output() can only
-   // be called from the app thread, but it won't cause issues as long as the
-   // pipe can precertify the buffer, which it can in most cases.
 --- panda3d/panda/src/gles2gsg/CMakeLists.txt	2020-03-20 15:48:21.000000000 +0100
 +++ panda3d.android/panda/src/gles2gsg/CMakeLists.txt	2020-04-12 06:52:11.171104480 +0200
 @@ -13,10 +13,13 @@
@@ -316,17 +311,6 @@
  
  set(P3GLSTUFF_HEADERS
    glGeomContext_src.I
---- panda3d/panda/src/glstuff/glGraphicsStateGuardian_src.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d.android/panda/src/glstuff/glGraphicsStateGuardian_src.cxx	2020-04-08 02:24:26.232049738 +0200
-@@ -80,6 +80,8 @@
- using std::min;
- using std::string;
- 
-+#error pouet
-+
- TypeHandle CLP(GraphicsStateGuardian)::_type_handle;
- 
- PStatCollector CLP(GraphicsStateGuardian)::_load_display_list_pcollector("Draw:Transfer data:Display lists");
 --- panda3d/panda/src/pipeline/threadDummyImpl.cxx	2020-03-20 15:48:21.000000000 +0100
 +++ panda3d.android/panda/src/pipeline/threadDummyImpl.cxx	2020-04-10 14:41:34.846809155 +0200
 @@ -25,6 +25,13 @@
@@ -605,8 +589,8 @@
 +#include "viewGraphicsStateGuardian.cxx"
 +#include "viewGraphicsWindow.cxx"
 --- panda3d/panda/src/viewdisplay/viewGraphicsPipe.cxx	2020-04-08 07:03:04.334798695 +0200
-+++ panda3d.android/panda/src/viewdisplay/viewGraphicsPipe.cxx	2020-04-10 18:02:06.735977654 +0200
-@@ -0,0 +1,234 @@
++++ panda3d.android/panda/src/viewdisplay/viewGraphicsPipe.cxx	2020-04-12 10:22:27.676788272 +0200
+@@ -0,0 +1,235 @@
 +/**
 + * PANDA 3D SOFTWARE
 + * Copyright (c) Carnegie Mellon University.  All rights reserved.
@@ -757,10 +741,11 @@
 +        LOG_E("ViewGraphicsPipe::make_output bad flags");
 +      return nullptr;
 +    }
++  }
 +    LOG_I("ViewGraphicsPipe::make_output returning new instance of ViewGraphicsWindow");
 +    return new ViewGraphicsWindow(engine, this, name, fb_prop, win_prop, flags, gsg, host);
-+  }
-+        LOG_E("ViewGraphicsPipe::make_output total fail");
++
++    LOG_E("ViewGraphicsPipe::make_output total fail");
 +  // Second thing to try: a GLES(2)GraphicsBuffer
 +  /*if (retry == 1) {
 +    if ((host==0)||
