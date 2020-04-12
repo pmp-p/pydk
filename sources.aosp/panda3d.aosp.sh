@@ -29,7 +29,7 @@ ExternalProject_Add(
     ${PANDA3D_URL}
     ${PANDA3D_HASH}
 
-    PATCH_COMMAND patch -p1 < ${SUPPORT}/panda3d/*.diff
+    PATCH_COMMAND patch -p1 < ${SUPPORT}/panda3d/all.diff
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
