@@ -1,0 +1,18 @@
+--- python3/Modules/timemodule.c	2019-10-15 00:32:36.000000000 +0200
++++ python3-android/Modules/timemodule.c	2019-10-23 18:14:08.011612412 +0200
+@@ -494,6 +494,7 @@
+ }
+ 
+ #ifndef HAVE_TIMEGM
++#ifndef CRYSTAX
+ static time_t
+ timegm(struct tm *p)
+ {
+@@ -505,6 +506,7 @@
+         ((p->tm_year-1)/100)*86400 + ((p->tm_year+299)/400)*86400;
+ }
+ #endif
++#endif
+ 
+ PyDoc_STRVAR(gmtime_doc,
+ "gmtime([seconds]) -> (tm_year, tm_mon, tm_mday, tm_hour, tm_min,\n\

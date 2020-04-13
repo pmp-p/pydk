@@ -1,5 +1,5 @@
 --- panda3d/panda/src/androiddisplay/config_androiddisplay.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/androiddisplay/config_androiddisplay.cxx	2020-04-13 07:38:06.823257373 +0200
++++ panda3d-android/panda/src/androiddisplay/config_androiddisplay.cxx	2020-04-13 08:32:49.000255192 +0200
 @@ -21,10 +21,17 @@
  
  #include "config_display.h"

@@ -1,5 +1,5 @@
 --- panda3d/panda/src/display/graphicsOutput.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/display/graphicsOutput.cxx	2020-04-13 06:36:45.411733457 +0200
++++ panda3d-android/panda/src/display/graphicsOutput.cxx	2020-04-13 08:32:49.002255164 +0200
 @@ -410,6 +410,10 @@
   */
  bool GraphicsOutput::

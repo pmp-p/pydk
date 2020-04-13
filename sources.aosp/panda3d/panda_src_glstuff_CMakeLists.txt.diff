@@ -1,5 +1,5 @@
 --- panda3d/panda/src/glstuff/CMakeLists.txt	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/glstuff/CMakeLists.txt	2020-04-13 03:26:24.898320799 +0200
++++ panda3d-android/panda/src/glstuff/CMakeLists.txt	2020-04-13 08:32:49.002255164 +0200
 @@ -1,6 +1,9 @@
 +if(ANDROID)
 +else()

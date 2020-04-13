@@ -1,0 +1,18 @@
+--- python3/Python/pystrtod.c	2019-10-15 00:32:36.000000000 +0200
++++ python3-android/Python/pystrtod.c	2019-10-23 18:14:08.023612024 +0200
+@@ -177,8 +177,14 @@
+ 
+     fail_pos = NULL;
+ 
+-    locale_data = localeconv();
++#if __ANDROID__ && (__ANDROID_API__ < 21)
++    locale_data = broken_localeconv();
+     decimal_point = locale_data->decimal_point;
++#else
++    locale_data = localeconv(); //PATCHED
++    decimal_point = locale_data->decimal_point;
++#endif // __ANDROID_API__
++
+     decimal_point_len = strlen(decimal_point);
+ 
+     assert(decimal_point_len != 0);

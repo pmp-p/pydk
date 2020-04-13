@@ -1,0 +1,19 @@
+--- python3/Python/dynload_shlib.c	2019-10-15 00:32:36.000000000 +0200
++++ python3-android/Python/dynload_shlib.c	2019-11-21 07:52:00.863020023 +0100
+@@ -37,9 +37,13 @@
+ #ifdef __CYGWIN__
+     ".dll",
+ #else  /* !__CYGWIN__ */
+-    "." SOABI ".so",
+-    ".abi" PYTHON_ABI_STRING ".so",
+-    ".so",
++    #if __ANDROID__
++        "." SOABI ".so",
++    #else
++        "." SOABI ".so",
++        ".abi" PYTHON_ABI_STRING ".so",
++        ".so",
++    #endif
+ #endif  /* __CYGWIN__ */
+     NULL,
+ };

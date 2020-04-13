@@ -97,14 +97,14 @@ set(OPENAL_INCLUDE_DIR ${APKUSR}/include)
 set(OPENAL_LIBRARY openal)
 
 
-#set(VORBIS_vorbis_LIBRARY "${APKUSR}/lib/libvorbis.so")
-#set(VORBIS_vorbisfile_LIBRARY "${APKUSR}/lib/libvorbisfile.so")
-#set(VORBISFILE_INCLUDE_DIRS "${APKUSR}/include/vorbis" "${APKUSR}/include/ogg")
-#set(VorbisFile_DIR "${APKUSR}")
-#set(VORBIS_INCLUDE_DIR "${APKUSR}/include/vorbis")
-#set(VORBIS_FOUND YES)
 # ?????????????
-set(Ogg_FOUND YES)
+set(OGG_LIBRARY "${APKUSR}/lib/libogg.so")
+set(OGG_INCLUDE_DIR "${APKUSR}/include/ogg")
+set(OGG_FOUND YES)
+
+set(VORBISFILE_LIBRARY "${APKUSR}/lib/libvorbisfile.so")
+set(VORBISFILE_LIBRARIES "${APKUSR}/lib/libvorbisfile.so")
+set(VORBISFILE_INCLUDE_DIR "${APKUSR}/include")
 set(VORBISFILE_FOUND YES)
 
 set(FREETYPE_DIR ${APKUSR})
@@ -146,6 +146,7 @@ END
      -DCMAKE_INSTALL_PREFIX=${APKUSR} ${PANDA3D_CMAKE_ARGS_COMMON}"
 
         #HAVE_ASSIMP
+        export VORBISDIR=${APKUSR}
 
         echo "$PANDA3D_ACMAKE \"\$@\""> ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/${unit}.rebuild
 
