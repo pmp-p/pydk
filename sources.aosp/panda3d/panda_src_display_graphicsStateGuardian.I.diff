@@ -1,0 +1,12 @@
+--- panda3d/panda/src/display/graphicsStateGuardian.I	2020-03-20 15:48:21.000000000 +0100
++++ panda3d-android/panda/src/display/graphicsStateGuardian.I	2020-04-13 05:36:30.493297766 +0200
+@@ -78,6 +78,9 @@
+  */
+ INLINE void GraphicsStateGuardian::
+ set_active(bool active) {
++#if __ANDROID__
++    _is_valid = true;
++#endif
+   _active = active;
+ }
+ 

@@ -1,5 +1,5 @@
---- panda3d/panda/src/viewdisplay/viewGraphicsWindow.I	2020-04-08 07:03:04.336798665 +0200
-+++ panda3d.android/panda/src/viewdisplay/viewGraphicsWindow.I	2020-04-07 18:16:08.878999077 +0200
+--- panda3d-980c6bb38961c13e0890990651d05df3550cf30a/panda/src/viewdisplay/viewGraphicsWindow.I	2020-04-13 05:43:16.709728110 +0200
++++ panda3d-android/panda/src/viewdisplay/viewGraphicsWindow.I	2020-04-13 03:26:24.900320771 +0200
 @@ -0,0 +1,12 @@
 +/**
 + * PANDA 3D SOFTWARE

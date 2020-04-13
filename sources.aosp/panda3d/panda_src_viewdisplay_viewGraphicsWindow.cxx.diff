@@ -1,6 +1,6 @@
---- panda3d/panda/src/viewdisplay/viewGraphicsWindow.cxx	2020-04-08 07:03:04.336798665 +0200
-+++ panda3d.android/panda/src/viewdisplay/viewGraphicsWindow.cxx	2020-04-12 12:12:14.240426076 +0200
-@@ -0,0 +1,960 @@
+--- panda3d-980c6bb38961c13e0890990651d05df3550cf30a/panda/src/viewdisplay/viewGraphicsWindow.cxx	2020-04-13 05:43:16.709728110 +0200
++++ panda3d-android/panda/src/viewdisplay/viewGraphicsWindow.cxx	2020-04-13 05:36:41.879141654 +0200
+@@ -0,0 +1,988 @@
 +/**
 + * PANDA 3D SOFTWARE
 + * Copyright (c) Carnegie Mellon University.  All rights reserved.
@@ -327,7 +327,7 @@
 +
 +  // GSG CreationInitialization
 +
-+    LOG_I("open_window: GSG");
++
 +  ViewGraphicsStateGuardian *viewgsg;
 +  if (_gsg == 0) {
 +    // There is no old gsg.  Create a new one.
@@ -345,6 +345,15 @@
 +    }
 +  }
 +
++
++if (_gsg) {
++    _gsg->set_active(true);
++    if (_gsg->is_active())
++        LOG_I("open_window: GSG active");
++    else
++        LOG_E("open_window: GSG INACTIVE");
++
++} else LOG_E("open_window: missing GSG");
 +#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
 +    char* senv;
 +    senv= getenv("PANDA_NATIVE_WINDOW");
@@ -359,8 +368,12 @@
 +        viewdisplay_cat.error() << "NO EGL Surface pointer\n";
 +        return false;
 +    }
-+    _properties.set_origin(100, -100);
++
 +    _properties.set_undecorated(true);
++
++  // Wait until View has opened the window.
++    process_events();
++
 +#else
 +
 +
@@ -434,10 +447,16 @@
 + */
 +bool ViewGraphicsWindow::
 +create_surface() {
-+#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
-+    LOG_I("362: create_surface");
++
 +    ViewGraphicsStateGuardian *viewgsg;
 +    DCAST_INTO_R(viewgsg, _gsg, false);
++
++
++
++
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    LOG_I("362: create_surface");
++
 +
 +/*
 +    ANativeWindow_setBuffersGeometry(awindow, 0, 0, viewgsg->_format);
@@ -450,21 +469,30 @@
 +  }
 +*/
 +    char* senv;
-+    EGLContext context = EGL_NO_CONTEXT;
++    //EGLContext context = EGL_NO_CONTEXT;
 +    senv= getenv("PANDA_NATIVE_CONTEXT");
-+    sscanf( senv, "%p", &context );
-+    LOG_I(" >>>>> context pointer %p found <<<<< ", context);
++    sscanf( senv, "%p", &viewgsg->_context );
++    LOG_I(" >>>>> context pointer %p found <<<<< ", viewgsg->_context);
 +
-+    viewgsg->_context = context;
 +
-+    // Switch to our newly created context.
-+    if (!eglMakeCurrent(_egl_display, _egl_surface, _egl_surface, viewgsg->_context)) {
-+        viewdisplay_cat.error() << "Failed to call eglMakeCurrent: " << get_egl_error_string(eglGetError()) << "\n";
-+    }
++    //viewgsg->_context = context ;
++    //viewgsg->_needs_reset = true ;
++
++  // Switch to our newly created context.
++  if (!eglMakeCurrent(_egl_display, _egl_surface, _egl_surface, viewgsg->_context)) {
++    viewdisplay_cat.error() << "Failed to call eglMakeCurrent: "
++      << get_egl_error_string(eglGetError()) << "\n";
++  }
++
++  // Query the size of the surface.  EGLint width, height;
++  // eglQuerySurface(_egl_display, _egl_surface, EGL_WIDTH, &width);
++  // eglQuerySurface(_egl_display, _egl_surface, EGL_HEIGHT, &height);
++
++  if (viewgsg->is_valid())
++    LOG_I("create_surface gsg ok");
++
 +
 +#else
-+  ViewGraphicsStateGuardian *viewgsg;
-+  DCAST_INTO_R(viewgsg, _gsg, false);
 +
 +  // Reconfigure the window buffers to match that of our framebuffer config.
 +  ANativeWindow_setBuffersGeometry(_app->window, 0, 0, viewgsg->_format);

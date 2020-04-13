@@ -1,11 +1,11 @@
 --- panda3d/panda/CMakeLists.txt	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/CMakeLists.txt	2020-04-13 00:17:30.435728593 +0200
++++ panda3d-android/panda/CMakeLists.txt	2020-04-13 07:31:09.214983211 +0200
 @@ -59,6 +59,10 @@
  add_subdirectory(src/wgldisplay)
  add_subdirectory(src/windisplay)
  add_subdirectory(src/x11display)
 +if (ANDROID AND NOT HAVE_EGL)
-+    add_subdirectory(src/viewdisplay)
++    add_subdirectory(src/androiddisplay)
 +endif()
 +
  

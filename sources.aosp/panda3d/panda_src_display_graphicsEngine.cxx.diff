@@ -1,5 +1,5 @@
 --- panda3d/panda/src/display/graphicsEngine.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/display/graphicsEngine.cxx	2020-04-13 00:48:38.198119572 +0200
++++ panda3d-android/panda/src/display/graphicsEngine.cxx	2020-04-13 07:02:38.802434811 +0200
 @@ -50,6 +50,14 @@
  #include "depthTestAttrib.h"
  #include "unionBoundingVolume.h"
@@ -70,19 +70,17 @@
        do_add_window(window);
        open_windows();
        if (window->is_valid()) {
-@@ -724,7 +749,11 @@
+@@ -724,7 +749,9 @@
    // that we don't render a frame before the offscreen buffers are ready
    // (which might result in a frame going by without some textures having
    // been rendered).
 +#if __ANDROID__
-+    #pragma message "744:open_windows removed"
-+#else
    open_windows();
 +#endif
  
    ClockObject *global_clock = ClockObject::get_global_clock();
  
-@@ -964,17 +993,20 @@
+@@ -964,17 +991,20 @@
   */
  void GraphicsEngine::
  open_windows() {
@@ -105,7 +103,7 @@
      for (auto it = _new_windows.begin(); it != _new_windows.end(); ++it) {
        GraphicsOutput *window = *it;
  
-@@ -1046,7 +1078,16 @@
+@@ -1046,7 +1076,16 @@
      GraphicsOutput *window = *it;
      if (window->is_valid()) {
        do_add_gsg(window->get_gsg(), window->get_pipe());

@@ -1,18 +1,18 @@
 --- panda3d/panda/CMakeLists.txt	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/CMakeLists.txt	2020-04-13 00:17:30.435728593 +0200
++++ panda3d-android/panda/CMakeLists.txt	2020-04-13 07:31:09.214983211 +0200
 @@ -59,6 +59,10 @@
  add_subdirectory(src/wgldisplay)
  add_subdirectory(src/windisplay)
  add_subdirectory(src/x11display)
 +if (ANDROID AND NOT HAVE_EGL)
-+    add_subdirectory(src/viewdisplay)
++    add_subdirectory(src/androiddisplay)
 +endif()
 +
  
  # For other components
  # bullet
 --- panda3d/panda/metalibs/pandagl/CMakeLists.txt	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/metalibs/pandagl/CMakeLists.txt	2020-04-13 00:17:30.435728593 +0200
++++ panda3d-android/panda/metalibs/pandagl/CMakeLists.txt	2020-04-13 03:26:24.896320826 +0200
 @@ -1,3 +1,11 @@
 +if(ANDROID)
 +  set(PANDAGL_PIPE_TYPE "viewGraphicsPipe")
@@ -34,16 +34,16 @@
    message("") # Add extra line before error
    message(SEND_ERROR
 --- panda3d/panda/metalibs/pandagles2/CMakeLists.txt	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/metalibs/pandagles2/CMakeLists.txt	2020-04-13 00:17:30.435728593 +0200
++++ panda3d-android/panda/metalibs/pandagles2/CMakeLists.txt	2020-04-13 07:34:48.305979251 +0200
 @@ -1,3 +1,26 @@
 +if(ANDROID AND NOT HAVE_EGL)
 +    if(HAVE_GLES2)
 +        set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "OpenGLES2Devel")
 +        add_metalib(pandagles2 ${MODULE_TYPE}
-+          INCLUDE viewGraphicsPipe.h
++          INCLUDE androidGraphicsPipe.h
 +          INIT init_libpandagles2 pandagles2.h
-+          EXPORT int get_pipe_type_pandagles2 "ViewGraphicsPipe::get_class_type().get_index()"
-+          COMPONENTS p3viewdisplay_gles2 p3glstuff p3gles2gsg)
++          EXPORT int get_pipe_type_pandagles2 "AndroidGraphicsPipe::get_class_type().get_index()"
++          COMPONENTS p3androiddisplay_gles2 p3glstuff p3gles2gsg)
 +        unset(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME)
 +
 +        install(TARGETS pandagles2
@@ -72,7 +72,7 @@
    EXPORT OpenGLES2 COMPONENT OpenGLES2
    DESTINATION ${MODULE_DESTINATION}
 --- panda3d/panda/metalibs/pandagles2/pandagles2.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/metalibs/pandagles2/pandagles2.cxx	2020-04-13 00:17:30.435728593 +0200
++++ panda3d-android/panda/metalibs/pandagles2/pandagles2.cxx	2020-04-13 07:42:40.945498876 +0200
 @@ -3,7 +3,7 @@
   * @author rdb
   * @date 2009-06-08
@@ -96,7 +96,7 @@
 +
 +//#include "config_egldisplay.h"
 +//#include "eglGraphicsPipe.h"
-+#include "config_viewdisplay.h"
++#include "config_androiddisplay.h"
 +#include "viewGraphicsPipe.h"
 +
 +/**
@@ -122,8 +122,454 @@
 +
 +
 +#endif
+--- panda3d/panda/src/androiddisplay/androidGraphicsStateGuardian.cxx	2020-03-20 15:48:21.000000000 +0100
++++ panda3d-android/panda/src/androiddisplay/androidGraphicsStateGuardian.cxx	2020-04-13 07:38:06.823257373 +0200
+@@ -17,6 +17,14 @@
+ 
+ #include <dlfcn.h>
+ 
++#include <android/log.h>
++#undef LOG_TAG
++#define LOG_TAG "AndroidGraphicsStateGuardian"
++#define LOG_INFO(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
++#define LOG_ERROR(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
++
++
++
+ TypeHandle AndroidGraphicsStateGuardian::_type_handle;
+ 
+ /**
+@@ -124,10 +132,17 @@
+  * gsg.
+  */
+ void AndroidGraphicsStateGuardian::
+-choose_pixel_format(const FrameBufferProperties &properties,
+-                    bool need_pbuffer, bool need_pixmap) {
++choose_pixel_format(const FrameBufferProperties &properties, bool need_pbuffer, bool need_pixmap) {
+ 
++#if APP
+   _egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
++#else
++    char* denv;
++    denv= getenv("PANDA_NATIVE_DISPLAY");
++    LOG_INFO(" >>>>> display env %s found <<<<< ", denv);
++    sscanf( denv, "%p", &_egl_display );
++    LOG_INFO(" >>>>> display pointer %p found <<<<< ", _egl_display);
++#endif
+   _fbconfig = 0;
+   _format = 0;
+ 
+--- panda3d/panda/src/androiddisplay/androidGraphicsWindow.cxx	2020-03-20 15:48:21.000000000 +0100
++++ panda3d-android/panda/src/androiddisplay/androidGraphicsWindow.cxx	2020-04-13 08:03:52.892059159 +0200
+@@ -8,7 +8,7 @@
+  *
+  * @file androidGraphicsWindow.cxx
+  * @author rdb
+- * @date 2013-01-11
++ * @date 20173-01-11 modified for android activity pmp-p
+  */
+ 
+ #include "androidGraphicsWindow.h"
+@@ -25,11 +25,61 @@
+ #include "throw_event.h"
+ #include "nativeWindowHandle.h"
+ 
+-#include "android_native_app_glue.h"
++
++#include <android/native_activity.h>
++
++// excerpt of native_app_glue
++struct android_app {
++    // The application can place a pointer to its own state object
++    // here if it likes.
++    void* userData;
++    // The ANativeActivity object instance that this app is running in.
++    ANativeActivity* activity;
++    // The ALooper associated with the app's thread.
++    ALooper* looper;
++    // When non-NULL, this is the input queue from which the app will
++    // receive user input events.
++    AInputQueue* inputQueue;
++    // When non-NULL, this is the window surface that the app can draw in.
++    ANativeWindow* window;
++    // Current content rectangle of the window; this is the area where the
++    // window's content should be placed to be seen by the user.
++    ARect contentRect;
++    // Current state of the app's activity.  May be either APP_CMD_START,
++    // APP_CMD_RESUME, APP_CMD_PAUSE, or APP_CMD_STOP; see below.
++    int activityState;
++    // -------------------------------------------------
++    // Below are "private" implementation of the glue code.
++    pthread_mutex_t mutex;
++    pthread_cond_t cond;
++    int msgread;
++    int msgwrite;
++    pthread_t thread;
++    // This is non-zero when the application's NativeActivity is being
++    // destroyed and waiting for the app thread to complete.
++    int destroyRequested;
++    int running;
++    int destroyed;
++    int redrawNeeded;
++    AInputQueue* pendingInputQueue;
++    ANativeWindow* pendingWindow;
++    ARect pendingContentRect;
++};
++
++
++
++
+ #include <android/window.h>
+ #include <android/log.h>
++#include <stdlib.h>
++
++#define LOG_TAG "androidGraphicsWindow.cxx"
++#define LOG_INFO(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
++#define LOG_ERROR(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
++
++//static EGLNativeWindowType awindow = NULL;
+ 
+-extern IMPORT_CLASS struct android_app* panda_android_app;
++//extern IMPORT_CLASS struct android_app* panda_android_app;
+ 
+ TypeHandle AndroidGraphicsWindow::_type_handle;
+ 
+@@ -53,7 +103,7 @@
+   _egl_display = android_pipe->_egl_display;
+   _egl_surface = 0;
+ 
+-  _app = panda_android_app;
++  _app = new android_app(); // panda_android_app;
+ 
+   PT(GraphicsWindowInputDevice) device = GraphicsWindowInputDevice::pointer_and_keyboard(this, "keyboard_mouse");
+   add_input_device(device);
+@@ -65,7 +115,8 @@
+  */
+ AndroidGraphicsWindow::
+ ~AndroidGraphicsWindow() {
+-  destroy_surface();
++    LOG_ERROR("~AndroidGraphicsWindow() should not destroy_surface");
++    destroy_surface();
+ }
+ 
+ /**
+@@ -179,6 +230,9 @@
+ process_events() {
+   GraphicsWindow::process_events();
+ 
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    #warning fixme process_events
++#else
+   // Read all pending events.
+   int looper_id;
+   int events;
+@@ -191,6 +245,8 @@
+       source->process(_app, source);
+     }
+   }
++#endif
++
+ }
+ 
+ /**
+@@ -218,7 +274,9 @@
+     // The base class has already handled this case.
+     return;
+   }
+-
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    #warning fixme set_properties
++#else
+   // There's not really much we can change on Android.
+   if (properties.has_fullscreen()) {
+     uint32_t add_flags = 0;
+@@ -233,6 +291,7 @@
+     _properties.set_fullscreen(properties.get_fullscreen());
+     properties.clear_fullscreen();
+   }
++#endif
+ }
+ 
+ /**
+@@ -240,6 +299,11 @@
+  */
+ void AndroidGraphicsWindow::
+ close_window() {
++
++
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    #warning fixme close_window
++#else
+   destroy_surface();
+ 
+   if (_gsg != nullptr) {
+@@ -254,6 +318,7 @@
+     _app->onAppCmd = nullptr;
+     _app->onInputEvent = nullptr;
+   }
++#endif
+ }
+ 
+ /**
+@@ -280,6 +345,23 @@
+     }
+   }
+ 
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    char* senv;
++    senv= getenv("PANDA_NATIVE_WINDOW");
++    sscanf( senv, "%p", &_app->window );
++    LOG_INFO(" >>>>> window pointer %p found <<<<< ", _app->window);
++
++    senv= getenv("PANDA_NATIVE_SURFACE");
++    sscanf( senv, "%p", &_egl_surface );
++    LOG_INFO(" >>>>> surface pointer %p found <<<<< ", _egl_surface);
++
++    if (_egl_surface == EGL_NO_SURFACE) {
++        androiddisplay_cat.error() << "NO EGL Surface pointer\n";
++        return false;
++    }
++    _properties.set_origin(100, -100);
++    _properties.set_undecorated(true);
++#else
+   // Register the callbacks
+   assert(_app != nullptr);
+   _app->userData = this;
+@@ -296,10 +378,11 @@
+     return false;
+   }
+ 
+-  // Set some other properties.
++    // Set some other properties.
+   _properties.set_origin(0, 0);
+   _properties.set_cursor_hidden(true);
+   _properties.set_undecorated(true);
++#endif
+ 
+   if (!androidgsg->get_fb_properties().verify_hardware_software
+       (_fb_properties, androidgsg->get_gl_renderer())) {
+@@ -309,6 +392,8 @@
+ 
+   _fb_properties = androidgsg->get_fb_properties();
+ 
++  create_surface();
++
+   return true;
+ }
+ 
+@@ -317,6 +402,11 @@
+  */
+ void AndroidGraphicsWindow::
+ destroy_surface() {
++
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    #warning fixme
++    _egl_surface = EGL_NO_SURFACE;
++#else
+   if (_egl_surface != EGL_NO_SURFACE) {
+     if (!eglDestroySurface(_egl_display, _egl_surface)) {
+       androiddisplay_cat.error() << "Failed to destroy surface: "
+@@ -324,6 +414,7 @@
+     }
+     _egl_surface = EGL_NO_SURFACE;
+   }
++#endif
+ 
+   // Destroy the current context.
+   if (_gsg != nullptr) {
+@@ -338,6 +429,35 @@
+  */
+ bool AndroidGraphicsWindow::
+ create_surface() {
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    LOG_INFO("362: create_surface");
++    AndroidGraphicsStateGuardian *androidgsg;
++    DCAST_INTO_R(androidgsg, _gsg, false);
++
++/*
++    ANativeWindow_setBuffersGeometry(awindow, 0, 0, androidgsg->_format);
++  // Create the EGL surface.
++  _egl_surface = eglCreateWindowSurface(_egl_display, androidgsg->_fbconfig, awindow, NULL);
++  if (eglGetError() != EGL_SUCCESS) {
++    androiddisplay_cat.error()
++      << "Failed to create window surface.\n";
++    return false;
++  }
++*/
++    char* senv;
++    EGLContext context = EGL_NO_CONTEXT;
++    senv= getenv("PANDA_NATIVE_CONTEXT");
++    sscanf( senv, "%p", &context );
++    LOG_INFO(" >>>>> context pointer %p found <<<<< ", context);
++
++    androidgsg->_context = context;
++
++    // Switch to our newly created context.
++    if (!eglMakeCurrent(_egl_display, _egl_surface, _egl_surface, androidgsg->_context)) {
++        androiddisplay_cat.error() << "Failed to call eglMakeCurrent: " << get_egl_error_string(eglGetError()) << "\n";
++    }
++
++#else
+   AndroidGraphicsStateGuardian *androidgsg;
+   DCAST_INTO_R(androidgsg, _gsg, false);
+ 
+@@ -384,7 +504,7 @@
+     close_window();
+     return false;
+   }
+-
++#endif
+   return true;
+ }
+ 
+@@ -393,10 +513,12 @@
+  */
+ void AndroidGraphicsWindow::
+ handle_command(struct android_app *app, int32_t command) {
++/* PMPP
+   AndroidGraphicsWindow *window = (AndroidGraphicsWindow *)app->userData;
+   if (window != nullptr) {
+     window->ns_handle_command(command);
+   }
++*/
+ }
+ 
+ /**
+@@ -405,7 +527,9 @@
+ void AndroidGraphicsWindow::
+ ns_handle_command(int32_t command) {
+   WindowProperties properties;
+-
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    #warning fixme
++#else
+   switch (command) {
+     case APP_CMD_SAVE_STATE:
+       // The system has asked us to save our current state.  Do so.
+@@ -434,15 +558,13 @@
+       system_changed_properties(properties);
+       break;
+     case APP_CMD_WINDOW_RESIZED:
+-      properties.set_size(ANativeWindow_getWidth(_app->window),
+-                          ANativeWindow_getHeight(_app->window));
++      properties.set_size(ANativeWindow_getWidth(_app->window), ANativeWindow_getHeight(_app->window));
+       break;
+     case APP_CMD_WINDOW_REDRAW_NEEDED:
+       break;
+     case APP_CMD_CONTENT_RECT_CHANGED:
+       properties.set_origin(_app->contentRect.left, _app->contentRect.top);
+-      properties.set_size(_app->contentRect.right - _app->contentRect.left,
+-                          _app->contentRect.bottom - _app->contentRect.top);
++      properties.set_size(_app->contentRect.right - _app->contentRect.left,  _app->contentRect.bottom - _app->contentRect.top);
+       system_changed_properties(properties);
+       break;
+     case APP_CMD_GAINED_FOCUS:
+@@ -459,6 +581,7 @@
+       system_changed_properties(properties);
+       break;
+   }
++#endif
+ }
+ 
+ /**
+@@ -466,8 +589,10 @@
+  */
+ int32_t AndroidGraphicsWindow::
+ handle_input_event(struct android_app* app, AInputEvent *event) {
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    #warning fixme
++#else
+   AndroidGraphicsWindow* window = (AndroidGraphicsWindow*) app->userData;
+-
+   int32_t event_type = AInputEvent_getType(event);
+   switch (event_type) {
+   case AINPUT_EVENT_TYPE_KEY:
+@@ -475,6 +600,7 @@
+   case AINPUT_EVENT_TYPE_MOTION:
+     return window->handle_motion_event(event);
+   }
++#endif
+   return 0;
+ }
+ 
+@@ -504,12 +630,14 @@
+     _input->button_down(KeyboardButton.rshift());
+   }*/
+ 
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    #warning FIXME
++#else
+   int32_t keycode = AKeyEvent_getKeyCode(event);
+   ButtonHandle button = map_button(keycode);
+ 
+   if (button == ButtonHandle::none()) {
+-    androiddisplay_cat.warning()
+-      << "Unknown keycode: " << keycode << "\n";
++    androiddisplay_cat.warning() << "Unknown keycode: " << keycode << "\n";
+     return 0;
+   }
+ 
+@@ -525,7 +653,7 @@
+     _input->button_up(button);
+   }
+   // TODO AKEY_EVENT_ACTION_MULTIPLE
+-
++#endif
+   return 1;
+ }
+ 
+@@ -534,6 +662,11 @@
+  */
+ int32_t AndroidGraphicsWindow::
+ handle_motion_event(const AInputEvent *event) {
++
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    #warning FIXME
++#else
++
+   int32_t action = AMotionEvent_getAction(event);
+   action &= AMOTION_EVENT_ACTION_MASK;
+ 
+@@ -569,7 +702,7 @@
+   float y = AMotionEvent_getY(event, 0) - _app->contentRect.top;
+ 
+   _input->set_pointer_in_window(x, y);
+-
++#endif
+   return 1;
+ }
+ 
+--- panda3d/panda/src/androiddisplay/config_androiddisplay.cxx	2020-03-20 15:48:21.000000000 +0100
++++ panda3d-android/panda/src/androiddisplay/config_androiddisplay.cxx	2020-04-13 07:38:06.823257373 +0200
+@@ -21,10 +21,17 @@
+ 
+ #include "config_display.h"
+ 
++#include <android/log.h>
++
++#define LOG_TAG "config_androiddisplay.cxx"
++#define LOG_INFO(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
++#define LOG_ERROR(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
++
+ Configure(config_androiddisplay);
+ NotifyCategoryDef(androiddisplay, "display");
+ 
+ ConfigureFn(config_androiddisplay) {
++  LOG_INFO("34: config_androiddisplay.cxx\n");
+   init_libandroiddisplay();
+ }
+ 
+@@ -37,6 +44,8 @@
+ void
+ init_libandroiddisplay() {
+   static bool initialized = false;
++  LOG_INFO("45: config_androiddisplay.cxx\n");
++
+   if (initialized) {
+     return;
+   }
 --- panda3d/panda/src/display/graphicsEngine.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/display/graphicsEngine.cxx	2020-04-13 00:48:38.198119572 +0200
++++ panda3d-android/panda/src/display/graphicsEngine.cxx	2020-04-13 07:02:38.802434811 +0200
 @@ -50,6 +50,14 @@
  #include "depthTestAttrib.h"
  #include "unionBoundingVolume.h"
@@ -194,19 +640,17 @@
        do_add_window(window);
        open_windows();
        if (window->is_valid()) {
-@@ -724,7 +749,11 @@
+@@ -724,7 +749,9 @@
    // that we don't render a frame before the offscreen buffers are ready
    // (which might result in a frame going by without some textures having
    // been rendered).
 +#if __ANDROID__
-+    #pragma message "744:open_windows removed"
-+#else
    open_windows();
 +#endif
  
    ClockObject *global_clock = ClockObject::get_global_clock();
  
-@@ -964,17 +993,20 @@
+@@ -964,17 +991,20 @@
   */
  void GraphicsEngine::
  open_windows() {
@@ -229,7 +673,7 @@
      for (auto it = _new_windows.begin(); it != _new_windows.end(); ++it) {
        GraphicsOutput *window = *it;
  
-@@ -1046,7 +1078,16 @@
+@@ -1046,7 +1076,16 @@
      GraphicsOutput *window = *it;
      if (window->is_valid()) {
        do_add_gsg(window->get_gsg(), window->get_pipe());
@@ -246,8 +690,33 @@
        remove_window(window);
      }
    }
+--- panda3d/panda/src/display/graphicsOutput.cxx	2020-03-20 15:48:21.000000000 +0100
++++ panda3d-android/panda/src/display/graphicsOutput.cxx	2020-04-13 06:36:45.411733457 +0200
+@@ -410,6 +410,10 @@
+  */
+ bool GraphicsOutput::
+ is_active() const {
++#if __ANDROID__
++    #pragma message "GraphicsOutput::is_active() false/true ?"
++    return true;
++#endif
+   if (!is_valid()) {
+     return false;
+   }
+--- panda3d/panda/src/display/graphicsStateGuardian.I	2020-03-20 15:48:21.000000000 +0100
++++ panda3d-android/panda/src/display/graphicsStateGuardian.I	2020-04-13 05:36:30.493297766 +0200
+@@ -78,6 +78,9 @@
+  */
+ INLINE void GraphicsStateGuardian::
+ set_active(bool active) {
++#if __ANDROID__
++    _is_valid = true;
++#endif
+   _active = active;
+ }
+ 
 --- panda3d/panda/src/display/graphicsWindow.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/display/graphicsWindow.cxx	2020-04-13 00:17:30.435728593 +0200
++++ panda3d-android/panda/src/display/graphicsWindow.cxx	2020-04-13 05:28:16.802066791 +0200
 @@ -21,6 +21,14 @@
  #include "throw_event.h"
  #include "string_utils.h"
@@ -263,20 +732,41 @@
  using std::string;
  
  TypeHandle GraphicsWindow::_type_handle;
-@@ -471,7 +479,11 @@
+@@ -165,6 +173,10 @@
+ bool GraphicsWindow::
+ is_active() const {
+   // Make this smarter?
++#if __ANDROID__
++    #pragma message "GraphicsWindow::is_active() badly hacked"
++    return true;
++#endif
+   return GraphicsOutput::is_active() && _properties.get_open() && !_properties.get_minimized();
+ }
+ 
+@@ -467,12 +479,21 @@
+       properties = _requested_properties;
+       _requested_properties.clear();
+ 
++
++
++#if __ANDROID__
++    open_window();
++    _is_valid = true;
++    LOG_E("_rejected_properties avoiding .add_properties(properties)  !");
++#else
+       set_properties_now(properties);
++
        if (properties.is_any_specified()) {
          display_cat.info()
            << "Unable to set window properties: " << properties << "\n";
-+#if __ANDROID__
-+LOG_E("_rejected_properties.add_properties(properties)");
-+#else
          _rejected_properties.add_properties(properties);
-+#endif
        }
++#endif
      }
    }
+ }
 --- panda3d/panda/src/gles2gsg/CMakeLists.txt	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/gles2gsg/CMakeLists.txt	2020-04-13 00:17:30.437728566 +0200
++++ panda3d-android/panda/src/gles2gsg/CMakeLists.txt	2020-04-13 03:26:24.898320799 +0200
 @@ -13,10 +13,13 @@
  )
  
@@ -296,7 +786,7 @@
  if(NOT BUILD_METALIBS)
    install(TARGETS p3gles2gsg
 --- panda3d/panda/src/gles2gsg/config_gles2gsg.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/gles2gsg/config_gles2gsg.cxx	2020-04-13 00:17:30.437728566 +0200
++++ panda3d-android/panda/src/gles2gsg/config_gles2gsg.cxx	2020-04-13 03:26:24.898320799 +0200
 @@ -40,6 +40,5 @@
      return;
    }
@@ -305,14 +795,14 @@
    GLES2init_classes();
  }
 --- panda3d/panda/src/gles2gsg/gles2gsg.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/gles2gsg/gles2gsg.cxx	2020-04-13 00:17:30.437728566 +0200
++++ panda3d-android/panda/src/gles2gsg/gles2gsg.cxx	2020-04-13 03:26:24.898320799 +0200
 @@ -17,3 +17,4 @@
  
  #include "gles2gsg.h"
  #include "glstuff_src.cxx"
 +
 --- panda3d/panda/src/glstuff/CMakeLists.txt	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/glstuff/CMakeLists.txt	2020-04-13 00:17:30.437728566 +0200
++++ panda3d-android/panda/src/glstuff/CMakeLists.txt	2020-04-13 03:26:24.898320799 +0200
 @@ -1,6 +1,9 @@
 +if(ANDROID)
 +else()
@@ -324,7 +814,7 @@
  set(P3GLSTUFF_HEADERS
    glGeomContext_src.I
 --- panda3d/panda/src/pipeline/threadDummyImpl.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/pipeline/threadDummyImpl.cxx	2020-04-13 00:17:30.437728566 +0200
++++ panda3d-android/panda/src/pipeline/threadDummyImpl.cxx	2020-04-13 03:26:24.898320799 +0200
 @@ -25,6 +25,13 @@
  #include <windows.h>
  #endif
@@ -340,7 +830,7 @@
   *
   */
 --- panda3d/panda/src/pipeline/threadDummyImpl.h	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/pipeline/threadDummyImpl.h	2020-04-13 00:17:30.437728566 +0200
++++ panda3d-android/panda/src/pipeline/threadDummyImpl.h	2020-04-13 03:26:24.898320799 +0200
 @@ -31,6 +31,10 @@
  #include <windows.h>  // For Sleep().
  #endif
@@ -367,7 +857,7 @@
  
  #include "threadDummyImpl.I"
 --- panda3d/panda/src/pipeline/threadDummyImpl.I	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/pipeline/threadDummyImpl.I	2020-04-13 00:17:30.437728566 +0200
++++ panda3d-android/panda/src/pipeline/threadDummyImpl.I	2020-04-13 03:26:24.898320799 +0200
 @@ -124,3 +124,13 @@
  INLINE void ThreadDummyImpl::
  consider_yield() {

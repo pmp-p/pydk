@@ -1,5 +1,5 @@
 --- panda3d/panda/metalibs/pandagles2/pandagles2.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/metalibs/pandagles2/pandagles2.cxx	2020-04-13 00:17:30.435728593 +0200
++++ panda3d-android/panda/metalibs/pandagles2/pandagles2.cxx	2020-04-13 07:42:40.945498876 +0200
 @@ -3,7 +3,7 @@
   * @author rdb
   * @date 2009-06-08
@@ -23,7 +23,7 @@
 +
 +//#include "config_egldisplay.h"
 +//#include "eglGraphicsPipe.h"
-+#include "config_viewdisplay.h"
++#include "config_androiddisplay.h"
 +#include "viewGraphicsPipe.h"
 +
 +/**

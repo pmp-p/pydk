@@ -1,5 +1,5 @@
---- panda3d/panda/src/viewdisplay/config_viewdisplay.h	2020-04-08 07:03:04.334798695 +0200
-+++ panda3d.android/panda/src/viewdisplay/config_viewdisplay.h	2020-04-08 02:22:08.181004101 +0200
+--- panda3d-980c6bb38961c13e0890990651d05df3550cf30a/panda/src/viewdisplay/config_viewdisplay.h	2020-04-13 05:43:16.707728138 +0200
++++ panda3d-android/panda/src/viewdisplay/config_viewdisplay.h	2020-04-13 03:26:24.900320771 +0200
 @@ -0,0 +1,46 @@
 +/**
 + * PANDA 3D SOFTWARE

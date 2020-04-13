@@ -1,5 +1,5 @@
 --- panda3d/panda/src/display/graphicsWindow.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/display/graphicsWindow.cxx	2020-04-13 00:17:30.435728593 +0200
++++ panda3d-android/panda/src/display/graphicsWindow.cxx	2020-04-13 05:28:16.802066791 +0200
 @@ -21,6 +21,14 @@
  #include "throw_event.h"
  #include "string_utils.h"
@@ -15,15 +15,36 @@
  using std::string;
  
  TypeHandle GraphicsWindow::_type_handle;
-@@ -471,7 +479,11 @@
+@@ -165,6 +173,10 @@
+ bool GraphicsWindow::
+ is_active() const {
+   // Make this smarter?
++#if __ANDROID__
++    #pragma message "GraphicsWindow::is_active() badly hacked"
++    return true;
++#endif
+   return GraphicsOutput::is_active() && _properties.get_open() && !_properties.get_minimized();
+ }
+ 
+@@ -467,12 +479,21 @@
+       properties = _requested_properties;
+       _requested_properties.clear();
+ 
++
++
++#if __ANDROID__
++    open_window();
++    _is_valid = true;
++    LOG_E("_rejected_properties avoiding .add_properties(properties)  !");
++#else
+       set_properties_now(properties);
++
        if (properties.is_any_specified()) {
          display_cat.info()
            << "Unable to set window properties: " << properties << "\n";
-+#if __ANDROID__
-+LOG_E("_rejected_properties.add_properties(properties)");
-+#else
          _rejected_properties.add_properties(properties);
-+#endif
        }
++#endif
      }
    }
+ }

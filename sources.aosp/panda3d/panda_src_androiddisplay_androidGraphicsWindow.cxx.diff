@@ -1,0 +1,380 @@
+--- panda3d/panda/src/androiddisplay/androidGraphicsWindow.cxx	2020-03-20 15:48:21.000000000 +0100
++++ panda3d-android/panda/src/androiddisplay/androidGraphicsWindow.cxx	2020-04-13 08:03:52.892059159 +0200
+@@ -8,7 +8,7 @@
+  *
+  * @file androidGraphicsWindow.cxx
+  * @author rdb
+- * @date 2013-01-11
++ * @date 20173-01-11 modified for android activity pmp-p
+  */
+ 
+ #include "androidGraphicsWindow.h"
+@@ -25,11 +25,61 @@
+ #include "throw_event.h"
+ #include "nativeWindowHandle.h"
+ 
+-#include "android_native_app_glue.h"
++
++#include <android/native_activity.h>
++
++// excerpt of native_app_glue
++struct android_app {
++    // The application can place a pointer to its own state object
++    // here if it likes.
++    void* userData;
++    // The ANativeActivity object instance that this app is running in.
++    ANativeActivity* activity;
++    // The ALooper associated with the app's thread.
++    ALooper* looper;
++    // When non-NULL, this is the input queue from which the app will
++    // receive user input events.
++    AInputQueue* inputQueue;
++    // When non-NULL, this is the window surface that the app can draw in.
++    ANativeWindow* window;
++    // Current content rectangle of the window; this is the area where the
++    // window's content should be placed to be seen by the user.
++    ARect contentRect;
++    // Current state of the app's activity.  May be either APP_CMD_START,
++    // APP_CMD_RESUME, APP_CMD_PAUSE, or APP_CMD_STOP; see below.
++    int activityState;
++    // -------------------------------------------------
++    // Below are "private" implementation of the glue code.
++    pthread_mutex_t mutex;
++    pthread_cond_t cond;
++    int msgread;
++    int msgwrite;
++    pthread_t thread;
++    // This is non-zero when the application's NativeActivity is being
++    // destroyed and waiting for the app thread to complete.
++    int destroyRequested;
++    int running;
++    int destroyed;
++    int redrawNeeded;
++    AInputQueue* pendingInputQueue;
++    ANativeWindow* pendingWindow;
++    ARect pendingContentRect;
++};
++
++
++
++
+ #include <android/window.h>
+ #include <android/log.h>
++#include <stdlib.h>
++
++#define LOG_TAG "androidGraphicsWindow.cxx"
++#define LOG_INFO(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
++#define LOG_ERROR(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
++
++//static EGLNativeWindowType awindow = NULL;
+ 
+-extern IMPORT_CLASS struct android_app* panda_android_app;
++//extern IMPORT_CLASS struct android_app* panda_android_app;
+ 
+ TypeHandle AndroidGraphicsWindow::_type_handle;
+ 
+@@ -53,7 +103,7 @@
+   _egl_display = android_pipe->_egl_display;
+   _egl_surface = 0;
+ 
+-  _app = panda_android_app;
++  _app = new android_app(); // panda_android_app;
+ 
+   PT(GraphicsWindowInputDevice) device = GraphicsWindowInputDevice::pointer_and_keyboard(this, "keyboard_mouse");
+   add_input_device(device);
+@@ -65,7 +115,8 @@
+  */
+ AndroidGraphicsWindow::
+ ~AndroidGraphicsWindow() {
+-  destroy_surface();
++    LOG_ERROR("~AndroidGraphicsWindow() should not destroy_surface");
++    destroy_surface();
+ }
+ 
+ /**
+@@ -179,6 +230,9 @@
+ process_events() {
+   GraphicsWindow::process_events();
+ 
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    #warning fixme process_events
++#else
+   // Read all pending events.
+   int looper_id;
+   int events;
+@@ -191,6 +245,8 @@
+       source->process(_app, source);
+     }
+   }
++#endif
++
+ }
+ 
+ /**
+@@ -218,7 +274,9 @@
+     // The base class has already handled this case.
+     return;
+   }
+-
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    #warning fixme set_properties
++#else
+   // There's not really much we can change on Android.
+   if (properties.has_fullscreen()) {
+     uint32_t add_flags = 0;
+@@ -233,6 +291,7 @@
+     _properties.set_fullscreen(properties.get_fullscreen());
+     properties.clear_fullscreen();
+   }
++#endif
+ }
+ 
+ /**
+@@ -240,6 +299,11 @@
+  */
+ void AndroidGraphicsWindow::
+ close_window() {
++
++
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    #warning fixme close_window
++#else
+   destroy_surface();
+ 
+   if (_gsg != nullptr) {
+@@ -254,6 +318,7 @@
+     _app->onAppCmd = nullptr;
+     _app->onInputEvent = nullptr;
+   }
++#endif
+ }
+ 
+ /**
+@@ -280,6 +345,23 @@
+     }
+   }
+ 
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    char* senv;
++    senv= getenv("PANDA_NATIVE_WINDOW");
++    sscanf( senv, "%p", &_app->window );
++    LOG_INFO(" >>>>> window pointer %p found <<<<< ", _app->window);
++
++    senv= getenv("PANDA_NATIVE_SURFACE");
++    sscanf( senv, "%p", &_egl_surface );
++    LOG_INFO(" >>>>> surface pointer %p found <<<<< ", _egl_surface);
++
++    if (_egl_surface == EGL_NO_SURFACE) {
++        androiddisplay_cat.error() << "NO EGL Surface pointer\n";
++        return false;
++    }
++    _properties.set_origin(100, -100);
++    _properties.set_undecorated(true);
++#else
+   // Register the callbacks
+   assert(_app != nullptr);
+   _app->userData = this;
+@@ -296,10 +378,11 @@
+     return false;
+   }
+ 
+-  // Set some other properties.
++    // Set some other properties.
+   _properties.set_origin(0, 0);
+   _properties.set_cursor_hidden(true);
+   _properties.set_undecorated(true);
++#endif
+ 
+   if (!androidgsg->get_fb_properties().verify_hardware_software
+       (_fb_properties, androidgsg->get_gl_renderer())) {
+@@ -309,6 +392,8 @@
+ 
+   _fb_properties = androidgsg->get_fb_properties();
+ 
++  create_surface();
++
+   return true;
+ }
+ 
+@@ -317,6 +402,11 @@
+  */
+ void AndroidGraphicsWindow::
+ destroy_surface() {
++
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    #warning fixme
++    _egl_surface = EGL_NO_SURFACE;
++#else
+   if (_egl_surface != EGL_NO_SURFACE) {
+     if (!eglDestroySurface(_egl_display, _egl_surface)) {
+       androiddisplay_cat.error() << "Failed to destroy surface: "
+@@ -324,6 +414,7 @@
+     }
+     _egl_surface = EGL_NO_SURFACE;
+   }
++#endif
+ 
+   // Destroy the current context.
+   if (_gsg != nullptr) {
+@@ -338,6 +429,35 @@
+  */
+ bool AndroidGraphicsWindow::
+ create_surface() {
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    LOG_INFO("362: create_surface");
++    AndroidGraphicsStateGuardian *androidgsg;
++    DCAST_INTO_R(androidgsg, _gsg, false);
++
++/*
++    ANativeWindow_setBuffersGeometry(awindow, 0, 0, androidgsg->_format);
++  // Create the EGL surface.
++  _egl_surface = eglCreateWindowSurface(_egl_display, androidgsg->_fbconfig, awindow, NULL);
++  if (eglGetError() != EGL_SUCCESS) {
++    androiddisplay_cat.error()
++      << "Failed to create window surface.\n";
++    return false;
++  }
++*/
++    char* senv;
++    EGLContext context = EGL_NO_CONTEXT;
++    senv= getenv("PANDA_NATIVE_CONTEXT");
++    sscanf( senv, "%p", &context );
++    LOG_INFO(" >>>>> context pointer %p found <<<<< ", context);
++
++    androidgsg->_context = context;
++
++    // Switch to our newly created context.
++    if (!eglMakeCurrent(_egl_display, _egl_surface, _egl_surface, androidgsg->_context)) {
++        androiddisplay_cat.error() << "Failed to call eglMakeCurrent: " << get_egl_error_string(eglGetError()) << "\n";
++    }
++
++#else
+   AndroidGraphicsStateGuardian *androidgsg;
+   DCAST_INTO_R(androidgsg, _gsg, false);
+ 
+@@ -384,7 +504,7 @@
+     close_window();
+     return false;
+   }
+-
++#endif
+   return true;
+ }
+ 
+@@ -393,10 +513,12 @@
+  */
+ void AndroidGraphicsWindow::
+ handle_command(struct android_app *app, int32_t command) {
++/* PMPP
+   AndroidGraphicsWindow *window = (AndroidGraphicsWindow *)app->userData;
+   if (window != nullptr) {
+     window->ns_handle_command(command);
+   }
++*/
+ }
+ 
+ /**
+@@ -405,7 +527,9 @@
+ void AndroidGraphicsWindow::
+ ns_handle_command(int32_t command) {
+   WindowProperties properties;
+-
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    #warning fixme
++#else
+   switch (command) {
+     case APP_CMD_SAVE_STATE:
+       // The system has asked us to save our current state.  Do so.
+@@ -434,15 +558,13 @@
+       system_changed_properties(properties);
+       break;
+     case APP_CMD_WINDOW_RESIZED:
+-      properties.set_size(ANativeWindow_getWidth(_app->window),
+-                          ANativeWindow_getHeight(_app->window));
++      properties.set_size(ANativeWindow_getWidth(_app->window), ANativeWindow_getHeight(_app->window));
+       break;
+     case APP_CMD_WINDOW_REDRAW_NEEDED:
+       break;
+     case APP_CMD_CONTENT_RECT_CHANGED:
+       properties.set_origin(_app->contentRect.left, _app->contentRect.top);
+-      properties.set_size(_app->contentRect.right - _app->contentRect.left,
+-                          _app->contentRect.bottom - _app->contentRect.top);
++      properties.set_size(_app->contentRect.right - _app->contentRect.left,  _app->contentRect.bottom - _app->contentRect.top);
+       system_changed_properties(properties);
+       break;
+     case APP_CMD_GAINED_FOCUS:
+@@ -459,6 +581,7 @@
+       system_changed_properties(properties);
+       break;
+   }
++#endif
+ }
+ 
+ /**
+@@ -466,8 +589,10 @@
+  */
+ int32_t AndroidGraphicsWindow::
+ handle_input_event(struct android_app* app, AInputEvent *event) {
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    #warning fixme
++#else
+   AndroidGraphicsWindow* window = (AndroidGraphicsWindow*) app->userData;
+-
+   int32_t event_type = AInputEvent_getType(event);
+   switch (event_type) {
+   case AINPUT_EVENT_TYPE_KEY:
+@@ -475,6 +600,7 @@
+   case AINPUT_EVENT_TYPE_MOTION:
+     return window->handle_motion_event(event);
+   }
++#endif
+   return 0;
+ }
+ 
+@@ -504,12 +630,14 @@
+     _input->button_down(KeyboardButton.rshift());
+   }*/
+ 
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    #warning FIXME
++#else
+   int32_t keycode = AKeyEvent_getKeyCode(event);
+   ButtonHandle button = map_button(keycode);
+ 
+   if (button == ButtonHandle::none()) {
+-    androiddisplay_cat.warning()
+-      << "Unknown keycode: " << keycode << "\n";
++    androiddisplay_cat.warning() << "Unknown keycode: " << keycode << "\n";
+     return 0;
+   }
+ 
+@@ -525,7 +653,7 @@
+     _input->button_up(button);
+   }
+   // TODO AKEY_EVENT_ACTION_MULTIPLE
+-
++#endif
+   return 1;
+ }
+ 
+@@ -534,6 +662,11 @@
+  */
+ int32_t AndroidGraphicsWindow::
+ handle_motion_event(const AInputEvent *event) {
++
++#if defined(__ANDROID_API__) && __ANDROID_API__ < 20
++    #warning FIXME
++#else
++
+   int32_t action = AMotionEvent_getAction(event);
+   action &= AMOTION_EVENT_ACTION_MASK;
+ 
+@@ -569,7 +702,7 @@
+   float y = AMotionEvent_getY(event, 0) - _app->contentRect.top;
+ 
+   _input->set_pointer_in_window(x, y);
+-
++#endif
+   return 1;
+ }
+ 
