@@ -14,7 +14,7 @@ export PYDROID="${BUILD_SRC}/python3-android"
 #3.8 : --without-gcc is gone
 
 export PYOPTS="--without-pymalloc --without-pydebug\
- --disable-ipv6 --without-ensurepip --with-c-locale-coercion\
+ --disable-ipv6 --with-c-locale-coercion\
  --enable-shared --with-computed-gotos"
 
 
@@ -173,7 +173,7 @@ ExternalProject_Add(
 
     PATCH_COMMAND sh -c "/bin/cp -aRfxp ${PYSRC} ${PYDROID}"
 
-    CONFIGURE_COMMAND sh -c "cd ${PYSRC} && CC=clang ./configure --prefix=${HOST} --with-cxx-main=clang $PYOPTS >/dev/null"
+    CONFIGURE_COMMAND sh -c "cd ${PYSRC} && CC=clang ./configure --prefix=${HOST} --with-cxx-main=clang $PYOPTS --with-ensurepip  >/dev/null"
 
     BUILD_COMMAND sh -c "cd ${PYSRC} && make ${JFLAGS}"
 
@@ -239,7 +239,7 @@ END
 
         #make it closer to target parameters
         python_ac_cv_patch config.site
-        echo "CONFIG_SITE=config.site CC=clang ./configure --prefix=${HOST} --with-cxx-main=clang $PYOPTS" > build.sh
+        echo "CONFIG_SITE=config.site CC=clang ./configure --prefix=${HOST} --with-cxx-main=clang $PYOPTS --without-ensurepip" > build.sh
         chmod +x build.sh
 
         if ./build.sh >/dev/null
@@ -286,7 +286,7 @@ CONFIG_SITE=config.site \\
  CFLAGS="$CFLAGS" \\
  \${_PYTHON_PROJECT_SRC}/configure --with-libs='-L${APKUSR}/lib -lbrokenthings -lstdc++ -lz -lm' \\
  --with-openssl=${APKUSR} --host=${PLATFORM_TRIPLET} --build=${HOST_TRIPLET} --prefix=${APKUSR} \\
- $PYOPTS 2>&1 >> ${BUILD_SRC}/build.log
+ $PYOPTS --without-ensurepip 2>&1 >> ${BUILD_SRC}/build.log
 
 if [ -f Makefile ]
 then

@@ -7,7 +7,7 @@
 
 
 
-export VORBIS_URL=${VORBIS_URL:-"https://github.com/xiph/vorbis/archive/30c490373b740f357d219c9e9672698d739f11f3.zip"}
+export VORBIS_URL=${VORBIS_URL:-"URL https://github.com/xiph/vorbis/archive/30c490373b740f357d219c9e9672698d739f11f3.zip"}
 export VORBIS_HAS=${VORBIS_HASH:-"URL_HASH SHA256=17f034a73d208bd230dd70f13ba3c600a9eed169aac38e3d38cd0e42dd759d7c"}
 
 

@@ -1,6 +1,6 @@
 # pydk : Android generic ( 4.4/32 api19 , 5+/64 api21)
 
-ARCHITECTURES="armeabi-v7a arm64-v8a x86 x86_64"
+ARCHITECTURES="armeabi-v7a arm64-v8a x86 x86_64 wasm"
 
 ```
 Requirements:
@@ -13,7 +13,7 @@ Requirements:
 
 clone this repo and go into folder pydk
 add sdk as "android-sdk" and ndk as "android-sdk/ndk-bundle" (ndk20) in the folder
-launch ./pydk-android-all.sh
+launch ./pydk-all.sh
 
 ```
 sources used:
@@ -33,14 +33,35 @@ sources used:
   +  panda3d from : https://github.com/panda3d/panda3d/archive/cmake.zip
 ```
 
-NOTE: there's a warning about a cross pip module not provided.
-it is not because not well tested  and  making use of cpython internals.
-but be aware that any demo provided may use prebuilt made with that module.
+NOTE: now has limited pip support and will detect  your ./projects/*/requirements.txt.
+and will do its best to package them for an android apk.
+
+NOTE: an emscripten android project emulation is expected.
+it will allow deploying your apk untouched in browsers.
+
 
 Beerware : [![PayPayl](https://img.shields.io/badge/Paypal-Me-yellow.svg)](http://paypal.me/pmpp)
 
 
 [![la rache](https://www.la-rache.com/img/kro.jpg)](https://www.la-rache.com)
+
+
+
+A simple button calling Panda3D engine widget
+[![panda3d](https://raw.githubusercontent.com/pmp-p/pydk/master/docs/Panda3D/pandapk-step1.png)
+[![panda3d](https://raw.githubusercontent.com/pmp-p/pydk/master/docs/Panda3D/pandapk-step2.png)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

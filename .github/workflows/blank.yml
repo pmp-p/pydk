@@ -33,20 +33,20 @@ jobs:
     - name: PyDK Android build HOST
       run: |
             cd /home/runner/work/pydk/pydk
-            ARCHITECTURES=hostonly time sh pydk-android-all.sh
+            ARCHITECTURES=hostonly time sh pydk-all.sh
     - name: PyDK Android build armeabi-v7a
       run: |
             cd /home/runner/work/pydk/pydk
-            ARCHITECTURES=armeabi-v7a time sh pydk-android-all.sh
+            ARCHITECTURES=armeabi-v7a time sh pydk-all.sh
     - name: PyDK Android build arm64-v8a
       run: |
             cd /home/runner/work/pydk/pydk
-            ARCHITECTURES=arm64-v8a time sh pydk-android-all.sh
+            ARCHITECTURES=arm64-v8a time sh pydk-all.sh
     - name: PyDK Android build x86
       run: |
             cd /home/runner/work/pydk/pydk
-            ARCHITECTURES=x86  time sh pydk-android-all.sh
+            ARCHITECTURES=x86  time sh pydk-all.sh
     - name: PyDK Android build x86_64
       run: |
             cd /home/runner/work/pydk/pydk
-            ARCHITECTURES=x86_64 time sh pydk-android-all.sh
+            ARCHITECTURES=x86_64 time sh pydk-all.sh

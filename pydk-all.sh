@@ -339,6 +339,9 @@ do
             API=21
             BITS=64
             ;;
+        wasm)
+            break
+            ;;
     esac
 
     export APKUSR=${ROOT}/apkroot-${ANDROID_NDK_ABI_NAME}/usr
@@ -468,4 +471,8 @@ END
 
     do_steps crosscompile
 done
+
+
+echo "exiting on $ANDROID_NDK_ABI_NAME"
+
 
