@@ -24,9 +24,10 @@ export PYTHONDONTWRITEBYTECODE=1
 
 if echo $CI|grep -q true
 then
-    echo "CI-force-test python3.6, ncpu=4"
     JOBS=4
-    export PYTHON=$(command -v python3.6)
+    export PYTHON=${PYTHON_FOR_CI:-$(command -v python3.6)}
+    echo "CI-force-test $PYTHON, ncpu=$JOBS"
+
 else
     #restrict $PYMINOR for env so host pip can work for populating android projects
     for py in ${PYMINOR} 7 6 5
@@ -42,6 +43,12 @@ fi
 if echo $PYTHON |grep -q python3.6
 then
     CI=true
+else
+    CI=${CI:-false}
+fi
+
+if $CI
+then
     JOBS=${JOBS:-8}
     JFLAGS="-s -j $JOBS"
     CNF="--silent"

@@ -1,12 +1,4 @@
 
-#export JAVA_HOME=/opt/sdk/jdk
-#export CROSS_COMPILE=armv7a-linux-androideabi
-#. ${ROOT}/${ANDROID_ABI}.sh
-#export _PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata__android_armv7a-linux-androideabi
-#export __ANDROID__=1
-
-
-
 cross_pip_host_cmake () {
     cat >> CMakeLists.txt <<END
 #${unit}

@@ -35,7 +35,7 @@ export BUILD_SRC=${ORIGIN}/src
 
 export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.so
 
-export ARCHITECTURES=${ARCHITECTURES:-"armeabi-v7a arm64-v8a x86 x86_64"}
+export ARCHITECTURES=${ARCHITECTURES:-"armeabi-v7a arm64-v8a x86 x86_64 wasm"}
 
 #UNITS="unit"
 UNITS=""
@@ -182,13 +182,13 @@ do
     . ${SUPPORT}/${unit}.${ENV}.sh
 done
 
+cd ${BUILD_SRC}
 
 if [ -f CMakeLists.txt ]
 then
     echo " * using previous CMakeLists.txt in $(pwd)"
 else
-
-cat > CMakeLists.txt <<END
+    cat > CMakeLists.txt <<END
 
 cmake_minimum_required(VERSION 3.10.2)
 
@@ -231,21 +231,22 @@ END
     do_steps host_cmake
 
     cd ${BUILD_SRC}
+
     if $CI
     then
-        if $CMAKE .. >/dev/null && make ${JFLAGS} >/dev/null
+        if $CMAKE . >/dev/null && make ${JFLAGS} >/dev/null
         then
             echo
         else
-            echo "ERROR : cmake externals"
+            echo "ERROR : cmake externals in ${BUILD_SRC} from $(pwd)"
             exit 1
         fi
     else
-        if $CMAKE .. && make ${JFLAGS}
+        if $CMAKE . && make ${JFLAGS}
         then
             echo
         else
-            echo "ERROR : cmake externals"
+            echo "ERROR : cmake externals in ${BUILD_SRC} from $(pwd)"
             exit 1
         fi
     fi
