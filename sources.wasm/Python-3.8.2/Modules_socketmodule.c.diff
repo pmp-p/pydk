@@ -1,0 +1,13 @@
+--- python3/Modules/socketmodule.c	2020-02-24 22:36:25.000000000 +0100
++++ python3-wasm/Modules/socketmodule.c	2020-04-17 05:50:52.712788567 +0200
+@@ -1359,6 +1359,10 @@
+        }
+ #endif /* AF_QIPCRTR */
+ 
++#if defined(__EMSCRIPTEN__) && defined(AF_VSOCK)
++    #undef AF_VSOCK
++#endif
++
+ #if defined(AF_VSOCK)
+        case AF_VSOCK:
+        {

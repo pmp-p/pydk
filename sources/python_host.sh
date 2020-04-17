@@ -3,6 +3,22 @@
 # JFLAGS :  make options
 # CNF : configure options
 
+export PYTHON3_URL=${PYTHON3_URL:-"URL https://github.com/python/cpython/archive/v${PYVER}.tar.gz"}
+
+case "${PYVER}" in
+    "3.7.5" )  export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=349ac7b4a9d399302542163fdf5496e1c9d1e5d876a4de771eec5acde76a1f8a"};;
+    "3.7.7" )  export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=93f87673997082e7865867b5d0a511ecc9329cc57f9304df1e6d5573ccba40d6"};;
+    "3.8.1" )  export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=48af0a22d12523bfe3c4f2e35497aa5d3dc069ad0828d4768ecc38aae8b9cf08"};;
+    "3.8.2" )  export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH SHA256=f5590c4c8978eb35a9ea14160af683ff07b6129dadf9a72b338bab3f3d493466"};;
+esac
+
+export PYOPTS="--without-pymalloc --without-pydebug\
+ --disable-ipv6 --with-c-locale-coercion\
+ --with-computed-gotos"
+
+
+export PYTARGET="${BUILD_SRC}/python3-${ENV}"
+
 
 export PYTHONDONTWRITEBYTECODE=1
 

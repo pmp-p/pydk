@@ -1,4 +1,4 @@
-# pydk : Android generic ( 4.4/32 api19 , 5+/64 api21)
+# pydk : Android generic ( 4.4/32 api19 , 5+/64 api21) + emscripten tip of tree/incoming
 
 ARCHITECTURES="armeabi-v7a arm64-v8a x86 x86_64 wasm"
 
@@ -47,11 +47,11 @@ Beerware : [![PayPayl](https://img.shields.io/badge/Paypal-Me-yellow.svg)](http:
 
 
 
-A simple button calling Panda3D engine widget
-[![panda3d](https://raw.githubusercontent.com/pmp-p/pydk/master/docs/Panda3D/pandapk-step1.png)
-[![panda3d](https://raw.githubusercontent.com/pmp-p/pydk/master/docs/Panda3D/pandapk-step2.png)
+A simple python created button calling Panda3D engine to render on a python created View :
 
+[![p3d1](https://raw.githubusercontent.com/pmp-p/pydk/master/docs/Panda3D/pandapk-step1.png)(https://www.panda3d.org)
 
+[![p3d2](https://raw.githubusercontent.com/pmp-p/pydk/master/docs/Panda3D/pandapk-step2.png)(https://www.panda3d.org)
 
 
 

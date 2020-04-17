@@ -38,15 +38,15 @@ cross_pip_build () {
 
 cross_pip_crosscompile () {
     # == a shell for one arch, with a ready to use cmake cross compile command
-    cat > ${ROOT}/bin/python3-${ANDROID_NDK_ABI_NAME} <<END
+    cat > ${ROOT}/bin/python3-${ABI_NAME} <<END
 #!/bin/sh
-. $ROOT/${ANDROID_NDK_ABI_NAME}.sh
+. ${HOST}/${ABI_NAME}.sh
 
 #. ${ROOT}/bin/activate
 
 export PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig
 
-export PS1="[PyDK:$ANDROID_NDK_ABI_NAME] \w \$ "
+export PS1="[PyDK:$ABI_NAME] \w \$ "
 
 export HOSTPYPATH=${HOST}/lib/python${PYMAJOR}.${PYMINOR}:${HOST}/lib/python${PYMAJOR}.${PYMINOR}/lib-dynload
 export PYTHONPATH=${ORIGIN}/assets/python${PYMAJOR}.${PYMINOR}:${APKUSR}/lib/python${PYMAJOR}.${PYMINOR}:\$HOSTPYPATH:${PYDROID}/Lib
@@ -55,8 +55,7 @@ export PYTHONHOME=${APKUSR}
 
 ${HOST}/bin/python3 -u -B "\$@"
 END
-    chmod +x ${ROOT}/bin/python3-${ANDROID_NDK_ABI_NAME}
-
+    chmod +x ${ROOT}/bin/python3-${ABI_NAME}
     . ${ORIGIN}/cross-modules.sh
 }
 

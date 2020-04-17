@@ -1,0 +1,14 @@
+--- python3/Include/pyport.h	2020-02-24 22:36:25.000000000 +0100
++++ python3-wasm/Include/pyport.h	2020-04-17 05:50:52.686788906 +0200
+@@ -723,7 +723,11 @@
+  * rather than waiting for integer multiplication to trigger bogus
+  * overflows.
+  */
++#ifndef __EMSCRIPTEN__
+ #error "LONG_BIT definition appears wrong for platform (bad gcc/glibc config?)."
++#else
++#warning "LONG_BIT definition appears wrong for platform (bad gcc/glibc config?)."
++#endif
+ #endif
+ 
+ #ifdef __cplusplus

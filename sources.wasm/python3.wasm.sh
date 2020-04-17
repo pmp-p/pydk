@@ -9,36 +9,57 @@
 
 python_ac_cv_patch () {
     cat >$1 <<END
-ac_cv_broken_mbstowcs=yes
-ac_cv_func_mbrtowc=no
-ac_cv_func_wcscoll=no
-ac_cv_func_wcsftime=no
-ac_cv_func_wcsxfrm=no
-ac_cv_func_gethostbyname_r=no
-
-ac_cv_func_clock_gettime=yes
-ac_cv_func_openpty=yes
-
+ax_cv_c_float_words_bigendian=no
 ac_cv_little_endian_double=yes
-ac_cv_file__dev_ptmx=yes
+
+ac_cv_file__dev_ptmx=no
 ac_cv_file__dev_ptc=no
+ac_cv_func_plock=no
+ac_cv_func_getentropy=no
+ac_cv_have_chflags=no
+ac_cv_have_lchflags=no
+ac_cv_func_sigaltstack=no
+
+ac_cv_func_getgroups=no
+ac_cv_func_setgroups=no
+ac_cv_func_getpgrp=no
+ac_cv_func_setpgrp=no
+
+ac_cv_func_getresuid=no
+ac_cv_func_seteuid=no
+ac_cv_func_setresuid=no
+ac_cv_func_setreuid=no
+ac_cv_func_setuid=no
+
+ac_cv_func_wcsftime=no
+ac_cv_func_sigaction=no
+
+ac_cv_func_sigrtmin=no
+ac_cv_func_sigrtmax=no
+ac_cv_func_siginterrupt=no
+
+ac_cv_func_mknod=no
 
 ac_cv_func_pwrite=no
 ac_cv_func_pwritev=no
 ac_cv_func_pwritev2=no
 
-ac_cv_func_getspnam=no
-ac_cv_func_getspent=no
-ac_cv_func_getgrouplist=no
+ac_cv_func_pread=no
+ac_cv_func_preadv=no
+ac_cv_func_preadv2=no
 
-ac_cv_header_uuid_h=no
-ac_cv_header_uuid_uuid_h=no
+ac_cv_func_dup3=no
+ac_cv_func_dlopen=yes
 
-ac_cv_func_wcsftime=no
-ac_cv_func_crypt_r=no
-ac_cv_search_crypt_r=no
+ac_cv_func_posix_spawn=no
+ac_cv_func_posix_spawnp=no
 
-ac_cv_func_getpid=yes
+ac_cv_pthread_is_default=yes
+ac_cv_pthread=no
+ac_cv_kthread=no
+
+ac_cv_func_clock_gettime=yes
+
 END
 
 }
@@ -79,6 +100,7 @@ _random _randommodule.c # Random number generator
 _bisect _bisectmodule.c # Bisection algorithms
 _json _json.c
 binascii binascii.c
+
 #asyncio req
 select selectmodule.c
 fcntl fcntlmodule.c
@@ -86,10 +108,12 @@ _sha1 sha1module.c
 _sha256 sha256module.c
 _sha512 sha512module.c
 _md5 md5module.c
+
 #
 termios termios.c
 _sha3 _sha3/sha3module.c
 _blake2 _blake2/blake2module.c _blake2/blake2b_impl.c _blake2/blake2s_impl.c
+
 #aiohttp
 unicodedata unicodedata.c
 zlib zlibmodule.c -DUSE_ZLIB_CRC32 -lz
@@ -101,37 +125,38 @@ _posixsubprocess _posixsubprocess.c  # POSIX subprocess module helper
 
 _socket socketmodule.c
 
-_lzma _lzmamodule.c -I${APKUSR}/include -L${APKUSR}/lib ${APKUSR}/lib/liblzma.a
+#TODO:
+#_lzma _lzmamodule.c -I${APKUSR}/include -L${APKUSR}/lib ${APKUSR}/lib/liblzma.a
+#_bz2 _bz2module.c -I${APKUSR}/include -L${APKUSR}/lib  ${APKUSR}/lib/libbz2.a
 
-_bz2 _bz2module.c -I${APKUSR}/include -L${APKUSR}/lib  ${APKUSR}/lib/libbz2.a
+# Modules/_hashopenssl.c:23:10: fatal error: 'openssl/evp.h' file not found
+# _hashlib _hashopenssl.c  -lssl -lcrypto
+#_ssl _ssl.c -DUSE_SSL -I${APKUSR}/include -L${APKUSR}/lib -lsslpython -lcryptopython #${APKUSR}/lib/libssl.a ${APKUSR}/lib/libcrypto.a
 
-_hashlib _hashopenssl.c -I${APKUSR}/include -L${APKUSR}/lib -lsslpython -lcryptopython
-_ssl _ssl.c -DUSE_SSL -I${APKUSR}/include -L${APKUSR}/lib -lsslpython -lcryptopython #${APKUSR}/lib/libssl.a ${APKUSR}/lib/libcrypto.a
+#_elementtree -I${PYTARGET}/Modules/expat -DHAVE_EXPAT_CONFIG_H -DUSE_PYEXPAT_CAPI _elementtree.c # elementtree accelerator
 
-_elementtree -I${PYTARGET}/Modules/expat -DHAVE_EXPAT_CONFIG_H -DUSE_PYEXPAT_CAPI _elementtree.c # elementtree accelerator
+#_ctypes _ctypes/_ctypes.c \
+# _ctypes/callbacks.c \
+# _ctypes/callproc.c \
+# _ctypes/stgdict.c \
+# _ctypes/cfield.c -I${PYTARGET}/Modules/_ctypes -I${APKUSR}/include -L${APKUSR}/lib -lffi # ${APKUSR}/lib/libffi.a
 
-_ctypes _ctypes/_ctypes.c \
- _ctypes/callbacks.c \
- _ctypes/callproc.c \
- _ctypes/stgdict.c \
- _ctypes/cfield.c -I${PYTARGET}/Modules/_ctypes -I${APKUSR}/include -L${APKUSR}/lib -lffi # ${APKUSR}/lib/libffi.a
-
-_decimal _decimal/_decimal.c \
- _decimal/libmpdec/basearith.c \
- _decimal/libmpdec/constants.c \
- _decimal/libmpdec/context.c \
- _decimal/libmpdec/convolute.c \
- _decimal/libmpdec/crt.c \
- _decimal/libmpdec/difradix2.c \
- _decimal/libmpdec/fnt.c \
- _decimal/libmpdec/fourstep.c \
- _decimal/libmpdec/io.c \
- _decimal/libmpdec/memory.c \
- _decimal/libmpdec/mpdecimal.c \
- _decimal/libmpdec/numbertheory.c \
- _decimal/libmpdec/sixstep.c \
- _decimal/libmpdec/transpose.c \
- -DCONFIG_${BITS} -DANSI -I${PYTARGET}/Modules/_decimal/libmpdec
+#_decimal _decimal/_decimal.c \
+# _decimal/libmpdec/basearith.c \
+# _decimal/libmpdec/constants.c \
+# _decimal/libmpdec/context.c \
+# _decimal/libmpdec/convolute.c \
+# _decimal/libmpdec/crt.c \
+# _decimal/libmpdec/difradix2.c \
+# _decimal/libmpdec/fnt.c \
+# _decimal/libmpdec/fourstep.c \
+# _decimal/libmpdec/io.c \
+# _decimal/libmpdec/memory.c \
+# _decimal/libmpdec/mpdecimal.c \
+# _decimal/libmpdec/numbertheory.c \
+# _decimal/libmpdec/sixstep.c \
+# _decimal/libmpdec/transpose.c \
+# -DCONFIG_${BITS} -DANSI -I${PYTARGET}/Modules/_decimal/libmpdec
 
 END
 }
@@ -158,7 +183,7 @@ ExternalProject_Add(
 
     PATCH_COMMAND sh -c "/bin/cp -aRfxp ${PYSRC} ${PYTARGET}"
 
-    CONFIGURE_COMMAND sh -c "cd ${PYSRC} && CC=clang ./configure --prefix=${HOST} --with-cxx-main=clang $PYOPTS --enable-shared  --with-ensurepip  >/dev/null"
+    CONFIGURE_COMMAND sh -c "cd ${PYSRC} && CC=clang ./configure --prefix=${HOST} --with-cxx-main=clang $PYOPTS --with-ensurepip  >/dev/null"
 
     BUILD_COMMAND sh -c "cd ${PYSRC} && make ${JFLAGS}"
 
@@ -181,33 +206,21 @@ python3_patch () {
 
     if [ -f Patched ]
     then
-        echo " * Python-${PYVER} tree already patched"
+        echo " * Python-${PYVER} tree already patched in ${PYTARGET}"
     else
         for PATCH in ${SUPPORT}/Python-${PYVER}/*.diff
         do
-            echo " * applying ${PATCH}"
+            echo " * applying ${PATCH} to ${PYTARGET}"
             patch -p1 < ${PATCH}
         done
-
-#        cat >> Lib/os.py <<END
-#
-#try:
-#    getpid
-#except:
-#    import sys
-#    print("210: os.getpid() is broken",file=sys.stderr)
-#    def getpid():
-#        return int(open('/proc/self/stat').read().split(' ')[0])
-#
-#END
 
         touch Patched
 
         # prevent __pycache__ filling up everywhere
         > ./Lib/compileall.py
 
-        #remove the binary blobs
-        rm -f ./Python/importlib.h ./Python/importlib_external.h
+        # remove the binary blobs
+        #rm -f ./Python/importlib.h ./Python/importlib_external.h
     fi
 
     # without regen importlib is a binary blob ! Use the host python build process to regen the target one then clean up
@@ -220,29 +233,8 @@ python3_patch () {
         echo "  ***********************************************************************"
         echo
     else
-        echo " - regenerating importlib binary blobs -"
-
-        #make it closer to target parameters
-        python_ac_cv_patch config.site
-        echo "CONFIG_SITE=config.site CC=clang ./configure --prefix=${HOST} --with-cxx-main=clang $PYOPTS --enable-shared  --without-ensurepip" > build.sh
-        chmod +x build.sh
-
-        if ./build.sh >/dev/null
-        then
-        cat >> pyconfig.h << END
-#ifdef HAVE_CRYPT_H
-#undef HAVE_CRYPT_H
-#endif
-END
-            if $CI
-            then
-                make ${JFLAGS} regen-importlib
-                make ${JFLAGS} clean
-            else
-                make ${JFLAGS} regen-importlib >/dev/null
-                make ${JFLAGS} clean >/dev/null
-            fi
-        fi
+        echo " - not regenerating importlib binary blobs for $PLATFORM_TRIPLET-"
+        exit 1
     fi
 }
 
@@ -251,7 +243,13 @@ END
 python_configure () {
 
     cp ${HOST}/${ABI_NAME}.sh $1
+
+    #dropped support for asm.js
+    EM_MODE=""
+    EM_FLAGS="-O3 -s EXPORT_ALL=1 -s ENVIRONMENT=web -s USE_ZLIB=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1"
+
     cat >> $1 <<END
+#======== adding to ${HOST}/${ABI_NAME}.sh
 
 export _PYTHON_PROJECT_SRC=${PYTARGET}
 export _PYTHON_PROJECT_BASE=$(pwd)
@@ -259,29 +257,56 @@ export PYTHONDONTWRITEBYTECODE=1
 export PYTHONPYCACHEPREFIX=${ORIGIN}/pycache
 export APKUSR=${APKUSR}
 
-$CXX -shared -fPIC -Wl,-soname,libbrokenthings.so -o ${APKUSR}/lib/libbrokenthings.so ${SUPPORT}/ndk_api19/brokenthings.cpp
+# trick configure to think we have at least pthreads headers
+#export CC="emcc $EM_MODE -I/usr/include"
+#export GCC="emcc $EM_MODE -I/usr/include"
+#export CPP="emcc -E"
+#export CXX="em++ $EM_MODE -I/usr/include"
 
-#${APKUSR}/lib/libbz2.a ${APKUSR}/lib/liblzma.a
-#-lbz2 -llzma
+export CPPFLAGS='$EM_FLAGS'
+export CXXFLAGS='$EM_FLAGS'
+export CFLAGS='$EM_FLAGS'
+
+# --with-libs='-L${APKUSR}/lib -lstdc++ -lz -lm'
 
 PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig \\
 PLATFORM_TRIPLET=${PLATFORM_TRIPLET} \\
 CONFIG_SITE=config.site \\
- CFLAGS="$CFLAGS" \\
- \${_PYTHON_PROJECT_SRC}/configure --with-libs='-L${APKUSR}/lib -lbrokenthings -lstdc++ -lz -lm' \\
- --with-openssl=${APKUSR} --host=${PLATFORM_TRIPLET} --build=${HOST_TRIPLET} --prefix=${APKUSR} \\
- $PYOPTS --without-ensurepip 2>&1 >> ${BUILD_SRC}/build.log
+CFLAGS="$CFLAGS" \\
+READELF=true \\
+ emconfigure \${_PYTHON_PROJECT_SRC}/configure \\
+ --host=${PLATFORM_TRIPLET} --build=${HOST_TRIPLET} --prefix=${APKUSR} \\
+ $PYOPTS --without-ensurepip --without-threads
+
+# 2>&1 >> ${BUILD_SRC}/build.log
 
 if [ -f Makefile ]
 then
     cat >>pyconfig.h <<DEF
-#ifndef HAVE_FORK
-#define HAVE_FORK 1
+
+// added by python3.wasm.sh
+
+#if HAVE_FORK
+    #undef HAVE_FORK
 #endif
-#ifndef HAVE_GETPID
-#define HAVE_GETPID 1
+
+#if HAVE_FORK_PTY
+    #undef HAVE_FORK_PTY
 #endif
+
+#ifndef HAVE_TIMEGM
+#define HAVE_TIMEGM 1
+#endif
+
+#ifndef HAVE_CLOCK
+#define HAVE_CLOCK 1
+#endif
+
+#define GOSH_MOVE_THEM 1
+// /python3.wasm.sh
+
 DEF
+
     if $CI
     then
         echo building cpython
@@ -289,7 +314,8 @@ DEF
         TERM=linux reset
     fi
 
-    make ${JFLAGS} install | egrep -v "install|Creating|copying|renaming"
+    emmake make install
+    #| egrep -v "install|Creating|copying|renaming"
     if [ -f ${PYLIB}/_sysconfigdata__linux_${ARCH}-linux-${ABI}.py ]
     then
         cp -vf ${PYLIB}/_sysconfigdata__linux_${ARCH}-linux-${ABI}.py ${PYLIB}/_sysconfigdata__android_${ARCH}-linux-${ABI}.py
@@ -300,6 +326,7 @@ else
     tail -n 30 ${BUILD_SRC}/build.log
     echo "Configuration failed for $PLATFORM_TRIPLET"
     env
+    exit 1
 fi
 END
 
@@ -319,15 +346,16 @@ python3_crosscompile () {
     if [ -f ${APKUSR}/lib/$LIBPYTHON ]
     then
 
-        echo "    -> $LIBPYTHON already built for $ANDROID_NDK_ABI_NAME"
+        echo "    -> $LIBPYTHON already built for $ABI_NAME"
 
     else
         echo " * configure target==$LIBPYTHON $PLATFORM_TRIPLET"
 
-        cd ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}
+        mkdir -p ${BUILD_PREFIX}-${ABI_NAME}
+        cd ${BUILD_PREFIX}-${ABI_NAME}
 
-        mkdir -p python3-${ANDROID_NDK_ABI_NAME}
-        cd python3-${ANDROID_NDK_ABI_NAME}
+        mkdir -p python3-${ABI_NAME}
+        cd python3-${ABI_NAME}
 
         _PYTHON_PROJECT_SRC=${PYTARGET}
         _PYTHON_PROJECT_BASE=$(pwd)
@@ -343,9 +371,8 @@ python3_crosscompile () {
         [ -f Makefile ] && make clean && rm Makefile
 
 
-# NDK also defines -ffunction-sections -funwind-tables but they result in worse OpenCV performance (Amos Wenger)
 
-        export CFLAGS="-m${BITS} -D__USE_GNU -fPIC -target ${PLATFORM_TRIPLET}${API} -include ${SUPPORT}/ndk_api19/ndk_fix.h -isysroot $TOOLCHAIN/sysroot -isystem $TOOLCHAIN/sysroot/usr/include"
+        #export CFLAGS="-m${BITS} -D__USE_GNU -fPIC -target ${PLATFORM_TRIPLET} -include ${SUPPORT}/ndk_api19/ndk_fix.h -isysroot $TOOLCHAIN/sysroot -isystem $TOOLCHAIN/sysroot/usr/include"
 
         export PYLIB=${APKUSR}/lib/python${PYMAJOR}.${PYMINOR}
 
@@ -356,51 +383,68 @@ python3_crosscompile () {
         mkdir -p ${PYASSETS}
 
         # == prepare the cross configure + build file for cpython
+        if [ -f ${PYTARGET}/configure ]
+        then
+            echo
+        else
+            make -C ${PYSRC} distclean
+            echo "EXTRA PATCHING ${PYSRC} -> ${PYTARGET}"
+            /bin/cp -aRfxp ${PYSRC} ${PYTARGET}
+        fi
+
+        python3_patch
+
+        cd ${BUILD_PREFIX}-${ABI_NAME}/python3-${ABI_NAME}
 
         python_configure ./build.sh
 
-
+        #===================================================
         # == need a very clean env for true reproducibility
+        if env -i sh build.sh
+        then
+            unset CFLAGS
 
-        env -i sh build.sh
+            # == cleanup a bit, as PYTHONDONTWRITEBYTECODE respect may not be perfect
 
-        unset CFLAGS
+            echo " * cleanup pycache folders"
 
-
-        # == cleanup a bit, as PYTHONDONTWRITEBYTECODE respect may not be perfect
-
-        echo " * cleanup pycache folders"
-
-        rm -rf $(find ${_PYTHON_PROJECT_SRC}/Lib/ -type d|grep __pycache__$)
-        rm -rf $(find ${PYLIB}/ -type d|grep __pycache__$)
+            rm -rf $(find ${_PYTHON_PROJECT_SRC}/Lib/ -type d|grep __pycache__$)
+            rm -rf $(find ${PYLIB}/ -type d|grep __pycache__$)
 
 
-        # we could just want to keep lib-dynload later
-        # sysconfig has already been moved.
+            # we could just want to keep lib-dynload later
+            # sysconfig has already been moved.
 
-        # idea : keep testsuite support on cdn ?
-        MOVE_TO_USR="site-packages lib-dynload test unittest lib2to3 contextlib.py argparse.py"
+            # idea : keep testsuite support on cdn ?
+            MOVE_TO_USR="site-packages lib-dynload test unittest lib2to3 contextlib.py argparse.py"
 
-        echo " * move files not suitable for zipimport usage"
+            echo " * move files not suitable for zipimport usage"
 
-        for move in $MOVE_TO_USR
-        do
-            mv -vf ${PYLIB}/${move} ${DISPOSE}/
-        done
+            for move in $MOVE_TO_USR
+            do
+                mv -vf ${PYLIB}/${move} ${DISPOSE}/
+            done
 
-        #mv -vf ${PYLIB} ${DISPOSE}/  ?Directory not empty?
-        #rm -rf ${PYLIB}
+            #mv -vf ${PYLIB} ${DISPOSE}/  ?Directory not empty?
+            #rm -rf ${PYLIB}
 
-        mkdir -p ${PYLIB}
+            mkdir -p ${PYLIB}
 
-        # those cannot be loaded from the apk zip archive while running testsuite
-        # could also be optionnal in most use cases.
-        for move in $MOVE_TO_USR
-        do
-            mv -vf ${DISPOSE}/${move} ${PYLIB}/
-        done
+            # those cannot be loaded from the apk zip archive while running testsuite
+            # could also be optionnal in most use cases.
+            for move in $MOVE_TO_USR
+            do
+                mv -vf ${DISPOSE}/${move} ${PYLIB}/
+            done
 
-        echo " * copy final libs to prebuilt folder"
+            echo " * copy final libs to prebuilt folder"
+
+        else
+            echo "failed to configure+make for ${PLATFORM_TRIPLET}"
+            break
+        fi
+
+        #========================================================
 
         if [ -f ${APKUSR}/lib/${LIBPYTHON} ]
         then
@@ -415,12 +459,12 @@ python3_crosscompile () {
 
             ${HOST}/bin/patchelf --set-soname ${LIBPYTHON} ${APKUSR}/lib/${LIBPYTHON}
 
-            mkdir -p ${ORIGIN}/prebuilt/${ANDROID_NDK_ABI_NAME}
-            #mv ${APKUSR}/lib/lib*.so ${ORIGIN}/prebuilt/${ANDROID_NDK_ABI_NAME}/
+            mkdir -p ${ORIGIN}/prebuilt/${ABI_NAME}
+            #mv ${APKUSR}/lib/lib*.so ${ORIGIN}/prebuilt/${ABI_NAME}/
 
             # keep a copy so module can cross compile
 
-            /bin/cp -vf ${APKUSR}/lib/lib*.so ${ORIGIN}/prebuilt/${ANDROID_NDK_ABI_NAME}/
+            /bin/cp -vf ${APKUSR}/lib/lib*.so ${ORIGIN}/prebuilt/${ABI_NAME}/
             echo " done"
         else
             break

@@ -1,0 +1,14 @@
+--- python3/Modules/socketmodule.h	2020-02-24 22:36:25.000000000 +0100
++++ python3-wasm/Modules/socketmodule.h	2020-04-17 05:50:52.714788541 +0200
+@@ -215,6 +215,11 @@
+ #ifdef AF_QIPCRTR
+     struct sockaddr_qrtr sq;
+ #endif
++
++#if defined(__EMSCRIPTEN__) && defined(AF_VSOCK)
++    #undef AF_VSOCK
++#endif
++
+ #ifdef AF_VSOCK
+     struct sockaddr_vm vm;
+ #endif

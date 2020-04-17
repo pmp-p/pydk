@@ -1,7 +1,9 @@
 
 # Thanks CFSworks !
 #export PANDA3D_URL=${PANDA3D_URL:-"URL https://github.com/panda3d/panda3d/archive/cmake.zip"}
-#export PANDA3D_HASH=${PANDA3D_HASH:-}
+
+# webglport
+# https://github.com/panda3d/panda3d/archive/e72bd7f5c62919d76cfa3d5f4b05712f5dfaac48.zip
 
 export PANDA3D_URL=${PANDA3D_URL:-"URL https://github.com/panda3d/panda3d/archive/980c6bb38961c13e0890990651d05df3550cf30a.zip"}
 export PANDA3D_HASH=${PANDA3D_HASH:-"URL_HASH SHA256=6745d430f34b6d6f84f88a36f51fe9d4291a02c0bbf7a1e14ecfb2de2ee7e214"}

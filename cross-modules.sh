@@ -9,11 +9,11 @@
 
 echo " * cross compiling third party modules"
 
-cd ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}
+cd ${BUILD_PREFIX}-${ABI_NAME}
 
-mkdir -p pip-${ANDROID_NDK_ABI_NAME}
+mkdir -p pip-${ABI_NAME}
 
-cd pip-${ANDROID_NDK_ABI_NAME}
+cd pip-${ABI_NAME}
 
 export CROSSDIR=$(pwd)
 
@@ -39,13 +39,13 @@ do
     cd ${CROSSDIR}
     if cd ${PKG}-*
     then
-        if ${ROOT}/bin/python3-${ANDROID_NDK_ABI_NAME} -c "import ${PKG};print(${PKG}.__file__)" |grep apkroot
+        if ${ROOT}/bin/python3-${ABI_NAME} -c "import ${PKG};print(${PKG}.__file__)" |grep apkroot
         then
-            echo "  * ${PKG} already ready for ${ANDROID_NDK_ABI_NAME}"
+            echo "  * ${PKG} already ready for ${ABI_NAME}"
         else
-            if ${ROOT}/bin/python3-${ANDROID_NDK_ABI_NAME} setup.py install
+            if ${ROOT}/bin/python3-${ABI_NAME} setup.py install
             then
-                echo "  -> ${PKG} installed for ${ANDROID_NDK_ABI_NAME}"
+                echo "  -> ${PKG} installed for ${ABI_NAME}"
             else
                 echo "ERROR can't install ${PKG} from ${CROSSDIR}"
                 exit 1
@@ -62,7 +62,7 @@ done
 
 for req in ${ORIGIN}/projects/*/requirements.txt
 do
-    if ${ROOT}/bin/python3-${ANDROID_NDK_ABI_NAME} -m pip install --no-use-pep517 --no-binary :all: -r $req
+    if ${ROOT}/bin/python3-${ABI_NAME} -m pip install --no-use-pep517 --no-binary :all: -r $req
     then
         echo ok
     else
@@ -113,7 +113,7 @@ then
 
 fi
 
-cat > ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/pip_lib.py  <<END
+cat > ${BUILD_PREFIX}-${ABI_NAME}/pip_lib.py  <<END
 import os
 import shutil
 
@@ -122,7 +122,7 @@ liblist = []
 
 FOUND="""$(find ${APKUSR}/lib/python3.?|grep so$)""".split("\n")
 
-PREBUILT="${ORIGIN}/prebuilt.aosp/${ANDROID_NDK_ABI_NAME}/"
+PREBUILT="${ORIGIN}/prebuilt.aosp/${ABI_NAME}/"
 
 PREFIX='/lib/python${PYMAJOR}.${PYMINOR}/'
 
@@ -182,7 +182,7 @@ set_target_properties({cmk_name} PROPERTIES IMPORTED_LOCATION \${{PREBUILT}}+{li
 print(PREBUILT)
 
 
-with open("${ORIGIN}/prebuilt.aosp/${ANDROID_NDK_ABI_NAME}.include","w") as file:
+with open("${ORIGIN}/prebuilt.aosp/${ABI_NAME}.include","w") as file:
     print(f"""
 add_library(jnilink SHARED jnilink.c)
 
@@ -194,7 +194,7 @@ target_link_libraries(jnilink
 
 END
 
-${HOST}/bin/python3 -u -B ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/pip_lib.py
+${HOST}/bin/python3 -u -B ${BUILD_PREFIX}-${ABI_NAME}/pip_lib.py
 
 
 

@@ -1,6 +1,12 @@
 #!/bin/sh
 
-sh -version
+echo "Guessing shell, only bash would reply :"
+if sh -version 2>/dev/null
+then
+    echo found bash
+else
+    echo "not bash, those previously rising errors are ash/sh/dash/... flavours"
+fi
 
 PYMINOR_DEFAULT=8
 
@@ -21,22 +27,30 @@ fi
 
 export HOST_TRIPLET=x86_64-linux-gnu
 export HOST_TAG=linux-x86_64
-export ENV=aosp
 export CMAKE_VERSION=3.10.3
+OLD_PATH=$PATH
+export ORIGIN=$(pwd)
+export HOST="${ORIGIN}/host"
+export BUILD_SRC=${ORIGIN}/src
+
+export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.so
+
 export ARCHITECTURES=${ARCHITECTURES:-"armeabi-v7a arm64-v8a x86 x86_64"}
 
-export ANDROID_HOME=${ANDROID_HOME:-$(pwd)/android-sdk}
-export NDK_HOME=${NDK_HOME:-${ANDROID_HOME}/ndk-bundle}
-export ANDROID_NDK_HOME=${NDK_HOME}
-
-export DN=org.${DN}
-
 #UNITS="unit"
-
 UNITS=""
 
 
-export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.so
+# select a place for android build
+export ENV=aosp
+ROOT="${ORIGIN}/${ENV}"
+BUILD_PREFIX="${ROOT}/build"
+
+
+# ndk specific
+export ANDROID_HOME=${ANDROID_HOME:-$(pwd)/android-sdk}
+export NDK_HOME=${NDK_HOME:-${ANDROID_HOME}/ndk-bundle}
+export ANDROID_NDK_HOME=${NDK_HOME}
 
 
 # above are the defaults, can be overridden via CONFIG
@@ -69,15 +83,7 @@ UNITS="$UNITS freetype2 harfbuzz ft2_hb bullet3 openal ogg vorbis panda3d"
 
 
 
-OLD_PATH=$PATH
-ORIGIN=$(pwd)
-ROOT="${ORIGIN}/${ENV}"
-HOST="${ORIGIN}/${ENV}/host"
-BUILD_PREFIX="${ROOT}/build"
-BUILD_SRC=${ROOT}/src
-
-
-export PYTHONPYCACHEPREFIX=${ROOT}/pycache
+export PYTHONPYCACHEPREFIX=${ORIGIN}/pycache
 mkdir -p ${PYTHONPYCACHEPREFIX}
 
 
@@ -89,8 +95,6 @@ ADBFS_SRC="${BUILD_SRC}/adbfs-prefix/src/adbfs"
 LZMA_SRC="${BUILD_SRC}/lzma-prefix/src/lzma"
 
 export CMAKE=${ROOT}/bin/cmake
-
-export APK=/data/data/${DN}.${APP}
 
 
 if [ -f "${SUPPORT}/cross_pip.aosp.sh" ]
@@ -173,9 +177,9 @@ export PATH=${HOST}/bin:${ROOT}/bin:$PATH
 for unit in $UNITS
 do
     echo -n "  +  $unit from : "
-    egrep 'URL |GIT' ${SUPPORT}/${unit}.aosp.sh|grep -v ^# |cut -d' ' -f 3-|cut -f1 -d\"
-    #echo
-    . ${SUPPORT}/${unit}.aosp.sh
+    egrep 'URL |GIT' ${SUPPORT}/${unit}.${ENV}.sh|grep -v ^# |cut -d' ' -f 3-|cut -f1 -d\"
+    echo
+    . ${SUPPORT}/${unit}.${ENV}.sh
 done
 
 
@@ -285,34 +289,55 @@ echo
 echo "ARCHITECTURES=[$ARCHITECTURES]"
 echo
 
-for ANDROID_NDK_ABI_NAME in $ARCHITECTURES
+for ABI_NAME in $ARCHITECTURES
 do
+    unset NDK_PREFIX
+    unset TOOLCHAIN
+
     if echo $ARCHITECTURES|grep -q hostonly
     then
         break
     fi
-    unset NDK_PREFIX
 
-    export TOOLCHAIN=$NDK_HOME/toolchains/llvm/prebuilt/$HOST_TAG
 
     cd ${ROOT}
 
-    mkdir -p ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}
 
-    if cd ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}
-    then
-        echo "Current architecture : $ANDROID_NDK_ABI_NAME"
-    else
-        echo "bad arch"
-        continue
-    fi
 
-    TARGET_ARCH_ABI=$ANDROID_NDK_ABI_NAME
+    export APKUSR=${ROOT}/apkroot-${ABI_NAME}/usr
 
+    export PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig
+
+    # == a shell for one arch, with a ready to use cmake cross compile command
+    cat > $ORIGIN/shell.${ABI_NAME}.sh <<END
+#!/bin/sh
+. ${HOST}/${ABI_NAME}.sh
+
+. ${ROOT}/bin/activate
+
+export PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig
+
+export PS1="[PyDK:$ABI_NAME] \w \$ "
+
+acmake () {
+        reset
+        echo "  == cmake for target ${ABI_NAME} =="
+        ${ACMAKE} "\$@"
+}
+
+END
+
+
+
+    # ndk specifics
+
+    export TOOLCHAIN=$NDK_HOME/toolchains/llvm/prebuilt/$HOST_TAG
+
+    ANDROID_NDK_ABI_NAME=${ABI_NAME}
     # except for armv7
     ABI=android
 
-    case "$ANDROID_NDK_ABI_NAME" in
+    case "$ABI_NAME" in
         armeabi-v7a)
             PLATFORM_TRIPLET=armv7a-linux-androideabi
             ARCH=armv7a
@@ -340,13 +365,36 @@ do
             BITS=64
             ;;
         wasm)
+            PLATFORM_TRIPLET=wasm-unknown-emscripten
+            ABI="wasm"
+            API="wasm"
+            export ABI API PLATFORM_TRIPLET
+            export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.a
+            break
+            ;;
+        asmjs)
+            PLATFORM_TRIPLET=asmjs-unknown-emscripten
+            ABI="asmjs"
+            API="asmjs"
+            export ABI API PLATFORM_TRIPLET
+            export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.so
+            echo "ASM.JS support has been dropped"
+            exit 1
             break
             ;;
     esac
 
-    export APKUSR=${ROOT}/apkroot-${ANDROID_NDK_ABI_NAME}/usr
 
-    export PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig
+    mkdir -p ${BUILD_PREFIX}-${ABI_NAME}
+
+    if cd ${BUILD_PREFIX}-${ABI_NAME}
+    then
+        echo "Current architecture : $ABI_NAME"
+    else
+        echo "bad arch"
+        continue
+    fi
+
 
     # for disposal of things we don't want to land in prebuilt folder
     export DISPOSE=${ROOT}/apkroot-${ANDROID_NDK_ABI_NAME}-discard
@@ -378,7 +426,7 @@ do
 
     # == set up the basic cmake toolchain
 
-#TODO: ANDROID_ARM_NEON
+#TODO: ANDROID_ARM_NEON // no need with ndk21+ neon is default
 
     cat > ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/toolchain.cmake <<END
 set(ANDROID_NDK_ROOT ${NDK_HOME})
@@ -413,13 +461,12 @@ set(CMAKE_CONFIGURATION_TYPES "Release")
 set(CMAKE_BUILD_TYPE "Release")
 END
 
-
     # == that env file can be handy for debugging compile failures.
     export ACMAKE="$CMAKE -DANDROID_ABI=${ANDROID_NDK_ABI_NAME}\
  -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/toolchain.cmake\
  -DCMAKE_INSTALL_PREFIX=${APKUSR}"
 
-    cat > $ROOT/${ANDROID_NDK_ABI_NAME}.sh <<END
+    cat > ${HOST}/${ANDROID_NDK_ABI_NAME}.sh <<END
 #!/bin/sh
 export ANDROID_NDK_HOME=${NDK_HOME}
 export STRIP=$STRIP
@@ -436,24 +483,6 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH
 
 END
 
-    # == a shell for one arch, with a ready to use cmake cross compile command
-    cat > $ORIGIN/shell.${ANDROID_NDK_ABI_NAME}.sh <<END
-#!/bin/sh
-. $ROOT/${ANDROID_NDK_ABI_NAME}.sh
-
-. ${ROOT}/bin/activate
-
-export PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig
-
-export PS1="[PyDK:$ANDROID_NDK_ABI_NAME] \w \$ "
-
-acmake () {
-        reset
-        echo "  == cmake for target ${ANDROID_NDK_ABI_NAME} =="
-        ${ACMAKE} "\$@"
-}
-
-END
 
 
 
@@ -473,6 +502,81 @@ END
 done
 
 
-echo "exiting on $ANDROID_NDK_ABI_NAME"
+
+
+if echo $ABI_NAME|grep -q wasm
+then
+    echo "switching sdk to $ABI_NAME"
+else
+    exit 0
+fi
+
+cd ${ORIGIN}
+
+echo adding wasm build
+# select a place for wasm build
+export ENV=wasm
+ROOT="${ORIGIN}/${ENV}"
+BUILD_PREFIX="${ROOT}/build"
+
+
+export SUPPORT=${ORIGIN}/sources.${ENV}
+export APKUSR=${ROOT}/apkroot-${ABI_NAME}/usr
+export PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig
+
+
+mkdir -p ${ROOT}
+. sources/python_host.sh
+
+export TOOLCHAIN=${ORIGIN}/emsdk/emsdk_env.sh
+
+cat > ${HOST}/${ABI_NAME}.sh <<END
+#!/bin/sh
+
+export PATH=${HOST}/bin:${ROOT}/bin:/bin:/usr/bin:/usr/local/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOST}/lib64:${HOST}/lib
+
+. ${TOOLCHAIN}
+
+#export STRIP=$STRIP
+#export READELF=$READELF
+#export AR=$AR
+#export AS=$AS
+#export LD=$LD
+#export CXX=$CXX
+#export CC=$CC
+#export RANLIB=$RANLIB
+
+export PLATFORM_TRIPLET=${PLATFORM_TRIPLET}
+
+END
+
+export UNITS="python3"
+
+for unit in $UNITS
+do
+    echo -n "  +  $unit from : "
+    egrep 'URL |GIT' ${SUPPORT}/${unit}.${ENV}.sh|grep -v ^# |cut -d' ' -f 3-|cut -f1 -d\"
+    echo
+    . ${SUPPORT}/${unit}.${ENV}.sh
+done
+
+
+if true
+then
+
+    mkdir -p ${BUILD_PREFIX}-${ABI_NAME}
+
+    if cd ${BUILD_PREFIX}-${ABI_NAME}
+    then
+        echo "Current architecture : $ABI_NAME"
+    else
+        echo "bad arch"
+        continue
+    fi
+
+    do_steps crosscompile
+
+fi
 
 
