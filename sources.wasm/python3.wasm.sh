@@ -128,7 +128,7 @@ _socket socketmodule.c
 
 # Modules/_hashopenssl.c:23:10: fatal error: 'openssl/evp.h' file not found
 _hashlib _hashopenssl.c  -I${APKUSR}/include -L${APKUSR}/lib -lssl -lcrypto
-_ssl _ssl.c -DUSE_SSL -I${APKUSR}/include -L${APKUSR}/lib -lsslpython -lcryptopython #${APKUSR}/lib/libssl.a ${APKUSR}/lib/libcrypto.a
+_ssl _ssl.c -DUSE_SSL -I${APKUSR}/include -L${APKUSR}/lib -lssl -lcrypto #${APKUSR}/lib/libssl.a ${APKUSR}/lib/libcrypto.a
 
 #_elementtree -I${PYTARGET}/Modules/expat -DHAVE_EXPAT_CONFIG_H -DUSE_PYEXPAT_CAPI _elementtree.c # elementtree accelerator
 
