@@ -50,3 +50,7 @@ jobs:
       run: |
             cd /home/runner/work/pydk/pydk
             ARCHITECTURES=x86_64 time sh pydk-all.sh
+    - name: PyDK Emscripten build wasm
+      run: |
+            cd /home/runner/work/pydk/pydk
+            ARCHITECTURES=wasm time sh pydk-all.sh

@@ -263,12 +263,12 @@ do_steps patch
 cd ${ROOT}
 
 PrepareBuild () {
-    cd ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}
+    cd ${BUILD_PREFIX}-${ABI_NAME}
 
     echo " * building $1 for target ${PLATFORM_TRIPLET}"
 
-    mkdir -p $1-${ANDROID_NDK_ABI_NAME}
-    cd $1-${ANDROID_NDK_ABI_NAME}
+    mkdir -p $1-${ABI_NAME}
+    cd $1-${ABI_NAME}
 }
 
 Building () {
@@ -552,7 +552,7 @@ export PLATFORM_TRIPLET=${PLATFORM_TRIPLET}
 
 END
 
-export UNITS="python3"
+export UNITS="openssl python3"
 
 for unit in $UNITS
 do
@@ -576,6 +576,7 @@ then
         continue
     fi
 
+    . $TOOLCHAIN
     do_steps crosscompile
 
 fi

@@ -92,10 +92,7 @@ _datetime _datetimemodule.c # datetime accelerator
 array arraymodule.c # array objects
 _contextvars _contextvarsmodule.c
 
-
 _random _randommodule.c # Random number generator
-
-
 
 _bisect _bisectmodule.c # Bisection algorithms
 _json _json.c
@@ -130,8 +127,8 @@ _socket socketmodule.c
 #_bz2 _bz2module.c -I${APKUSR}/include -L${APKUSR}/lib  ${APKUSR}/lib/libbz2.a
 
 # Modules/_hashopenssl.c:23:10: fatal error: 'openssl/evp.h' file not found
-# _hashlib _hashopenssl.c  -lssl -lcrypto
-#_ssl _ssl.c -DUSE_SSL -I${APKUSR}/include -L${APKUSR}/lib -lsslpython -lcryptopython #${APKUSR}/lib/libssl.a ${APKUSR}/lib/libcrypto.a
+_hashlib _hashopenssl.c  -I${APKUSR}/include -L${APKUSR}/lib -lssl -lcrypto
+_ssl _ssl.c -DUSE_SSL -I${APKUSR}/include -L${APKUSR}/lib -lsslpython -lcryptopython #${APKUSR}/lib/libssl.a ${APKUSR}/lib/libcrypto.a
 
 #_elementtree -I${PYTARGET}/Modules/expat -DHAVE_EXPAT_CONFIG_H -DUSE_PYEXPAT_CAPI _elementtree.c # elementtree accelerator
 
@@ -286,11 +283,11 @@ then
 
 // added by python3.wasm.sh
 
-#if HAVE_FORK
+#ifdef HAVE_FORK
     #undef HAVE_FORK
 #endif
 
-#if HAVE_FORK_PTY
+#ifdef HAVE_FORK_PTY
     #undef HAVE_FORK_PTY
 #endif
 
