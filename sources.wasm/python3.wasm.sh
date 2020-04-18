@@ -434,7 +434,7 @@ python3_crosscompile () {
                 mv -vf ${DISPOSE}/${move} ${PYLIB}/
             done
 
-            echo " * copy final libs to prebuilt folder"
+            echo " * copy final libs to prebuilt folder ${PYLIB}/"
 
         else
             echo "failed to configure+make for ${PLATFORM_TRIPLET}"
@@ -446,22 +446,12 @@ python3_crosscompile () {
         if [ -f ${APKUSR}/lib/${LIBPYTHON} ]
         then
 
-            # == default rights would prevent patching.
-
-            chmod u+w ${APKUSR}/lib/lib*.so
-
-
-            # == this will fix most ndk link problems
-            # == also get rid of unfriendly (IMPORTED_NO_SONAME ON) requirement with cmake
-
-            ${HOST}/bin/patchelf --set-soname ${LIBPYTHON} ${APKUSR}/lib/${LIBPYTHON}
-
             mkdir -p ${ORIGIN}/prebuilt/${ABI_NAME}
             #mv ${APKUSR}/lib/lib*.so ${ORIGIN}/prebuilt/${ABI_NAME}/
 
             # keep a copy so module can cross compile
 
-            /bin/cp -vf ${APKUSR}/lib/lib*.so ${ORIGIN}/prebuilt/${ABI_NAME}/
+            /bin/cp -vf ${APKUSR}/lib/lib* ${ORIGIN}/prebuilt/${ABI_NAME}/
             echo " done"
         else
             break

@@ -526,6 +526,9 @@ export APKUSR=${ROOT}/apkroot-${ABI_NAME}/usr
 export PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig
 
 
+# for disposal of things we don't want to land in prebuilt folder
+export DISPOSE=${ROOT}/apkroot-${ABI_NAME}-discard
+
 mkdir -p ${ROOT}
 . sources/python_host.sh
 
