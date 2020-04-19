@@ -4,7 +4,9 @@ echo "Guessing shell, only bash would reply :"
 if sh -version 2>/dev/null
 then
     echo found bash
+    NOBASH=false
 else
+    NOBASH=true
     echo "not bash, those previously rising errors are ash/sh/dash/... flavours"
 fi
 
@@ -502,7 +504,11 @@ END
     do_steps crosscompile
 done
 
-
+# CI does not use bash
+if NOBASH
+then
+    unset ENV ROOT BUILD_PREFIX SUPPORT APKUSR PKG_CONFIG_PATH TOOLCHAIN UNITS PYTHON3_URL
+fi
 
 
 if echo $ABI_NAME|grep -q wasm
@@ -514,25 +520,25 @@ fi
 
 cd ${ORIGIN}
 
-echo adding wasm build
+echo " * adding wasm build"
+
 # select a place for wasm build
-export ENV=wasm
-ROOT="${ORIGIN}/${ENV}"
-BUILD_PREFIX="${ROOT}/build"
+export ENV="wasm"
+export ROOT="${ORIGIN}/${ENV}"
+export BUILD_PREFIX="${ROOT}/build"
 
-
-export SUPPORT=${ORIGIN}/sources.${ENV}
-export APKUSR=${ROOT}/apkroot-${ABI_NAME}/usr
-export PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig
-
+export SUPPORT="${ORIGIN}/sources.${ENV}"
+export APKUSR="${ROOT}/apkroot-${ABI_NAME}/usr"
+export PKG_CONFIG_PATH="${APKUSR}/lib/pkgconfig"
 
 # for disposal of things we don't want to land in prebuilt folder
-export DISPOSE=${ROOT}/apkroot-${ABI_NAME}-discard
+export DISPOSE="${ROOT}/apkroot-${ABI_NAME}-discard"
 
+echo " * checking host python"
 mkdir -p ${ROOT}
 . sources/python_host.sh
 
-export TOOLCHAIN=${ORIGIN}/emsdk/emsdk_env.sh
+export TOOLCHAIN="${ORIGIN}/emsdk/emsdk_env.sh"
 
 cat > ${HOST}/${ABI_NAME}.sh <<END
 #!/bin/sh

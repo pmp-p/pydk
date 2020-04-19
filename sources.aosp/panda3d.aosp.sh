@@ -2,11 +2,14 @@
 # Thanks CFSworks !
 #export PANDA3D_URL=${PANDA3D_URL:-"URL https://github.com/panda3d/panda3d/archive/cmake.zip"}
 
-# webglport
-# https://github.com/panda3d/panda3d/archive/e72bd7f5c62919d76cfa3d5f4b05712f5dfaac48.zip
+# last build ok
+# 980c6bb38961c13e0890990651d05df3550cf30a 6745d430f34b6d6f84f88a36f51fe9d4291a02c0bbf7a1e14ecfb2de2ee7e214
 
-export PANDA3D_URL=${PANDA3D_URL:-"URL https://github.com/panda3d/panda3d/archive/980c6bb38961c13e0890990651d05df3550cf30a.zip"}
-export PANDA3D_HASH=${PANDA3D_HASH:-"URL_HASH SHA256=6745d430f34b6d6f84f88a36f51fe9d4291a02c0bbf7a1e14ecfb2de2ee7e214"}
+# webglport
+# https://github.com/panda3d/panda3d/archive/e72bd7f5c62919d76cfa3d5f4b05712f5dfaac48.zip 86e7569dd02b350826f74c0d69bf958dc4474b53deffc7f8bb48d667e2fe6fd5
+
+export PANDA3D_URL=${PANDA3D_URL:-"URL https://github.com/panda3d/panda3d/archive/e72bd7f5c62919d76cfa3d5f4b05712f5dfaac48.zip"}
+export PANDA3D_HASH=${PANDA3D_HASH:-"URL_HASH SHA256=86e7569dd02b350826f74c0d69bf958dc4474b53deffc7f8bb48d667e2fe6fd5"}
 
 export PANDA3D_CMAKE_ARGS_COMMON="-DHAVE_PYTHON=YES\
 -DHAVE_EGG=YES -DHAVE_SSE2=NO -DHAVE_THREADS=YES"
