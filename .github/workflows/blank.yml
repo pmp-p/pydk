@@ -18,6 +18,7 @@ jobs:
             echo
             grep "^Pkg.Revision =" ${ANDROID_HOME}/ndk-bundle/source.properties
             sudo apt-get update
+            sudo apt-get install bash
             echo pydk support
             sudo apt-get install -y python3-venv libfuse-dev >/dev/null
             echo python3 support
@@ -53,4 +54,4 @@ jobs:
     - name: PyDK Emscripten build wasm
       run: |
             cd /home/runner/work/pydk/pydk
-            ARCHITECTURES=wasm time sh pydk-all.sh
+            ARCHITECTURES=wasm bash pydk-all.sh
