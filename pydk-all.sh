@@ -288,6 +288,16 @@ std_make () {
     fi
 }
 
+em_make () {
+    if emmake make install |egrep -v "libtool|install"
+    then
+        echo "make $1 : installed"
+    else
+        echo "ERROR: make $1"
+        exit 1
+    fi
+}
+
 echo
 echo "ARCHITECTURES=[$ARCHITECTURES]"
 echo
@@ -504,12 +514,15 @@ END
     do_steps crosscompile
 done
 
-# CI does not use bash
-if NOBASH
+# if CI does not use bash
+if $NOBASH
 then
-    unset ENV ROOT BUILD_PREFIX SUPPORT APKUSR PKG_CONFIG_PATH TOOLCHAIN UNITS PYTHON3_URL
+    unset ENV ROOT BUILD_PREFIX SUPPORT APKUSR PKG_CONFIG_PATH TOOLCHAIN UNITS PYTHON3_URL PYTHON3_HASH
 fi
 
+# until webgl is merged into master
+unset PANDA3D_URL
+unset PANDA3D_HASH
 
 if echo $ABI_NAME|grep -q wasm
 then
@@ -540,6 +553,8 @@ mkdir -p ${ROOT}
 
 export TOOLCHAIN="${ORIGIN}/emsdk/emsdk_env.sh"
 
+export EMCMAKE="emcmake $CMAKE -DCMAKE_INSTALL_PREFIX=${APKUSR}"
+
 cat > ${HOST}/${ABI_NAME}.sh <<END
 #!/bin/sh
 
@@ -561,7 +576,8 @@ export PLATFORM_TRIPLET=${PLATFORM_TRIPLET}
 
 END
 
-export UNITS="openssl python3"
+
+export UNITS="openssl python3 panda3d"
 
 for unit in $UNITS
 do
@@ -586,6 +602,9 @@ then
     fi
 
     . $TOOLCHAIN
+
+    embuilder.py build zlib bzip2 freetype harfbuzz ogg vorbis libpng bullet
+
     do_steps crosscompile
 
 fi
