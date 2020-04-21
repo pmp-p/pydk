@@ -465,9 +465,9 @@ set(HARFBUZZ_LIBRARIES "${APKUSR}/lib/libharfbuzz.so")
 set(HARFBUZZ_INCLUDE_DIR "${APKUSR}/include/harfbuzz")
 set(HARFBUZZ_LIBRARY "${APKUSR}/lib/libharfbuzz.so")
 
-set(OGG_INCLUDE_DIRS "${APKUSR}/include")
-set(OGG_LIBRARIES "${APKUSR}/lib/libogg.so")
-
+set(OGG_LIBRARY "${APKUSR}/lib/libogg.so")
+set(OGG_INCLUDE_DIR "${APKUSR}/include/ogg")
+set(OGG_FOUND YES)
 
 
 set(CMAKE_CONFIGURATION_TYPES "Release")

@@ -82,7 +82,7 @@ ln -sf ${APKUSR}/include/python${PYVER} ${TP}/python${PYVER}/include
 TP_PYTHON="--use-python --python-incdir=${APKUSR}/include --python-libdir=${APKUSR}/lib"
 
 TP_FT2="--use-freetype"
-TP_VB="--use-vorbis"
+TP_VB="--no-vorbis"
 TP_HB="--use-harfbuzz"
 TP_BUL="--use-bullet"
 TP_FT2="--use-freetype"
