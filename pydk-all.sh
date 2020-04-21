@@ -577,7 +577,7 @@ export PLATFORM_TRIPLET=${PLATFORM_TRIPLET}
 END
 
 
-export UNITS="openssl python3 panda3d"
+export UNITS="openssl python3 vorbis panda3d"
 
 for unit in $UNITS
 do

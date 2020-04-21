@@ -60,8 +60,6 @@ OPT_TARGET="$OPT_TARGET --use-direct --no-pview --no-fftw --no-nvidiacg"
 OPT_TARGET="$OPT_TARGET --static  --override HAVE_THREADS=UNDEF --override STDFLOAT_DOUBLE=1 "
 OPT_TARGET="$OPT_TARGET $GFX"
 
-# --outputdir ../panda3d-wasm"
-
 EM_LIBS="-s FULL_ES2=1 -s USE_WEBGL2=1 -s OFFSCREENCANVAS_SUPPORT=1 -s USE_LIBPNG=1"
 EM_LIBS="$EM_LIBS -s USE_HARFBUZZ=1 -s USE_FREETYPE=1 -s USE_OGG=1 -s USE_VORBIS=1 -s USE_BULLET=1 -s USE_ZLIB=1"
 
@@ -72,15 +70,6 @@ EM_FLAGS="$EM_FLAGS -s ASSERTIONS=1 -s DEMANGLE_SUPPORT=1 -s DISABLE_EXCEPTION_C
 EM_FLAGS="$EM_FLAGS -s TOTAL_MEMORY=512MB"
 
 # 3rd parties
-
-export TP=$(pwd)/thirdparty/emscripten-libs
-
-# --python-incdir= --python-libdir=${APKUSR}/lib"
-mkdir -p ${TP}/python ${TP}/python${PYVER}
-ln -sf ${APKUSR}/include ${TP}/python${PYVER}/include
-ln -sf ${APKUSR}/include/python${PYVER} ${TP}/python${PYVER}/include
-TP_PYTHON="--use-python --python-incdir=${APKUSR}/include --python-libdir=${APKUSR}/lib"
-
 TP_FT2="--use-freetype"
 TP_VB="--no-vorbis"
 TP_HB="--use-harfbuzz"
@@ -91,6 +80,17 @@ TP_OA="--use-openal"
 TP_ALL="${TP_FT2} ${TP_HB} ${TP_OA} ${TP_VB} ${TP_BUL} ${TP_PYTHON}"
 
 cd ${BUILD_SRC}/${unit}-prefix/src/panda3d-webgl-port
+
+export TP=$(pwd)/thirdparty/emscripten-libs
+
+mkdir -p ${TP}/python${PYVER}
+ln -s ${TP}/python${PYVER} ${TP}/python
+ln -sf ${APKUSR}/include ${TP}/python/include
+ln -sf ${APKUSR}/lib ${TP}/python/lib
+
+TP_PYTHON="--use-python --python-incdir=${APKUSR}/include --python-libdir=${APKUSR}/lib"
+
+# build it
 
 export CXXFLAGS='-std=c++11 -fno-exceptions $EM_FLAGS $EM_LIBS'
 PATH=$HOST/bin:$PATH python3 makepanda/makepanda.py $OPT_COMMON $OPT_TARGET $TP_ALL --verbose --outputdir $BUILD_DEST
