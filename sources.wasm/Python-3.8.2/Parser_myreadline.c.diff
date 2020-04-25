@@ -1,5 +1,5 @@
 --- python3/Parser/myreadline.c	2020-02-24 22:36:25.000000000 +0100
-+++ python3-wasm/Parser/myreadline.c	2020-04-17 05:50:52.716788515 +0200
++++ python3-wasm/Parser/myreadline.c	2020-04-20 18:37:21.117123489 +0200
 @@ -11,10 +11,6 @@
  
  #include "Python.h"

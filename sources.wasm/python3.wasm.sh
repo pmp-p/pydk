@@ -243,7 +243,7 @@ python_configure () {
 
     #dropped support for asm.js
     EM_MODE=""
-    EM_FLAGS="-O3 -s EXPORT_ALL=1 -s ENVIRONMENT=web -s USE_ZLIB=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1"
+    EM_FLAGS="-O3 -fPIC -s SIDE_MODULE=1 -s LINKABLE=1 -s ENVIRONMENT=web -s USE_ZLIB=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1"
 
     cat >> $1 <<END
 #======== adding to ${HOST}/${ABI_NAME}.sh
@@ -254,26 +254,21 @@ export PYTHONDONTWRITEBYTECODE=1
 export PYTHONPYCACHEPREFIX=${ORIGIN}/pycache
 export APKUSR=${APKUSR}
 
-# trick configure to think we have at least pthreads headers
-#export CC="emcc $EM_MODE -I/usr/include"
-#export GCC="emcc $EM_MODE -I/usr/include"
-#export CPP="emcc -E"
-#export CXX="em++ $EM_MODE -I/usr/include"
-
 export CPPFLAGS='$EM_FLAGS'
 export CXXFLAGS='$EM_FLAGS'
 export CFLAGS='$EM_FLAGS'
 
-# --with-libs='-L${APKUSR}/lib -lstdc++ -lz -lm'
+#
 
-PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig \\
-PLATFORM_TRIPLET=${PLATFORM_TRIPLET} \\
-CONFIG_SITE=config.site \\
-CFLAGS="$CFLAGS" \\
-READELF=true \\
- emconfigure \${_PYTHON_PROJECT_SRC}/configure \\
- --host=${PLATFORM_TRIPLET} --build=${HOST_TRIPLET} --prefix=${APKUSR} \\
- $PYOPTS --without-ensurepip --without-threads
+PYDKMAIN=1 PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig\\
+ PLATFORM_TRIPLET=${PLATFORM_TRIPLET}\\
+ CONFIG_SITE=config.site\\
+ CFLAGS="$EM_FLAGS"\\
+ CPPFLAGS="$EM_FLAGS"\\
+ READELF=true\\
+ emconfigure \${_PYTHON_PROJECT_SRC}/configure --with-libs='-L${APKUSR}/lib -lz -lm'\\
+ --host=${PLATFORM_TRIPLET} --build=${HOST_TRIPLET} --prefix=${APKUSR}\\
+ $PYOPTS --without-ensurepip
 
 # 2>&1 >> ${BUILD_SRC}/build.log
 
@@ -299,6 +294,19 @@ then
 #define HAVE_CLOCK 1
 #endif
 
+#ifndef HAVE_COPYSIGN
+#define HAVE_COPYSIGN 1
+#endif
+
+#ifndef HAVE_HYPOT
+#define HAVE_HYPOT 1
+#endif
+
+#ifndef HAVE_DUP2
+#define HAVE_DUP2 1
+#endif
+
+
 #define GOSH_MOVE_THEM 1
 // /python3.wasm.sh
 
@@ -311,6 +319,8 @@ DEF
         TERM=linux reset
     fi
 
+    emmake make inclinstall
+    emmake make libinstall
     emmake make install
     #| egrep -v "install|Creating|copying|renaming"
     if [ -f ${PYLIB}/_sysconfigdata__linux_${ARCH}-linux-${ABI}.py ]

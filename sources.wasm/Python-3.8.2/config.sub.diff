@@ -1,5 +1,5 @@
 --- python3/config.sub	2020-02-24 22:36:25.000000000 +0100
-+++ python3-wasm/config.sub	2020-04-17 05:50:52.674789062 +0200
++++ python3-wasm/config.sub	2020-04-20 18:37:21.079124034 +0200
 @@ -118,7 +118,8 @@
    linux-musl* | linux-uclibc* | uclinux-uclibc* | uclinux-gnu* | kfreebsd*-gnu* | \
    knetbsd*-gnu* | netbsd*-gnu* | netbsd*-eabi* | \

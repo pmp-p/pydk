@@ -1,5 +1,5 @@
 --- python3/Python/strdup.c	2020-02-24 22:36:25.000000000 +0100
-+++ python3-wasm/Python/strdup.c	2020-04-17 05:50:52.728788358 +0200
++++ python3-wasm/Python/strdup.c	2020-04-20 18:37:21.127123346 +0200
 @@ -1,4 +1,6 @@
  /* strdup() replacement (from stdwin, if you must know) */
 +#include <stdlib.h>

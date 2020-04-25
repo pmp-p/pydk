@@ -335,8 +335,15 @@ export PS1="[PyDK:$ABI_NAME] \w \$ "
 acmake () {
         reset
         echo "  == cmake for target ${ABI_NAME} =="
-        ${ACMAKE} "\$@"
+        ${ACMAKE} \$@
 }
+
+wcmake () {
+        reset
+        echo "  == cmake for target ${ABI_NAME} =="
+        echo $WCMAKE \$@
+}
+
 
 END
 
@@ -553,7 +560,7 @@ mkdir -p ${ROOT}
 
 export TOOLCHAIN="${ORIGIN}/emsdk/emsdk_env.sh"
 
-export EMCMAKE="emcmake $CMAKE -DCMAKE_INSTALL_PREFIX=${APKUSR}"
+export WCMAKE="emcmake $CMAKE -Wno-dev -DCMAKE_INSTALL_PREFIX=${APKUSR}"
 
 cat > ${HOST}/${ABI_NAME}.sh <<END
 #!/bin/sh
@@ -573,6 +580,8 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOST}/lib64:${HOST}/lib
 #export RANLIB=$RANLIB
 
 export PLATFORM_TRIPLET=${PLATFORM_TRIPLET}
+
+export WCMAKE="$WCMAKE"
 
 END
 
@@ -603,7 +612,8 @@ then
 
     . $TOOLCHAIN
 
-    embuilder.py build zlib bzip2 freetype harfbuzz ogg vorbis libpng bullet
+    embuilder --pic build zlib bzip2 freetype harfbuzz ogg vorbis libpng bullet
+    #embuilder build zlib bzip2 freetype harfbuzz ogg vorbis libpng bullet
 
     do_steps crosscompile
 

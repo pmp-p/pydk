@@ -34,18 +34,13 @@ openssl_crosscompile () {
 # no-sock  -> python3-wasm/Modules/_ssl.c:954:9: error: implicit declaration of function 'SSL_set_fd' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
 #        SSL_set_fd(self->ssl, Py_SAFE_DOWNCAST(sock->sock_fd, SOCKET_T, int))
 
-        emconfigure ./Configure gcc -static -no-pic --prefix=${APKUSR}\
+        emconfigure ./Configure gcc -static --prefix=${APKUSR}\
  no-hw no-tests no-asm no-afalgeng \
  -DCTLOG_FILE=/ssl.log \
  -DOPENSSL_SYS_NETWARE -DSIG_DFL=0 -DSIG_IGN=0 -DHAVE_FORK=0 -DOPENSSL_NO_AFALGENG=1 \
  --with-rand-seed=getrandom
         sed -i 's|^CROSS_COMPILE.*$|CROSS_COMPILE=|g' Makefile
         emmake make install
-         #CROSS_COMPILE="" emmake make -s -j1 depend
-#        # no-ssl2 no-ssl3 no-comp
-#            CROSS_COMPILE="" ARCH=${ARCH} API=${API} ./Configure -D__ANDROID_API__=${API} shared no-hw --prefix=${APKUSR} android-${ARCH}\
-# >/dev/null && CROSS_COMPILE="" make -s -j1 depend >/dev/null && CROSS_COMPILE="" make -s -j1 install >/dev/null
-#            SOVER="1.1"
 
         if [ -f  ${APKUSR}/lib/libssl.a ]
         then

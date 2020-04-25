@@ -1,5 +1,5 @@
 --- python3/Lib/threading.py	2020-02-24 22:36:25.000000000 +0100
-+++ python3-wasm/Lib/threading.py	2020-04-17 05:50:52.694788801 +0200
++++ python3-wasm/Lib/threading.py	2020-04-20 18:37:21.097123776 +0200
 @@ -247,7 +247,8 @@
          return self._lock.__enter__()
  

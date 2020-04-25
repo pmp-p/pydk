@@ -1,5 +1,5 @@
 --- python3/Python/pylifecycle.c	2020-02-24 22:36:25.000000000 +0100
-+++ python3-wasm/Python/pylifecycle.c	2020-04-17 05:50:52.726788384 +0200
++++ python3-wasm/Python/pylifecycle.c	2020-04-20 18:37:21.125123375 +0200
 @@ -2369,6 +2369,8 @@
      if (sigaction(sig, NULL, &context) == -1)
          return SIG_ERR;

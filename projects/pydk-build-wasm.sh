@@ -10,15 +10,39 @@ export ROOT=$(pwd)
 export PYDK=${PYDK:-$(realpath $ROOT/..)}
 export TOOLCHAIN_HOME=${TOOLCHAIN_HOME:-$(realpath ${PYDK}/emsdk)}
 
-EMOPTS="-s ERROR_ON_UNDEFINED_SYMBOLS=1"
-EMOPTS="$EMOPTS -g0 -O2 -s ENVIRONMENT=web -s USE_ZLIB=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1 -s EXPORT_ALL=1 -s USE_ZLIB=1 -s NO_EXIT_RUNTIME=1 -s MAIN_MODULE=0"
-DBG="-s ASSERTIONS=1 -s DEMANGLE_SUPPORT=1 -s TOTAL_STACK=14680064 -s TOTAL_MEMORY=512MB"
+EMOPTS="$EMOPTS -s ENVIRONMENT=web -s EXPORT_ALL=1 -s NO_EXIT_RUNTIME=1"
+EMOPTS="$EMOPTS -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1"
+
+#black or white canvas ?
+#EMOPTS="$EMOPTS -s OFFSCREENCANVAS_SUPPORT=1"
+
+#FAIL Unncaught ReferenceError: GL is not defined
+# -s FULL_ES2=1"
+
+EMOPTS="$EMOPTS -s MIN_WEBGL_VERSION=2 -s USE_WEBGL2=1"
+EMOPTS="$EMOPTS -s USE_ZLIB=1 -s USE_LIBPNG=1"
+EMOPTS="$EMOPTS -s USE_HARFBUZZ=1 -s USE_FREETYPE=1 -s USE_OGG=1 -s USE_BULLET=1 -s USE_ZLIB=1"
+#-s USE_VORBIS=1
+
+#p3webgldisplay.a  pandagles2.a
+for l in p3webgldisplay.a p3openal_audio.a p3dtool.a p3dtoolconfig.a p3interrogatedb.a p3direct.a\
+ pandabullet.a pandaexpress.a panda.a p3framework.a \
+ py.panda3d.interrogatedb.cpython-38-x86_64-linux-gnu.a py.panda3d.core.cpython-38-x86_64-linux-gnu.a\
+ py.panda3d.bullet.cpython-38-x86_64-linux-gnu.a py.panda3d.direct.cpython-38-x86_64-linux-gnu.a
+do
+    PANDA3D="$PANDA3D ${PYDK}/wasm/build-wasm/panda3d-wasm/lib/lib${l}"
+done
+#PANDA3D=$(find ${PYDK}/wasm/build-wasm/panda3d-wasm/lib/|grep a$)
+
+APKLIB=${PYDK}/wasm/apkroot-wasm/usr/lib
+
+PYALL="$APKLIB/libpython3.8.a $APKLIB/libssl.a $APKLIB/libcrypto.a"
+
 
 
 export LIBDIR=${PYDK}/wasm/apkroot-wasm/usr/lib
 export INCDIR=${PYDK}/wasm/apkroot-wasm/usr/include
 
-./app/src/main/cpp/pythonsupport.c
 
 reset
 echo " Building $1 with ${TOOLCHAIN_HOME} and ${PYDK} from ${ROOT}"
@@ -32,7 +56,7 @@ function install_run
 {
     APK_FILE=$1
     echo todo run view webserv + browser instance
-    if [ -f $APK_FILE ]
+    if [ -f python.wasm ]
     then
         echo "  * Running $APK_FILE press ctrl+c to terminate"
 
@@ -75,19 +99,27 @@ function do_stdlib
         echo stdlib zip ready
     else
         echo " * prepare stdlib for zip archiving"
+
+        rm -rf assets/python$PYVER
         mkdir -p assets/python$PYVER
-        /bin/cp -Rfxpvu ${PYDK}/src/python3-wasm/Lib/. assets/python$PYVER/|egrep -v "test/|lib2to3"
+        /bin/cp -Rfxpvu ${PYDK}/src/python3-wasm/Lib/. assets/python$PYVER/|egrep -v "test/|lib2to3" | wc -l
         rm -rf assets/python$PYVER/test assets/python$PYVER/unittest
         rm -rf assets/python$PYVER/lib2to3 assets/python$PYVER/site-packages
 
         echo " * overwriting with specific stdlib platform support"
         /bin/cp -aRfvx ${PYDK}/sources.wasm/stdlib/. assets/
 
-        WD=$(pwd)
-        cd assets/python3.8
-        zip "${WD}/python3.8.zip" -r .
-        cd "${WD}"
-        rm -rf assets/python$PYVER
+
+        if true
+        then
+            WD=$(pwd)
+            cd assets/python3.8
+            zip "${WD}/python3.8.zip" -r .
+            cd "${WD}"
+            rm -rf assets/python$PYVER
+        else
+            echo " >>>>>>>>>>>>>>>>> stdlib not zipped <<<<<<<<<<<<<<<<<<"
+        fi
     fi
 }
 
@@ -158,16 +190,24 @@ then
 
         done
 
-        do_pip ${APK}
-
         do_stdlib ${APK}
 
-        if [ -d patches ]
+        do_pip ${APK}
+
+        # **************  those patches should not apply to stdlib as it's better ziped *******************
+        if [ -d patches/. ]
         then
-            echo " applying user patches"
+            echo " * applying user patches"
             cp -Rfvpvu patches/. assets/
         fi
 
+        if [ -f assets/python3.8.zip ]
+        then
+            echo " * stdlib is packed assume patching done"
+        else
+            echo " * patching stdlib"
+            /bin/cp -aRfx ${PYDK}/sources.wasm/stdlib/. assets/
+        fi
 
         do_clean ${APK}
 
@@ -175,12 +215,17 @@ then
 
         . ${TOOLCHAIN_HOME}/emsdk_env.sh
 
-        emcc -static $DBG \
+DBG="-s GL_DEBUG=1 -s LLD_REPORT_UNDEFINED=1 -s ASSERTIONS=1 -s DEMANGLE_SUPPORT=1 -s TOTAL_STACK=14680064 -s TOTAL_MEMORY=512MB"
+
+#DBG="$DBG -g0 -O3"
+DBG="$DBG --source-map-base http://localhost:8000/ -g4 -O0 -s LINKABLE=1 -s EXPORT_ALL=1 "
+
+        emcc -fPIC $DBG -s MAIN_MODULE=1 -s USE_PTHREADS=0\
  -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "cwrap", "getValue", "stringToUTF8"]' \
  -I${INCDIR} -I${INCDIR}/python3.8 $EMOPTS \
  --preload-file ./assets@/assets --preload-file ./lib@/lib  --preload-file python3.8.zip \
  -o python.html ./app/src/main/cpp/pythonsupport.c\
- -L${LIBDIR} -lpython3.8 -lssl -lcrypto\
+ -L${LIBDIR} -lpython3.8 -lvorbis -lvorbisfile -lssl -lcrypto -ldl $PANDA3D\
  "$@"
 
 

@@ -1,5 +1,5 @@
 --- python3/configure	2020-02-24 22:36:25.000000000 +0100
-+++ python3-wasm/configure	2020-04-17 05:50:52.682788958 +0200
++++ python3-wasm/configure	2020-04-20 18:37:21.089123891 +0200
 @@ -3271,6 +3271,9 @@
  	*-*-cygwin*)
  		ac_sys_system=Cygwin

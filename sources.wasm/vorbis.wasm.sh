@@ -20,7 +20,7 @@ vorbis_crosscompile () {
     else
         PrepareBuild ${unit}
         #-DBUILD_SHARED_LIBS=No
-        if $EMCMAKE -DOGG_LIBRARY=${EM_CACHE}/wasm -DOGG_INCLUDE_DIR=${EM_CACHE}/wasm/include ${BUILD_SRC}/${unit}-prefix/src/${unit} >/dev/null
+        if $WCMAKE -DOGG_LIBRARY=${EM_CACHE}/wasm -DOGG_INCLUDE_DIR=${EM_CACHE}/wasm/include ${BUILD_SRC}/${unit}-prefix/src/${unit} >/dev/null
         then
             em_make ${unit}
         else

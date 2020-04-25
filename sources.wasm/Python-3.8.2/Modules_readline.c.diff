@@ -1,5 +1,5 @@
 --- python3/Modules/readline.c	2020-02-24 22:36:25.000000000 +0100
-+++ python3-wasm/Modules/readline.c	2020-04-17 05:50:52.706788645 +0200
++++ python3-wasm/Modules/readline.c	2020-04-20 18:37:21.109123604 +0200
 @@ -1175,6 +1175,11 @@
  
      completed_input_string = not_done_reading;

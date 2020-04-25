@@ -1,5 +1,5 @@
 --- python3/Modules/selectmodule.c	2020-02-24 22:36:25.000000000 +0100
-+++ python3-wasm/Modules/selectmodule.c	2020-04-17 05:50:52.708788619 +0200
++++ python3-wasm/Modules/selectmodule.c	2020-04-20 18:37:21.111123575 +0200
 @@ -322,7 +322,11 @@
      do {
          Py_BEGIN_ALLOW_THREADS
