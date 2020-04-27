@@ -1,6 +1,16 @@
+PyDK (Python Developpement Kit) allows you to efforless build CPython , Panda3D and gives you prebuilt libraries
+ready to use pip modules and runtime loaders.
+
+for use on :
+
+- Android starting with API19(kitkat 4.4)
+
+- Web browsers and Electron.
+
+
+
 # pydk : Android generic ( 4.4/32 api19 , 5+/64 api21) + emscripten tip of tree/incoming
 
-ARCHITECTURES="armeabi-v7a arm64-v8a x86 x86_64 wasm"
 
 ```
 Requirements:
@@ -13,7 +23,9 @@ Requirements:
 
 clone this repo and go into folder pydk
 add sdk as "android-sdk" and ndk as "android-sdk/ndk-bundle" (ndk20) in the folder
-launch ./pydk-all.sh
+launch
+
+ARCHITECTURES="armeabi-v7a arm64-v8a x86 x86_64" ./pydk-all.sh
 
 ```
 sources used:
@@ -55,6 +67,18 @@ A simple python created button calling Panda3D engine to render on a python crea
 
 
 
+# pydk : Emscripten
+
+Requirements : GNU/Linux os , internet connection.
+
+ARCHITECTURES="wasm" ./pydk-all.sh
+
+
+
+demo :  https://pmp-p.github.io/panda3d-next/py3/
+
+
+[![p3d3](https://raw.githubusercontent.com/pmp-p/pydk/master/docs/Panda3D/pandapk-step3.png)(https://www.panda3d.org)
 
 
 
@@ -66,6 +90,7 @@ A simple python created button calling Panda3D engine to render on a python crea
 
 
 # pydk : H3Droid ( and most kitkat devices )
+# deprecated, some assembly required....
 
 While helping to cross-compile, the script also try to prepare a onboard sdk (armv7 currently).
 
@@ -121,30 +146,6 @@ EGL Terminal running Panda3D+LUI GLES 2.0  and Tilde VT100 editor at the same ti
 * [Tilde](https://github.com/gphalkes/tilde) The Tilde Text Editor  #tilde on freenode
 
 * [H3droid](https://h3droid.com) An image developed specifically to work on Allwinner H3 based devices #h3droid on freenode
-
-
-
-# pydk : Emscripten
-
-Requirements : GNU/Linux os , emsdk portable incoming branch
-
---
-
-```
-sudo mkdir /data
-
-sudo chown $(whoami) /data
-
-bash ./emsdkbuild.sh /data/data/u.root.web /path/to/emsdk_set_env.sh
-```
-
-After installation, running  ```.  /data/data/u.root.web/sdk.em.env```  will enter the build zone.
-
-It behaves like a virtualenv : your prompt will reflect that fact.
-
-In the build folder you'll find various .build files which are recipes to download / patch / build some software for your presets.
-
-[basic demo  cpython, xterm, dom access, custom emscripten loader](https://pmp-p.github.io/python-next/test.html)
 
 --
 
