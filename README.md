@@ -61,9 +61,9 @@ Beerware : [![PayPayl](https://img.shields.io/badge/Paypal-Me-yellow.svg)](http:
 
 A simple python created button calling Panda3D engine to render on a python created View :
 
-[![p3d1](https://raw.githubusercontent.com/pmp-p/pydk/master/docs/Panda3D/pandapk-step1.png)(https://www.panda3d.org)
+![p3d1](https://raw.githubusercontent.com/pmp-p/pydk/master/docs/Panda3D/pandapk-step1.png)(https://www.panda3d.org)
 
-[![p3d2](https://raw.githubusercontent.com/pmp-p/pydk/master/docs/Panda3D/pandapk-step2.png)(https://www.panda3d.org)
+![p3d2](https://raw.githubusercontent.com/pmp-p/pydk/master/docs/Panda3D/pandapk-step2.png)(https://www.panda3d.org)
 
 
 
@@ -78,7 +78,8 @@ ARCHITECTURES="wasm" ./pydk-all.sh
 demo :  https://pmp-p.github.io/panda3d-next/py3/
 
 
-[![p3d3](https://raw.githubusercontent.com/pmp-p/pydk/master/docs/Panda3D/pandapk-step3.png)(https://www.panda3d.org)
+![p3d3](https://raw.githubusercontent.com/pmp-p/pydk/master/docs/Panda3D/pandapk-step3.png)(https://pmp-p.github.io/panda3d-next/py3/)
+
 
 
 
