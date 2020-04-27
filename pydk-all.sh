@@ -612,8 +612,9 @@ then
 
     . $TOOLCHAIN
 
-    embuilder --pic build zlib bzip2 freetype harfbuzz ogg vorbis libpng bullet
-    #embuilder build zlib bzip2 freetype harfbuzz ogg vorbis libpng bullet
+    ALL="zlib bzip2 freetype harfbuzz ogg vorbis libpng bullet"
+    #embuilder --pic build $ALL
+    embuilder build $ALL
 
     do_steps crosscompile
 

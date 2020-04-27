@@ -10,27 +10,20 @@ export ROOT=$(pwd)
 export PYDK=${PYDK:-$(realpath $ROOT/..)}
 export TOOLCHAIN_HOME=${TOOLCHAIN_HOME:-$(realpath ${PYDK}/emsdk)}
 
-EMOPTS="$EMOPTS -s ENVIRONMENT=web -s EXPORT_ALL=1 -s NO_EXIT_RUNTIME=1"
-EMOPTS="$EMOPTS -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1"
-
-#black or white canvas ?
-#EMOPTS="$EMOPTS -s OFFSCREENCANVAS_SUPPORT=1"
-
-#FAIL Unncaught ReferenceError: GL is not defined
-# -s FULL_ES2=1"
-
-EMOPTS="$EMOPTS -s MIN_WEBGL_VERSION=2 -s USE_WEBGL2=1"
-EMOPTS="$EMOPTS -s USE_ZLIB=1 -s USE_LIBPNG=1"
-EMOPTS="$EMOPTS -s USE_HARFBUZZ=1 -s USE_FREETYPE=1 -s USE_OGG=1 -s USE_BULLET=1 -s USE_ZLIB=1"
-#-s USE_VORBIS=1
 
 #p3webgldisplay.a  pandagles2.a
-for l in p3webgldisplay.a p3openal_audio.a p3dtool.a p3dtoolconfig.a p3interrogatedb.a p3direct.a\
+for l in pandagles2.a p3openal_audio.a p3dtool.a p3dtoolconfig.a p3interrogatedb.a p3direct.a\
  pandabullet.a pandaexpress.a panda.a p3framework.a \
- py.panda3d.interrogatedb.cpython-38-x86_64-linux-gnu.a py.panda3d.core.cpython-38-x86_64-linux-gnu.a\
- py.panda3d.bullet.cpython-38-x86_64-linux-gnu.a py.panda3d.direct.cpython-38-x86_64-linux-gnu.a
+ py.panda3d.interrogatedb.cpython-38-wasm.a py.panda3d.core.cpython-38-wasm.a \
+ py.panda3d.bullet.cpython-38-wasm py.panda3d.direct.cpython-38-wasm.a
 do
-    PANDA3D="$PANDA3D ${PYDK}/wasm/build-wasm/panda3d-wasm/lib/lib${l}"
+    lib=${PYDK}/wasm/build-wasm/panda3d-wasm/lib/lib${l}
+    if [ -f $lib ]
+    then
+        PANDA3D="$PANDA3D $lib"
+    else
+        echo " ERROR : missing link lib $lib"
+    fi
 done
 #PANDA3D=$(find ${PYDK}/wasm/build-wasm/panda3d-wasm/lib/|grep a$)
 
@@ -178,7 +171,6 @@ then
         echo 'skipped'
         #/bin/cp -Rfxpvu ${PYDK}/prebuilt.wasm/* ./prebuilt/ |wc -l
 
-         #$(ls ${PYDK}/prebuilt)
         for ARCH in "wasm"
         do
             echo " * Copy/Update include from $(echo ${PYDK}/*/apkroot-$ARCH/usr) for local project"
@@ -215,18 +207,48 @@ then
 
         . ${TOOLCHAIN_HOME}/emsdk_env.sh
 
-DBG="-s GL_DEBUG=1 -s LLD_REPORT_UNDEFINED=1 -s ASSERTIONS=1 -s DEMANGLE_SUPPORT=1 -s TOTAL_STACK=14680064 -s TOTAL_MEMORY=512MB"
+if false
+then
+EMOPTS="$EMOPTS -s ENVIRONMENT=web -s EXPORT_ALL=1 -s NO_EXIT_RUNTIME=1"
+EMOPTS="$EMOPTS -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1"
 
-#DBG="$DBG -g0 -O3"
-DBG="$DBG --source-map-base http://localhost:8000/ -g4 -O0 -s LINKABLE=1 -s EXPORT_ALL=1 "
+#black or white canvas ?
+#EMOPTS="$EMOPTS -s OFFSCREENCANVAS_SUPPORT=1"
 
-        emcc -fPIC $DBG -s MAIN_MODULE=1 -s USE_PTHREADS=0\
- -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "cwrap", "getValue", "stringToUTF8"]' \
+#FAIL Unncaught ReferenceError: GL is not defined
+# -s FULL_ES2=1"
+
+EMOPTS="$EMOPTS -s MIN_WEBGL_VERSION=2 -s USE_WEBGL2=1"
+EMOPTS="$EMOPTS -s USE_ZLIB=1 -s USE_LIBPNG=1 -s USE_HARFBUZZ=1 -s USE_FREETYPE=1 -s USE_OGG=1 -s USE_BULLET=1"
+#EMOPTS="$EMOPTS -s USE_VORBIS=1"
+
+
+# -s GL_DEBUG=1
+DBG="-s ASSERTIONS=1 -s DEMANGLE_SUPPORT=1 -s TOTAL_STACK=14680064 -s TOTAL_MEMORY=512MB"
+
+#DBG="$DBG -g4 -O0 -s LLD_REPORT_UNDEFINED=1"
+DBG="-g0 -O3"
+DBG="$DBG -s LLD_REPORT_UNDEFINED=1 --source-map-base http://localhost:8000/" # -s EXPORT_ALL=1 "
+
+fi
+
+EMOPTS="-s ERROR_ON_UNDEFINED_SYMBOLS=1"
+EMOPTS="$EMOPTS -g0 -O2 -s ENVIRONMENT=web -s USE_ZLIB=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1 -s EXPORT_ALL=1 -s USE_ZLIB=1 -s NO_EXIT_RUNTIME=1 -s MAIN_MODULE=0"
+DBG="-s ASSERTIONS=1 -s DEMANGLE_SUPPORT=1 -s TOTAL_STACK=14680064 -s TOTAL_MEMORY=512MB"
+
+
+
+# nope
+#  -fPIC -s MAIN_MODULE=1 -s USE_PTHREADS=0
+#
+# -lpython3.8 -lvorbis -lvorbisfile -lssl -lcrypto
+        emcc -static $DBG -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "cwrap", "getValue", "stringToUTF8"]' \
  -I${INCDIR} -I${INCDIR}/python3.8 $EMOPTS \
- --preload-file ./assets@/assets --preload-file ./lib@/lib  --preload-file python3.8.zip \
+ --preload-file ./assets@/assets --preload-file ./lib@/lib --preload-file python3.8.zip\
  -o python.html ./app/src/main/cpp/pythonsupport.c\
- -L${LIBDIR} -lpython3.8 -lvorbis -lvorbisfile -lssl -lcrypto -ldl $PANDA3D\
- "$@"
+ -L${LIBDIR} $LIBDIR/libssl.a $LIBDIR/libcrypto.a  $LIBDIR/libpython3.8.a \
+ -lbullet -logg -lvorbisfile -lvorbis -lfreetype -lharfbuzz $PANDA3D
+
 
 
         #./gradlew assembleDebug "$@"

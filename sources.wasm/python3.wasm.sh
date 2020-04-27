@@ -48,6 +48,7 @@ ac_cv_func_pread=no
 ac_cv_func_preadv=no
 ac_cv_func_preadv2=no
 
+ac_cv_func_dup2=yes
 ac_cv_func_dup3=no
 ac_cv_func_dlopen=yes
 
@@ -243,7 +244,8 @@ python_configure () {
 
     #dropped support for asm.js
     EM_MODE=""
-    EM_FLAGS="-O3 -fPIC -s SIDE_MODULE=1 -s LINKABLE=1 -s ENVIRONMENT=web -s USE_ZLIB=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1"
+    # nope -fPIC
+    EM_FLAGS="-O3 -s EXPORT_ALL=1 -s ENVIRONMENT=web -s USE_ZLIB=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1"
 
     cat >> $1 <<END
 #======== adding to ${HOST}/${ABI_NAME}.sh
@@ -258,15 +260,13 @@ export CPPFLAGS='$EM_FLAGS'
 export CXXFLAGS='$EM_FLAGS'
 export CFLAGS='$EM_FLAGS'
 
-#
+# --with-libs='-L${APKUSR}/lib -lz -lm'
 
-PYDKMAIN=1 PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig\\
+PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig\\
  PLATFORM_TRIPLET=${PLATFORM_TRIPLET}\\
  CONFIG_SITE=config.site\\
- CFLAGS="$EM_FLAGS"\\
- CPPFLAGS="$EM_FLAGS"\\
  READELF=true\\
- emconfigure \${_PYTHON_PROJECT_SRC}/configure --with-libs='-L${APKUSR}/lib -lz -lm'\\
+ emconfigure \${_PYTHON_PROJECT_SRC}/configure \\
  --host=${PLATFORM_TRIPLET} --build=${HOST_TRIPLET} --prefix=${APKUSR}\\
  $PYOPTS --without-ensurepip
 
@@ -376,8 +376,6 @@ python3_crosscompile () {
         python_module_setup_local Modules/Setup.local
 
         [ -f Makefile ] && make clean && rm Makefile
-
-
 
         #export CFLAGS="-m${BITS} -D__USE_GNU -fPIC -target ${PLATFORM_TRIPLET} -include ${SUPPORT}/ndk_api19/ndk_fix.h -isysroot $TOOLCHAIN/sysroot -isystem $TOOLCHAIN/sysroot/usr/include"
 
