@@ -319,6 +319,10 @@ DEF
         TERM=linux reset
     fi
 
+    . $TOOLCHAIN
+
+    export PATH=\$PATH:\$EMSDK/upstream/emscripten
+
     emmake make inclinstall
     emmake make libinstall
     emmake make install

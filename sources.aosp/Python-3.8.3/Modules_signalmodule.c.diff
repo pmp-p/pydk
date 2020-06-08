@@ -1,0 +1,16 @@
+--- cpython-3.8.3/Modules/signalmodule.c	2020-05-13 19:31:54.000000000 +0200
++++ cpython-3.8.3-aosp/Modules/signalmodule.c	2020-06-07 10:47:21.607947729 +0200
+@@ -44,6 +44,13 @@
+ #define SIG_ERR ((PyOS_sighandler_t)(-1))
+ #endif
+ 
++//PMPP API<21
++#if __ANDROID_API__ < 21
++    #define SIGRTMIN 32
++    #define SIGRTMAX _NSIG
++#endif
++//PMPP API<21
++
+ #ifndef NSIG
+ # if defined(_NSIG)
+ #  define NSIG _NSIG            /* For BSD/SysV */

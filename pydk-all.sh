@@ -338,13 +338,6 @@ acmake () {
         ${ACMAKE} \$@
 }
 
-wcmake () {
-        reset
-        echo "  == cmake for target ${ABI_NAME} =="
-        echo $WCMAKE \$@
-}
-
-
 END
 
 
@@ -474,6 +467,8 @@ set(HARFBUZZ_LIBRARY "${APKUSR}/lib/libharfbuzz.so")
 
 set(OGG_LIBRARY "${APKUSR}/lib/libogg.so")
 set(OGG_INCLUDE_DIR "${APKUSR}/include/ogg")
+set(OGG_LIBRARIES "${APKUSR}/lib/libogg.so")
+set(OGG_INCLUDE_DIRS "${APKUSR}/include")
 set(OGG_FOUND YES)
 
 
@@ -560,6 +555,9 @@ mkdir -p ${ROOT}
 
 export TOOLCHAIN="${ORIGIN}/emsdk/emsdk_env.sh"
 
+. $TOOLCHAIN
+export PATH=$PATH:$EMSDK/upstream/emscripten
+
 export WCMAKE="emcmake $CMAKE -Wno-dev -DCMAKE_INSTALL_PREFIX=${APKUSR}"
 
 cat > ${HOST}/${ABI_NAME}.sh <<END
@@ -569,6 +567,8 @@ export PATH=${HOST}/bin:${ROOT}/bin:/bin:/usr/bin:/usr/local/bin
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOST}/lib64:${HOST}/lib
 
 . ${TOOLCHAIN}
+
+export PATH=\$PATH:$EMSDK/upstream/emscripten
 
 #export STRIP=$STRIP
 #export READELF=$READELF
@@ -585,6 +585,25 @@ export WCMAKE="$WCMAKE"
 
 END
 
+# == a shell for one arch, with a ready to use cmake cross compile command
+cat > $ORIGIN/shell.${ABI_NAME}.sh <<END
+#!/bin/sh
+. ${HOST}/${ABI_NAME}.sh
+
+. ${ROOT}/bin/activate
+
+export PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig
+
+export PS1="[PyDK:$ABI_NAME] \w \$ "
+
+wcmake () {
+        reset
+        echo "  == cmake for target ${ABI_NAME} =="
+        echo $WCMAKE \$@
+}
+
+
+END
 
 export UNITS="openssl python3 vorbis panda3d"
 
@@ -609,8 +628,6 @@ then
         echo "bad arch"
         continue
     fi
-
-    . $TOOLCHAIN
 
     ALL="zlib bzip2 freetype harfbuzz ogg vorbis libpng bullet"
     #embuilder --pic build $ALL

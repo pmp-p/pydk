@@ -1,0 +1,15 @@
+--- cpython-3.8.3/Lib/os.py	2020-05-13 19:31:54.000000000 +0200
++++ cpython-3.8.3-aosp/Lib/os.py	2020-06-07 10:47:21.591947960 +0200
+@@ -1112,3 +1112,12 @@
+             cookie,
+             nt._remove_dll_directory
+         )
++
++try:
++    getpid
++except:
++    import sys
++    print("210: os.getpid() is broken",file=sys.stderr)
++    def getpid():
++        return int(open('/proc/self/stat').read().split(' ')[0])
++

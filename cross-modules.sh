@@ -122,7 +122,7 @@ liblist = []
 
 FOUND="""$(find ${APKUSR}/lib/python3.?|grep so$)""".split("\n")
 
-PREBUILT="${ORIGIN}/prebuilt.aosp/${ABI_NAME}/"
+PREBUILT="${ORIGIN}/prebuilt/${ABI_NAME}/"
 
 PREFIX='/lib/python${PYMAJOR}.${PYMINOR}/'
 
@@ -182,7 +182,7 @@ set_target_properties({cmk_name} PROPERTIES IMPORTED_LOCATION \${{PREBUILT}}+{li
 print(PREBUILT)
 
 
-with open("${ORIGIN}/prebuilt.aosp/${ABI_NAME}.include","w") as file:
+with open("${ORIGIN}/prebuilt/${ABI_NAME}.include","w") as file:
     print(f"""
 add_library(jnilink SHARED jnilink.c)
 

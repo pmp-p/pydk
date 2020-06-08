@@ -1,0 +1,12 @@
+--- cpython-3.8.3/Python/importdl.c	2020-05-13 19:31:54.000000000 +0200
++++ cpython-3.8.3-aosp/Python/importdl.c	2020-06-07 10:47:21.617947584 +0200
+@@ -131,6 +131,9 @@
+     pathbytes = PyUnicode_EncodeFSDefault(path);
+     if (pathbytes == NULL)
+         goto error;
++#if __ANDROID__
++#warning "FIXME: supress lib from "PyInit_lib"
++#endif
+     exportfunc = _PyImport_FindSharedFuncptr(hook_prefix, name_buf,
+                                              PyBytes_AS_STRING(pathbytes),
+                                              fp);
