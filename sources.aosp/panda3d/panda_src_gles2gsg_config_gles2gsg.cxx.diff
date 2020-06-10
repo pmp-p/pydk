@@ -1,5 +1,5 @@
---- panda3d/panda/src/gles2gsg/config_gles2gsg.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/gles2gsg/config_gles2gsg.cxx	2020-04-13 08:32:49.002255164 +0200
+--- panda3d-git/panda/src/gles2gsg/config_gles2gsg.cxx	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/src/gles2gsg/config_gles2gsg.cxx	2020-06-07 14:46:51.679404891 +0200
 @@ -40,6 +40,5 @@
      return;
    }

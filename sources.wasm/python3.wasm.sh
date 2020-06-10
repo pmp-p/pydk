@@ -61,6 +61,7 @@ ac_cv_kthread=no
 
 ac_cv_func_clock_gettime=yes
 
+ac_cv_header_uuid_uuid_h=yes
 END
 
 }
@@ -123,15 +124,16 @@ _posixsubprocess _posixsubprocess.c  # POSIX subprocess module helper
 
 _socket socketmodule.c
 
-#TODO:
-#_lzma _lzmamodule.c -I${APKUSR}/include -L${APKUSR}/lib ${APKUSR}/lib/liblzma.a
-#_bz2 _bz2module.c -I${APKUSR}/include -L${APKUSR}/lib  ${APKUSR}/lib/libbz2.a
 
 # Modules/_hashopenssl.c:23:10: fatal error: 'openssl/evp.h' file not found
 _hashlib _hashopenssl.c  -I${APKUSR}/include -L${APKUSR}/lib -lssl -lcrypto
 _ssl _ssl.c -DUSE_SSL -I${APKUSR}/include -L${APKUSR}/lib -lssl -lcrypto #${APKUSR}/lib/libssl.a ${APKUSR}/lib/libcrypto.a
 
 #_elementtree -I${PYTARGET}/Modules/expat -DHAVE_EXPAT_CONFIG_H -DUSE_PYEXPAT_CAPI _elementtree.c # elementtree accelerator
+
+
+#TODO:
+_uuid _uuidmodule.c
 
 #_ctypes _ctypes/_ctypes.c \
 # _ctypes/callbacks.c \
@@ -306,6 +308,11 @@ then
 #define HAVE_DUP2 1
 #endif
 
+#undef HAVE_UUID_GENERATE_TIME_SAFE
+#undef HAVE_UUID_ENC_BE
+#undef HAVE_UUID_CREATE
+
+#define uuid_generate_time uuid_generate
 
 #define GOSH_MOVE_THEM 1
 // /python3.wasm.sh

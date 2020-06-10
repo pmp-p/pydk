@@ -114,8 +114,10 @@ set(VORBISFILE_FOUND YES)
 
 set(FREETYPE_DIR ${APKUSR})
 set(FREETYPE_INCLUDE_DIRS "${APKUSR}/include")
-set(FREETYPE_LIBRARY "${APKUSR}/lib/libfreetype.so" "${APKUSR}/lib/libbz2.a" "z")
-set(FREETYPE_LIBRARIES "${APKUSR}/lib/libfreetype.so" "${APKUSR}/lib/libbz2.a" "z")
+#set(FREETYPE_LIBRARY "${APKUSR}/lib/libfreetype.so" "${APKUSR}/lib/libbz2.a" "z")
+#set(FREETYPE_LIBRARIES "${APKUSR}/lib/libfreetype.so" "${APKUSR}/lib/libbz2.a" "z")
+set(FREETYPE_LIBRARY "${APKUSR}/lib/libfreetype.so" "${APKUSR}/lib/libbz2.so" "z")
+set(FREETYPE_LIBRARIES "${APKUSR}/lib/libfreetype.so" "${APKUSR}/lib/libbz2.so" "z")
 set(FREETYPE_FOUND YES)
 include_directories("${APKUSR}/include/freetype2")
 
@@ -136,7 +138,7 @@ set(BULLET_INCLUDE_DIR ${APKUSR}/include/bullet)
 set(BULLET_LIBRARIES -L${APKUSR}/lib BulletDynamics BulletCollision LinearMath BulletSoftBody)
 set(BULLET_FOUND Yes)
 
-string(APPEND CMAKE_MODULE_LINKER_FLAGS " -L${APKUSR}/lib -lpython${PYMAJOR}.${PYMINOR}")
+string(APPEND CMAKE_MODULE_LINKER_FLAGS " -L${APKUSR}/lib -lpython${PYMAJOR}.${PYMINOR} -lffi -lz -lbz2 -llzma -lbrokenthings")
 
 END
 
@@ -146,7 +148,8 @@ END
 
         PANDA3D_ACMAKE="$CMAKE ${BUILD_SRC}/${unit}-prefix/src/${unit} \
      -DANDROID_ABI=${ANDROID_NDK_ABI_NAME} -DHAVE_EGL=NO -DHAVE_GL=NO -DHAVE_GLX=NO -DHAVE_X11=NO -DHAVE_GLES1=NO -DHAVE_GLES2=YES\
-     -DHAVE_OPENAL=Yes -DHAVE_VORBIS=No -DHAVE_HARFBUZZ=Yes -DHAVE_FREETYPE=Yes -DHAVE_BULLET=Yes\
+     -DHAVE_OPENAL=Yes -DHAVE_HARFBUZZ=Yes -DHAVE_FREETYPE=Yes -DHAVE_BULLET=Yes\
+     -DHAVE_PYTHON=Yes -DHAVE_VORBIS=No \
      -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/${unit}.toolchain.cmake\
      -DCMAKE_INSTALL_PREFIX=${APKUSR} ${PANDA3D_CMAKE_ARGS_COMMON}"
 

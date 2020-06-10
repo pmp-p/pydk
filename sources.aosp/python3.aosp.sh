@@ -103,7 +103,8 @@ _socket socketmodule.c
 
 _lzma _lzmamodule.c -I${APKUSR}/include -L${APKUSR}/lib ${APKUSR}/lib/liblzma.a
 
-_bz2 _bz2module.c -I${APKUSR}/include -L${APKUSR}/lib  ${APKUSR}/lib/libbz2.a
+_bz2 _bz2module.c -I${APKUSR}/include -L${APKUSR}/lib -lbz2
+#${APKUSR}/lib/libbz2.a
 
 _hashlib _hashopenssl.c -I${APKUSR}/include -L${APKUSR}/lib -lsslpython -lcryptopython
 _ssl _ssl.c -DUSE_SSL -I${APKUSR}/include -L${APKUSR}/lib -lsslpython -lcryptopython #${APKUSR}/lib/libssl.a ${APKUSR}/lib/libcrypto.a

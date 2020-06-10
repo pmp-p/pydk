@@ -37,7 +37,7 @@ bzip2_build () {
 }
 
 bzip2_crosscompile () {
-    if [ -f ${APKUSR}/lib/libbz2.a ]
+    if [ -f ${APKUSR}/lib/libbz2.so ]
     then
         echo "    -> libbz2 already built for $ANDROID_NDK_ABI_NAME"
     else
@@ -45,6 +45,13 @@ bzip2_crosscompile () {
 
         unset CFLAGS
         make ${JFLAGS} CC=$CC AR=$AR RANLIB=$RANLIB PREFIX=${APKUSR} bzip2 install
+        ${CC} -shared -Wl,-soname -Wl,libbz2.so -o ${APKUSR}/lib/libbz2.so blocksort.o \
+  huffman.o    \
+  crctable.o   \
+  randtable.o  \
+  compress.o   \
+  decompress.o \
+  bzlib.o
         unset CFLAGS
 
     fi

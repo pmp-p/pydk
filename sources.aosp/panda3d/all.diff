@@ -1,5 +1,21 @@
---- panda3d/panda/CMakeLists.txt	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/CMakeLists.txt	2020-04-13 08:32:48.998255219 +0200
+--- panda3d-git/cmake/macros/Python.cmake	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/cmake/macros/Python.cmake	2020-06-10 17:09:48.874998870 +0200
+@@ -48,8 +48,11 @@
+   string(REPLACE "." "/" slash_namespace "${namespace}")
+ 
+   add_library(${target} ${MODULE_TYPE} ${sources})
+-  target_link_libraries(${target} PKG::PYTHON)
+-
++  if (ANDROID)
++    target_link_libraries(${target} "python${PYMAJOR}.${PYMINOR}" "ffi" "z"  "bz2" "lzma" "brokenthings")
++  else()
++    target_link_libraries(${target} PKG::PYTHON)
++  endif()
+   if(BUILD_SHARED_LIBS)
+     set(_outdir "${PANDA_OUTPUT_DIR}/${slash_namespace}")
+ 
+--- panda3d-git/panda/CMakeLists.txt	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/CMakeLists.txt	2020-06-07 14:46:51.673404976 +0200
 @@ -59,6 +59,10 @@
  add_subdirectory(src/wgldisplay)
  add_subdirectory(src/windisplay)
@@ -11,8 +27,8 @@
  
  # For other components
  # bullet
---- panda3d/panda/metalibs/pandagl/CMakeLists.txt	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/metalibs/pandagl/CMakeLists.txt	2020-04-13 08:32:48.998255219 +0200
+--- panda3d-git/panda/metalibs/pandagl/CMakeLists.txt	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/metalibs/pandagl/CMakeLists.txt	2020-06-07 14:46:51.675404948 +0200
 @@ -1,3 +1,11 @@
 +if(ANDROID)
 +  set(PANDAGL_PIPE_TYPE "viewGraphicsPipe")
@@ -33,8 +49,8 @@
  else()
    message("") # Add extra line before error
    message(SEND_ERROR
---- panda3d/panda/metalibs/pandagles2/CMakeLists.txt	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/metalibs/pandagles2/CMakeLists.txt	2020-04-13 08:32:49.000255192 +0200
+--- panda3d-git/panda/metalibs/pandagles2/CMakeLists.txt	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/metalibs/pandagles2/CMakeLists.txt	2020-06-07 14:46:51.675404948 +0200
 @@ -1,3 +1,26 @@
 +if(ANDROID AND NOT HAVE_EGL)
 +    if(HAVE_GLES2)
@@ -71,8 +87,8 @@
  install(TARGETS pandagles2
    EXPORT OpenGLES2 COMPONENT OpenGLES2
    DESTINATION ${MODULE_DESTINATION}
---- panda3d/panda/metalibs/pandagles2/pandagles2.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/metalibs/pandagles2/pandagles2.cxx	2020-04-13 08:32:49.000255192 +0200
+--- panda3d-git/panda/metalibs/pandagles2/pandagles2.cxx	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/metalibs/pandagles2/pandagles2.cxx	2020-06-07 14:46:51.675404948 +0200
 @@ -3,7 +3,7 @@
   * @author rdb
   * @date 2009-06-08
@@ -122,8 +138,8 @@
 +
 +
 +#endif
---- panda3d/panda/src/androiddisplay/androidGraphicsStateGuardian.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/androiddisplay/androidGraphicsStateGuardian.cxx	2020-04-13 08:32:49.000255192 +0200
+--- panda3d-git/panda/src/androiddisplay/androidGraphicsStateGuardian.cxx	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/src/androiddisplay/androidGraphicsStateGuardian.cxx	2020-06-07 14:46:51.675404948 +0200
 @@ -17,6 +17,14 @@
  
  #include <dlfcn.h>
@@ -159,8 +175,8 @@
    _fbconfig = 0;
    _format = 0;
  
---- panda3d/panda/src/androiddisplay/androidGraphicsWindow.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/androiddisplay/androidGraphicsWindow.cxx	2020-04-13 21:33:16.302203090 +0200
+--- panda3d-git/panda/src/androiddisplay/androidGraphicsWindow.cxx	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/src/androiddisplay/androidGraphicsWindow.cxx	2020-06-07 14:46:51.675404948 +0200
 @@ -8,7 +8,7 @@
   *
   * @file androidGraphicsWindow.cxx
@@ -670,69 +686,8 @@
    return 1;
  }
  
---- panda3d/panda/src/androiddisplay/CMakeLists.txt	2020-04-13 21:12:48.905032022 +0200
-+++ panda3d-android/panda/src/androiddisplay/CMakeLists.txt	2020-04-13 21:10:03.809295658 +0200
-@@ -0,0 +1,58 @@
-+set(P3VIEWDISPLAY_HEADERS
-+  config_androiddisplay.h
-+  androidGraphicsPipe.h androidGraphicsPipe.I
-+  androidGraphicsStateGuardian.h androidGraphicsStateGuardian.I
-+  androidGraphicsWindow.h androidGraphicsWindow.I
-+
-+)
-+
-+set(P3VIEWDISPLAY_SOURCES
-+  config_androiddisplay.cxx
-+  androidGraphicsPipe.cxx
-+  androidGraphicsStateGuardian.cxx
-+  androidGraphicsWindow.cxx
-+)
-+
-+composite_sources(p3androiddisplay P3VIEWDISPLAY_SOURCES)
-+
-+if(HAVE_GLES1)
-+    add_component_library(p3androiddisplay_gles1 SYMBOL BUILDING_PANDAGLES
-+        INIT init_libandroiddisplay config_androiddisplay.h
-+        ${P3VIEWDISPLAY_HEADERS} ${P3VIEWDISPLAY_SOURCES})
-+    target_compile_definitions(p3androiddisplay_gles1 PUBLIC OPENGLES_1)
-+    target_link_libraries(p3androiddisplay_gles2 p3glesgsg p3glstuff EGL PKG::GLES)
-+
-+
-+    if(NOT BUILD_METALIBS)
-+        install(TARGETS p3androiddisplay_gles2
-+            EXPORT OpenGLES2 COMPONENT OpenGLES2
-+            DESTINATION ${CMAKE_INSTALL_LIBDIR}
-+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/panda3d
-+            ARCHIVE COMPONENT OpenGLES2Devel)
-+    endif()
-+
-+    install(FILES ${P3VIEWDISPLAY_HEADERS} COMPONENT OpenGLES2Devel DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/panda3d)
-+endif()
-+
-+if(HAVE_GLES2)
-+    add_component_library(p3androiddisplay_gles2 SYMBOL BUILDING_PANDAGLES2
-+        INIT init_libandroiddisplay config_androiddisplay.h
-+        ${P3VIEWDISPLAY_HEADERS} ${P3VIEWDISPLAY_SOURCES})
-+    target_compile_definitions(p3androiddisplay_gles2 PUBLIC OPENGLES_2)
-+    # panda from p3x11display ?
-+    target_link_libraries(p3androiddisplay_gles2 p3gles2gsg EGL PKG::GLES2)
-+
-+
-+    if(NOT BUILD_METALIBS)
-+        install(TARGETS p3androiddisplay_gles2
-+            EXPORT OpenGLES2 COMPONENT OpenGLES2
-+            DESTINATION ${CMAKE_INSTALL_LIBDIR}
-+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/panda3d
-+            ARCHIVE COMPONENT OpenGLES2Devel)
-+    endif()
-+
-+    install(FILES ${P3VIEWDISPLAY_HEADERS} COMPONENT OpenGLES2Devel DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/panda3d)
-+
-+endif()
-+
-+
---- panda3d/panda/src/androiddisplay/config_androiddisplay.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/androiddisplay/config_androiddisplay.cxx	2020-04-13 08:32:49.000255192 +0200
+--- panda3d-git/panda/src/androiddisplay/config_androiddisplay.cxx	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/src/androiddisplay/config_androiddisplay.cxx	2020-06-07 14:46:51.675404948 +0200
 @@ -21,10 +21,17 @@
  
  #include "config_display.h"
@@ -760,8 +715,8 @@
    if (initialized) {
      return;
    }
---- panda3d/panda/src/display/graphicsEngine.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/display/graphicsEngine.cxx	2020-04-13 08:32:49.000255192 +0200
+--- panda3d-git/panda/src/display/graphicsEngine.cxx	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/src/display/graphicsEngine.cxx	2020-06-07 14:46:51.677404919 +0200
 @@ -50,6 +50,14 @@
  #include "depthTestAttrib.h"
  #include "unionBoundingVolume.h"
@@ -882,8 +837,8 @@
        remove_window(window);
      }
    }
---- panda3d/panda/src/display/graphicsOutput.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/display/graphicsOutput.cxx	2020-04-13 08:32:49.002255164 +0200
+--- panda3d-git/panda/src/display/graphicsOutput.cxx	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/src/display/graphicsOutput.cxx	2020-06-07 14:46:51.677404919 +0200
 @@ -410,6 +410,10 @@
   */
  bool GraphicsOutput::
@@ -895,8 +850,8 @@
    if (!is_valid()) {
      return false;
    }
---- panda3d/panda/src/display/graphicsStateGuardian.I	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/display/graphicsStateGuardian.I	2020-04-13 08:32:49.002255164 +0200
+--- panda3d-git/panda/src/display/graphicsStateGuardian.I	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/src/display/graphicsStateGuardian.I	2020-06-07 14:46:51.677404919 +0200
 @@ -78,6 +78,9 @@
   */
  INLINE void GraphicsStateGuardian::
@@ -907,8 +862,8 @@
    _active = active;
  }
  
---- panda3d/panda/src/display/graphicsWindow.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/display/graphicsWindow.cxx	2020-04-13 08:32:49.002255164 +0200
+--- panda3d-git/panda/src/display/graphicsWindow.cxx	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/src/display/graphicsWindow.cxx	2020-06-07 14:46:51.679404891 +0200
 @@ -21,6 +21,14 @@
  #include "throw_event.h"
  #include "string_utils.h"
@@ -957,8 +912,8 @@
      }
    }
  }
---- panda3d/panda/src/gles2gsg/CMakeLists.txt	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/gles2gsg/CMakeLists.txt	2020-04-13 08:32:49.002255164 +0200
+--- panda3d-git/panda/src/gles2gsg/CMakeLists.txt	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/src/gles2gsg/CMakeLists.txt	2020-06-07 14:46:51.679404891 +0200
 @@ -13,10 +13,13 @@
  )
  
@@ -977,8 +932,8 @@
  
  if(NOT BUILD_METALIBS)
    install(TARGETS p3gles2gsg
---- panda3d/panda/src/gles2gsg/config_gles2gsg.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/gles2gsg/config_gles2gsg.cxx	2020-04-13 08:32:49.002255164 +0200
+--- panda3d-git/panda/src/gles2gsg/config_gles2gsg.cxx	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/src/gles2gsg/config_gles2gsg.cxx	2020-06-07 14:46:51.679404891 +0200
 @@ -40,6 +40,5 @@
      return;
    }
@@ -986,15 +941,15 @@
 -
    GLES2init_classes();
  }
---- panda3d/panda/src/gles2gsg/gles2gsg.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/gles2gsg/gles2gsg.cxx	2020-04-13 08:32:49.002255164 +0200
+--- panda3d-git/panda/src/gles2gsg/gles2gsg.cxx	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/src/gles2gsg/gles2gsg.cxx	2020-06-07 14:46:51.679404891 +0200
 @@ -17,3 +17,4 @@
  
  #include "gles2gsg.h"
  #include "glstuff_src.cxx"
 +
---- panda3d/panda/src/glstuff/CMakeLists.txt	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/glstuff/CMakeLists.txt	2020-04-13 08:32:49.002255164 +0200
+--- panda3d-git/panda/src/glstuff/CMakeLists.txt	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/src/glstuff/CMakeLists.txt	2020-06-07 14:46:51.679404891 +0200
 @@ -1,6 +1,9 @@
 +if(ANDROID)
 +else()
@@ -1005,8 +960,8 @@
  
  set(P3GLSTUFF_HEADERS
    glGeomContext_src.I
---- panda3d/panda/src/pipeline/threadDummyImpl.cxx	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/pipeline/threadDummyImpl.cxx	2020-04-13 08:32:49.004255138 +0200
+--- panda3d-git/panda/src/pipeline/threadDummyImpl.cxx	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/src/pipeline/threadDummyImpl.cxx	2020-06-07 14:46:51.679404891 +0200
 @@ -25,6 +25,13 @@
  #include <windows.h>
  #endif
@@ -1021,8 +976,8 @@
  /**
   *
   */
---- panda3d/panda/src/pipeline/threadDummyImpl.h	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/pipeline/threadDummyImpl.h	2020-04-13 08:32:49.004255138 +0200
+--- panda3d-git/panda/src/pipeline/threadDummyImpl.h	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/src/pipeline/threadDummyImpl.h	2020-06-07 14:46:51.679404891 +0200
 @@ -31,6 +31,10 @@
  #include <windows.h>  // For Sleep().
  #endif
@@ -1048,8 +1003,8 @@
  };
  
  #include "threadDummyImpl.I"
---- panda3d/panda/src/pipeline/threadDummyImpl.I	2020-03-20 15:48:21.000000000 +0100
-+++ panda3d-android/panda/src/pipeline/threadDummyImpl.I	2020-04-13 08:32:49.004255138 +0200
+--- panda3d-git/panda/src/pipeline/threadDummyImpl.I	2020-04-13 15:10:29.000000000 +0200
++++ panda3d-aosp/panda/src/pipeline/threadDummyImpl.I	2020-06-07 14:46:51.679404891 +0200
 @@ -124,3 +124,13 @@
  INLINE void ThreadDummyImpl::
  consider_yield() {
