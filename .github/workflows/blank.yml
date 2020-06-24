@@ -40,12 +40,12 @@ jobs:
             fi
             cd $WD
     - name: PyDK Build target (non-wasm)
-      if: matrix.target != "wasm"
+      if: matrix.target != 'wasm'
       run: |
             cd /home/runner/work/pydk/pydk
             time sh pydk-all.sh
     - name: PyDK Emscripten build (wasm)
-      if: matrix.target == "wasm"
+      if: matrix.target == 'wasm'
       run: |
             cd /home/runner/work/pydk/pydk
             bash pydk-all.sh
