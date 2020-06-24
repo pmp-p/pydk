@@ -5,6 +5,12 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ["hostonly", "armeabi-v7a", "arm64-v8a", "x86", "x86_64", "wasm"]
+    env:
+      ARCHITECTURES: ${{ matrix.target }}
     steps:
     - uses: actions/checkout@v1
     - name: PyDK prepare
@@ -27,31 +33,19 @@ jobs:
             sudo apt-get install -y  libgl1-mesa-dev libgles2-mesa-dev libglapi-mesa mesa-common-dev libegl1-mesa-dev >/dev/null
             echo panda3d support
             sudo apt-get install -y libbullet-dev libfreetype6-dev libjpeg-dev libode-dev libopenal-dev libpng-dev libssl-dev libogg-dev libvorbis-dev  >/dev/null
-            echo emscripten support
-            git clone https://github.com/emscripten-core/emsdk.git
-            cd emsdk && ./emsdk update-tags && ./emsdk install --embedded latest && ./emsdk activate --embedded latest
+            if [ "$ARCHITECTURES" = "wasm" ]; then
+              echo emscripten support
+              git clone https://github.com/emscripten-core/emsdk.git
+              cd emsdk && ./emsdk update-tags && ./emsdk install --embedded latest && ./emsdk activate --embedded latest
+            fi
             cd $WD
-    - name: PyDK Android build HOST
+    - name: PyDK Build target (non-wasm)
+      if: matrix.target != "wasm"
       run: |
             cd /home/runner/work/pydk/pydk
-            ARCHITECTURES=hostonly time sh pydk-all.sh
-    - name: PyDK Android build armeabi-v7a
+            time sh pydk-all.sh
+    - name: PyDK Emscripten build (wasm)
+      if: matrix.target == "wasm"
       run: |
             cd /home/runner/work/pydk/pydk
-            ARCHITECTURES=armeabi-v7a time sh pydk-all.sh
-    - name: PyDK Android build arm64-v8a
-      run: |
-            cd /home/runner/work/pydk/pydk
-            ARCHITECTURES=arm64-v8a time sh pydk-all.sh
-    - name: PyDK Android build x86
-      run: |
-            cd /home/runner/work/pydk/pydk
-            ARCHITECTURES=x86  time sh pydk-all.sh
-    - name: PyDK Android build x86_64
-      run: |
-            cd /home/runner/work/pydk/pydk
-            ARCHITECTURES=x86_64 time sh pydk-all.sh
-    - name: PyDK Emscripten build wasm
-      run: |
-            cd /home/runner/work/pydk/pydk
-            ARCHITECTURES=wasm bash pydk-all.sh
+            bash pydk-all.sh
