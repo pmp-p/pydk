@@ -206,7 +206,8 @@ then
         shift 1
 
         . ${TOOLCHAIN_HOME}/emsdk_env.sh
-        export PATH=$PATH:$EMSDK/upstream/emscripten
+
+        export PATH="$EMSDK/upstream/emscripten:$PATH"
 
 if false
 then

@@ -30,11 +30,15 @@ jobs:
             echo emscripten support
             git clone https://github.com/emscripten-core/emsdk.git
             cd emsdk && ./emsdk update-tags && ./emsdk install --embedded latest && ./emsdk activate --embedded latest
-            cd $WD
-    - name: PyDK Android build HOST
-      run: |
+            echo
+            echo " === Building pre-requisite HOST support ===="
             cd /home/runner/work/pydk/pydk
             ARCHITECTURES=hostonly time sh pydk-all.sh
+            cd $WD
+    - name: PyDK Emscripten build wasm
+      run: |
+            cd /home/runner/work/pydk/pydk
+            ARCHITECTURES=wasm bash pydk-all.sh
     - name: PyDK Android build armeabi-v7a
       run: |
             cd /home/runner/work/pydk/pydk
@@ -51,7 +55,3 @@ jobs:
       run: |
             cd /home/runner/work/pydk/pydk
             ARCHITECTURES=x86_64 time sh pydk-all.sh
-    - name: PyDK Emscripten build wasm
-      run: |
-            cd /home/runner/work/pydk/pydk
-            ARCHITECTURES=wasm bash pydk-all.sh

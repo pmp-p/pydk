@@ -269,7 +269,7 @@ PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig \\
 PLATFORM_TRIPLET=${PLATFORM_TRIPLET} \\
 CONFIG_SITE=config.site \\
  CFLAGS="$CFLAGS" \\
- \${_PYTHON_PROJECT_SRC}/configure --with-libs='-L${APKUSR}/lib -lbrokenthings -lstdc++ -lz -lm' \\
+ \${_PYTHON_PROJECT_SRC}/configure --cache-file=${SUPPORT}/config.${API}.${PLATFORM_TRIPLET} --with-libs='-L${APKUSR}/lib -lbrokenthings -lstdc++ -lz -lm' \\
  --with-openssl=${APKUSR} --host=${PLATFORM_TRIPLET} --build=${HOST_TRIPLET} --prefix=${APKUSR} \\
  $PYOPTS --without-ensurepip 2>&1 >> ${BUILD_SRC}/build.log
 

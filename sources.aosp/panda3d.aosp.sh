@@ -19,6 +19,7 @@ export PANDA3D_CMAKE_ARGS="${PANDA3D_CMAKE_ARGS_COMMON}\
 
 
 panda3d_host_cmake () {
+    cat ${SUPPORT}/panda3d/*.diff > ${SUPPORT}/panda3d/all
     cat >> CMakeLists.txt <<END
 
 if(1)
@@ -36,7 +37,7 @@ ExternalProject_Add(
     ${PANDA3D_URL}
     ${PANDA3D_HASH}
 
-    PATCH_COMMAND patch -p1 < ${SUPPORT}/panda3d/all.diff
+    PATCH_COMMAND patch -p1 < ${SUPPORT}/panda3d/all
 
     DOWNLOAD_NO_PROGRESS ${CI}
 

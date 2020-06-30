@@ -37,7 +37,7 @@ export BUILD_SRC=${ORIGIN}/src
 
 export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.so
 
-export ARCHITECTURES=${ARCHITECTURES:-"armeabi-v7a arm64-v8a x86 x86_64 wasm"}
+export ARCHITECTURES=${ARCHITECTURES:-"wasm armeabi-v7a arm64-v8a x86 x86_64"}
 
 #UNITS="unit"
 UNITS=""
@@ -172,8 +172,8 @@ do_steps () {
 cd "${ROOT}"
 
 # because libpython is shared
-export LD_LIBRARY_PATH=${HOST}/lib64:${HOST}/lib:$LD_LIBRARY_PATH
-export PATH=${HOST}/bin:${ROOT}/bin:$PATH
+export LD_LIBRARY_PATH="${HOST}/lib64:${HOST}/lib:$LD_LIBRARY_PATH"
+export PATH="${HOST}/bin:${ROOT}/bin:$PATH"
 
 
 for unit in $UNITS
@@ -556,7 +556,7 @@ mkdir -p ${ROOT}
 export TOOLCHAIN="${ORIGIN}/emsdk/emsdk_env.sh"
 
 . $TOOLCHAIN
-export PATH=$PATH:$EMSDK/upstream/emscripten
+export PATH="$EMSDK/upstream/emscripten:$PATH"
 
 export WCMAKE="emcmake $CMAKE -Wno-dev -DCMAKE_INSTALL_PREFIX=${APKUSR}"
 
@@ -568,7 +568,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOST}/lib64:${HOST}/lib
 
 . ${TOOLCHAIN}
 
-export PATH=\$PATH:$EMSDK/upstream/emscripten
+export PATH="$EMSDK/upstream/emscripten:\$PATH"
 
 #export STRIP=$STRIP
 #export READELF=$READELF
@@ -592,7 +592,7 @@ cat > $ORIGIN/shell.${ABI_NAME}.sh <<END
 
 . ${ROOT}/bin/activate
 
-export PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig
+export PKG_CONFIG_PATH="${APKUSR}/lib/pkgconfig"
 
 export PS1="[PyDK:$ABI_NAME] \w \$ "
 

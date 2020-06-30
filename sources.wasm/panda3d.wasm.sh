@@ -101,8 +101,8 @@ cd ${BUILD_SRC}/${unit}-prefix/src/panda3d-webgl-port
 # nope
 # -fPIC
 CXXFLAGS="-std=c++11 -fno-exceptions $EM_FLAGS $EM_LIBS"\
- MAKEPANDA_THIRDPARTY=$BUILD_DEST/thirdparty\
- PATH=$HOST/bin:$PATH\
+ MAKEPANDA_THIRDPARTY="$BUILD_DEST/thirdparty"\
+ PATH="$HOST/bin:$PATH"\
  python3 makepanda/makepanda.py $OPT_COMMON $OPT_TARGET $TP_ALL --verbose --outputdir $BUILD_DEST
 
 cd "$BUILD_DEST"
