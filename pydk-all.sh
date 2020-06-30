@@ -173,7 +173,7 @@ cd "${ROOT}"
 
 # because libpython is shared
 export LD_LIBRARY_PATH=${HOST}/lib64:${HOST}/lib:$LD_LIBRARY_PATH
-export PATH=${HOST}/bin:${ROOT}/bin:$PATH
+export "PATH=${HOST}/bin:${ROOT}/bin:$PATH"
 
 
 for unit in $UNITS
@@ -556,7 +556,7 @@ mkdir -p ${ROOT}
 export TOOLCHAIN="${ORIGIN}/emsdk/emsdk_env.sh"
 
 . $TOOLCHAIN
-export PATH=$PATH:$EMSDK/upstream/emscripten
+export PATH="$PATH:$EMSDK/upstream/emscripten"
 
 export WCMAKE="emcmake $CMAKE -Wno-dev -DCMAKE_INSTALL_PREFIX=${APKUSR}"
 
@@ -568,7 +568,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOST}/lib64:${HOST}/lib
 
 . ${TOOLCHAIN}
 
-export PATH=\$PATH:$EMSDK/upstream/emscripten
+export PATH="$PATH:$EMSDK/upstream/emscripten"
 
 #export STRIP=$STRIP
 #export READELF=$READELF
