@@ -100,15 +100,19 @@ cd ${BUILD_SRC}/${unit}-prefix/src/panda3d-webgl-port
 
 # nope
 # -fPIC
-CXXFLAGS="-std=c++11 -fno-exceptions $EM_FLAGS $EM_LIBS"\
+cat > build.sh <<END
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH\
+ CXXFLAGS="-std=c++11 -fno-exceptions $EM_FLAGS $EM_LIBS"\
  MAKEPANDA_THIRDPARTY="$BUILD_DEST/thirdparty"\
- PATH="$HOST/bin:$PATH"\
+ PATH="$HOST/bin:$EMSDK/upstream/emscripten:$BASEPATH"\
  python3 makepanda/makepanda.py $OPT_COMMON $OPT_TARGET $TP_ALL --verbose --outputdir $BUILD_DEST
+END
+    env -i bash build.sh
 
 cd "$BUILD_DEST"
 
 else
-    echo cmake test
+    echo wcmake test
 fi
     fi
 }

@@ -37,7 +37,7 @@ export BUILD_SRC=${ORIGIN}/src
 
 export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.so
 
-export ARCHITECTURES=${ARCHITECTURES:-"wasm armeabi-v7a arm64-v8a x86 x86_64"}
+export ARCHITECTURES=${ARCHITECTURES:-"armeabi-v7a arm64-v8a x86 x86_64 wasm"}
 
 #UNITS="unit"
 UNITS=""
@@ -174,6 +174,7 @@ cd "${ROOT}"
 # because libpython is shared
 export LD_LIBRARY_PATH="${HOST}/lib64:${HOST}/lib:$LD_LIBRARY_PATH"
 export PATH="${HOST}/bin:${ROOT}/bin:$PATH"
+export BASEPATH="${HOST}/bin:${ROOT}/bin:/bin:/usr/bin:/usr/local/bin"
 
 
 for unit in $UNITS
@@ -493,7 +494,7 @@ export CXX=$CXX
 export CC=$CC
 export RANLIB=$RANLIB
 
-export PATH=${HOST}/bin:${ROOT}/bin:/bin:/usr/bin:/usr/local/bin
+export PATH=$BASEPATH
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH
 
 END
@@ -556,7 +557,7 @@ mkdir -p ${ROOT}
 export TOOLCHAIN="${ORIGIN}/emsdk/emsdk_env.sh"
 
 . $TOOLCHAIN
-export PATH="$EMSDK/upstream/emscripten:$PATH"
+export PATH="$EMSDK/upstream/emscripten:$BASEPATH"
 
 export WCMAKE="emcmake $CMAKE -Wno-dev -DCMAKE_INSTALL_PREFIX=${APKUSR}"
 
@@ -568,7 +569,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOST}/lib64:${HOST}/lib
 
 . ${TOOLCHAIN}
 
-export PATH="$EMSDK/upstream/emscripten:\$PATH"
+export PATH="$EMSDK/upstream/emscripten:$BASEPATH"
 
 #export STRIP=$STRIP
 #export READELF=$READELF

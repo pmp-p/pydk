@@ -207,7 +207,7 @@ then
 
         . ${TOOLCHAIN_HOME}/emsdk_env.sh
 
-        export PATH="$EMSDK/upstream/emscripten:$PATH"
+        export PATH="$EMSDK/upstream/emscripten:$BASEPATH"
 
 if false
 then

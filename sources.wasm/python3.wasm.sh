@@ -268,7 +268,7 @@ PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig\\
  PLATFORM_TRIPLET=${PLATFORM_TRIPLET}\\
  CONFIG_SITE=config.site\\
  READELF=true\\
- emconfigure \${_PYTHON_PROJECT_SRC}/configure \\
+ emconfigure \${_PYTHON_PROJECT_SRC}/configure --cache-file=${SUPPORT}/config.${API}.${PLATFORM_TRIPLET} \\
  --host=${PLATFORM_TRIPLET} --build=${HOST_TRIPLET} --prefix=${APKUSR}\\
  $PYOPTS --without-ensurepip
 
@@ -328,7 +328,7 @@ DEF
 
     . $TOOLCHAIN
 
-    export PATH=\$PATH:\$EMSDK/upstream/emscripten
+    export PATH="$EMSDK/upstream/emscripten:$BASEPATH"
 
     emmake make inclinstall
     emmake make libinstall
