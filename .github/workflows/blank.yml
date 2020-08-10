@@ -16,6 +16,8 @@ jobs:
             echo
             gcc --version | head -n 1
             echo
+            env|grep GITHUB
+            echo
             grep "^Pkg.Revision =" ${ANDROID_HOME}/ndk-bundle/source.properties
             sudo apt-get update
             sudo apt-get install bash wget
