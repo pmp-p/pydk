@@ -32,7 +32,9 @@ ac_cv_enable_sign_compare_warning=${ac_cv_enable_sign_compare_warning=yes}
 ac_cv_enable_strict_prototypes_warning=${ac_cv_enable_strict_prototypes_warning=yes}
 ac_cv_enable_unreachable_code_warning=${ac_cv_enable_unreachable_code_warning=yes}
 ac_cv_env_CC_set=set
+ac_cv_env_CC_value=/data/cross/pydk/android-sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang
 ac_cv_env_CFLAGS_set=set
+ac_cv_env_CFLAGS_value='-m64 -D__USE_GNU -fPIC -target x86_64-linux-android21 -include /data/cross/pydk/sources.aosp/ndk_api19/ndk_fix.h -isysroot /data/cross/pydk/android-sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/sysroot -isystem /data/cross/pydk/android-sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include'
 ac_cv_env_CPPFLAGS_set=
 ac_cv_env_CPPFLAGS_value=
 ac_cv_env_CPP_set=
@@ -46,6 +48,7 @@ ac_cv_env_MACHDEP_value=
 ac_cv_env_PKG_CONFIG_LIBDIR_set=
 ac_cv_env_PKG_CONFIG_LIBDIR_value=
 ac_cv_env_PKG_CONFIG_PATH_set=set
+ac_cv_env_PKG_CONFIG_PATH_value=/data/cross/pydk/aosp/apkroot-x86_64/usr/lib/pkgconfig
 ac_cv_env_PKG_CONFIG_set=
 ac_cv_env_PKG_CONFIG_value=
 ac_cv_env_PROFILE_TASK_set=
@@ -285,6 +288,7 @@ ac_cv_have_decl_isinf=${ac_cv_have_decl_isinf=yes}
 ac_cv_have_decl_isnan=${ac_cv_have_decl_isnan=yes}
 ac_cv_have_getc_unlocked=${ac_cv_have_getc_unlocked=yes}
 ac_cv_have_lchflags=${ac_cv_have_lchflags=no}
+ac_cv_have_size_t_format=${ac_cv_have_size_t_format='cross -- assuming yes'}
 ac_cv_header_alloca_h=${ac_cv_header_alloca_h=yes}
 ac_cv_header_asm_types_h=${ac_cv_header_asm_types_h=yes}
 ac_cv_header_bluetooth_bluetooth_h=${ac_cv_header_bluetooth_bluetooth_h=no}
@@ -423,7 +427,11 @@ ac_cv_path_ac_pt_PKG_CONFIG=${ac_cv_path_ac_pt_PKG_CONFIG=/usr/bin/pkg-config}
 ac_cv_path_install=${ac_cv_path_install='/usr/bin/install -c'}
 ac_cv_path_mkdir=${ac_cv_path_mkdir=/bin/mkdir}
 ac_cv_posix_semaphores_enabled=${ac_cv_posix_semaphores_enabled=yes}
+ac_cv_prog_AR=${ac_cv_prog_AR=/data/cross/pydk/android-sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android-ar}
+ac_cv_prog_CC=${ac_cv_prog_CC=/data/cross/pydk/android-sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang}
+ac_cv_prog_CPP=${ac_cv_prog_CPP='/data/cross/pydk/android-sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang -E'}
 ac_cv_prog_PYTHON_FOR_REGEN=${ac_cv_prog_PYTHON_FOR_REGEN=python3.8}
+ac_cv_prog_READELF=${ac_cv_prog_READELF=/data/cross/pydk/android-sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android-readelf}
 ac_cv_prog_TRUE=${ac_cv_prog_TRUE=true}
 ac_cv_prog_cc_c89=${ac_cv_prog_cc_c89=}
 ac_cv_prog_cc_g=${ac_cv_prog_cc_g=yes}

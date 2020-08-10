@@ -30,7 +30,6 @@ fi
 export HOST_TRIPLET=x86_64-linux-gnu
 export HOST_TAG=linux-x86_64
 export CMAKE_VERSION=3.10.3
-OLD_PATH=$PATH
 export ORIGIN=$(pwd)
 export HOST="${ORIGIN}/host"
 export BUILD_SRC=${ORIGIN}/src
@@ -173,8 +172,64 @@ cd "${ROOT}"
 
 # because libpython is shared
 export LD_LIBRARY_PATH="${HOST}/lib64:${HOST}/lib:$LD_LIBRARY_PATH"
-export PATH="${HOST}/bin:${ROOT}/bin:$PATH"
 export BASEPATH="${HOST}/bin:${ROOT}/bin:/bin:/usr/bin:/usr/local/bin"
+
+# prevent system path interference in build tools
+export PATH="$BASEPATH"
+
+
+# == a shell for host tools, with a ready to use cmake cross compile command
+ABI_NAME="host"
+export APKUSR="${HOST}"
+
+cat > $HOST/toolchain.cmake <<END
+
+
+
+END
+
+
+cat > $ORIGIN/shell.${ABI_NAME}.sh <<END
+#!/bin/sh
+# . ${HOST}/${ABI_NAME}.sh
+
+. ${ROOT}/bin/activate
+
+export LD_LIBRARY_PATH="${HOST}/lib64:${HOST}/lib:$LD_LIBRARY_PATH"
+
+export PATH="$BASEPATH"
+
+export PYDK="${ORIGIN}"
+
+export PYTHONPATH=${HOST}/lib/python$PYVER:${HOST}/lib/python$PYVER/site-packages
+
+alias python="${HOST}/bin/python${PYMAJOR}.${PYMINOR} -i -u -B"
+
+export PKG_CONFIG_PATH="${APKUSR}/lib/pkgconfig"
+
+export PS1="[PyDK:$ABI_NAME] \w \$ "
+
+hcmake () {
+        reset
+        echo "  == cmake for target ${ABI_NAME} =="
+        cmake\
+ -DCMAKE_FIND_LIBRARY_PREFIXES="lib"\
+ -DCMAKE_FIND_LIBRARY_SUFFIXES="so"\
+ -DCMAKE_TOOLCHAIN_FILE=${HOST}/toolchain.cmake\
+ -DCMAKE_INSTALL_PREFIX="${APKUSR}" \$@
+}
+
+END
+
+
+
+
+
+
+
+
+
+
 
 
 for unit in $UNITS
@@ -606,7 +661,7 @@ wcmake () {
 
 END
 
-export UNITS="openssl python3 vorbis panda3d"
+export UNITS="openssl python3 vorbis panda3d panda3dffi"
 
 for unit in $UNITS
 do
@@ -625,14 +680,21 @@ then
     if cd ${BUILD_PREFIX}-${ABI_NAME}
     then
         echo "Current architecture : $ABI_NAME"
+        if [ -f embuilt ]
+        then
+            echo "emsdk libs ready"
+        else
+            ALL="zlib bzip2 freetype harfbuzz ogg vorbis libpng bullet"
+            embuilder --pic build $ALL
+            embuilder build $ALL
+            touch embuilt
+        fi
     else
         echo "bad arch"
         continue
     fi
 
-    ALL="zlib bzip2 freetype harfbuzz ogg vorbis libpng bullet"
-    #embuilder --pic build $ALL
-    embuilder build $ALL
+
 
     do_steps crosscompile
 

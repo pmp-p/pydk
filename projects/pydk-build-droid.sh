@@ -38,8 +38,9 @@ function install_run
         act=$($aapt dump badging "$APK_FILE"|awk -F" " '/launchable-activity/ {print $2}'|awk -F"'" '/name=/ {print $2}')
         echo "Running $pkg/$act"
         $ADB shell am start -n "$pkg/$act"
-
-        echo "press <enter> to kill app"
+        echo
+        echo " * adb is $ADB"
+        echo "press <enter> to kill app '$APK'"
         read
         echo "$ADB shell am force-stop $APK"
         $ADB shell am force-stop $APK

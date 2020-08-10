@@ -49,13 +49,15 @@ panda3d_crosscompile () {
         # $WCMAKE ${BUILD_SRC}/${unit}-prefix/src/panda3d-webgl-port
 if true
 then
-OPT_COMMON="--optimize 4 --use-freetype --use-bullet --use-zlib --no-openssl --no-eigen --use-python --use-direct"
+OPT_COMMON="--optimize 3 --use-freetype --use-bullet --use-zlib --no-openssl --no-eigen --use-python --use-direct"
 OPT_COMMON="$OPT_COMMON --no-ffmpeg --no-png --no-tiff --no-jpeg --no-eigen --no-assimp --no-egg"
 OPT_COMMON="$OPT_COMMON --override HAVE_THREADS=UNDEF"
 
 OPT_TARGET="--nothing --target emscripten --no-pandatool --no-openssl --no-neon --no-sse2"
 OPT_TARGET="$OPT_TARGET --use-direct --no-pview --no-fftw --no-nvidiacg"
-OPT_TARGET="$OPT_TARGET --static --override HAVE_THREADS=UNDEF --override STDFLOAT_DOUBLE=1"
+OPT_TARGET="$OPT_TARGET --static --override HAVE_THREADS=UNDEF"
+
+# --override STDFLOAT_DOUBLE=1"
 
 GFX="--no-x11 --no-egl --no-gles --use-gles2"
 OPT_TARGET="$OPT_TARGET $GFX"
