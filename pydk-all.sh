@@ -22,7 +22,7 @@ then
     export OPENSSL_VERSION="1.0.2t"
 else
 # python 3.8.x
-    export PYVER=${PYMAJOR}.${PYMINOR}.2
+    export PYVER=${PYMAJOR}.${PYMINOR}.5
     export OPENSSL_VERSION="1.1.1f"
 fi
 
@@ -85,7 +85,11 @@ UNITS="$UNITS freetype2 harfbuzz ft2_hb bullet3 openal ogg vorbis panda3d"
 
 
 export PYTHONPYCACHEPREFIX=${ORIGIN}/pycache
-mkdir -p ${PYTHONPYCACHEPREFIX}
+
+# specific to host python that will drive the build
+mkdir -p "${HOST}"
+mkdir -p "${PYTHONPYCACHEPREFIX}"
+
 
 
 export SUPPORT=${ORIGIN}/sources.${ENV}

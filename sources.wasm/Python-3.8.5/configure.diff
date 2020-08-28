@@ -1,0 +1,108 @@
+--- cpython-3.8.3/configure	2020-05-13 19:31:54.000000000 +0200
++++ cpython-3.8.3-wasm/configure	2020-06-07 12:53:04.581798887 +0200
+@@ -3275,6 +3275,9 @@
+ 	*-*-cygwin*)
+ 		ac_sys_system=Cygwin
+ 		;;
++	wasm-*-*)
++		_host_cpu=
++		;;
+ 	*-*-vxworks*)
+ 	    ac_sys_system=VxWorks
+ 	    ;;
+@@ -3328,6 +3331,9 @@
+ 	*-*-vxworks*)
+ 		_host_cpu=$host_cpu
+ 		;;
++	wasm-*-*)
++		ac_sys_system=Emscripten
++		;;
+ 	*)
+ 		# for now, limit cross builds to known configurations
+ 		MACHDEP="unknown"
+@@ -9324,8 +9330,9 @@
+ # -- usually .so, .sl on HP-UX, .dll on Cygwin
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking the extension of shared libraries" >&5
+ $as_echo_n "checking the extension of shared libraries... " >&6; }
++
+ if test -z "$SHLIB_SUFFIX"; then
+-	case $ac_sys_system in
++    case $ac_sys_system in
+ 	hp*|HP*)
+ 		case `uname -m` in
+ 			ia64) SHLIB_SUFFIX=.so;;
+@@ -9336,6 +9343,12 @@
+ 	*)	   SHLIB_SUFFIX=.so;;
+ 	esac
+ fi
++
++case $ac_sys_system in
++Emscripten)
++    SHLIB_SUFFIX=.wasm;;
++esac
++
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $SHLIB_SUFFIX" >&5
+ $as_echo "$SHLIB_SUFFIX" >&6; }
+ 
+@@ -10799,7 +10812,7 @@
+ 
+ else
+ 
+-    as_fn_error $? "could not find pthreads on your system" "$LINENO" 5
++    echo 'as_fn_error $? "could not find pthreads on your system" "$LINENO" 5'
+ 
+ fi
+ 
+@@ -11723,6 +11736,9 @@
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ #include <sys/epoll.h>
++#ifdef __EMSCRIPTEN__
++#error unsupported
++#endif
+ int
+ main ()
+ {
+@@ -11748,6 +11764,9 @@
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ #include <sys/epoll.h>
++#ifdef __EMSCRIPTEN__
++#error unsupported
++#endif
+ int
+ main ()
+ {
+@@ -12430,7 +12449,9 @@
+ #ifdef HAVE_GRP_H
+ #include <grp.h>
+ #endif
+-
++#ifdef __EMSCRIPTEN__
++    #error setgroups
++#endif
+ int
+ main ()
+ {
+@@ -13112,7 +13133,9 @@
+ #else
+ #include <sys/types.h>
+ #endif
+-
++#ifdef __EMSCRIPTEN__
++    #error makedev
++#endif
+ int
+ main ()
+ {
+@@ -15194,6 +15217,10 @@
+ case $ac_sys_system in
+     Linux*|GNU*|Darwin|VxWorks)
+ 	EXT_SUFFIX=.${SOABI}${SHLIB_SUFFIX};;
++    Emscripten)
++        SOABI="cpython-${VERSION}-emscripten"
++        EXT_SUFFIX=".wasm"
++        ;;
+     *)
+ 	EXT_SUFFIX=${SHLIB_SUFFIX};;
+ esac

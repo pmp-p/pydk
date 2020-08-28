@@ -1,0 +1,23 @@
+--- cpython-3.8.5/Lib/locale.py	2020-07-20 15:01:32.000000000 +0200
++++ cpython-3.8.5-aosp/Lib/locale.py	2020-08-27 18:54:48.108970638 +0200
+@@ -46,6 +46,10 @@
+ 
+     from _locale import *
+ 
++    if hasattr(sys, 'getandroidapilevel'):
++        if sys.getandroidapilevel()<21:
++            raise ImportError("android-api19")
++
+ except ImportError:
+ 
+     # Locale emulation
+@@ -88,6 +92,9 @@
+         """ setlocale(integer,string=None) -> string.
+             Activates/queries locale processing.
+         """
++        if category>LC_ALL:
++            raise Error('_locale emulation invalid category')
++
+         if value not in (None, '', 'C'):
+             raise Error('_locale emulation only supports "C" locale')
+         return 'C'
