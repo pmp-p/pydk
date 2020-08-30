@@ -41,7 +41,7 @@ openal_crosscompile () {
     else
 
         PrepareBuild ${unit}
-        if $ACMAKE ${BUILD_SRC}/${unit}-prefix/src/${unit} >/dev/null
+        if $ACMAKE -DEXAMPLES=No ${BUILD_SRC}/${unit}-prefix/src/${unit} >/dev/null
         then
             std_make ${unit}
         else
