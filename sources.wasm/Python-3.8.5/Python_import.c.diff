@@ -1,5 +1,5 @@
---- cpython-3.8.3/Python/import.c	2020-05-13 19:31:54.000000000 +0200
-+++ cpython-3.8.3-wasm/Python/import.c	2020-06-07 12:53:04.615798413 +0200
+--- cpython-3.8.5/Python/import.c	2020-07-20 15:01:32.000000000 +0200
++++ python3-wasm/Python/import.c	2020-08-28 12:53:03.855088011 +0200
 @@ -2029,6 +2029,20 @@
      list = PyList_New(0);
      if (list == NULL)

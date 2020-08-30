@@ -1,5 +1,5 @@
---- cpython-3.8.3/Modules/selectmodule.c	2020-05-13 19:31:54.000000000 +0200
-+++ cpython-3.8.3-wasm/Modules/selectmodule.c	2020-06-07 12:53:04.601798608 +0200
+--- cpython-3.8.5/Modules/selectmodule.c	2020-07-20 15:01:32.000000000 +0200
++++ python3-wasm/Modules/selectmodule.c	2020-08-28 12:53:03.839088221 +0200
 @@ -322,7 +322,11 @@
      do {
          Py_BEGIN_ALLOW_THREADS

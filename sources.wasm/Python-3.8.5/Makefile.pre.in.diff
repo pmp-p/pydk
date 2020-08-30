@@ -1,5 +1,5 @@
---- cpython-3.8.3/Makefile.pre.in	2020-05-13 19:31:54.000000000 +0200
-+++ cpython-3.8.3-wasm/Makefile.pre.in	2020-06-07 12:53:04.589798775 +0200
+--- cpython-3.8.5/Makefile.pre.in	2020-07-20 15:01:32.000000000 +0200
++++ python3-wasm/Makefile.pre.in	2020-08-28 12:53:03.828088366 +0200
 @@ -225,7 +225,7 @@
  PY3LIBRARY=     @PY3LIBRARY@
  DLLLIBRARY=	@DLLLIBRARY@

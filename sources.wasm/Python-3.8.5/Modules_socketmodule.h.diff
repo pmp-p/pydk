@@ -1,5 +1,5 @@
---- cpython-3.8.3/Modules/socketmodule.h	2020-05-13 19:31:54.000000000 +0200
-+++ cpython-3.8.3-wasm/Modules/socketmodule.h	2020-06-07 12:53:04.607798524 +0200
+--- cpython-3.8.5/Modules/socketmodule.h	2020-07-20 15:01:32.000000000 +0200
++++ python3-wasm/Modules/socketmodule.h	2020-08-28 12:53:03.844088155 +0200
 @@ -215,6 +215,11 @@
  #ifdef AF_QIPCRTR
      struct sockaddr_qrtr sq;

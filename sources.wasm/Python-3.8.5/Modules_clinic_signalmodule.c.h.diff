@@ -1,5 +1,5 @@
---- cpython-3.8.3/Modules/clinic/signalmodule.c.h	2020-05-13 19:31:54.000000000 +0200
-+++ cpython-3.8.3-wasm/Modules/clinic/signalmodule.c.h	2020-06-07 12:53:04.591798747 +0200
+--- cpython-3.8.5/Modules/clinic/signalmodule.c.h	2020-07-20 15:01:32.000000000 +0200
++++ python3-wasm/Modules/clinic/signalmodule.c.h	2020-08-28 12:53:03.830088339 +0200
 @@ -396,9 +396,13 @@
      if (how == -1 && PyErr_Occurred()) {
          goto exit;

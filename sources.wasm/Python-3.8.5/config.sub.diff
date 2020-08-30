@@ -1,5 +1,5 @@
---- cpython-3.8.3/config.sub	2020-05-13 19:31:54.000000000 +0200
-+++ cpython-3.8.3-wasm/config.sub	2020-06-07 12:53:04.575798970 +0200
+--- cpython-3.8.5/config.sub	2020-07-20 15:01:32.000000000 +0200
++++ python3-wasm/config.sub	2020-08-28 12:53:03.808088628 +0200
 @@ -118,7 +118,8 @@
    linux-musl* | linux-uclibc* | uclinux-uclibc* | uclinux-gnu* | kfreebsd*-gnu* | \
    knetbsd*-gnu* | netbsd*-gnu* | netbsd*-eabi* | \
