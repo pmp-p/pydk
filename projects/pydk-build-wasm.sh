@@ -2,7 +2,6 @@ APK=$1
 PYVER=${PYVER:-"3.8"}
 
 
-
 . $(echo -n ../*/bin/activate)
 
 
@@ -25,12 +24,12 @@ do
         echo " ERROR : missing link lib $lib"
     fi
 done
+
 #PANDA3D=$(find ${PYDK}/wasm/build-wasm/panda3d-wasm/lib/|grep a$)
 
 APKLIB=${PYDK}/wasm/apkroot-wasm/usr/lib
 
-PYALL="$APKLIB/libpython3.8.a $APKLIB/libssl.a $APKLIB/libcrypto.a"
-
+PYALL="$APKLIB/libpython${PYVER}.a $APKLIB/libssl.a $APKLIB/libcrypto.a"
 
 
 export LIBDIR=${PYDK}/wasm/apkroot-wasm/usr/lib
@@ -55,7 +54,7 @@ function install_run
 
  PYTHONPATH=. \
  LD_LIBRARY_PATH=${PYDK}/host/lib:${PYDK}/host/lib64:${LD_LIBRARY_PATH} \
- ${PYDK}/host/bin/python3.8 -u -B -m pythons.js  -d $(pwd) ${WEB:-"8000"}
+ ${PYDK}/host/bin/python${PYVER} -u -B -m pythons.js -d $(pwd) ${WEB:-"8000"}
         echo "bye"
     fi
 }
@@ -87,7 +86,7 @@ function do_pip
 function do_stdlib
 {
 
-    if [ -f python3.8.zip ]
+    if [ -f python${PYVER}.zip ]
     then
         echo stdlib zip ready
     else
@@ -99,15 +98,14 @@ function do_stdlib
         rm -rf assets/python$PYVER/test assets/python$PYVER/unittest
         rm -rf assets/python$PYVER/lib2to3 assets/python$PYVER/site-packages
 
-        echo " * overwriting with specific stdlib platform support"
-        /bin/cp -aRfvx ${PYDK}/sources.wasm/stdlib/. assets/
-
+        echo " * overwriting with specific stdlib $PYVER platform support (zipimport)"
+        /bin/cp -aRfvx ${PYDK}/sources.py/cpython/stdlib/python$PYVER/. assets/python$PYVER/
 
         if true
         then
             WD=$(pwd)
-            cd assets/python3.8
-            zip "${WD}/python3.8.zip" -r .
+            cd assets/python${PYVER}
+            zip "${WD}/python${PYVER}.zip" -r .
             cd "${WD}"
             rm -rf assets/python$PYVER
         else
@@ -144,22 +142,29 @@ then
     else
         echo " * syncing stdlib for $PYVER"
 
-        mkdir -p assets/python$PYVER/
-
-        # cleanup
+        mkdir -p assets/python$PYVER/ assets/packages/
 
 
         # copy generic python platform support
-        cp -Rfxpvu ${PYDK}/sources.py/. assets/
+        cp -Rfxpvu ${PYDK}/sources.py/common/. assets/
+
+        cp -Rfxpu ${PYDK}/wasm/build-wasm/panda3dffi-wasm/direct/ assets/packages/
+
+        # copy specific python interpreter support
+        cp -Rfxpvu ${PYDK}/sources.py/cpython/packages/. assets/packages/
 
         # copy specific python platform support
-        cp -fxpvu ${PYDK}/sources.wasm/*.py assets/
+        cp -fxpvu ${PYDK}/sources.py/cpython/wasm/*.py assets/
 
         # copy specific C platform support
         cp -fxpvu ${PYDK}/sources.wasm/*.c ./app/src/main/cpp/
 
-        # copy test runner support
-        cp -Rfxpvu ${PYDK}/sources.wasm/pythons ./
+        # copy test framework
+        cp -Rfxpvu ${PYDK}/wapy-lib/pythons ./assets/
+
+        # copy readline support
+        cp -fxpvu ${PYDK}/wapy-lib/readline/pyreadline.py ./assets/
+
 
         # todo move test folder with binary cmdline support into separate archive
         # until testsuite is fixed.
@@ -193,12 +198,15 @@ then
             cp -Rfvpvu patches/. assets/
         fi
 
-        if [ -f assets/python3.8.zip ]
+
+        # maybe stdlib not zipped ( testsuite case )
+
+        if [ -f assets/python${PYVER}.zip ]
         then
             echo " * stdlib is packed assume patching done"
         else
             echo " * patching stdlib"
-            /bin/cp -aRfx ${PYDK}/sources.wasm/stdlib/. assets/
+            /bin/cp -aRfx ${PYDK}/sources.py/cpython/stdlib/python${PYVER}/. assets/python${PYVER}/
         fi
 
         do_clean ${APK}
@@ -207,28 +215,28 @@ then
 
         . ${TOOLCHAIN_HOME}/emsdk_env.sh
 
-        export PATH="$EMSDK/upstream/emscripten:$BASEPATH"
+        #export PATH="$EMSDK/upstream/emscripten:$BASEPATH"
 
-if false
-then
+    if false
+    then
 
-#black or white canvas ?
-#EMOPTS="$EMOPTS -s OFFSCREENCANVAS_SUPPORT=1"
+        #black or white canvas ?
+        #EMOPTS="$EMOPTS -s OFFSCREENCANVAS_SUPPORT=1"
 
-#FAIL Unncaught ReferenceError: GL is not defined
-# -s FULL_ES2=1"
+        #FAIL Unncaught ReferenceError: GL is not defined
+        # -s FULL_ES2=1"
 
-EMOPTS="$EMOPTS -s MIN_WEBGL_VERSION=2 -s USE_WEBGL2=1"
-EMOPTS="$EMOPTS -s USE_ZLIB=1 -s USE_LIBPNG=1 -s USE_HARFBUZZ=1 -s USE_FREETYPE=1 -s USE_OGG=1 -s USE_BULLET=1"
-#EMOPTS="$EMOPTS -s USE_VORBIS=1"
+        EMOPTS="$EMOPTS -s MIN_WEBGL_VERSION=2 -s USE_WEBGL2=1"
+        EMOPTS="$EMOPTS -s USE_ZLIB=1 -s USE_LIBPNG=1 -s USE_HARFBUZZ=1 -s USE_FREETYPE=1 -s USE_OGG=1 -s USE_BULLET=1"
+        #EMOPTS="$EMOPTS -s USE_VORBIS=1"
 
-# -s GL_DEBUG=1
+        # -s GL_DEBUG=1
 
-#DBG="$DBG -g4 -O0 -s LLD_REPORT_UNDEFINED=1"
-DBG="-g0 -O3"
-DBG="$DBG -s LLD_REPORT_UNDEFINED=1 --source-map-base http://localhost:8000/" # -s EXPORT_ALL=1 "
+        #DBG="$DBG -g4 -O0 -s LLD_REPORT_UNDEFINED=1"
+        DBG="-g0 -O3"
+        DBG="$DBG -s LLD_REPORT_UNDEFINED=1 --source-map-base http://localhost:8000/" # -s EXPORT_ALL=1 "
 
-fi
+    fi
 
 EMOPTS="-s ERROR_ON_UNDEFINED_SYMBOLS=1"
 EMOPTS="$EMOPTS -g0 -O2 -s ENVIRONMENT=web -s USE_ZLIB=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1 -s EXPORT_ALL=1"
@@ -239,18 +247,18 @@ DBG="-s ASSERTIONS=1 -s DEMANGLE_SUPPORT=1 -s TOTAL_STACK=14680064 -s TOTAL_MEMO
 # nope
 #  -fPIC -s MAIN_MODULE=1 -s USE_PTHREADS=0
 #
-# -lpython3.8 -lvorbis -lvorbisfile -lssl -lcrypto
+# -lpython${PYVER} -lvorbis -lvorbisfile -lssl -lcrypto
         emcc -static $DBG -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "cwrap", "getValue", "stringToUTF8"]' \
- -I${INCDIR} -I${INCDIR}/python3.8 $EMOPTS \
- --preload-file ./assets@/assets --preload-file ./lib@/lib --preload-file python3.8.zip\
+ -I${INCDIR} -I${INCDIR}/python${PYVER} $EMOPTS \
+ --preload-file ./assets@/assets\
+ --preload-file ./lib@/lib --preload-file python${PYVER}.zip\
  -o python.html ./app/src/main/cpp/pythonsupport.c\
- -L${LIBDIR} $LIBDIR/libssl.a $LIBDIR/libcrypto.a  $LIBDIR/libpython3.8.a \
+ -L${LIBDIR} $LIBDIR/libssl.a $LIBDIR/libcrypto.a  $LIBDIR/libpython${PYVER}.a \
  -lbullet -logg -lvorbisfile -lvorbis -lfreetype -lharfbuzz $PANDA3D
 
 
-
         #./gradlew assembleDebug "$@"
-        cp -uv ./app/src/main/res/index.html ./
+        #cp -uv ./app/src/main/res/index.html ./
 
         if echo $@|grep -q build
         then
