@@ -100,7 +100,7 @@ export PIP3="pip3 install --upgrade"
 if $CI
 then
     echo CI - FORCING pip upgrade
-    sudo -H pip3 install --upgrade pip
+    pip3 install --upgrade pip
     export QUIET="1>/dev/null"
 else
     $PIP3 pip
