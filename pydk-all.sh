@@ -29,7 +29,11 @@ fi
 
 export HOST_TRIPLET=x86_64-linux-gnu
 export HOST_TAG=linux-x86_64
+#tested
 export CMAKE_VERSION=3.10.3
+#new
+export CMAKE_VERSION=3.13.0
+
 export ORIGIN=$(pwd)
 export HOST="${ORIGIN}/host"
 export BUILD_SRC=${ORIGIN}/src
@@ -252,7 +256,7 @@ then
 else
     cat > CMakeLists.txt <<END
 
-cmake_minimum_required(VERSION 3.10.2)
+cmake_minimum_required(VERSION 3.13.0)
 
 project(${ENV})
 

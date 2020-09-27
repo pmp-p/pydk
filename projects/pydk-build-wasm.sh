@@ -239,19 +239,25 @@ then
     fi
 
 EMOPTS="-s ERROR_ON_UNDEFINED_SYMBOLS=1"
-EMOPTS="$EMOPTS -g0 -O2 -s ENVIRONMENT=web -s USE_ZLIB=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1 -s EXPORT_ALL=1"
+EMOPTS="$EMOPTS -s ENVIRONMENT=web -s USE_ZLIB=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1 -s EXPORT_ALL=1"
 EMOPTS="$EMOPTS -s USE_ZLIB=1 -s NO_EXIT_RUNTIME=1 -s MAIN_MODULE=0"
+
+#EMOPTS="$EMOPTS -g0 -O0 -s INVOKE_RUN=0"
+EMOPTS="$EMOPTS -g0 -O3 -s LZ4=0"
+
 DBG="-s ASSERTIONS=1 -s DEMANGLE_SUPPORT=1 -s TOTAL_STACK=14680064 -s TOTAL_MEMORY=512MB"
-
-
+echo "================================================================="
+echo $EMOPTS
+echo "================================================================="
 # nope
 #  -fPIC -s MAIN_MODULE=1 -s USE_PTHREADS=0
 #
 # -lpython${PYVER} -lvorbis -lvorbisfile -lssl -lcrypto
-        emcc -static $DBG -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "cwrap", "getValue", "stringToUTF8"]' \
+        emcc --memory-init-file 0 -static $DBG -s 'EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "cwrap", "getValue", "stringToUTF8"]' \
  -I${INCDIR} -I${INCDIR}/python${PYVER} $EMOPTS \
- --preload-file ./assets@/assets\
- --preload-file ./lib@/lib --preload-file python${PYVER}.zip\
+ --preload-file ./assets\
+ --preload-file ./lib\
+ --preload-file python${PYVER}.zip\
  -o python.html ./app/src/main/cpp/pythonsupport.c\
  -L${LIBDIR} $LIBDIR/libssl.a $LIBDIR/libcrypto.a  $LIBDIR/libpython${PYVER}.a \
  -lbullet -logg -lvorbisfile -lvorbis -lfreetype -lharfbuzz $PANDA3D

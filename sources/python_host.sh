@@ -93,22 +93,25 @@ env >> ${BUILD_SRC}/build.log
 echo  >> ${BUILD_SRC}/build.log
 echo  >> ${BUILD_SRC}/build.log
 
+# DO NOT USE  -m pip what would not use venv
+export PIP3="pip3 install --no-warn-script-location --upgrade"
+
 if $CI
 then
     echo CI - no pip upgrade
     export QUIET="1>/dev/null"
 else
-    pip3 install --upgrade pip
-    pip3 install --upgrade setuptools
-    pip3 install --upgrade Cython
+    $PIP3 pip
+    $PIP3 setuptools
+    $PIP3 Cython
 fi
 
 if [ -f new_env ]
 then
 
-    if pip3 install scikit-build
+    if $PIP3 scikit-build
     then
-        if pip3 install "cmake==${CMAKE_VERSION}"
+        if $PIP3 "cmake==${CMAKE_VERSION}"
         then
             rm new_env
         fi
