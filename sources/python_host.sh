@@ -98,7 +98,8 @@ export PIP3="pip3 install --no-warn-script-location --upgrade"
 
 if $CI
 then
-    echo CI - no pip upgrade
+    echo CI - FORCING pip upgrade
+    sudo -H pip3 install --upgrade pip
     export QUIET="1>/dev/null"
 else
     $PIP3 pip
