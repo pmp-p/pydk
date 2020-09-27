@@ -10,7 +10,7 @@
 # webglport
 # https://github.com/panda3d/panda3d/archive/e72bd7f5c62919d76cfa3d5f4b05712f5dfaac48.zip 86e7569dd02b350826f74c0d69bf958dc4474b53deffc7f8bb48d667e2fe6fd5
 
-export PANDA3D_URL=${PANDA3D_URL:-"https://github.com/panda3d/panda3d/archive/v1.10.7.tar.gz"}
+export PANDA3D_URL=${PANDA3D_URL:-"URL https://github.com/panda3d/panda3d/archive/v1.10.7.tar.gz"}
 export PANDA3D_HASH=${PANDA3D_HASH:-"URL_HASH SHA256=b189313c4e9548e20b0facb0c078636e39467b149000919b80a7dd90b35a1939"}
 
 export PANDA3D_CMAKE_ARGS_COMMON="-DHAVE_PYTHON=YES\
