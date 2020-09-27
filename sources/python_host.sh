@@ -94,7 +94,8 @@ echo  >> ${BUILD_SRC}/build.log
 echo  >> ${BUILD_SRC}/build.log
 
 # DO NOT USE  -m pip what would not use venv
-export PIP3="pip3 install --no-warn-script-location --upgrade"
+# --no-warn-script-location
+export PIP3="pip3 install --upgrade"
 
 if $CI
 then
