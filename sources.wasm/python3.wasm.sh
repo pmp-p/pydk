@@ -260,6 +260,9 @@ export PYTHONDONTWRITEBYTECODE=1
 export PYTHONPYCACHEPREFIX=${ORIGIN}/pycache
 export APKUSR=${APKUSR}
 
+# hasardous fix for libatomic
+export LDFLAGS="-Wl,--shared-memory,--no-check-features"
+
 export CPPFLAGS='$EM_FLAGS'
 export CXXFLAGS='$EM_FLAGS'
 export CFLAGS='$EM_FLAGS'
