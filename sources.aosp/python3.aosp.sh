@@ -190,18 +190,6 @@ python3_patch () {
             patch -p1 < ${PATCH}
         done
 
-#        cat >> Lib/os.py <<END
-#
-#try:
-#    getpid
-#except:
-#    import sys
-#    print("210: os.getpid() is broken",file=sys.stderr)
-#    def getpid():
-#        return int(open('/proc/self/stat').read().split(' ')[0])
-#
-#END
-
         touch Patched
 
         # prevent __pycache__ filling up everywhere

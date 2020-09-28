@@ -317,6 +317,8 @@ END
         fi
     fi
     echo "  -> host tools now in CMAKE_INSTALL_PREFIX=${HOST}"
+    echo "  -> upgrading host build pip"
+    "${HOST}/bin/python3" -m pip install --upgrade pip
 fi
 
 
@@ -634,6 +636,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOST}/lib64:${HOST}/lib
 
 export PATH="$EMSDK/upstream/emscripten:$BASEPATH"
 
+
 #export STRIP=$STRIP
 #export READELF=$READELF
 #export AR=$AR
@@ -669,7 +672,7 @@ wcmake () {
 
 END
 
-export UNITS="openssl python3 vorbis panda3d panda3dffi"
+export UNITS="openssl libffi python3 vorbis panda3d panda3dffi"
 
 for unit in $UNITS
 do
@@ -692,7 +695,7 @@ then
         then
             echo "emsdk libs ready"
         else
-            ALL="zlib bzip2 freetype harfbuzz ogg vorbis libpng bullet"
+            ALL="struct_info zlib bzip2 freetype harfbuzz ogg vorbis libpng bullet"
             embuilder --pic build $ALL
             embuilder build $ALL
             touch embuilt
