@@ -135,11 +135,13 @@ _ssl _ssl.c -DUSE_SSL -I${APKUSR}/include -L${APKUSR}/lib -lssl -lcrypto #${APKU
 #TODO:
 _uuid _uuidmodule.c
 
-#_ctypes _ctypes/_ctypes.c \
-# _ctypes/callbacks.c \
-# _ctypes/callproc.c \
-# _ctypes/stgdict.c \
-# _ctypes/cfield.c -I${PYTARGET}/Modules/_ctypes -I${APKUSR}/include -L${APKUSR}/lib -lffi # ${APKUSR}/lib/libffi.a
+_ctypes _ctypes/_ctypes.c \
+ _ctypes/callbacks.c \
+ _ctypes/callproc.c \
+ _ctypes/stgdict.c \
+ _ctypes/cfield.c -I${PYTARGET}/Modules/_ctypes -I${APKUSR}/include -L${APKUSR}/lib -lffi # ${APKUSR}/lib/libffi.a
+
+# $(pkg-config libffi --libs-only-L --cflags-only-I)
 
 #_decimal _decimal/_decimal.c \
 # _decimal/libmpdec/basearith.c \

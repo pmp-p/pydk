@@ -1,3 +1,7 @@
+# atomics linking problem : https://github.com/emscripten-core/emscripten/issues/8503
+# https://github.com/emscripten-core/emscripten/issues/10370
+# -pthread -s ENVIRONMENT=web,worker
+# -Wl,--shared-memory,--no-check-features
 
 
 libffi_host_cmake () {
