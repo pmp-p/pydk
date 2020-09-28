@@ -1,4 +1,4 @@
-export LIBFFI_VERSION=3.3
+
 
 libffi_host_cmake () {
     #already done in aosp
@@ -22,6 +22,7 @@ libffi_crosscompile () {
     else
         FFI_SRC="${BUILD_SRC}/libffi-prefix/src/libffi"
 
+        cd "$FFI_SRC"
 
         if [ -f Patched ]
         then

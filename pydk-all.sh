@@ -26,6 +26,8 @@ else
     export OPENSSL_VERSION="1.1.1f"
 fi
 
+export LIBFFI_VERSION=3.3
+
 
 export HOST_TRIPLET=x86_64-linux-gnu
 export HOST_TAG=linux-x86_64
