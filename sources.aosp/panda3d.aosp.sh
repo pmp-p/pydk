@@ -80,6 +80,7 @@ panda3d_crosscompile () {
     then
         echo "    -> ${unit} already built for $ANDROID_NDK_ABI_NAME"
     else
+
         echo " * building Panda3D for target ${ANDROID_ABI}"
 
         cat ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/toolchain.cmake > ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/${unit}.toolchain.cmake
@@ -111,9 +112,9 @@ set(OPENAL_LIBRARY openal)
 
 
 #
-#set(OGG_LIBRARY "${APKUSR}/lib/libogg.so")
-#set(OGG_INCLUDE_DIR "${APKUSR}/include/ogg")
-#set(OGG_FOUND YES)
+set(OGG_LIBRARY "${APKUSR}/lib/libogg.so")
+set(OGG_INCLUDE_DIR "${APKUSR}/include/ogg")
+set(OGG_FOUND YES)
 
 set(VORBISFILE_LIBRARY "${APKUSR}/lib/libvorbisfile.so")
 set(VORBISFILE_LIBRARIES "${APKUSR}/lib/libvorbisfile.so")
@@ -180,6 +181,7 @@ END
                     exit 1
                 fi
             fi
+            touch ${APKUSR}/lib/python${PYMAJOR}.${MINOR}/site-packages/panda3d/__init__.py
         else
             if $CI
             then

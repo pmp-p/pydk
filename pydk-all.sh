@@ -219,7 +219,7 @@ export PATH="$BASEPATH"
 
 export PYDK="${ORIGIN}"
 
-export PYTHONPATH=${HOST}/lib/python$PYVER:${HOST}/lib/python$PYVER/site-packages
+export PYTHONPATH=${HOST}/lib/python$PYVER:${HOST}/lib/python${PYMAJOR}.${PYMINOR}/site-packages
 
 alias python="${HOST}/bin/python${PYMAJOR}.${PYMINOR} -i -u -B"
 
@@ -330,6 +330,9 @@ END
     echo "  -> upgrading host build pip"
     "${HOST}/bin/python3" -m pip install --upgrade pip
 fi
+
+# small fix for panda3d cmake
+touch "${HOST}/lib/python${PYMAJOR}.${PYMINOR}/site-packages/panda3d/__init__.py"
 
 
 # == can't save space here with patching an existing host source python tree after a cleanup

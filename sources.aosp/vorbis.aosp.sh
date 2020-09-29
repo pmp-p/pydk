@@ -51,7 +51,10 @@ vorbis_crosscompile () {
         echo "    -> vorbis already built for $ANDROID_NDK_ABI_NAME"
     else
         PrepareBuild ${unit}
-        if $ACMAKE -DBUILD_SHARED_LIBS=Yes ${BUILD_SRC}/${unit}-prefix/src/${unit} >/dev/null
+        if $ACMAKE \
+ -DBUILD_SHARED_LIBS=Yes ${BUILD_SRC}/${unit}-prefix/src/${unit}\
+ -DOGG_LIBRARY=${APKUSR}/lib/libogg.so\
+ -DOGG_INCLUDE_DIR=${APKUSR}/include >/dev/null
         then
             std_make ${unit}
         else

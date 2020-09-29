@@ -129,7 +129,8 @@ _socket socketmodule.c
 _hashlib _hashopenssl.c  -I${APKUSR}/include -L${APKUSR}/lib -lssl -lcrypto
 _ssl _ssl.c -DUSE_SSL -I${APKUSR}/include -L${APKUSR}/lib -lssl -lcrypto #${APKUSR}/lib/libssl.a ${APKUSR}/lib/libcrypto.a
 
-#_elementtree -I${PYTARGET}/Modules/expat -DHAVE_EXPAT_CONFIG_H -DUSE_PYEXPAT_CAPI _elementtree.c # elementtree accelerator
+#_elementtree -I${PYTARGET}/Modules/expat -DHAVE_EXPAT_CONFIG_H -DUSE_PYEXPAT_CAPI _elementtree.c
+# elementtree accelerator
 
 
 #TODO:
@@ -139,7 +140,8 @@ _ctypes _ctypes/_ctypes.c \
  _ctypes/callbacks.c \
  _ctypes/callproc.c \
  _ctypes/stgdict.c \
- _ctypes/cfield.c -I${PYTARGET}/Modules/_ctypes -I${APKUSR}/include -L${APKUSR}/lib -lffi # ${APKUSR}/lib/libffi.a
+ _ctypes/cfield.c -I${PYTARGET}/Modules/_ctypes -I${APKUSR}/include -pthread ${APKUSR}/lib/libffi.a
+
 
 # $(pkg-config libffi --libs-only-L --cflags-only-I)
 
@@ -261,7 +263,7 @@ export PYTHONPYCACHEPREFIX=${ORIGIN}/pycache
 export APKUSR=${APKUSR}
 
 # hasardous fix for libatomic
-export LDFLAGS="-Wl,--shared-memory,--no-check-features"
+# export LDFLAGS="-Wl,--shared-memory,--no-check-features"
 
 export CPPFLAGS='$EM_FLAGS'
 export CXXFLAGS='$EM_FLAGS'
@@ -275,7 +277,8 @@ PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig\\
  READELF=true\\
  emconfigure \${_PYTHON_PROJECT_SRC}/configure --cache-file=${SUPPORT}/cache.${API}.${PLATFORM_TRIPLET} \\
  --host=${PLATFORM_TRIPLET} --build=${HOST_TRIPLET} --prefix=${APKUSR}\\
- $PYOPTS --without-ensurepip
+ $PYOPTS --without-ensurepip\\
+  --with-libs="-Wl,--shared-memory,--no-check-features"
 
 # 2>&1 >> ${BUILD_SRC}/build.log
 
