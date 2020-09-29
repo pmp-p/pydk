@@ -18,12 +18,12 @@ export PYMINOR=${PYMINOR:-$PYMINOR_DEFAULT}
 if echo $PYMINOR |grep -q 7
 then
 # python 3.7.x
-    export PYVER=${PYMAJOR}.${PYMINOR}.5
+    export PYVER=${PYMAJOR}.${PYMINOR}.7
     export OPENSSL_VERSION="1.0.2t"
 else
 # python 3.8.x
     export PYVER=${PYMAJOR}.${PYMINOR}.5
-    export OPENSSL_VERSION="1.1.1f"
+    export OPENSSL_VERSION="1.1.1h"
 fi
 
 export LIBFFI_VERSION=3.3
@@ -31,10 +31,13 @@ export LIBFFI_VERSION=3.3
 
 export HOST_TRIPLET=x86_64-linux-gnu
 export HOST_TAG=linux-x86_64
+
 #tested
 export CMAKE_VERSION=3.10.3
+
 #new
 export CMAKE_VERSION=3.13.0
+
 
 export ORIGIN=$(pwd)
 export HOST="${ORIGIN}/host"
@@ -68,9 +71,14 @@ pwd
     . $(pwd)/CONFIG
 fi
 
-
+#tested
 PATCHELF_URL="URL https://github.com/NixOS/patchelf/archive/0.10.tar.gz"
 PATCHELF_HASH="URL_HASH SHA256=b3cb6bdedcef5607ce34a350cf0b182eb979f8f7bc31eae55a93a70a3f020d13"
+
+#new
+PATCHELF_URL="URL https://github.com/NixOS/patchelf/archive/0.12.tar.gz"
+PATCHELF_HASH="URL_HASH SHA256=3dca33fb862213b3541350e1da262249959595903f559eae0fbc68966e9c3f56"
+
 
 ADBFS_URL="GIT_REPOSITORY https://github.com/spion/adbfs-rootless.git"
 ADBFS_HASH="GIT_TAG ba64c22dbd373499eea9c9a9d2a9dd1cd25c33e1 # 14 july 2019"
@@ -533,8 +541,8 @@ set(HARFBUZZ_LIBRARIES "${APKUSR}/lib/libharfbuzz.so")
 set(HARFBUZZ_INCLUDE_DIR "${APKUSR}/include/harfbuzz")
 set(HARFBUZZ_LIBRARY "${APKUSR}/lib/libharfbuzz.so")
 
-set(OGG_LIBRARY "${APKUSR}/lib/libogg.so")
-set(OGG_INCLUDE_DIR "${APKUSR}/include/ogg")
+#set(OGG_LIBRARY "${APKUSR}/lib/libogg.so")
+#set(OGG_INCLUDE_DIR "${APKUSR}/include/ogg")
 set(OGG_LIBRARIES "${APKUSR}/lib/libogg.so")
 set(OGG_INCLUDE_DIRS "${APKUSR}/include")
 set(OGG_FOUND YES)

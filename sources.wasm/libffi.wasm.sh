@@ -49,9 +49,10 @@ libffi_crosscompile () {
         # NDK also defines -ffunction-sections -funwind-tables but they result in worse OpenCV performance (Amos Wenger)
         #export CFLAGS="-m${BITS} -fPIC -target ${PLATFORM_TRIPLET}${API} -isysroot $TOOLCHAIN/sysroot -isystem $TOOLCHAIN/sysroot/usr/include"
 
-        export CFLAGS="-O3"
+        # -s USE_PTHREADS=1
+        export CFLAGS="-O3 -s EXPORT_ALL=1"
         export CXXFLAGS="$CFLAGS"
-        export EMMAKEN_CFLAGS="-s USE_PTHREADS=1"
+        export EMMAKEN_CFLAGS="-s EXPORT_ALL=1"
 
         CNF="--enable-static --disable-shared --disable-dependency-tracking\
   --disable-builddir --disable-multi-os-directory --disable-raw-api"

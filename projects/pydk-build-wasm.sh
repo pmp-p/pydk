@@ -259,7 +259,7 @@ echo "================================================================="
  --preload-file ./lib\
  --preload-file python${PYVER}.zip\
  -o python.html ./app/src/main/cpp/pythonsupport.c\
- -L${LIBDIR} $LIBDIR/libssl.a $LIBDIR/libcrypto.a  $LIBDIR/libpython${PYVER}.a \
+ -L${LIBDIR} $LIBDIR/libssl.a $LIBDIR/libcrypto.a $LIBDIR/libpython${PYVER}.a \
  -lbullet -logg -lvorbisfile -lvorbis -lfreetype -lharfbuzz $PANDA3D
 
 

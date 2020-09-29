@@ -19,12 +19,11 @@ vorbis_crosscompile () {
         echo "    -> vorbis already built for $ABI_NAME"
     else
         PrepareBuild ${unit}
-        #-DBUILD_SHARED_LIBS=No
+        #-DBUILD_SHARED_LIBS=No  -DOGG_INCLUDE_DIR=${EM_CACHE}/wasm/include -DOGG_LIBRARY=${EM_CACHE}/wasm
+
         if $WCMAKE \
- -DOGG_LIBRARY=${EM_CACHE}/wasm \
- -DOGG_LIBRARIES=${EM_CACHE}/wasm \
- -DOGG_INCLUDE_DIR=${EM_CACHE}/wasm/include \
- -DOGG_INCLUDE_DIRS=${EM_CACHE}/wasm/include \
+ -DOGG_LIBRARIES=${EM_CACHE}/wasm-pic/libogg.a \
+ -DOGG_INCLUDE_DIRS=${EM_CACHE}/wasm-pic/include \
  ${BUILD_SRC}/${unit}-prefix/src/${unit} >/dev/null
         then
             em_make ${unit}
