@@ -127,7 +127,8 @@ _socket socketmodule.c
 
 # Modules/_hashopenssl.c:23:10: fatal error: 'openssl/evp.h' file not found
 _hashlib _hashopenssl.c  -I${APKUSR}/include -L${APKUSR}/lib -lssl -lcrypto
-_ssl _ssl.c -DUSE_SSL -I${APKUSR}/include -L${APKUSR}/lib -lssl -lcrypto #${APKUSR}/lib/libssl.a ${APKUSR}/lib/libcrypto.a
+_ssl _ssl.c -DUSE_SSL -I${APKUSR}/include -L${APKUSR}/lib\
+ -lssl -lcrypto #${APKUSR}/lib/libssl.a ${APKUSR}/lib/libcrypto.a
 
 #_elementtree -I${PYTARGET}/Modules/expat -DHAVE_EXPAT_CONFIG_H -DUSE_PYEXPAT_CAPI _elementtree.c
 # elementtree accelerator
@@ -140,7 +141,8 @@ _ctypes _ctypes/_ctypes.c \
  _ctypes/callbacks.c \
  _ctypes/callproc.c \
  _ctypes/stgdict.c \
- _ctypes/cfield.c -I${PYTARGET}/Modules/_ctypes -I${APKUSR}/include -pthread ${APKUSR}/lib/libffi.a
+ _ctypes/cfield.c -I${PYTARGET}/Modules/_ctypes -I${APKUSR}/include\
+ -L${APKUSR}/lib -lffi ${APKUSR}/lib/libffi.a
 
 
 # $(pkg-config libffi --libs-only-L --cflags-only-I)
@@ -278,7 +280,7 @@ PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig\\
  emconfigure \${_PYTHON_PROJECT_SRC}/configure --cache-file=${SUPPORT}/cache.${API}.${PLATFORM_TRIPLET} \\
  --host=${PLATFORM_TRIPLET} --build=${HOST_TRIPLET} --prefix=${APKUSR}\\
  $PYOPTS --without-ensurepip\\
-  --with-libs="-Wl,--shared-memory,--no-check-features"
+  --with-libs="-Wl,--shared-memory,--no-check-features -pthread"
 
 # 2>&1 >> ${BUILD_SRC}/build.log
 

@@ -113,17 +113,21 @@ __init__.py
 CACHE_URL
 CONFIG
 
+
+# build folders
+host
+src
+wasm
 aosp
 android-sdk
 assets
 prebuilt
-testing
-ATTIC
 
 prebuilt.aosp
 prebuilt.wasm
 projects
 
+# tools
 emsdk
 wapy-lib
 wasi-sdk-11.0
