@@ -162,7 +162,7 @@ for libpath in FOUND:
         modname = lib.rsplit('.',1)[0]
 
     cmk_name = '_'.join(modpath) + '_' + modname
-    lib = "lib" + '.'.join(modpath) + '.' + modname + SUFFIX
+    lib = "lib." + '.'.join(modpath) + '.' + modname + SUFFIX
 
     print(f"    Module : {modpath} | {modname} => {lib}")
 
