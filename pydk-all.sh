@@ -81,8 +81,11 @@ PATCHELF_HASH="URL_HASH SHA256=3dca33fb862213b3541350e1da262249959595903f559eae0
 
 
 ADBFS_URL="GIT_REPOSITORY https://github.com/spion/adbfs-rootless.git"
+#tested
 ADBFS_HASH="GIT_TAG ba64c22dbd373499eea9c9a9d2a9dd1cd25c33e1 # 14 july 2019"
 
+#new
+ADBFS_HASH="GIT_TAG 5b091a50cd2419e1cebe42aa1d0e1ad1f90fdfad # 29 feb 2020"
 
 # optionnal urls for sources packages
 if [ -f "CACHE_URL" ]

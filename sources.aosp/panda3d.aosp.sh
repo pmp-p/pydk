@@ -168,27 +168,23 @@ END
         echo "$PANDA3D_ACMAKE \"\$@\""> ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/${unit}.rebuild
 
         # could fail once on Python export
-        if $PANDA3D_ACMAKE
-        then
-            if $CI
-            then
-                make ${JFLAGS} install >/dev/null
-            else
-                if make ${JFLAGS} install
-                then
-                    echo
-                else
-                    exit 1
-                fi
-            fi
-            touch ${APKUSR}/lib/python${PYMAJOR}.${MINOR}/site-packages/panda3d/__init__.py
-        else
+
+        for cmpass in 1 2
+        do
             if $CI
             then
                 $PANDA3D_ACMAKE >/dev/null && make ${JFLAGS} install >/dev/null
             else
                 $PANDA3D_ACMAKE >/dev/null && make ${JFLAGS} install
             fi
+        done
+
+        if [ -f ${APKUSR}/lib/libpanda.so ]
+        then
+            touch ${APKUSR}/lib/python${PYMAJOR}.${MINOR}/site-packages/panda3d/__init__.py
+        else
+            echo Panda3D build failed for $ABI_NAME
+            exit 1
         fi
     fi
 }
