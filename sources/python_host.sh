@@ -114,4 +114,25 @@ then
             rm new_env
         fi
     fi
+
+    if [ -f ${ROOT}/bin/cmake ]
+    then
+        echo cmake build ok
+    else
+        echo "
+
+
+    
+
+        [ UNSUPPORTED ] your system could not build cmake requested version, will use system version
+
+
+
+
+
+"
+        sleep 3
+        ln -s $(comman -v cmake) ${ROOT}/bin/cmake
+    fi
+
 fi
