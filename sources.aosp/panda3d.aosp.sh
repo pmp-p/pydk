@@ -113,7 +113,7 @@ set(OPENAL_LIBRARY openal)
 
 #
 set(OGG_LIBRARY "${APKUSR}/lib/libogg.so")
-set(OGG_INCLUDE_DIR "${APKUSR}/include/ogg")
+set(OGG_INCLUDE_DIR "${APKUSR}/include")
 set(OGG_FOUND YES)
 
 set(VORBISFILE_LIBRARY "${APKUSR}/lib/libvorbisfile.so")

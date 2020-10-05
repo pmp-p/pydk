@@ -23,7 +23,7 @@ vorbis_crosscompile () {
 
         if $WCMAKE \
  -DOGG_LIBRARY=${EM_CACHE}/wasm-pic/libogg.a \
- -DOGG_INCLUDE_DIR=${EM_CACHE}/wasm-pic/include/ogg \
+ -DOGG_INCLUDE_DIR=${EM_CACHE}/wasm-pic/include \
  ${BUILD_SRC}/${unit}-prefix/src/${unit} >/dev/null
         then
             em_make ${unit}
