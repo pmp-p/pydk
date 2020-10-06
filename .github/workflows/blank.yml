@@ -57,10 +57,14 @@ jobs:
       run: |
             cd /home/runner/work/pydk/pydk
             ARCHITECTURES=x86_64 time sh pydk-all.sh
+    - name: PyDK Collect SDK
+      run: |
+            cd /home/runner/work/pydk/pydk
+            mkdir staging
+            mv prebuilt staging
+            mv */apkroot-*/usr/include staging
     - name: PyDK Package SDK
       uses: actions/upload-artifact@v2
       with:
         name: pydk-release
-        path: |
-          /home/runner/work/pydk/pydk/prebuilt
-          /home/runner/work/pydk/pydk/*/apkroot-*/usr/include
+        path: /home/runner/work/pydk/pydk/staging
