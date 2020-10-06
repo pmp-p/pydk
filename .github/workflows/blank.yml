@@ -60,11 +60,9 @@ jobs:
     - name: PyDK Collect SDK
       run: |
             cd /home/runner/work/pydk/pydk
-            mkdir staging
-            mv prebuilt staging
-            mv */apkroot-*/usr/include staging
+            tar -cf pydk-release.tar.gz prebuilt */apkroot-*/usr/include
     - name: PyDK Package SDK
       uses: actions/upload-artifact@v2
       with:
         name: pydk-release
-        path: /home/runner/work/pydk/pydk/staging
+        path: /home/runner/work/pydk/pydk/pydk-release.tar.gz
