@@ -139,6 +139,9 @@ shell.wasm.sh
 shell.wasi.sh
 shell.host.sh
 
+docs/screenshots
+
+
 #alpha project for extension cross compilation
 repo
 cross-modules.sh

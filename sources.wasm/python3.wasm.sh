@@ -472,19 +472,19 @@ python3_crosscompile () {
 
         #========================================================
 
-        if [ -f ${APKUSR}/lib/${LIBPYTHON} ]
-        then
-
-            mkdir -p ${ORIGIN}/prebuilt/${ABI_NAME}
-            #mv ${APKUSR}/lib/lib*.so ${ORIGIN}/prebuilt/${ABI_NAME}/
-
-            # keep a copy so module can cross compile
-
-            /bin/cp -vf ${APKUSR}/lib/lib* ${ORIGIN}/prebuilt/${ABI_NAME}/
-            echo " done"
-        else
-            break
-        fi
+#        if [ -f ${APKUSR}/lib/${LIBPYTHON} ]
+#        then
+#
+#            mkdir -p ${ORIGIN}/prebuilt/${ABI_NAME}
+#            #mv ${APKUSR}/lib/lib*.so ${ORIGIN}/prebuilt/${ABI_NAME}/
+#
+#            # keep a copy so module can cross compile
+#
+#            /bin/cp -vf ${APKUSR}/lib/lib* ${ORIGIN}/prebuilt/${ABI_NAME}/
+#            echo " done"
+#        else
+#            break
+#        fi
     fi
 
 

@@ -712,8 +712,11 @@ then
             echo "emsdk libs ready"
         else
             ALL="struct_info zlib bzip2 freetype harfbuzz ogg vorbis libpng bullet"
-            embuilder --pic build $ALL
-            embuilder build $ALL
+            for one in $ALL
+            do
+                embuilder --pic build $one
+                embuilder build $one
+            done
             touch embuilt
         fi
     else

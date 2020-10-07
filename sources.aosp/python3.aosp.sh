@@ -300,7 +300,7 @@ END
 
 python3_crosscompile () {
 
-    # prebuilt/<arch>/ is the final place for libpython
+    # pydk-min/prebuilt/<arch>/ is the final place for libpython
     # but prefix is set to <apk>/usr
     # because a lot of python <prefix>/lib/* can't go in apk private <apk>/lib folder on device
 
@@ -406,12 +406,7 @@ python3_crosscompile () {
 
             ${HOST}/bin/patchelf --set-soname ${LIBPYTHON} ${APKUSR}/lib/${LIBPYTHON}
 
-            mkdir -p ${ORIGIN}/prebuilt/${ANDROID_NDK_ABI_NAME}
-            #mv ${APKUSR}/lib/lib*.so ${ORIGIN}/prebuilt/${ANDROID_NDK_ABI_NAME}/
 
-            # keep a copy so module can cross compile
-
-            /bin/cp -vf ${APKUSR}/lib/lib*.so ${ORIGIN}/prebuilt/${ANDROID_NDK_ABI_NAME}/
             echo " done"
         else
             break

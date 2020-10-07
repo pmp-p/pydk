@@ -60,9 +60,8 @@ jobs:
     - name: PyDK Collect SDK
       run: |
             cd /home/runner/work/pydk/pydk
-            tar -cf pydk-min.tar.gz prebuilt */apkroot-*/usr/include
     - name: PyDK Package SDK
       uses: actions/upload-artifact@v2
       with:
-        name: pydk-release
-        path: /home/runner/work/pydk/pydk/pydk-min.tar.gz
+        name: pydk-min
+        path: /home/runner/work/pydk/pydk/pydk-min

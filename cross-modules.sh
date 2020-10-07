@@ -7,6 +7,17 @@
 # https://bugs.python.org/issue28833 cross compilation of third-party extension modules
 
 
+mkdir -p ${ORIGIN}/pydk-min/prebuilt/${ABI_NAME}
+
+# put a copy into prebuilt for packaging support lib
+/bin/cp -f ${APKUSR}/lib/lib*.so ${ORIGIN}/pydk-min/prebuilt/${ABI_NAME}/
+
+# put the sysroot for projects building
+# TODO: dedup  common + arch folder
+mkdir -p ${ORIGIN}/pydk-min/${ENV}/apkroot-${ABI_NAME}/usr
+/bin/cp -rf ${APKUSR}/include ${ORIGIN}/pydk-min/${ENV}/apkroot-${ABI_NAME}/usr
+
+
 echo " * cross compiling third party modules"
 
 cd ${BUILD_PREFIX}-${ABI_NAME}
@@ -122,7 +133,7 @@ liblist = []
 
 FOUND="""$(find ${APKUSR}/lib/python3.?|grep so$)""".split("\n")
 
-PREBUILT="${ORIGIN}/prebuilt/${ABI_NAME}/"
+PREBUILT="${ORIGIN}/pydk-min/prebuilt/${ABI_NAME}/"
 
 PREFIX='/lib/python${PYMAJOR}.${PYMINOR}/'
 
@@ -162,7 +173,7 @@ for libpath in FOUND:
         modname = lib.rsplit('.',1)[0]
 
     cmk_name = '_'.join(modpath) + '_' + modname
-    lib = "lib." + '.'.join(modpath) + '.' + modname + SUFFIX
+    lib = "lib" + '.'.join(modpath) + '.' + modname + SUFFIX
 
     print(f"    Module : {modpath} | {modname} => {lib}")
 
