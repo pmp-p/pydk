@@ -173,7 +173,9 @@ for libpath in FOUND:
         modname = lib.rsplit('.',1)[0]
 
     cmk_name = '_'.join(modpath) + '_' + modname
-    lib = "lib" + '.'.join(modpath) + '.' + modname + SUFFIX
+    lib = "lib." + '.'.join(modpath) + '.' + modname + SUFFIX
+    if lib.startswith('lib..'):
+        lib = 'lib' + lib[4:]
 
     print(f"    Module : {modpath} | {modname} => {lib}")
 
@@ -192,8 +194,7 @@ set_target_properties({cmk_name} PROPERTIES IMPORTED_LOCATION \${{PREBUILT}}+{li
 
 print(PREBUILT)
 
-
-with open("${ORIGIN}/prebuilt/${ABI_NAME}.include","w") as file:
+with open("${ORIGIN}/pydk-min/prebuilt/${ABI_NAME}.include","w") as file:
     print(f"""
 add_library(jnilink SHARED jnilink.c)
 
