@@ -252,8 +252,8 @@ python_configure () {
 
     #dropped support for asm.js
     EM_MODE=""
-    # nope -fPIC
-    EM_FLAGS="-O3 -s EXPORT_ALL=1 -s ENVIRONMENT=web -s USE_ZLIB=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1"
+    # nope -s ENVIRONMENT=web
+    EM_FLAGS="-fPIC -O3 -s EXPORT_ALL=1  -s USE_ZLIB=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1"
 
     cat >> $1 <<END
 #======== adding to ${HOST}/${ABI_NAME}.sh
@@ -280,7 +280,9 @@ PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig\\
  emconfigure \${_PYTHON_PROJECT_SRC}/configure --cache-file=${SUPPORT}/cache.${API}.${PLATFORM_TRIPLET} \\
  --host=${PLATFORM_TRIPLET} --build=${HOST_TRIPLET} --prefix=${APKUSR}\\
  $PYOPTS --without-ensurepip\\
-  --with-libs="-Wl,--shared-memory,--no-check-features -pthread"
+
+
+# not needed just want lib not exe  --with-libs="-Wl,--shared-memory,--no-check-features -pthread"
 
 # 2>&1 >> ${BUILD_SRC}/build.log
 

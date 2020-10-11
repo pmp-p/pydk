@@ -22,6 +22,7 @@ vorbis_crosscompile () {
         #-DBUILD_SHARED_LIBS=No  -DOGG_INCLUDE_DIR=${EM_CACHE}/wasm/include -DOGG_LIBRARY=${EM_CACHE}/wasm
 
         if $WCMAKE \
+ -DCMAKE_CXX_FLAGS="-fPIC" -DCMAKE_C_FLAGS="-fPIC" \
  -DOGG_LIBRARY=${EM_CACHE}/wasm-pic/libogg.a \
  -DOGG_INCLUDE_DIR=${EM_CACHE}/wasm-pic/include \
  ${BUILD_SRC}/${unit}-prefix/src/${unit} >/dev/null
