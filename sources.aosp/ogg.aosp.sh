@@ -38,7 +38,7 @@ ogg_build () {
 ogg_crosscompile () {
     if [ -f  ${APKUSR}/lib/libogg.so ]
     then
-        echo "    -> ogg already built for $ANDROID_NDK_ABI_NAME"
+        echo "    -> ogg already built for $ABI_NAME"
     else
         PrepareBuild ${unit}
         if $ACMAKE -DBUILD_SHARED_LIBS=Yes ${BUILD_SRC}/${unit}-prefix/src/${unit} >/dev/null

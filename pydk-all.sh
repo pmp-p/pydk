@@ -47,8 +47,13 @@ export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.so
 
 export ARCHITECTURES=${ARCHITECTURES:-"armeabi-v7a arm64-v8a x86 x86_64 wasm"}
 
+export PYTHONPYCACHEPREFIX=${ORIGIN}/pycache
+export HOME=${PYTHONPYCACHEPREFIX}
+
+
 #UNITS="unit"
 UNITS=""
+
 
 
 # select a place for android build
@@ -100,8 +105,6 @@ UNITS="unit bzip2 lzma libffi sqlite3 openssl python3"
 UNITS="$UNITS freetype2 harfbuzz ft2_hb bullet3 openal ogg vorbis panda3d"
 
 
-
-export PYTHONPYCACHEPREFIX=${ORIGIN}/pycache
 
 # specific to host python that will drive the build
 mkdir -p "${HOST}"
@@ -423,18 +426,18 @@ acmake () {
 END
 
 
-
     # ndk specifics
 
     export TOOLCHAIN=$NDK_HOME/toolchains/llvm/prebuilt/$HOST_TAG
 
-    ANDROID_NDK_ABI_NAME=${ABI_NAME}
     # except for armv7
     ABI=android
+    unset PLATABI
 
     case "$ABI_NAME" in
         armeabi-v7a)
             PLATFORM_TRIPLET=armv7a-linux-androideabi
+            PLATABI=android
             ARCH=armv7a
             ABI=androideabi
             API=19
@@ -461,16 +464,36 @@ END
             ;;
         wasm)
             PLATFORM_TRIPLET=wasm-unknown-emscripten
-            ABI="wasm"
-            API="wasm"
+            ARCH=wasm
+            API=1
+            ABI="emscripten"
+            export ABI API PLATFORM_TRIPLET
+            export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.a
+            break
+            ;;
+        wasi32)
+            PLATFORM_TRIPLET=wasm32-unknow-wasi
+            ARCH=wasm32
+            ABI=wasi
+            API=1
+            export ABI API PLATFORM_TRIPLET
+            export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.a
+            break
+            ;;
+        wasi64)
+            PLATFORM_TRIPLET=wasm64-unknow-wasi
+            ARCH=wasm64
+            ABI=wasi
+            API=1
             export ABI API PLATFORM_TRIPLET
             export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.a
             break
             ;;
         asmjs)
             PLATFORM_TRIPLET=asmjs-unknown-emscripten
-            ABI="asmjs"
-            API="asmjs"
+            ARCH=asmjs
+            ABI=fastcomp
+            API=1
             export ABI API PLATFORM_TRIPLET
             export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.so
             echo "ASM.JS support has been dropped"
@@ -480,11 +503,19 @@ END
     esac
 
 
+    export HOST_PLATFORM=${ARCH}_${API}_${PLATABI:-$ABI}
+
     mkdir -p ${BUILD_PREFIX}-${ABI_NAME}
 
     if cd ${BUILD_PREFIX}-${ABI_NAME}
     then
-        echo "Current architecture : $ABI_NAME"
+        echo "
+
+
+        Current architecture : $ABI_NAME HOST_PLATFORM = $HOST_PLATFORM
+    ============================================================================
+
+        "
     else
         echo "bad arch"
         continue
@@ -492,7 +523,7 @@ END
 
 
     # for disposal of things we don't want to land in prebuilt folder
-    export DISPOSE=${ROOT}/apkroot-${ANDROID_NDK_ABI_NAME}-discard
+    export DISPOSE=${ROOT}/apkroot-${ABI_NAME}-discard
 
     mkdir -p ${APKUSR} ${DISPOSE}
 
@@ -523,14 +554,14 @@ END
 
 #TODO: ANDROID_ARM_NEON // no need with ndk21+ neon is default
 
-    cat > ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/toolchain.cmake <<END
+    cat > ${BUILD_PREFIX}-${ABI_NAME}/toolchain.cmake <<END
 set(ANDROID_NDK_ROOT ${NDK_HOME})
 set(ANDROID_NDK ${NDK_HOME})
 set(ANDROID_NATIVE_API_LEVEL ${API})
 set(ANDROID_PLATFORM_LEVEL ${API})
 set(ANDROID_PLATFORM "android-${API}")
-set(ANDROID_ARCH ${ANDROID_NDK_ABI_NAME})
-set(ANDROID_ABI ${ANDROID_NDK_ABI_NAME})
+set(ANDROID_ARCH ${ABI_NAME})
+set(ANDROID_ABI ${ABI_NAME})
 set(CMAKE_CROSSCOMPILING ON)
 set(CMAKE_FIND_LIBRARY_PREFIXES lib)
 set(CMAKE_FIND_LIBRARY_SUFFIXES .so)
@@ -559,11 +590,11 @@ set(CMAKE_BUILD_TYPE "Release")
 END
 
     # == that env file can be handy for debugging compile failures.
-    export ACMAKE="$CMAKE -DANDROID_ABI=${ANDROID_NDK_ABI_NAME}\
- -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/toolchain.cmake\
+    export ACMAKE="$CMAKE -DANDROID_ABI=${ABI_NAME}\
+ -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ABI_NAME}/toolchain.cmake\
  -DCMAKE_INSTALL_PREFIX=${APKUSR}"
 
-    cat > ${HOST}/${ANDROID_NDK_ABI_NAME}.sh <<END
+    cat > ${HOST}/${ABI_NAME}.sh <<END
 #!/bin/sh
 export ANDROID_NDK_HOME=${NDK_HOME}
 export STRIP=$STRIP
@@ -583,7 +614,7 @@ END
 
 
 
-    grep -v 'Using custom NDK path'  ${NDK_HOME}/build/cmake/android.toolchain.cmake >> ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/toolchain.cmake
+    grep -v 'Using custom NDK path'  ${NDK_HOME}/build/cmake/android.toolchain.cmake >> ${BUILD_PREFIX}-${ABI_NAME}/toolchain.cmake
 
     # == building bzip2
 
@@ -662,7 +693,7 @@ export PATH="$EMSDK/upstream/emscripten:$BASEPATH"
 #export CC=$CC
 #export RANLIB=$RANLIB
 
-export PLATFORM_TRIPLET=${PLATFORM_TRIPLET}
+export PLATFORM_TRIPLET=${HOST_PLATFORM}
 
 export WCMAKE="$WCMAKE"
 

@@ -48,7 +48,7 @@ vorbis_build () {
 vorbis_crosscompile () {
     if [ -f  ${APKUSR}/lib/libvorbis.so ]
     then
-        echo "    -> vorbis already built for $ANDROID_NDK_ABI_NAME"
+        echo "    -> vorbis already built for $ABI_NAME"
     else
         PrepareBuild ${unit}
         if $ACMAKE \

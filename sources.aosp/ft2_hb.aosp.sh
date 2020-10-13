@@ -25,7 +25,7 @@ ft2_hb_crosscompile () {
 
     if [ -f ${APKUSR}/lib/libfreetype.so ]
     then
-        echo "    -> freetype2-harfbuzz already built for $ANDROID_NDK_ABI_NAME"
+        echo "    -> freetype2-harfbuzz already built for $ABI_NAME"
     else
         PrepareBuild ${unit}
 

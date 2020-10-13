@@ -38,7 +38,7 @@ sqlite3_build () {
 sqlite3_crosscompile () {
     if [ -f  ${APKUSR}/lib/libsqlite3.a ]
     then
-        echo "    -> sqlite3 already built for $ANDROID_NDK_ABI_NAME"
+        echo "    -> sqlite3 already built for $ABI_NAME"
     else
         PrepareBuild ${unit}
         $ACMAKE ${BUILD_SRC}/${unit}-prefix/src/${unit} && make -s install

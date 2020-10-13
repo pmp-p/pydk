@@ -44,9 +44,9 @@ openssl_crosscompile () {
 
         if [ -f  ${APKUSR}/lib/libssl.a ]
         then
-            echo "    -> openssl-${OPENSSL_VERSION}  built for $ANDROID_NDK_ABI_NAME"
+            echo "    -> openssl-${OPENSSL_VERSION}  built for $ABI_NAME"
         else
-            echo "ERROR: openssl-${OPENSSL_VERSION}  $ANDROID_NDK_ABI_NAME"
+            echo "ERROR: openssl-${OPENSSL_VERSION}  $ABI_NAME"
             exit 1
         fi
 

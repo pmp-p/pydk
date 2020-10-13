@@ -39,7 +39,7 @@ bzip2_build () {
 bzip2_crosscompile () {
     if [ -f ${APKUSR}/lib/libbz2.so ]
     then
-        echo "    -> libbz2 already built for $ANDROID_NDK_ABI_NAME"
+        echo "    -> libbz2 already built for $ABI_NAME"
     else
         Building bz2
 

@@ -254,7 +254,7 @@ $CXX -shared -fPIC -Wl,-soname,libbrokenthings.so -o ${APKUSR}/lib/libbrokenthin
 #-lbz2 -llzma
 
 PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig \\
-PLATFORM_TRIPLET=${PLATFORM_TRIPLET} \\
+PLATFORM_TRIPLET=${HOST_PLATFORM} \\
 CONFIG_SITE=config.site \\
  CFLAGS="$CFLAGS" \\
  \${_PYTHON_PROJECT_SRC}/configure --enable-shared --with-decimal-contextvar --without-ensurepip \\
@@ -283,8 +283,9 @@ DEF
     make ${JFLAGS} install | egrep -v "install|Creating|copying|renaming"
     if [ -f ${PYLIB}/_sysconfigdata__linux_${ARCH}-linux-${ABI}.py ]
     then
-        cp -vf ${PYLIB}/_sysconfigdata__linux_${ARCH}-linux-${ABI}.py ${PYLIB}/_sysconfigdata__android_${ARCH}-linux-${ABI}.py
-        cp -vf ${PYLIB}/_sysconfigdata__*_${ARCH}-linux-${ABI}.py ${PYASSETS}/
+        echo
+        #cp -vf ${PYLIB}/_sysconfigdata__linux_${ARCH}-linux-${ABI}.py ${PYLIB}/_sysconfigdata__android_${ARCH}-linux-${ABI}.py
+        #cp -vf ${PYLIB}/_sysconfigdata__*_${ARCH}-linux-${ABI}.py ${PYASSETS}/
     fi
 else
     echo ================== ${BUILD_SRC}/build.log ===================
@@ -310,15 +311,15 @@ python3_crosscompile () {
     if [ -f ${APKUSR}/lib/$LIBPYTHON ]
     then
 
-        echo "    -> $LIBPYTHON already built for $ANDROID_NDK_ABI_NAME"
+        echo "    -> $LIBPYTHON already built for $ABI_NAME"
 
     else
         echo " * configure target==$LIBPYTHON $PLATFORM_TRIPLET"
 
-        cd ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}
+        cd ${BUILD_PREFIX}-${ABI_NAME}
 
-        mkdir -p python3-${ANDROID_NDK_ABI_NAME}
-        cd python3-${ANDROID_NDK_ABI_NAME}
+        mkdir -p python3-${ABI_NAME}
+        cd python3-${ABI_NAME}
 
         _PYTHON_PROJECT_SRC=${PYTARGET}
         _PYTHON_PROJECT_BASE=$(pwd)

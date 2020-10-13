@@ -44,7 +44,7 @@ libffi_build () {
 libffi_crosscompile () {
     if [ -f ${APKUSR}/lib/libffi.so ]
     then
-        echo "    -> libffi already built for $ANDROID_NDK_ABI_NAME"
+        echo "    -> libffi already built for $ABI_NAME"
     else
         Building libffi
 

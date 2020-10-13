@@ -37,7 +37,7 @@ openal_crosscompile () {
 
     if [ -f  ${APKUSR}/lib/libopenal.so ]
     then
-        echo "    -> OpenAL already built for $ANDROID_NDK_ABI_NAME"
+        echo "    -> OpenAL already built for $ABI_NAME"
     else
 
         PrepareBuild ${unit}

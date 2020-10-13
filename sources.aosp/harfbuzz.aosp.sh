@@ -40,13 +40,13 @@ harfbuzz_build () {
 harfbuzz_crosscompile () {
     if [ -f  ${APKUSR}/lib/libharfbuzz.so ]
     then
-        echo "    -> harfbuzz already built for $ANDROID_NDK_ABI_NAME"
+        echo "    -> harfbuzz already built for $ABI_NAME"
     else
 
         PrepareBuild ${unit}
 
-        cat ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/toolchain.cmake > ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/${unit}.toolchain.cmake
-        cat >> ${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/${unit}.toolchain.cmake <<END
+        cat ${BUILD_PREFIX}-${ABI_NAME}/toolchain.cmake > ${BUILD_PREFIX}-${ABI_NAME}/${unit}.toolchain.cmake
+        cat >> ${BUILD_PREFIX}-${ABI_NAME}/${unit}.toolchain.cmake <<END
 
 set(FREETYPE_DIR ${APKUSR})
 set(FREETYPE_INCLUDE_DIRS "${APKUSR}/include")
@@ -60,8 +60,8 @@ END
 
         HARFBUZZ_CMAKE_ARGS="-DBUILD_SHARED_LIBS=YES -DHB_HAVE_FREETYPE=ON -DHB_BUILD_TESTS=NO"
 
-        HARFBUZZ_ACMAKE="$CMAKE -DANDROID_ABI=${ANDROID_NDK_ABI_NAME}\
- -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ANDROID_NDK_ABI_NAME}/${unit}.toolchain.cmake\
+        HARFBUZZ_ACMAKE="$CMAKE -DANDROID_ABI=${ABI_NAME}\
+ -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ABI_NAME}/${unit}.toolchain.cmake\
  -DCMAKE_INSTALL_PREFIX=${APKUSR}"
 
         if $HARFBUZZ_ACMAKE $HARFBUZZ_CMAKE_ARGS ${BUILD_SRC}/${unit}-prefix/src/${unit} >/dev/null

@@ -46,7 +46,7 @@ freetype2_crosscompile () {
     PrepareBuild ${unit}
     if [ -f ${APKUSR}/lib/libfreetype.a ]
     then
-        echo "    -> freetype2-static already built for $ANDROID_NDK_ABI_NAME"
+        echo "    -> freetype2-static already built for $ABI_NAME"
     else
         FRETYPE2_CMAKE_ARGS="-DBUILD_SHARED_LIBS=NO \
  -DFT_WITH_BZIP2=ON -DFT_WITH_ZLIB=ON -DFT_WITH_PNG=NO\

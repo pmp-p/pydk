@@ -6,6 +6,22 @@
 
 # https://bugs.python.org/issue28833 cross compilation of third-party extension modules
 
+# https://github.com/google/python-adb
+# https://github.com/appknox/adb-join-wifi
+# https://github.com/appknox/AndroidProxySetter
+# https://github.com/fujiawei-dev/cerium
+# https://pypi.org/project/androidautotest/
+# https://pypi.org/project/androidvideo/
+# https://github.com/OzymandiasTheGreat/Joy2DroidX
+
+
+
+# prevent from using user installed packages
+export PYTHONPYCACHEPREFIX=${PYTHONPYCACHEPREFIX}
+export HOME=${PYTHONPYCACHEPREFIX}
+
+# install Cython in build python
+pip3 install Cython
 
 mkdir -p ${ORIGIN}/pydk-min/prebuilt/${ABI_NAME}
 
@@ -18,6 +34,14 @@ mkdir -p ${ORIGIN}/pydk-min/${ENV}/apkroot-${ABI_NAME}/usr
 /bin/cp -rf ${APKUSR}/include ${ORIGIN}/pydk-min/${ENV}/apkroot-${ABI_NAME}/usr
 
 
+# seed some modules to build
+
+cat <<END > "${ORIGIN}/projects/requirements.txt"
+numpy
+pyjnius
+plyer
+END
+
 echo " * cross compiling third party modules"
 
 cd ${BUILD_PREFIX}-${ABI_NAME}
@@ -26,63 +50,27 @@ mkdir -p pip-${ABI_NAME}
 
 cd pip-${ABI_NAME}
 
-export CROSSDIR=$(pwd)
+
+function cross_pip {
+    MODE=$1
+    shift
+    ${ROOT}/bin/python3-${ABI_NAME} -m pip $MODE --use-feature=2020-resolver --no-use-pep517 --no-binary :all: $@
+}
+
 
 #six
-PREREQ="pip wheel"
+#PREREQ="cython wheel"
+#cross_pip install ${PREREQ}
 
-${ROOT}/bin/pip3 download --dest ${CROSSDIR} --no-binary :all: setuptools ${PREREQ}
-
-cd ${CROSSDIR}
-
-unzip -q -o setuptools-*.zip && rm setuptools-*.zip
-
-#tar xfz Cython-*.tar.gz && rm Cython-*.tar.gz
-
-
-for mod in $PREREQ
+for req in $(find "${ORIGIN}/projects" -maxdepth 2 -type f |grep /requirements.txt$)
 do
-    tar xfz ${mod}-*.tar.gz && rm ${mod}-*.tar.gz
-done
-
-for PKG in setuptools ${PREREQ}
-do
-    cd ${CROSSDIR}
-    if cd ${PKG}-*
-    then
-        if ${ROOT}/bin/python3-${ABI_NAME} -c "import ${PKG};print(${PKG}.__file__)" |grep apkroot
-        then
-            echo "  * ${PKG} already ready for ${ABI_NAME}"
-        else
-            if ${ROOT}/bin/python3-${ABI_NAME} setup.py install
-            then
-                echo "  -> ${PKG} installed for ${ABI_NAME}"
-            else
-                echo "ERROR can't install ${PKG} from ${CROSSDIR}"
-                exit 1
-            fi
-        fi
-        cd ${CROSSDIR}
-        rm -rf ./${PKG}-*
-    else
-        echo "ERROR can't find ${PKG}-* in ${CROSSDIR}"
-        exit 1
-    fi
-done
-
-
-for req in ${ORIGIN}/projects/*/requirements.txt
-do
-    if ${ROOT}/bin/python3-${ABI_NAME} -m pip install --no-use-pep517 --no-binary :all: -r $req
+    if cross_pip -r $req
     then
         echo ok
     else
         echo "ERROR: pip install $req failed"
-        #exit 1
-        #read
     fi
 done
-
 
 # TODO: build/patch from sources pip packages here.
 # ${ROOT}/bin/pip3 download --dest ${CROSSDIR} --no-binary :all: setuptools pip
@@ -99,30 +87,6 @@ do
         cp -ru $req ${ORIGIN}/assets/packages/
     fi
 done
-
-
-
-
-
-
-if false
-then
-
-    for req in ${ORIGIN}/projects/*/requirements-jni.txt
-    do
-        if $CROSSPIP -r $req
-        then
-            echo $req OK
-        else
-            echo "ERROR: failed to cross build [$req]"
-        fi
-    done
-
-
-    ls ${BUILD_SRC}/pip
-
-
-fi
 
 cat > ${BUILD_PREFIX}-${ABI_NAME}/pip_lib.py  <<END
 import os

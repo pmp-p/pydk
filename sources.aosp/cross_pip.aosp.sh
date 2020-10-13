@@ -36,18 +36,45 @@ cross_pip_crosscompile () {
 
 #. ${ROOT}/bin/activate
 
+export _PYTHON_HOST_PLATFORM=$HOST_PLATFORM
+
+
 export PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig
 
 export PS1="[PyDK:$ABI_NAME] \w \$ "
 
-export HOSTPYPATH=${HOST}/lib/python${PYMAJOR}.${PYMINOR}:${HOST}/lib/python${PYMAJOR}.${PYMINOR}/lib-dynload
-export PYTHONPATH=${ORIGIN}/assets/python${PYMAJOR}.${PYMINOR}:${APKUSR}/lib/python${PYMAJOR}.${PYMINOR}:\$HOSTPYPATH:${PYDROID}/Lib
+export PYTHONPYCACHEPREFIX=${PYTHONPYCACHEPREFIX}
+export HOME=${PYTHONPYCACHEPREFIX}
+
+cat >$PYTHONPYCACHEPREFIX/.numpy-site.cfg <<NUMPY
+[DEFAULT]
+library_dirs = ${APKUSR}/lib
+include_dirs = ${APKUSR}/include
+NUMPY
+
+export PYTHONPATH=\
+${ORIGIN}/assets/python${PYMAJOR}.${PYMINOR}:\
+${APKUSR}/lib/python${PYMAJOR}.${PYMINOR}:\
+${HOST}/lib/python${PYMAJOR}.${PYMINOR}:\
+${HOST}/lib/python${PYMAJOR}.${PYMINOR}/site-packages:\
+${HOST}/lib/python${PYMAJOR}.${PYMINOR}/lib-dynload
+
+
 export _PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata__android_${ARCH}-linux-${ABI}
 export PYTHONHOME=${APKUSR}
 
 ${HOST}/bin/python3 -u -B "\$@"
+
 END
-    chmod +x ${ROOT}/bin/python3-${ABI_NAME}
+
+    cat > ${ROOT}/bin/pip3-${ABI_NAME} <<END
+#!/bin/sh
+MODE=\$1
+shift
+${ROOT}/bin/python3-${ABI_NAME} -m pip \$MODE --use-feature=2020-resolver --no-use-pep517 --no-binary :all: \$@
+END
+
+    chmod +x ${ROOT}/bin/python3-${ABI_NAME} ${ROOT}/bin/pip3-${ABI_NAME}
     . ${ORIGIN}/cross-modules.sh
 }
 

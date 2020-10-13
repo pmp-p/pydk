@@ -49,7 +49,7 @@ bullet3_crosscompile () {
         PrepareBuild ${unit}
     if [ -f ${APKUSR}/lib/libLinearMath.so ]
     then
-        echo "    -> bullet3 already built for $ANDROID_NDK_ABI_NAME"
+        echo "    -> bullet3 already built for $ABI_NAME"
     else
         BULLET3_CMAKE_ARGS="-DBUILD_SHARED_LIBS=YES -DUSE_DOUBLE_PRECISION=NO\
  -DBUILD_UNIT_TESTS=NO -DBUILD_EXTRAS=NO -DBUILD_CPU_DEMOS=NO\

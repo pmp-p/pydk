@@ -34,7 +34,7 @@ lzma_crosscompile () {
 
     if [ -f ${APKUSR}/lib/liblzma.a ]
     then
-        echo "    -> liblzma already built for $ANDROID_NDK_ABI_NAME"
+        echo "    -> liblzma already built for $ABI_NAME"
     else
         Building lzma
 
