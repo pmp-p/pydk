@@ -30,7 +30,7 @@ jobs:
             echo panda3d support
             sudo apt-get install -y libbullet-dev libfreetype6-dev libjpeg-dev libode-dev libopenal-dev libpng-dev libssl-dev libogg-dev libvorbis-dev  >/dev/null
             echo pyproot support
-            sudo apt-get install -y libtalloc- dev libfuse3- dev
+            sudo apt-get install -y libtalloc-dev libfuse3-dev
             echo emscripten support
             git clone https://github.com/emscripten-core/emsdk.git
             cd emsdk && ./emsdk update-tags && ./emsdk install --embedded latest && ./emsdk activate --embedded latest

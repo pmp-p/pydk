@@ -72,11 +72,6 @@ function cross_pip {
     ${ROOT}/bin/python3-${ABI_NAME} -m pip $MODE --use-feature=2020-resolver --no-use-pep517 --no-binary :all: $@
 }
 
-
-#six
-#PREREQ="cython wheel"
-#cross_pip install ${PREREQ}
-
 for req in $(find "${ORIGIN}/projects" -maxdepth 2 -type f |grep /requirements.txt$)
 do
     if cross_pip -r $req
@@ -189,15 +184,6 @@ target_link_libraries(jnilink
 END
 
 ${HOST}/bin/python3 -u -B ${BUILD_PREFIX}-${ABI_NAME}/pip_lib.py
-
-
-
-
-
-
-
-
-
 
 
 
