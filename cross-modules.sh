@@ -34,13 +34,28 @@ mkdir -p ${ORIGIN}/pydk-min/${ENV}/apkroot-${ABI_NAME}/usr
 /bin/cp -rf ${APKUSR}/include ${ORIGIN}/pydk-min/${ENV}/apkroot-${ABI_NAME}/usr
 
 
-# seed some modules to build
 
-cat <<END > "${ORIGIN}/projects/requirements.txt"
+if [ -d ${ORIGIN}/projects ]
+then
+        echo " * using local projects"
+else
+    git clone https://github.com/pmp-p/projects.git projects
+fi
+
+if [ -f "${ORIGIN}/projects/requirements.txt" ]
+then
+    echo " * using local projects pip requirements"
+else
+    # seed some usefull modules to build
+    cat <<END > "${ORIGIN}/projects/requirements.txt"
 numpy
 pyjnius
 plyer
+pyglet
 END
+
+fi
+
 
 echo " * cross compiling third party modules"
 
@@ -116,6 +131,9 @@ else:
 print(f"SUFFIX = {SUFFIX}")
 
 for libpath in FOUND:
+    if "$ABI_NAME" == "wasm":
+        print("libpath={}".format(libpath))
+    if not libpath:continue
     folder, lib = libpath.rsplit('/',1)
 
     # module can be in "site-packages" "lib-dynload" or none of them

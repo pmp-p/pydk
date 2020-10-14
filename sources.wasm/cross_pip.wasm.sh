@@ -1,15 +1,9 @@
-# https://packaging.python.org/guides/hosting-your-own-index/
-# pypiserver - minimal PyPI server for use with pip/easy_inst
-all https://pypi.org/project/pypiserver/
-
+# pypiserver - minimal PyPI server for use with pip/easy_install https://pypi.org/project/pypiserver/
 # Upload source distributions of your requirements to your PyPI server. https://pypi.org/project/pypi-uploader/
-
 # pip2pi builds a PyPI-compatible package repository from pip requirements. https://github.com/wolever/pip2pi
-
+#
 # Guide for how to create a (minimal) private PyPI repo, just using Apache with directory autoindex, and pip with an extra index URL.
 # https://gist.github.com/Jaza/fcea493dd0ba6ebf09d3
-
-
 
 
 
@@ -74,7 +68,7 @@ ${HOST}/lib/python${PYMAJOR}.${PYMINOR}/site-packages:\
 ${HOST}/lib/python${PYMAJOR}.${PYMINOR}/lib-dynload
 
 
-export _PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata__android_${HOST_PLATFORM}
+export _PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata__unknown_$HOST_PLATFORM
 export PYTHONHOME=${APKUSR}
 
 ${HOST}/bin/python3 -u -B "\$@"

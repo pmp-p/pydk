@@ -274,7 +274,7 @@ export CFLAGS='$EM_FLAGS'
 # --with-libs='-L${APKUSR}/lib -lz -lm'
 
 PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig\\
- PLATFORM_TRIPLET=${PLATFORM_TRIPLET}\\
+ PLATFORM_TRIPLET=${HOST_PLATFORM} \\
  CONFIG_SITE=config.site\\
  READELF=true\\
  emconfigure \${_PYTHON_PROJECT_SRC}/configure --cache-file=${SUPPORT}/cache.${API}.${PLATFORM_TRIPLET} \\
@@ -348,8 +348,9 @@ DEF
     #| egrep -v "install|Creating|copying|renaming"
     if [ -f ${PYLIB}/_sysconfigdata__linux_${ARCH}-linux-${ABI}.py ]
     then
-        cp -vf ${PYLIB}/_sysconfigdata__linux_${ARCH}-linux-${ABI}.py ${PYLIB}/_sysconfigdata__android_${ARCH}-linux-${ABI}.py
-        cp -vf ${PYLIB}/_sysconfigdata__*_${ARCH}-linux-${ABI}.py ${PYASSETS}/
+        echo
+        #cp -vf ${PYLIB}/_sysconfigdata__linux_${ARCH}-linux-${ABI}.py ${PYLIB}/_sysconfigdata__android_${ARCH}-linux-${ABI}.py
+        #cp -vf ${PYLIB}/_sysconfigdata__*_${ARCH}-linux-${ABI}.py ${PYASSETS}/
     fi
 else
     echo ================== ${BUILD_SRC}/build.log ===================
@@ -472,21 +473,6 @@ python3_crosscompile () {
             break
         fi
 
-        #========================================================
-
-#        if [ -f ${APKUSR}/lib/${LIBPYTHON} ]
-#        then
-#
-#            mkdir -p ${ORIGIN}/prebuilt/${ABI_NAME}
-#            #mv ${APKUSR}/lib/lib*.so ${ORIGIN}/prebuilt/${ABI_NAME}/
-#
-#            # keep a copy so module can cross compile
-#
-#            /bin/cp -vf ${APKUSR}/lib/lib* ${ORIGIN}/prebuilt/${ABI_NAME}/
-#            echo " done"
-#        else
-#            break
-#        fi
     fi
 
 

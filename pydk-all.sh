@@ -466,44 +466,38 @@ END
             PLATFORM_TRIPLET=wasm-unknown-emscripten
             ARCH=wasm
             API=1
-            ABI="emscripten"
-            export ABI API PLATFORM_TRIPLET
-            export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.a
-            break
+            ABI=emscripten
+            LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.a
             ;;
         wasi32)
             PLATFORM_TRIPLET=wasm32-unknow-wasi
             ARCH=wasm32
-            ABI=wasi
             API=1
-            export ABI API PLATFORM_TRIPLET
-            export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.a
-            break
+            ABI=wasi
+            LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.a
             ;;
         wasi64)
             PLATFORM_TRIPLET=wasm64-unknow-wasi
             ARCH=wasm64
-            ABI=wasi
             API=1
-            export ABI API PLATFORM_TRIPLET
-            export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.a
-            break
+            ABI=wasi
+            LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.a
             ;;
         asmjs)
             PLATFORM_TRIPLET=asmjs-unknown-emscripten
             ARCH=asmjs
-            ABI=fastcomp
             API=1
-            export ABI API PLATFORM_TRIPLET
-            export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.so
+            ABI=fastcomp
+            LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.so
             echo "ASM.JS support has been dropped"
             exit 1
-            break
             ;;
     esac
 
-
+    export ABI API PLATFORM_TRIPLET LIBPYTHON
     export HOST_PLATFORM=${ARCH}_${API}_${PLATABI:-$ABI}
+
+    unset PLATABI
 
     mkdir -p ${BUILD_PREFIX}-${ABI_NAME}
 
@@ -519,6 +513,16 @@ END
     else
         echo "bad arch"
         continue
+    fi
+
+    if echo $PLATFORM_TRIPLET|grep -q wasm
+    then
+        break
+    fi
+
+    if echo $PLATFORM_TRIPLET|grep -q asmjs
+    then
+        break
     fi
 
 
@@ -720,6 +724,18 @@ wcmake () {
 END
 
 export UNITS="openssl libffi python3 vorbis panda3d panda3dffi"
+
+if [ -f "${SUPPORT}/cross_pip.wasm.sh" ]
+then
+    UNITS="$UNITS cross_pip"
+else
+    echo "
+    ********************************************************************************
+    cross-pip not found ${SUPPORT}/cross_pip.wasm.sh
+    cross-modules wont't run, that means disabling *any* extra python modules
+    ********************************************************************************
+    "
+fi
 
 for unit in $UNITS
 do
