@@ -66,7 +66,8 @@ mkdir -p pip-${ABI_NAME}
 cd pip-${ABI_NAME}
 
 
-function cross_pip {
+function cross_pip
+{
     MODE=$1
     shift
     ${ROOT}/bin/python3-${ABI_NAME} -m pip $MODE --use-feature=2020-resolver --no-use-pep517 --no-binary :all: $@

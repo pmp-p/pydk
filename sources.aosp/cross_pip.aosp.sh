@@ -9,6 +9,7 @@ all https://pypi.org/project/pypiserver/
 # Guide for how to create a (minimal) private PyPI repo, just using Apache with directory autoindex, and pip with an extra index URL.
 # https://gist.github.com/Jaza/fcea493dd0ba6ebf09d3
 
+# https://www.freecodecamp.org/news/how-to-use-github-as-a-pypi-server-1c3b0d07db2/
 
 
 
