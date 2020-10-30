@@ -383,6 +383,9 @@ em_make () {
     fi
 }
 
+
+$HOST/bin/python3 -m pip install --upgrade pip
+
 echo
 echo "ARCHITECTURES=[$ARCHITECTURES]"
 echo
@@ -405,6 +408,12 @@ do
     export APKUSR=${ROOT}/apkroot-${ABI_NAME}/usr
 
     export PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig
+
+
+    # == that can be handy for debugging compile failures, put it in the shell too.
+    export ACMAKE="$CMAKE -DANDROID_ABI=${ABI_NAME}\
+ -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ABI_NAME}/toolchain.cmake\
+ -DCMAKE_INSTALL_PREFIX=${APKUSR}"
 
     # == a shell for one arch, with a ready to use cmake cross compile command
     cat > $ORIGIN/shell.${ABI_NAME}.sh <<END
@@ -494,7 +503,7 @@ END
             ;;
     esac
 
-    export ABI API PLATFORM_TRIPLET LIBPYTHON
+    export ABI ABI_NAME API PLATFORM_TRIPLET LIBPYTHON
     export HOST_PLATFORM=${ARCH}_${API}_${PLATABI:-$ABI}
 
     unset PLATABI
@@ -593,10 +602,6 @@ set(CMAKE_CONFIGURATION_TYPES "Release")
 set(CMAKE_BUILD_TYPE "Release")
 END
 
-    # == that env file can be handy for debugging compile failures.
-    export ACMAKE="$CMAKE -DANDROID_ABI=${ABI_NAME}\
- -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ABI_NAME}/toolchain.cmake\
- -DCMAKE_INSTALL_PREFIX=${APKUSR}"
 
     cat > ${HOST}/${ABI_NAME}.sh <<END
 #!/bin/sh

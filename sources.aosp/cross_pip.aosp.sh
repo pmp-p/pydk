@@ -75,7 +75,7 @@ ${HOST}/lib/python${PYMAJOR}.${PYMINOR}/site-packages:\
 ${HOST}/lib/python${PYMAJOR}.${PYMINOR}/lib-dynload
 
 
-export _PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata__android_${HOST_PLATFORM}
+export _PYTHON_SYSCONFIGDATA_NAME=_sysconfigdata__linux_${HOST_PLATFORM}
 export PYTHONHOME=${APKUSR}
 
 ${HOST}/bin/python3 -u -B "\$@"
