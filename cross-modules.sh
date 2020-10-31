@@ -75,7 +75,7 @@ function cross_pip
 
 for req in $(find "${ORIGIN}/projects" -maxdepth 2 -type f |grep /requirements.txt$)
 do
-    if cross_pip -r $req
+    if cross_pip install -r $req
     then
         echo ok
     else

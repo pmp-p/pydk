@@ -663,6 +663,7 @@ echo " * adding wasm build"
 export ENV="wasm"
 export ROOT="${ORIGIN}/${ENV}"
 export BUILD_PREFIX="${ROOT}/build"
+export CMAKE=${ROOT}/bin/cmake
 
 export SUPPORT="${ORIGIN}/sources.${ENV}"
 export APKUSR="${ROOT}/apkroot-${ABI_NAME}/usr"
@@ -693,14 +694,14 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOST}/lib64:${HOST}/lib
 export PATH="$EMSDK/upstream/emscripten:$BASEPATH"
 
 
-#export STRIP=$STRIP
-#export READELF=$READELF
-#export AR=$AR
-#export AS=$AS
-#export LD=$LD
-#export CXX=$CXX
-#export CC=$CC
-#export RANLIB=$RANLIB
+#export STRIP=STRIP
+#export READELF=READELF
+#export AR=AR
+#export AS=AS
+#export LD=LD
+#export CXX=CXX
+#export CC=CC
+#export RANLIB=RANLIB
 
 export PLATFORM_TRIPLET=${HOST_PLATFORM}
 
