@@ -1,6 +1,6 @@
 # https://packaging.python.org/guides/hosting-your-own-index/
 # pypiserver - minimal PyPI server for use with pip/easy_inst
-all https://pypi.org/project/pypiserver/
+# all https://pypi.org/project/pypiserver/
 
 # Upload source distributions of your requirements to your PyPI server. https://pypi.org/project/pypi-uploader/
 
