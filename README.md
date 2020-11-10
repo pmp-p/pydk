@@ -30,7 +30,7 @@ Its next big step is to package only testsuites and provides local wheels.
 ```
 Requirements:
     * python 3.7/8 installed
-    * clang/clang++ 8+ full build env
+    * clang/clang++ 8+ full build env ( including git )
     * android-sdk + android-ndk
     * all Panda3D requirements
     * about 16 GiB free disk space
@@ -171,5 +171,4 @@ EGL Terminal running Panda3D+LUI GLES 2.0  and Tilde VT100 editor at the same ti
 * [H3droid](https://h3droid.com) An image developed specifically to work on Allwinner H3 based devices #h3droid on freenode
 
 --
-
 

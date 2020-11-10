@@ -1,0 +1,25 @@
+--- Python-3.9.0/Python/fileutils.c	2020-10-05 17:07:58.000000000 +0200
++++ Python-3.9.0-aosp/Python/fileutils.c	2020-11-09 08:45:24.129783316 +0100
+@@ -51,6 +51,16 @@
+ }
+ 
+ 
++//PMPP API<21
++#ifdef __ANDROID__
++    #if __ANDROID_API__ < 21
++        #ifndef CRYSTAX
++            #define NO_LOCALECONV 1
++        #endif
++    #endif
++#endif
++//PMPP API<21
++
+ PyObject *
+ _Py_device_encoding(int fd)
+ {
+@@ -2091,3 +2101,5 @@
+     PyMem_Free(oldloc);
+     return res;
+ }
++
++

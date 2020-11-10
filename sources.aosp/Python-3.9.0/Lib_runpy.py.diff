@@ -1,0 +1,11 @@
+--- Python-3.9.0/Lib/runpy.py	2020-10-05 17:07:58.000000000 +0200
++++ Python-3.9.0-aosp/Lib/runpy.py	2020-11-09 08:45:24.041786357 +0100
+@@ -138,7 +138,7 @@
+                     f"'{mod_name}' as the module name.")
+         raise error(msg.format(mod_name, type(ex).__name__, ex)) from ex
+     if spec is None:
+-        raise error("No module named %s" % mod_name)
++        raise error("No module named5 %s" % mod_name)
+     if spec.submodule_search_locations is not None:
+         if mod_name == "__main__" or mod_name.endswith(".__main__"):
+             raise error("Cannot use package as __main__ module")

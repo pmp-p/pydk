@@ -10,7 +10,7 @@ else
     echo "not bash, those previously rising errors are ash/sh/dash/... flavours"
 fi
 
-PYMINOR_DEFAULT=8
+PYMINOR_DEFAULT=9
 
 export PYMAJOR=3
 export PYMINOR=${PYMINOR:-$PYMINOR_DEFAULT}
@@ -21,8 +21,9 @@ then
     export PYVER=${PYMAJOR}.${PYMINOR}.7
     export OPENSSL_VERSION="1.0.2t"
 else
-# python 3.8.x
-    export PYVER=${PYMAJOR}.${PYMINOR}.5
+# python 3.8.x / 3.9.x
+    #export PYVER=${PYMAJOR}.${PYMINOR}.5
+    export PYVER=${PYMAJOR}.${PYMINOR}.0
     export OPENSSL_VERSION="1.1.1h"
 fi
 
@@ -33,9 +34,6 @@ export HOST_TRIPLET=x86_64-linux-gnu
 export HOST_TAG=linux-x86_64
 
 #tested
-export CMAKE_VERSION=3.10.3
-
-#new
 export CMAKE_VERSION=3.13.0
 
 
@@ -53,7 +51,6 @@ export HOME=${PYTHONPYCACHEPREFIX}
 
 #UNITS="unit"
 UNITS=""
-
 
 
 # select a place for android build
@@ -77,10 +74,6 @@ pwd
 fi
 
 #tested
-PATCHELF_URL="URL https://github.com/NixOS/patchelf/archive/0.10.tar.gz"
-PATCHELF_HASH="URL_HASH SHA256=b3cb6bdedcef5607ce34a350cf0b182eb979f8f7bc31eae55a93a70a3f020d13"
-
-#new
 PATCHELF_URL="URL https://github.com/NixOS/patchelf/archive/0.12.tar.gz"
 PATCHELF_HASH="URL_HASH SHA256=3dca33fb862213b3541350e1da262249959595903f559eae0fbc68966e9c3f56"
 

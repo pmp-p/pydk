@@ -39,6 +39,8 @@ ac_cv_func_crypt_r=no
 ac_cv_search_crypt_r=no
 
 ac_cv_func_getpid=yes
+
+ac_cv_func_readlink=yes
 END
 
 }
@@ -127,7 +129,7 @@ _decimal _decimal/_decimal.c \
  _decimal/libmpdec/fnt.c \
  _decimal/libmpdec/fourstep.c \
  _decimal/libmpdec/io.c \
- _decimal/libmpdec/memory.c \
+ _decimal/libmpdec/mpalloc.c \
  _decimal/libmpdec/mpdecimal.c \
  _decimal/libmpdec/numbertheory.c \
  _decimal/libmpdec/sixstep.c \

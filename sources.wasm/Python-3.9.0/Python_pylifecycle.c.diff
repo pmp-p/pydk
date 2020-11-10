@@ -1,0 +1,20 @@
+--- Python-3.9.0/Python/pylifecycle.c	2020-10-05 17:07:58.000000000 +0200
++++ Python-3.9.0-wasm/Python/pylifecycle.c	2020-11-09 08:40:31.567883505 +0100
+@@ -2514,6 +2514,8 @@
+     if (sigaction(sig, NULL, &context) == -1)
+         return SIG_ERR;
+     return context.sa_handler;
++#elif defined(__EMSCRIPTEN__)
++    return SIG_ERR;
+ #else
+     PyOS_sighandler_t handler;
+ /* Special signal handling for the secure CRT in Visual Studio 2005 */
+@@ -2560,6 +2562,8 @@
+     if (sigaction(sig, &context, &ocontext) == -1)
+         return SIG_ERR;
+     return ocontext.sa_handler;
++#elif defined(__EMSCRIPTEN__)
++    return SIG_ERR;
+ #else
+     PyOS_sighandler_t oldhandler;
+     oldhandler = signal(sig, handler);

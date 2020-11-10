@@ -1,0 +1,13 @@
+--- Python-3.9.0/Modules/_ctypes/callbacks.c	2020-10-05 17:07:58.000000000 +0200
++++ Python-3.9.0-wasm/Modules/_ctypes/callbacks.c	2020-11-09 08:40:31.467886955 +0100
+@@ -361,8 +361,8 @@
+ 
+     assert(CThunk_CheckExact((PyObject *)p));
+ 
+-    p->pcl_write = ffi_closure_alloc(sizeof(ffi_closure),
+-                                                                         &p->pcl_exec);
++    p->pcl_write = ffi_closure_alloc(sizeof(ffi_closure), &p->pcl_exec);
++
+     if (p->pcl_write == NULL) {
+         PyErr_NoMemory();
+         goto error;

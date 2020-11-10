@@ -12,7 +12,13 @@ except Exception as e:
             pass
 
 
+import rlcompleter
+
+
 class ReadInput(pyreadline.ReadLine, ReadTouch, aio.runnable):
+
+    completer = rlcompleter.Completer().complete
+
     MB = {
         "B": "",
         "C": 0,
@@ -23,39 +29,54 @@ class ReadInput(pyreadline.ReadLine, ReadTouch, aio.runnable):
         "D": {"": ""},
     }
     CR = "\r"
+    LF = "\n"
     ESC = "\x1b[C"
 
     def putc(self, c):
-        oldbuf = len(self.line)
-        oldpos = self.caret
-        out = f'{" " * (oldbuf + 4)}\r'
-        embed.demux_fd(1, out)
-        #if c == pyreadline.CR:
-        #    embed.log("CR!")
+        extra = 0
+        b = byte(c)
 
-        if c == pyreadline.LF:
-            res = self.process_char(pyreadline.LF)
+        if b == b"\x09":
+            if len(self.line):
+                rlc = self.completer(self.line, 0) or self.line
+                if rlc == self.line:
+                    return
             self.reset()
-
-            embed.demux_fd(1, f'+-> {res}\r\n')
-            embed.stdio_append(0,res+"\n") #; + ";print('pouet');sys.stdout.flush();embed.demux_fd(1,'++> ')")
-
-            #TODO: set a prompt display to be set after exec in next loop
-            embed.prompt_request()
-
+            self.process_str(rlc)
+            out = f"{self.CR}T>> {self.line}"
+            return
         else:
-            self.process_char(c)
 
-            out = f"$>> {self.line}"
-            if oldpos > self.caret:
-                # embed.log('cursor move left %s > %s' % (oldpos,self.caret) )
-                out += f'{out}{self.CR}{self.ESC * (self.caret + 4)}'
-            elif self.caret < len(self.line):
-                # embed.log('cursor move right %s > %s %s' % (oldpos,self.caret,len(self.line)) )
-                out += f'{out}{self.CR}{self.ESC * (self.caret + 4)}'
-            sys.stdout.flush()
+            if b == b"\x08":
+                extra = 1
+
+            # clear old line including prompt
+            oldbuf = len(self.line)
+            oldpos = self.caret
+            out = f'{self.CR}{" " * (oldbuf + 4 + extra)}{self.CR}'
             embed.demux_fd(1, out)
 
+            # overwrite cleaned space
+            if b == pyreadline.LF:
+                res = self.process_char(c)
+                self.reset()
+
+                embed.demux_fd(1, f"+-> {res}{self.CR}{self.LF}")
+                embed.stdio_append(0, res + "\n")  # ; + ";print('pouet');sys.stdout.flush();embed.demux_fd(1,'++> ')")
+
+                # TODO: set a prompt display to be set after exec in next loop
+                embed.prompt_request()
+                return
+
+            # add the new char
+            self.process_char(c)
+
+        # or just display completion
+
+        out = f">>> {self.line}{self.CR}{self.ESC * (self.caret + 4)}"
+
+        sys.stdout.flush()
+        embed.demux_fd(1, out)
 
     if __EMSCRIPTEN__:
 
@@ -92,7 +113,7 @@ class ReadInput(pyreadline.ReadLine, ReadTouch, aio.runnable):
                 for c in bytes(ubuf).decode():
                     self.putc(c)
                 ubuf.clear()
-                #sys.stdout.flush()
+                # sys.stdout.flush()
 
 
 aio.inputs = {}

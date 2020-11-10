@@ -34,6 +34,12 @@ mkdir -p ${ORIGIN}/pydk-min/${ENV}/apkroot-${ABI_NAME}/usr
 /bin/cp -rf ${APKUSR}/include ${ORIGIN}/pydk-min/${ENV}/apkroot-${ABI_NAME}/usr
 
 
+if [ -d ${ORIGIN}/wapy-lib ]
+then
+        echo " * using local stdlib"
+else
+    git clone --single-branch --branch wapy-wipdonotuse https://github.com/pmp-p/wapy-lib.git wapy-lib
+fi
 
 if [ -d ${ORIGIN}/projects ]
 then

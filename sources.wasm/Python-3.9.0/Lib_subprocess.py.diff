@@ -1,0 +1,12 @@
+--- Python-3.9.0/Lib/subprocess.py	2020-10-05 17:07:58.000000000 +0200
++++ Python-3.9.0-wasm/Lib/subprocess.py	2020-11-09 08:40:31.439887921 +0100
+@@ -75,7 +75,8 @@
+     _mswindows = True
+ except ModuleNotFoundError:
+     _mswindows = False
+-    import _posixsubprocess
++    if (sys.platform != "wasm"):
++        import _posixsubprocess
+     import select
+     import selectors
+ else:
