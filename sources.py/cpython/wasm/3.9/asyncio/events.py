@@ -1,24 +1,35 @@
 """Event loop and event loop policy."""
 
-__all__ = ['AbstractEventLoopPolicy',
-           'AbstractEventLoop', 'AbstractServer',
-           'Handle', 'TimerHandle',
-           'get_event_loop_policy', 'set_event_loop_policy',
-           'get_event_loop', 'set_event_loop', 'new_event_loop',
-           'get_child_watcher', 'set_child_watcher',
-           '_set_running_loop', '_get_running_loop',
-           'get_running_loop',
-           ]
+__all__ = [
+    "AbstractEventLoopPolicy",
+    "AbstractEventLoop",
+    "AbstractServer",
+    "Handle",
+    "TimerHandle",
+    "get_event_loop_policy",
+    "set_event_loop_policy",
+    "get_event_loop",
+    "set_event_loop",
+    "new_event_loop",
+    "get_child_watcher",
+    "set_child_watcher",
+    "_set_running_loop",
+    "_get_running_loop",
+    "get_running_loop",
+]
 
 import functools
 import inspect
 import os
 import reprlib
 import socket
-#import subprocess : subprocess depends on os.waitpid, but we CAN'T
+
+# import subprocess : subprocess depends on os.waitpid, but we CAN'T
 class subprocess:
-    PIPE=-1
-    STDOUT=-2
+    PIPE = -1
+    STDOUT = -2
+
+
 import sys
 import threading
 import traceback
@@ -48,20 +59,19 @@ def _format_args_and_kwargs(args, kwargs):
     if args:
         items.extend(reprlib.repr(arg) for arg in args)
     if kwargs:
-        items.extend('{}={}'.format(k, reprlib.repr(v))
-                     for k, v in kwargs.items())
-    return '(' + ', '.join(items) + ')'
+        items.extend("{}={}".format(k, reprlib.repr(v)) for k, v in kwargs.items())
+    return "(" + ", ".join(items) + ")"
 
 
-def _format_callback(func, args, kwargs, suffix=''):
+def _format_callback(func, args, kwargs, suffix=""):
     if isinstance(func, functools.partial):
         suffix = _format_args_and_kwargs(args, kwargs) + suffix
         return _format_callback(func.func, func.args, func.keywords, suffix)
 
-    if hasattr(func, '__qualname__'):
-        func_repr = getattr(func, '__qualname__')
-    elif hasattr(func, '__name__'):
-        func_repr = getattr(func, '__name__')
+    if hasattr(func, "__qualname__"):
+        func_repr = getattr(func, "__qualname__")
+    elif hasattr(func, "__name__"):
+        func_repr = getattr(func, "__name__")
     else:
         func_repr = repr(func)
 
@@ -70,11 +80,12 @@ def _format_callback(func, args, kwargs, suffix=''):
         func_repr += suffix
     return func_repr
 
+
 def _format_callback_source(func, args):
     func_repr = _format_callback(func, args, None)
     source = _get_function_source(func)
     if source:
-        func_repr += ' at %s:%s' % source
+        func_repr += " at %s:%s" % source
     return func_repr
 
 
@@ -88,9 +99,7 @@ def extract_stack(f=None, limit=None):
         # Limit the amount of work to a reasonable amount, as extract_stack()
         # can be called for each coroutine and future in debug mode.
         limit = constants.DEBUG_STACK_DEPTH
-    stack = traceback.StackSummary.extract(traceback.walk_stack(f),
-                                           limit=limit,
-                                           lookup_lines=False)
+    stack = traceback.StackSummary.extract(traceback.walk_stack(f), limit=limit, lookup_lines=False)
     stack.reverse()
     return stack
 
@@ -98,8 +107,7 @@ def extract_stack(f=None, limit=None):
 class Handle:
     """Object returned by callback registration methods."""
 
-    __slots__ = ('_callback', '_args', '_cancelled', '_loop',
-                 '_source_traceback', '_repr', '__weakref__')
+    __slots__ = ("_callback", "_args", "_cancelled", "_loop", "_source_traceback", "_repr", "__weakref__")
 
     def __init__(self, callback, args, loop):
         self._loop = loop
@@ -115,19 +123,19 @@ class Handle:
     def _repr_info(self):
         info = [self.__class__.__name__]
         if self._cancelled:
-            info.append('cancelled')
+            info.append("cancelled")
         if self._callback is not None:
             info.append(_format_callback_source(self._callback, self._args))
         if self._source_traceback:
             frame = self._source_traceback[-1]
-            info.append('created at %s:%s' % (frame[0], frame[1]))
+            info.append("created at %s:%s" % (frame[0], frame[1]))
         return info
 
     def __repr__(self):
         if self._repr is not None:
             return self._repr
         info = self._repr_info()
-        return '<%s>' % ' '.join(info)
+        return "<%s>" % " ".join(info)
 
     def cancel(self):
         if not self._cancelled:
@@ -148,14 +156,14 @@ class Handle:
             self._callback(*self._args)
         except Exception as exc:
             cb = _format_callback_source(self._callback, self._args)
-            msg = 'Exception in callback {}'.format(cb)
+            msg = "Exception in callback {}".format(cb)
             context = {
-                'message': msg,
-                'exception': exc,
-                'handle': self,
+                "message": msg,
+                "exception": exc,
+                "handle": self,
             }
             if self._source_traceback:
-                context['source_traceback'] = self._source_traceback
+                context["source_traceback"] = self._source_traceback
             self._loop.call_exception_handler(context)
         self = None  # Needed to break cycles when an exception occurs.
 
@@ -163,7 +171,7 @@ class Handle:
 class TimerHandle(Handle):
     """Object returned by timed callback registration methods."""
 
-    __slots__ = ['_scheduled', '_when']
+    __slots__ = ["_scheduled", "_when"]
 
     def __init__(self, when, callback, args, loop):
         assert when is not None
@@ -176,7 +184,7 @@ class TimerHandle(Handle):
     def _repr_info(self):
         info = super()._repr_info()
         pos = 2 if self._cancelled else 1
-        info.insert(pos, 'when=%s' % self._when)
+        info.insert(pos, "when=%s" % self._when)
         return info
 
     def __hash__(self):
@@ -200,10 +208,12 @@ class TimerHandle(Handle):
 
     def __eq__(self, other):
         if isinstance(other, TimerHandle):
-            return (self._when == other._when and
-                    self._callback == other._callback and
-                    self._args == other._args and
-                    self._cancelled == other._cancelled)
+            return (
+                self._when == other._when
+                and self._callback == other._callback
+                and self._args == other._args
+                and self._cancelled == other._cancelled
+            )
         return NotImplemented
 
     def __ne__(self, other):
@@ -320,15 +330,36 @@ class AbstractEventLoop:
     def getnameinfo(self, sockaddr, flags=0):
         raise NotImplementedError
 
-    def create_connection(self, protocol_factory, host=None, port=None, *,
-                          ssl=None, family=0, proto=0, flags=0, sock=None,
-                          local_addr=None, server_hostname=None):
+    def create_connection(
+        self,
+        protocol_factory,
+        host=None,
+        port=None,
+        *,
+        ssl=None,
+        family=0,
+        proto=0,
+        flags=0,
+        sock=None,
+        local_addr=None,
+        server_hostname=None
+    ):
         raise NotImplementedError
 
-    def create_server(self, protocol_factory, host=None, port=None, *,
-                      family=socket.AF_UNSPEC, flags=socket.AI_PASSIVE,
-                      sock=None, backlog=100, ssl=None, reuse_address=None,
-                      reuse_port=None):
+    def create_server(
+        self,
+        protocol_factory,
+        host=None,
+        port=None,
+        *,
+        family=socket.AF_UNSPEC,
+        flags=socket.AI_PASSIVE,
+        sock=None,
+        backlog=100,
+        ssl=None,
+        reuse_address=None,
+        reuse_port=None
+    ):
         """A coroutine which creates a TCP server bound to host and port.
 
         The return value is a Server object which can be used to stop
@@ -366,13 +397,10 @@ class AbstractEventLoop:
         """
         raise NotImplementedError
 
-    def create_unix_connection(self, protocol_factory, path=None, *,
-                               ssl=None, sock=None,
-                               server_hostname=None):
+    def create_unix_connection(self, protocol_factory, path=None, *, ssl=None, sock=None, server_hostname=None):
         raise NotImplementedError
 
-    def create_unix_server(self, protocol_factory, path=None, *,
-                           sock=None, backlog=100, ssl=None):
+    def create_unix_server(self, protocol_factory, path=None, *, sock=None, backlog=100, ssl=None):
         """A coroutine which creates a UNIX Domain Socket server.
 
         The return value is a Server object, which can be used to stop
@@ -392,11 +420,20 @@ class AbstractEventLoop:
         """
         raise NotImplementedError
 
-    def create_datagram_endpoint(self, protocol_factory,
-                                 local_addr=None, remote_addr=None, *,
-                                 family=0, proto=0, flags=0,
-                                 reuse_address=None, reuse_port=None,
-                                 allow_broadcast=None, sock=None):
+    def create_datagram_endpoint(
+        self,
+        protocol_factory,
+        local_addr=None,
+        remote_addr=None,
+        *,
+        family=0,
+        proto=0,
+        flags=0,
+        reuse_address=None,
+        reuse_port=None,
+        allow_broadcast=None,
+        sock=None
+    ):
         """A coroutine which creates a datagram endpoint.
 
         This method will try to establish the endpoint in the background.
@@ -455,14 +492,14 @@ class AbstractEventLoop:
         # close fd in pipe transport then close f and vise versa.
         raise NotImplementedError
 
-    def subprocess_shell(self, protocol_factory, cmd, *, stdin=subprocess.PIPE,
-                         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                         **kwargs):
+    def subprocess_shell(
+        self, protocol_factory, cmd, *, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
+    ):
         raise NotImplementedError
 
-    def subprocess_exec(self, protocol_factory, *args, stdin=subprocess.PIPE,
-                        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                        **kwargs):
+    def subprocess_exec(
+        self, protocol_factory, *args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
+    ):
         raise NotImplementedError
 
     # Ready-based callback registration methods.
@@ -599,13 +636,14 @@ class BaseDefaultEventLoopPolicy(AbstractEventLoopPolicy):
 
         This may be None or an instance of EventLoop.
         """
-        if (self._local._loop is None and
-            not self._local._set_called and
-            isinstance(threading.current_thread(), threading._MainThread)):
+        if (
+            self._local._loop is None
+            and not self._local._set_called
+            and isinstance(threading.current_thread(), threading._MainThread)
+        ):
             self.set_event_loop(self.new_event_loop())
         if self._local._loop is None:
-            raise RuntimeError('There is no current event loop in thread %r.'
-                               % threading.current_thread().name)
+            raise RuntimeError("There is no current event loop in thread %r." % threading.current_thread().name)
         return self._local._loop
 
     def set_event_loop(self, loop):
@@ -640,6 +678,7 @@ class _RunningLoop(threading.local):
 
 _running_loop = _RunningLoop()
 
+
 def get_running_loop():
     """Return the running event loop.  Raise a RuntimeError if there is none.
 
@@ -648,7 +687,7 @@ def get_running_loop():
     # NOTE: this function is normally implemented in C (see _asynciomodule.c)
     loop = _get_running_loop()
     if loop is None:
-        raise RuntimeError('651:asyncio-wasx: no running event loop for pid=%s' % os.getpid())
+        raise RuntimeError("651:asyncio-wasx: no running event loop for pid=%s" % os.getpid())
     return loop
 
 
@@ -678,8 +717,10 @@ def _init_event_loop_policy():
     with _lock:
         if _event_loop_policy is None:  # pragma: no branch
             from . import DefaultEventLoopPolicy
+
             _event_loop_policy = DefaultEventLoopPolicy()
-    #pdb("666:_init_event_loop_policy")
+    # pdb("666:_init_event_loop_policy")
+
 
 def get_event_loop_policy():
     """Get the current event loop policy."""
@@ -696,6 +737,7 @@ def set_event_loop_policy(policy):
     assert policy is None or isinstance(policy, AbstractEventLoopPolicy)
     _event_loop_policy = policy
 
+
 def get_event_loop():
     """Return an asyncio event loop.
 
@@ -709,10 +751,12 @@ def get_event_loop():
         loop = get_running_loop()
     except RuntimeError:
         loop = get_event_loop_policy().new_event_loop()
-        get_event_loop_policy().set_event_loop( loop )
+        get_event_loop_policy().set_event_loop(loop)
     return loop
 
+
 new_event_loop = get_event_loop
+
 
 def set_event_loop(loop):
     pass

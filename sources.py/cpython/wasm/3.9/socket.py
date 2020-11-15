@@ -94,6 +94,7 @@ def _intenum_converter(value, enum_klass):
 
 _realsocket = socket
 
+
 class _GiveupOnSendfile(Exception):
     pass
 
@@ -102,11 +103,12 @@ import select
 import fcntl
 import os
 
+
 def b(s):
-    return bytes(s,'utf-8')
+    return bytes(s, "utf-8")
 
 
-class DomSocket: #_client:
+class DomSocket:  # _client:
     def __init__(self, client_id=None, data=b"", addr="127.0.0.1", port=0):
         self._fileno = 0
         self.parent = client_id or 0
@@ -120,10 +122,9 @@ class DomSocket: #_client:
         if client_id:
             self._fileno, self.w = os.pipe()
             self.rfile = os.fdopen(self._fileno, "rb")
-            #self.wfile = os.fdopen(self.w, "wb")
+            # self.wfile = os.fdopen(self.w, "wb")
         self.wfile = sys.stderr.buffer
         self.w = self.wfile.fileno()
-
 
     def setblocking(self, *argv, **kw):
         if self._fileno:
@@ -173,11 +174,9 @@ class DomSocket: #_client:
 
     def connect(self, *argv, **kw):
         self.mode = "C"
-        print("176:socket.connect",argv,kw)
+        print("176:socket.connect", argv, kw)
 
-
-
-#class DomSocket_server(DomSocket_client):
+    # class DomSocket_server(DomSocket_client):
 
     def listen(self, *backlog):
         print("182:listen", self, backlog)
@@ -190,19 +189,18 @@ class DomSocket: #_client:
 
         self._fileno, self.w = os.pipe()
         self.rfile = os.fdopen(self._fileno, "rb")
-        rootfs[ 'tcp!!{}'.format(self.port) ] = os.fdopen(self.w, "w")
+        rootfs["tcp!!{}".format(self.port)] = os.fdopen(self.w, "w")
 
         print("172:bind-v", self._fileno, self.w)
 
-        #self.wfile = sys.stderr.buffer
-        #self.w = self.wfile.fileno()
-
+        # self.wfile = sys.stderr.buffer
+        # self.w = self.wfile.fileno()
 
     def build_client(self, cliport):
         ds = DomSocket(self._fileno, b"", "localhost", cliport)
         ds.connect(cliport)
-        msg = b'conn\x00ected\n'
-        embed.fdwrite( msg , int(cliport), len(msg) )
+        msg = b"conn\x00ected\n"
+        embed.fdwrite(msg, int(cliport), len(msg))
         return ds
 
     def accept(self):
@@ -214,25 +212,23 @@ class DomSocket: #_client:
             raise BlockingIOError()
 
         self.lock += 1
-        client = b''.join(self.data).decode().strip()
-        client,opc = client.split('!',1)
+        client = b"".join(self.data).decode().strip()
+        client, opc = client.split("!", 1)
 
-        print("225:accept-{}".format(opc), self.lock, self._fileno, self.w, client )
+        print("225:accept-{}".format(opc), self.lock, self._fileno, self.w, client)
 
         try:
             return self.build_client(int(client)), self.getsockname()
         finally:
             self.data.clear()
 
-
-
-# shared
-    def settimeout(self,*argv,**kw):
-        print("239:settimeout",argv,kw)
+    # shared
+    def settimeout(self, *argv, **kw):
+        print("239:settimeout", argv, kw)
 
     def close(self):
         print("233:closed", self)
-        if self.lock>0:
+        if self.lock > 0:
             self.lock -= 1
         if not self.lock:
             self._closed = True
@@ -241,13 +237,13 @@ class DomSocket: #_client:
         return f"{self.mode}:{self.port}->{self.parent or ''}->{self._fileno}"
 
 
-
 import builtins
+
 builtins.rootfs = {}
 
 
 def socket(family=-1, type=-1, proto=-1, fileno=None):
-    if sys.platform=='wasm' and proto == 6:
+    if sys.platform == "wasm" and proto == 6:
         print("need hack")
         return DomSocket(family, type, proto, fileno)
 

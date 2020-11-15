@@ -29,14 +29,15 @@ Its next big step is to package only testsuites and provides local wheels.
 
 ```
 Requirements:
-    * python 3.7/8 installed
-    * clang/clang++ 8+ full build env ( including git )
+    * C-Python ® 3.9/8/7 installed
+    * clang/clang++ 8+ full build env
+    * git, wget
     * android-sdk + android-ndk
     * all Panda3D requirements
     * about 16 GiB free disk space
     * 4 GiB MEM-SWAP for panda3d linking
 
-( for debian/ubuntu/mint just have a look at the .github/workflows/blank.yml CI apt-get lines )
+( for debian/ubuntu/mint maybe just have a look at the .github/workflows/blank.yml CI apt-get lines )
 
 ```
 
@@ -62,12 +63,15 @@ sources used:
   +  ogg from : http://downloads.xiph.org/releases/ogg/libogg-1.3.4.tar.xz
   +  vorbis from : https://github.com/xiph/vorbis.git
   +  panda3d from : GIT + android patches + webgl port branch merged
+  +  SDL2/SDL2_image/SDL2_mixer/SDL2_ttf stable from libsdl.org
 ```
 
 NOTE: now has limited pip support and will detect  your ./projects/*/requirements.txt.
 and will do its best to package them for an android apk.
 
-you can also use pip-cross via the various venv shell.[ARCHITECTURE].sh (to be sourced)
+You can also use pip-cross via the various venv shell.[ARCHITECTURE].sh (to be sourced)
+( when in the shell you have python3-xxxxxx and pip3-xxxxxx cross compiler scripts )
+
 
 
 NOTE: an emscripten android project emulation is actually brewing.

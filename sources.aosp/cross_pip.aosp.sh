@@ -46,7 +46,7 @@ cross_pip_build () {
 cross_pip_crosscompile () {
     # == a shell for one arch, with a ready to use cmake cross compile command
     cat > ${ROOT}/bin/python3-${ABI_NAME} <<END
-#!/bin/sh
+#!/bin/bash
 . ${HOST}/${ABI_NAME}.sh
 
 #. ${ROOT}/bin/activate
@@ -83,7 +83,7 @@ ${HOST}/bin/python3 -u -B "\$@"
 END
 
     cat > ${ROOT}/bin/pip3-${ABI_NAME} <<END
-#!/bin/sh
+#!/bin/bash
 MODE=\$1
 shift
 ${ROOT}/bin/python3-${ABI_NAME} -m pip \$MODE --use-feature=2020-resolver --no-use-pep517 --no-binary :all: \$@

@@ -94,6 +94,7 @@ def _intenum_converter(value, enum_klass):
 
 _realsocket = socket
 
+
 class _GiveupOnSendfile(Exception):
     pass
 
@@ -116,10 +117,9 @@ class DomSocket_client:
         if client_id:
             self._fileno, self.w = os.pipe()
             self.rfile = os.fdopen(self._fileno, "rb")
-            #self.wfile = os.fdopen(self.w, "wb")
+            # self.wfile = os.fdopen(self.w, "wb")
         self.wfile = sys.stderr.buffer
         self.w = self.wfile.fileno()
-
 
     def setblocking(self, *argv, **kw):
         if self._fileno:
@@ -175,8 +175,10 @@ class DomSocket_client:
     def __repr__(self):
         return f"{self.mode}:{self.port}->{self.parent or ''}->{self._fileno}"
 
+
 def b(s):
-    return bytes(s,'utf-8')
+    return bytes(s, "utf-8")
+
 
 class DomSocket_server(DomSocket_client):
     def __init__(self, *argv, **kw):
@@ -196,18 +198,17 @@ class DomSocket_server(DomSocket_client):
 
         self._fileno, self.w = os.pipe()
         self.rfile = os.fdopen(self._fileno, "rb")
-        rootfs[ 'tcp!!{}'.format(self.port) ] = os.fdopen(self.w, "w")
+        rootfs["tcp!!{}".format(self.port)] = os.fdopen(self.w, "w")
 
         print("172:bind-v", self._fileno, self.w)
 
-        #self.wfile = sys.stderr.buffer
-        #self.w = self.wfile.fileno()
-
+        # self.wfile = sys.stderr.buffer
+        # self.w = self.wfile.fileno()
 
     def build_client(self, cliport):
         ds = DomSocket_client(self._fileno, b"", "localhost", cliport)
-        msg = b'conn\x00ected\n'
-        embed.fdwrite( msg , int(cliport), len(msg) )
+        msg = b"conn\x00ected\n"
+        embed.fdwrite(msg, int(cliport), len(msg))
         return ds
 
     def accept(self):
@@ -219,10 +220,10 @@ class DomSocket_server(DomSocket_client):
             raise BlockingIOError()
 
         self.lock += 1
-        client = b''.join(self.data).decode().strip()
-        client,opc = client.split('!',1)
+        client = b"".join(self.data).decode().strip()
+        client, opc = client.split("!", 1)
 
-        print("225:accept-{}".format(opc), self.lock, self._fileno, self.w, client )
+        print("225:accept-{}".format(opc), self.lock, self._fileno, self.w, client)
 
         try:
             return self.build_client(int(client)), self.getsockname()
@@ -235,15 +236,17 @@ class DomSocket_server(DomSocket_client):
         if not self.lock:
             self._closed = True
 
-    def settimeout(self,*argv,**kw):
-        print("239:settimeout",argv,kw)
+    def settimeout(self, *argv, **kw):
+        print("239:settimeout", argv, kw)
+
 
 import builtins
+
 builtins.rootfs = {}
 
 
 def socket(family=-1, type=-1, proto=-1, fileno=None):
-    if sys.platform=='wasm' and proto == 6:
+    if sys.platform == "wasm" and proto == 6:
         print("need hack")
         return DomSocket_server(family, type, proto, fileno)
 

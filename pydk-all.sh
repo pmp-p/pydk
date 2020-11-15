@@ -58,8 +58,10 @@ export ENV=aosp
 ROOT="${ORIGIN}/${ENV}"
 BUILD_PREFIX="${ROOT}/build"
 
+# sdk tools https://developer.android.com/studio/releases/platform-tools
 
-# ndk specific
+# ndk https://developer.android.com/ndk/downloads
+
 export ANDROID_HOME=${ANDROID_HOME:-$(pwd)/android-sdk}
 export NDK_HOME=${NDK_HOME:-${ANDROID_HOME}/ndk-bundle}
 export ANDROID_NDK_HOME=${NDK_HOME}
@@ -95,7 +97,7 @@ fi
 UNITS="unit bzip2 lzma libffi sqlite3 openssl python3"
 
 #extra
-UNITS="$UNITS freetype2 harfbuzz ft2_hb bullet3 openal ogg vorbis panda3d"
+UNITS="$UNITS freetype2 harfbuzz ft2_hb bullet3 openal ogg vorbis panda3d sdl2"
 
 
 
@@ -128,22 +130,30 @@ else
 fi
 
 
-if grep "^Pkg.Revision = 21" $NDK_HOME/source.properties
-then
-    echo NDK 21+ found
-else
-    echo "
-WARNING:
-
-Only NDK 21 has been tested and is expected to be found in :
-   NDK_HOME=$NDK_HOME or ANDROID_HOME=${ANDROID_HOME} + ndk-bundle
-
-press <enter> to continue anyway
-"
-    read cont
-fi
 
 . sources/python_host.sh
+
+if $CI
+then
+    echo " * using ndk from CI"
+else
+    if grep "^Pkg.Revision = 21" $NDK_HOME/source.properties
+    then
+        echo NDK 21+ found
+    else
+        echo "
+    WARNING:
+
+    Only NDK 21 has been tested and is expected to be found in :
+       NDK_HOME=$NDK_HOME or ANDROID_HOME=${ANDROID_HOME} + ndk-bundle
+
+        Found $(grep Revision $NDK_HOME/source.properties)
+
+    press <enter> to continue anyway
+    "
+        read cont
+    fi
+fi
 
 
 # build order
@@ -189,11 +199,10 @@ cd "${ROOT}"
 
 # because libpython is shared
 export LD_LIBRARY_PATH="${HOST}/lib64:${HOST}/lib:$LD_LIBRARY_PATH"
-export BASEPATH="${HOST}/bin:${ROOT}/bin:/bin:/usr/bin:/usr/local/bin"
+export BASEPATH="${HOST}/bin:$NDK_HOME:${ROOT}/bin:/bin:/usr/bin:/usr/local/bin"
 
 # prevent system path interference in build tools
 export PATH="$BASEPATH"
-
 
 # == a shell for host tools, with a ready to use cmake cross compile command
 ABI_NAME="host"
@@ -217,6 +226,8 @@ export LD_LIBRARY_PATH="${HOST}/lib64:${HOST}/lib:$LD_LIBRARY_PATH"
 export PATH="$BASEPATH"
 
 export PYDK="${ORIGIN}"
+
+export PREFIX="${APKUSR}"
 
 export PYTHONPATH=${HOST}/lib/python$PYVER:${HOST}/lib/python${PYMAJOR}.${PYMINOR}/site-packages
 
@@ -408,25 +419,6 @@ do
  -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ABI_NAME}/toolchain.cmake\
  -DCMAKE_INSTALL_PREFIX=${APKUSR}"
 
-    # == a shell for one arch, with a ready to use cmake cross compile command
-    cat > $ORIGIN/shell.${ABI_NAME}.sh <<END
-#!/bin/sh
-. ${HOST}/${ABI_NAME}.sh
-
-. ${ROOT}/bin/activate
-
-export PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig
-
-export PS1="[PyDK:$ABI_NAME] \w \$ "
-
-acmake () {
-        reset
-        echo "  == cmake for target ${ABI_NAME} =="
-        ${ACMAKE} \$@
-}
-
-END
-
 
     # ndk specifics
 
@@ -500,6 +492,42 @@ END
     export HOST_PLATFORM=${ARCH}_${API}_${PLATABI:-$ABI}
 
     unset PLATABI
+
+
+    # == a shell for one arch, with a ready to use cmake cross compile command
+    cat > $ORIGIN/shell.${ABI_NAME}.sh <<END
+#!/bin/bash
+. ${HOST}/${ABI_NAME}.sh
+
+. ${ROOT}/bin/activate
+
+export PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig
+
+export PS1="[PyDK:$ABI_NAME] \w \$ "
+
+export PYDK="${ORIGIN}"
+
+acmake () {
+        reset
+        echo "  == cmake for target ${ABI_NAME} =="
+        ${ACMAKE} \$@
+}
+
+aconfigure () {
+        reset
+        echo " == configure for target ${ABI_NAME} == "
+        ./configure --target=${PLATFORM_TRIPLET} --host=${PLATFORM_TRIPLET} --build=${HOST_TRIPLET} --prefix=${APKUSR} \$@
+}
+
+if echo "script:\$1" |grep -q sh\$
+then
+    echo "Running ${ABI_NAME} script \$1"
+    . \$1
+fi
+
+END
+
+
 
     mkdir -p ${BUILD_PREFIX}-${ABI_NAME}
 
@@ -597,7 +625,7 @@ END
 
 
     cat > ${HOST}/${ABI_NAME}.sh <<END
-#!/bin/sh
+#!/bin/bash
 export ANDROID_NDK_HOME=${NDK_HOME}
 export STRIP=$STRIP
 export READELF=$READELF
@@ -607,6 +635,11 @@ export LD=$LD
 export CXX=$CXX
 export CC=$CC
 export RANLIB=$RANLIB
+
+#ndk-build
+export PREFIX="${APKUSR}"
+export APP_ABI=$ABI_NAME
+export APP_PLATFORM=android-$API
 
 export PATH=$BASEPATH
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH
@@ -686,6 +719,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOST}/lib64:${HOST}/lib
 
 export PATH="$EMSDK/upstream/emscripten:$BASEPATH"
 
+export PYDK="${ORIGIN}"
 
 #export STRIP=STRIP
 #export READELF=READELF
@@ -704,7 +738,7 @@ END
 
 # == a shell for one arch, with a ready to use cmake cross compile command
 cat > $ORIGIN/shell.${ABI_NAME}.sh <<END
-#!/bin/sh
+#!/bin/bash
 . ${HOST}/${ABI_NAME}.sh
 
 . ${ROOT}/bin/activate
@@ -713,12 +747,20 @@ export PKG_CONFIG_PATH="${APKUSR}/lib/pkgconfig"
 
 export PS1="[PyDK:$ABI_NAME] \w \$ "
 
+export PYDK="${ORIGIN}"
+
+
 wcmake () {
         reset
         echo "  == cmake for target ${ABI_NAME} =="
         echo $WCMAKE \$@
 }
 
+if echo "script:\$1" |grep -q sh\$
+then
+    echo "Running ${ABI_NAME} script \$1"
+    . \$1
+fi
 
 END
 

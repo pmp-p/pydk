@@ -1,5 +1,6 @@
 """Selector event loop for Em with signal handling."""
 import sys
+
 _emscripten = True
 
 
@@ -10,10 +11,11 @@ import signal
 import socket
 import stat
 
-#import subprocess : subprocess depends on os.waitpid, but we CAN'T
+# import subprocess : subprocess depends on os.waitpid, but we CAN'T
 class subprocess:
-    PIPE=-1
-    STDOUT=-2
+    PIPE = -1
+    STDOUT = -2
+
 
 import sys
 import threading
@@ -32,13 +34,16 @@ from .coroutines import coroutine
 from .log import logger
 
 
-__all__ = ['SelectorEventLoop',
-           'AbstractChildWatcher', 'SafeChildWatcher',
-           'FastChildWatcher', 'DefaultEventLoopPolicy',
-           ]
+__all__ = [
+    "SelectorEventLoop",
+    "AbstractChildWatcher",
+    "SafeChildWatcher",
+    "FastChildWatcher",
+    "DefaultEventLoopPolicy",
+]
 
-if sys.platform == 'win32':  # pragma: no cover
-    raise ImportError('Signals are not really supported on Windows')
+if sys.platform == "win32":  # pragma: no cover
+    raise ImportError("Signals are not really supported on Windows")
 
 
 def _sighandler_noop(signum, frame):
@@ -74,10 +79,8 @@ class _EmSelectorEventLoop(listactor_events.BaseSelectorEventLoop):
         Raise ValueError if the signal number is invalid or uncatchable.
         Raise RuntimeError if there is a problem setting up the handler.
         """
-        if (coroutines.iscoroutine(callback)
-                or coroutines.iscoroutinefunction(callback)):
-            raise TypeError("coroutines cannot be used "
-                            "with add_signal_handler()")
+        if coroutines.iscoroutine(callback) or coroutines.iscoroutinefunction(callback):
+            raise TypeError("coroutines cannot be used " "with add_signal_handler()")
         self._check_signal(sig)
         self._check_closed()
         pdb("signal.set_wakeup_fd(self._csock.fileno()) stub")
@@ -87,7 +90,7 @@ class _EmSelectorEventLoop(listactor_events.BaseSelectorEventLoop):
             # event loop running in another thread cannot add a signal
             # handler.
             if _emscripten:
-                self._cq.append('')
+                self._cq.append("")
             else:
                 signal.set_wakeup_fd(self._csock.fileno())
         except (ValueError, OSError) as exc:
@@ -112,10 +115,10 @@ class _EmSelectorEventLoop(listactor_events.BaseSelectorEventLoop):
                 try:
                     signal.set_wakeup_fd(-1)
                 except (ValueError, OSError) as nexc:
-                    logger.info('set_wakeup_fd(-1) failed: %s', nexc)
+                    logger.info("set_wakeup_fd(-1) failed: %s", nexc)
 
             if exc.errno == errno.EINVAL:
-                raise RuntimeError('sig {} cannot be caught'.format(sig))
+                raise RuntimeError("sig {} cannot be caught".format(sig))
             else:
                 raise
 
@@ -150,7 +153,7 @@ class _EmSelectorEventLoop(listactor_events.BaseSelectorEventLoop):
                 signal.signal(sig, handler)
         except OSError as exc:
             if exc.errno == errno.EINVAL:
-                raise RuntimeError('sig {} cannot be caught'.format(sig))
+                raise RuntimeError("sig {} cannot be caught".format(sig))
             else:
                 raise
 
@@ -158,7 +161,7 @@ class _EmSelectorEventLoop(listactor_events.BaseSelectorEventLoop):
             try:
                 signal.set_wakeup_fd(-1)
             except (ValueError, OSError) as exc:
-                logger.info('set_wakeup_fd(-1) failed: %s', exc)
+                logger.info("set_wakeup_fd(-1) failed: %s", exc)
 
         return True
 
@@ -169,33 +172,26 @@ class _EmSelectorEventLoop(listactor_events.BaseSelectorEventLoop):
         Raise RuntimeError if there is a problem setting up the handler.
         """
         if not isinstance(sig, int):
-            raise TypeError('sig must be an int, not {!r}'.format(sig))
+            raise TypeError("sig must be an int, not {!r}".format(sig))
 
         if not (1 <= sig < signal.NSIG):
-            raise ValueError(
-                'sig {} out of range(1, {})'.format(sig, signal.NSIG))
+            raise ValueError("sig {} out of range(1, {})".format(sig, signal.NSIG))
 
-    def _make_read_pipe_transport(self, pipe, protocol, waiter=None,
-                                  extra=None):
+    def _make_read_pipe_transport(self, pipe, protocol, waiter=None, extra=None):
         return _EmReadPipeTransport(self, pipe, protocol, waiter, extra)
 
-    def _make_write_pipe_transport(self, pipe, protocol, waiter=None,
-                                   extra=None):
+    def _make_write_pipe_transport(self, pipe, protocol, waiter=None, extra=None):
         return _EmWritePipeTransport(self, pipe, protocol, waiter, extra)
 
     @coroutine
-    def _make_subprocess_transport(self, protocol, args, shell,
-                                   stdin, stdout, stderr, bufsize,
-                                   extra=None, **kwargs):
+    def _make_subprocess_transport(self, protocol, args, shell, stdin, stdout, stderr, bufsize, extra=None, **kwargs):
         with events.get_child_watcher() as watcher:
             waiter = self.create_future()
-            transp = _EmSubprocessTransport(self, protocol, args, shell,
-                                              stdin, stdout, stderr, bufsize,
-                                              waiter=waiter, extra=extra,
-                                              **kwargs)
+            transp = _EmSubprocessTransport(
+                self, protocol, args, shell, stdin, stdout, stderr, bufsize, waiter=waiter, extra=extra, **kwargs
+            )
 
-            watcher.add_child_handler(transp.get_pid(),
-                                      self._child_watcher_callback, transp)
+            watcher.add_child_handler(transp.get_pid(), self._child_watcher_callback, transp)
             try:
                 yield from waiter
             except Exception as exc:
@@ -217,22 +213,18 @@ class _EmSelectorEventLoop(listactor_events.BaseSelectorEventLoop):
         self.call_soon_threadsafe(transp._process_exited, returncode)
 
     @coroutine
-    def create_Em_connection(self, protocol_factory, path=None, *,
-                               ssl=None, sock=None,
-                               server_hostname=None):
+    def create_Em_connection(self, protocol_factory, path=None, *, ssl=None, sock=None, server_hostname=None):
         assert server_hostname is None or isinstance(server_hostname, str)
         if ssl:
             if server_hostname is None:
-                raise ValueError(
-                    'you have to pass server_hostname when using ssl')
+                raise ValueError("you have to pass server_hostname when using ssl")
         else:
             if server_hostname is not None:
-                raise ValueError('server_hostname is only meaningful with ssl')
+                raise ValueError("server_hostname is only meaningful with ssl")
 
         if path is not None:
             if sock is not None:
-                raise ValueError(
-                    'path and sock can not be specified at the same time')
+                raise ValueError("path and sock can not be specified at the same time")
 
             path = os.fspath(path)
             sock = socket.socket(socket.AF_Em, socket.SOCK_STREAM, 0)
@@ -245,34 +237,28 @@ class _EmSelectorEventLoop(listactor_events.BaseSelectorEventLoop):
 
         else:
             if sock is None:
-                raise ValueError('no path and sock were specified')
-            if (sock.family != socket.AF_Em or
-                    not base_events._is_stream_socket(sock)):
-                raise ValueError(
-                    'A Em Domain Stream Socket was expected, got {!r}'
-                    .format(sock))
+                raise ValueError("no path and sock were specified")
+            if sock.family != socket.AF_Em or not base_events._is_stream_socket(sock):
+                raise ValueError("A Em Domain Stream Socket was expected, got {!r}".format(sock))
             sock.setblocking(False)
 
-        transport, protocol = yield from self._create_connection_transport(
-            sock, protocol_factory, ssl, server_hostname)
+        transport, protocol = yield from self._create_connection_transport(sock, protocol_factory, ssl, server_hostname)
         return transport, protocol
 
     @coroutine
-    def create_Em_server(self, protocol_factory, path=None, *,
-                           sock=None, backlog=100, ssl=None):
+    def create_Em_server(self, protocol_factory, path=None, *, sock=None, backlog=100, ssl=None):
         if isinstance(ssl, bool):
-            raise TypeError('ssl argument must be an SSLContext or None')
+            raise TypeError("ssl argument must be an SSLContext or None")
 
         if path is not None:
             if sock is not None:
-                raise ValueError(
-                    'path and sock can not be specified at the same time')
+                raise ValueError("path and sock can not be specified at the same time")
 
             path = os.fspath(path)
             sock = socket.socket(socket.AF_Em, socket.SOCK_STREAM)
 
             # Check for abstract socket. `str` and `bytes` paths are supported.
-            if path[0] not in (0, '\x00'):
+            if path[0] not in (0, "\x00"):
                 try:
                     if stat.S_ISSOCK(os.stat(path).st_mode):
                         os.remove(path)
@@ -280,8 +266,7 @@ class _EmSelectorEventLoop(listactor_events.BaseSelectorEventLoop):
                     pass
                 except OSError as err:
                     # Directory may have permissions only to create socket.
-                    logger.error('Unable to check or remove stale Em socket '
-                                 '%r: %r', path, err)
+                    logger.error("Unable to check or remove stale Em socket " "%r: %r", path, err)
 
             try:
                 sock.bind(path)
@@ -290,7 +275,7 @@ class _EmSelectorEventLoop(listactor_events.BaseSelectorEventLoop):
                 if exc.errno == errno.EADDRINUSE:
                     # Let's improve the error message by adding
                     # with what exact address it occurs.
-                    msg = 'Address {!r} is already in use'.format(path)
+                    msg = "Address {!r} is already in use".format(path)
                     raise OSError(errno.EADDRINUSE, msg) from None
                 else:
                     raise
@@ -299,14 +284,10 @@ class _EmSelectorEventLoop(listactor_events.BaseSelectorEventLoop):
                 raise
         else:
             if sock is None:
-                raise ValueError(
-                    'path was not specified, and no sock specified')
+                raise ValueError("path was not specified, and no sock specified")
 
-            if (sock.family != socket.AF_Em or
-                    not base_events._is_stream_socket(sock)):
-                raise ValueError(
-                    'A Em Domain Stream Socket was expected, got {!r}'
-                    .format(sock))
+            if sock.family != socket.AF_Em or not base_events._is_stream_socket(sock):
+                raise ValueError("A Em Domain Stream Socket was expected, got {!r}".format(sock))
 
         server = base_events.Server(self, [sock])
         sock.listen(backlog)
@@ -321,7 +302,7 @@ class _EmReadPipeTransport(transports.ReadTransport):
 
     def __init__(self, loop, pipe, protocol, waiter=None, extra=None):
         super().__init__(extra)
-        self._extra['pipe'] = pipe
+        self._extra["pipe"] = pipe
         self._loop = loop
         self._pipe = pipe
         self._fileno = pipe.fileno()
@@ -329,9 +310,7 @@ class _EmReadPipeTransport(transports.ReadTransport):
         self._closing = False
 
         mode = os.fstat(self._fileno).st_mode
-        if not (stat.S_ISFIFO(mode) or
-                stat.S_ISSOCK(mode) or
-                stat.S_ISCHR(mode)):
+        if not (stat.S_ISFIFO(mode) or stat.S_ISSOCK(mode) or stat.S_ISCHR(mode)):
             self._pipe = None
             self._fileno = None
             self._protocol = None
@@ -341,34 +320,30 @@ class _EmReadPipeTransport(transports.ReadTransport):
 
         self._loop.call_soon(self._protocol.connection_made, self)
         # only start reading when connection_made() has been called
-        self._loop.call_soon(self._loop._add_reader,
-                             self._fileno, self._read_ready)
+        self._loop.call_soon(self._loop._add_reader, self._fileno, self._read_ready)
         if waiter is not None:
             # only wake up the waiter when connection_made() has been called
-            self._loop.call_soon(futures._set_result_unless_cancelled,
-                                 waiter, None)
+            self._loop.call_soon(futures._set_result_unless_cancelled, waiter, None)
 
     def __repr__(self):
         info = [self.__class__.__name__]
         if self._pipe is None:
-            info.append('closed')
+            info.append("closed")
         elif self._closing:
-            info.append('closing')
-        info.append('fd=%s' % self._fileno)
-        selector = getattr(self._loop, '_selector', None)
+            info.append("closing")
+        info.append("fd=%s" % self._fileno)
+        selector = getattr(self._loop, "_selector", None)
         if self._pipe is not None and selector is not None:
-            polling = listactor_events._test_selector_event(
-                          selector,
-                          self._fileno, selectors.EVENT_READ)
+            polling = listactor_events._test_selector_event(selector, self._fileno, selectors.EVENT_READ)
             if polling:
-                info.append('polling')
+                info.append("polling")
             else:
-                info.append('idle')
+                info.append("idle")
         elif self._pipe is not None:
-            info.append('open')
+            info.append("open")
         else:
-            info.append('closed')
-        return '<%s>' % ' '.join(info)
+            info.append("closed")
+        return "<%s>" % " ".join(info)
 
     def _read_ready(self):
         try:
@@ -376,7 +351,7 @@ class _EmReadPipeTransport(transports.ReadTransport):
         except (BlockingIOError, InterruptedError):
             pass
         except OSError as exc:
-            self._fatal_error(exc, 'Fatal read error on pipe transport')
+            self._fatal_error(exc, "Fatal read error on pipe transport")
         else:
             if data:
                 self._protocol.data_received(data)
@@ -409,22 +384,18 @@ class _EmReadPipeTransport(transports.ReadTransport):
 
     def __del__(self):
         if self._pipe is not None:
-            warnings.warn("unclosed transport %r" % self, ResourceWarning,
-                          source=self)
+            warnings.warn("unclosed transport %r" % self, ResourceWarning, source=self)
             self._pipe.close()
 
-    def _fatal_error(self, exc, message='Fatal error on pipe transport'):
+    def _fatal_error(self, exc, message="Fatal error on pipe transport"):
         # should be called by exception handler only
-        if (isinstance(exc, OSError) and exc.errno == errno.EIO):
+        if isinstance(exc, OSError) and exc.errno == errno.EIO:
             if self._loop.get_debug():
                 logger.debug("%r: %s", self, message, exc_info=True)
         else:
-            self._loop.call_exception_handler({
-                'message': message,
-                'exception': exc,
-                'transport': self,
-                'protocol': self._protocol,
-            })
+            self._loop.call_exception_handler(
+                {"message": message, "exception": exc, "transport": self, "protocol": self._protocol,}
+            )
         self._close(exc)
 
     def _close(self, exc):
@@ -442,12 +413,10 @@ class _EmReadPipeTransport(transports.ReadTransport):
             self._loop = None
 
 
-class _EmWritePipeTransport(transports._FlowControlMixin,
-                              transports.WriteTransport):
-
+class _EmWritePipeTransport(transports._FlowControlMixin, transports.WriteTransport):
     def __init__(self, loop, pipe, protocol, waiter=None, extra=None):
         super().__init__(extra, loop)
-        self._extra['pipe'] = pipe
+        self._extra["pipe"] = pipe
         self._pipe = pipe
         self._fileno = pipe.fileno()
         self._protocol = protocol
@@ -463,8 +432,7 @@ class _EmWritePipeTransport(transports._FlowControlMixin,
             self._pipe = None
             self._fileno = None
             self._protocol = None
-            raise ValueError("Pipe transport is only for "
-                             "pipes, sockets and character devices")
+            raise ValueError("Pipe transport is only for " "pipes, sockets and character devices")
 
         os.set_blocking(self._fileno, False)
         self._loop.call_soon(self._protocol.connection_made, self)
@@ -474,38 +442,34 @@ class _EmWritePipeTransport(transports._FlowControlMixin,
         # works for pipes and sockets. (Exception: OS X 10.4?  Issue #19294.)
         if is_socket or (is_fifo and not sys.platform.startswith("aix")):
             # only start reading when connection_made() has been called
-            self._loop.call_soon(self._loop._add_reader,
-                                 self._fileno, self._read_ready)
+            self._loop.call_soon(self._loop._add_reader, self._fileno, self._read_ready)
 
         if waiter is not None:
             # only wake up the waiter when connection_made() has been called
-            self._loop.call_soon(futures._set_result_unless_cancelled,
-                                 waiter, None)
+            self._loop.call_soon(futures._set_result_unless_cancelled, waiter, None)
 
     def __repr__(self):
         info = [self.__class__.__name__]
         if self._pipe is None:
-            info.append('closed')
+            info.append("closed")
         elif self._closing:
-            info.append('closing')
-        info.append('fd=%s' % self._fileno)
-        selector = getattr(self._loop, '_selector', None)
+            info.append("closing")
+        info.append("fd=%s" % self._fileno)
+        selector = getattr(self._loop, "_selector", None)
         if self._pipe is not None and selector is not None:
-            polling = listactor_events._test_selector_event(
-                          selector,
-                          self._fileno, selectors.EVENT_WRITE)
+            polling = listactor_events._test_selector_event(selector, self._fileno, selectors.EVENT_WRITE)
             if polling:
-                info.append('polling')
+                info.append("polling")
             else:
-                info.append('idle')
+                info.append("idle")
 
             bufsize = self.get_write_buffer_size()
-            info.append('bufsize=%s' % bufsize)
+            info.append("bufsize=%s" % bufsize)
         elif self._pipe is not None:
-            info.append('open')
+            info.append("open")
         else:
-            info.append('closed')
-        return '<%s>' % ' '.join(info)
+            info.append("closed")
+        return "<%s>" % " ".join(info)
 
     def get_write_buffer_size(self):
         return len(self._buffer)
@@ -528,8 +492,7 @@ class _EmWritePipeTransport(transports._FlowControlMixin,
 
         if self._conn_lost or self._closing:
             if self._conn_lost >= constants.LOG_THRESHOLD_FOR_CONNLOST_WRITES:
-                logger.warning('pipe closed by peer or '
-                               'os.write(pipe, data) raised exception.')
+                logger.warning("pipe closed by peer or " "os.write(pipe, data) raised exception.")
             self._conn_lost += 1
             return
 
@@ -541,7 +504,7 @@ class _EmWritePipeTransport(transports._FlowControlMixin,
                 n = 0
             except Exception as exc:
                 self._conn_lost += 1
-                self._fatal_error(exc, 'Fatal write error on pipe transport')
+                self._fatal_error(exc, "Fatal write error on pipe transport")
                 return
             if n == len(data):
                 return
@@ -553,7 +516,7 @@ class _EmWritePipeTransport(transports._FlowControlMixin,
         self._maybe_pause_protocol()
 
     def _write_ready(self):
-        assert self._buffer, 'Data should not be empty'
+        assert self._buffer, "Data should not be empty"
 
         try:
             n = os.write(self._fileno, self._buffer)
@@ -565,7 +528,7 @@ class _EmWritePipeTransport(transports._FlowControlMixin,
             # Remove writer here, _fatal_error() doesn't it
             # because _buffer is empty.
             self._loop._remove_writer(self._fileno)
-            self._fatal_error(exc, 'Fatal write error on pipe transport')
+            self._fatal_error(exc, "Fatal write error on pipe transport")
         else:
             if n == len(self._buffer):
                 self._buffer.clear()
@@ -606,25 +569,21 @@ class _EmWritePipeTransport(transports._FlowControlMixin,
 
     def __del__(self):
         if self._pipe is not None:
-            warnings.warn("unclosed transport %r" % self, ResourceWarning,
-                          source=self)
+            warnings.warn("unclosed transport %r" % self, ResourceWarning, source=self)
             self._pipe.close()
 
     def abort(self):
         self._close(None)
 
-    def _fatal_error(self, exc, message='Fatal error on pipe transport'):
+    def _fatal_error(self, exc, message="Fatal error on pipe transport"):
         # should be called by exception handler only
         if isinstance(exc, base_events._FATAL_ERROR_IGNORE):
             if self._loop.get_debug():
                 logger.debug("%r: %s", self, message, exc_info=True)
         else:
-            self._loop.call_exception_handler({
-                'message': message,
-                'exception': exc,
-                'transport': self,
-                'protocol': self._protocol,
-            })
+            self._loop.call_exception_handler(
+                {"message": message, "exception": exc, "transport": self, "protocol": self._protocol,}
+            )
         self._close(exc)
 
     def _close(self, exc=None):
@@ -646,7 +605,6 @@ class _EmWritePipeTransport(transports._FlowControlMixin,
 
 
 class _EmSubprocessTransport(base_subprocess.BaseSubprocessTransport):
-
     def _start(self, args, shell, stdin, stdout, stderr, bufsize, **kwargs):
         stdin_w = None
         if stdin == subprocess.PIPE:
@@ -657,11 +615,11 @@ class _EmSubprocessTransport(base_subprocess.BaseSubprocessTransport):
             # just fine on other platforms.
             stdin, stdin_w = socket.socketpair()
         self._proc = subprocess.Popen(
-            args, shell=shell, stdin=stdin, stdout=stdout, stderr=stderr,
-            universal_newlines=False, bufsize=bufsize, **kwargs)
+            args, shell=shell, stdin=stdin, stdout=stdout, stderr=stderr, universal_newlines=False, bufsize=bufsize, **kwargs
+        )
         if stdin_w is not None:
             stdin.close()
-            self._proc.stdin = open(stdin_w.detach(), 'wb', buffering=bufsize)
+            self._proc.stdin = open(stdin_w.detach(), "wb", buffering=bufsize)
 
 
 class AbstractChildWatcher:
@@ -735,7 +693,6 @@ class AbstractChildWatcher:
 
 
 class BaseChildWatcher(AbstractChildWatcher):
-
     def __init__(self):
         self._loop = None
         self._callbacks = {}
@@ -753,10 +710,7 @@ class BaseChildWatcher(AbstractChildWatcher):
         assert loop is None or isinstance(loop, events.AbstractEventLoop)
 
         if self._loop is not None and loop is None and self._callbacks:
-            warnings.warn(
-                'A loop is being detached '
-                'from a child watcher with pending handlers',
-                RuntimeWarning)
+            warnings.warn("A loop is being detached " "from a child watcher with pending handlers", RuntimeWarning)
 
         if self._loop is not None:
             self._loop.remove_signal_handler(signal.SIGCHLD)
@@ -776,10 +730,9 @@ class BaseChildWatcher(AbstractChildWatcher):
             # self._loop should always be available here
             # as '_sig_chld' is added as a signal handler
             # in 'attach_loop'
-            self._loop.call_exception_handler({
-                'message': 'Unknown exception in SIGCHLD handler',
-                'exception': exc,
-            })
+            self._loop.call_exception_handler(
+                {"message": "Unknown exception in SIGCHLD handler", "exception": exc,}
+            )
 
     def _compute_returncode(self, status):
         if os.WIFSIGNALED(status):
@@ -818,9 +771,7 @@ class SafeChildWatcher(BaseChildWatcher):
 
     def add_child_handler(self, pid, callback, *args):
         if self._loop is None:
-            raise RuntimeError(
-                "Cannot add child handler, "
-                "the child watcher does not have a loop attached")
+            raise RuntimeError("Cannot add child handler, " "the child watcher does not have a loop attached")
 
         self._callbacks[pid] = (callback, args)
 
@@ -849,9 +800,7 @@ class SafeChildWatcher(BaseChildWatcher):
             # (may happen if waitpid() is called elsewhere).
             pid = expected_pid
             returncode = 255
-            logger.warning(
-                "Unknown child process pid %d, will report returncode 255",
-                pid)
+            logger.warning("Unknown child process pid %d, will report returncode 255", pid)
         else:
             if pid == 0:
                 # The child process is still alive.
@@ -859,8 +808,7 @@ class SafeChildWatcher(BaseChildWatcher):
 
             returncode = self._compute_returncode(status)
             if self._loop.get_debug():
-                logger.debug('process %s exited with returncode %s',
-                             expected_pid, returncode)
+                logger.debug("process %s exited with returncode %s", expected_pid, returncode)
 
         try:
             callback, args = self._callbacks.pop(pid)
@@ -868,8 +816,7 @@ class SafeChildWatcher(BaseChildWatcher):
             # May happen if .remove_child_handler() is called
             # after os.waitpid() returns.
             if self._loop.get_debug():
-                logger.warning("Child watcher got an unexpected pid: %r",
-                               pid, exc_info=True)
+                logger.warning("Child watcher got an unexpected pid: %r", pid, exc_info=True)
         else:
             callback(pid, returncode, *args)
 
@@ -884,6 +831,7 @@ class FastChildWatcher(BaseChildWatcher):
     There is no noticeable overhead when handling a big number of children
     (O(1) each time a child terminates).
     """
+
     def __init__(self):
         super().__init__()
         self._lock = threading.Lock()
@@ -911,17 +859,13 @@ class FastChildWatcher(BaseChildWatcher):
             collateral_victims = str(self._zombies)
             self._zombies.clear()
 
-        logger.warning(
-            "Caught subprocesses termination from unknown pids: %s",
-            collateral_victims)
+        logger.warning("Caught subprocesses termination from unknown pids: %s", collateral_victims)
 
     def add_child_handler(self, pid, callback, *args):
         assert self._forks, "Must use the context manager"
 
         if self._loop is None:
-            raise RuntimeError(
-                "Cannot add child handler, "
-                "the child watcher does not have a loop attached")
+            raise RuntimeError("Cannot add child handler, " "the child watcher does not have a loop attached")
 
         with self._lock:
             try:
@@ -966,26 +910,22 @@ class FastChildWatcher(BaseChildWatcher):
                         # It may not be registered yet.
                         self._zombies[pid] = returncode
                         if self._loop.get_debug():
-                            logger.debug('unknown process %s exited '
-                                         'with returncode %s',
-                                         pid, returncode)
+                            logger.debug("unknown process %s exited " "with returncode %s", pid, returncode)
                         continue
                     callback = None
                 else:
                     if self._loop.get_debug():
-                        logger.debug('process %s exited with returncode %s',
-                                     pid, returncode)
+                        logger.debug("process %s exited with returncode %s", pid, returncode)
 
             if callback is None:
-                logger.warning(
-                    "Caught subprocess termination from unknown pid: "
-                    "%d -> %d", pid, returncode)
+                logger.warning("Caught subprocess termination from unknown pid: " "%d -> %d", pid, returncode)
             else:
                 callback(pid, returncode, *args)
 
 
 class _EmDefaultEventLoopPolicy(events.BaseDefaultEventLoopPolicy):
     """Em event loop policy with a watcher for child processes."""
+
     _loop_factory = _EmSelectorEventLoop
 
     def __init__(self):
@@ -996,8 +936,7 @@ class _EmDefaultEventLoopPolicy(events.BaseDefaultEventLoopPolicy):
         with events._lock:
             if self._watcher is None:  # pragma: no branch
                 self._watcher = SafeChildWatcher()
-                if isinstance(threading.current_thread(),
-                              threading._MainThread):
+                if isinstance(threading.current_thread(), threading._MainThread):
                     self._watcher.attach_loop(self._local._loop)
 
     def set_event_loop(self, loop):
@@ -1010,8 +949,7 @@ class _EmDefaultEventLoopPolicy(events.BaseDefaultEventLoopPolicy):
 
         super().set_event_loop(loop)
 
-        if (self._watcher is not None and
-                isinstance(threading.current_thread(), threading._MainThread)):
+        if self._watcher is not None and isinstance(threading.current_thread(), threading._MainThread):
             self._watcher.attach_loop(loop)
 
     def get_child_watcher(self):
@@ -1033,6 +971,7 @@ class _EmDefaultEventLoopPolicy(events.BaseDefaultEventLoopPolicy):
             self._watcher.close()
 
         self._watcher = watcher
+
 
 SelectorEventLoop = _EmSelectorEventLoop
 DefaultEventLoopPolicy = _EmDefaultEventLoopPolicy
