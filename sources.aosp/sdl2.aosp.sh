@@ -1,7 +1,5 @@
 # https://www.libsdl.org/projects/SDL_image/
 # https://www.libsdl.org/projects/SDL_image/release/SDL2_image-2.0.5.tar.gz
-export SDL2_URL=${UNIT_URL:-"GIT_REPOSITORY https://github.com/pmp-p/pydk.git"}
-export SDL2_HASH=${UNIT_HASH:-}
 
 
 sdl2_host_cmake () {
@@ -11,8 +9,6 @@ sdl2_host_cmake () {
 if(0)
 ExternalProject_Add(
     ${unit}
-    ${UNIT_URL}
-    ${UNIT_HASH}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
