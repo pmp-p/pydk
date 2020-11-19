@@ -30,6 +30,16 @@ from . import futures
 from .coroutines import coroutine
 
 
+def _set_task_name(task, name):
+    if name is not None:
+        try:
+            set_name = task.set_name
+        except AttributeError:
+            pass
+        else:
+            set_name(name)
+
+
 class Task(futures.Future):
     """A coroutine wrapped in a Future."""
 
@@ -99,6 +109,22 @@ class Task(futures.Future):
 
     def _repr_info(self):
         return base_tasks._task_repr_info(self)
+
+
+    def get_coro(self):
+        return self._coro
+
+    def get_name(self):
+        return self._name
+
+    def set_name(self, value):
+        self._name = str(value)
+
+    def set_result(self, result):
+        raise RuntimeError('Task does not support set_result operation')
+
+    def set_exception(self, exception):
+        raise RuntimeError('Task does not support set_exception operation')
 
     def get_stack(self, *, limit=None):
         """Return the list of stack frames for this task's coroutine.

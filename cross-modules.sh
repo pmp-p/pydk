@@ -54,11 +54,18 @@ then
 else
     # seed some usefull modules to build
     cat <<END > "${ORIGIN}/projects/requirements.txt"
+wheel
 numpy
+python-box
 pyjnius
 plyer
 pyglet
 END
+
+#git+https://github.com/pmp-p/pygame@pydk
+
+# prevent eggs https://stackoverflow.com/questions/6301003/stopping-setup-py-from-installing-as-egg
+# setup.py install --single-version-externally-managed --root=/
 
 fi
 
@@ -96,14 +103,15 @@ mkdir -p ${ORIGIN}/assets/packages
 
 for req in $(find ${APKUSR}/lib/python${PYMAJOR}.${PYMINOR}/site-packages/ -maxdepth 1  | egrep -v 'pth$|info$|egg$|txt$|/$')
 do
-    if find $req -type f|grep so$
-    then
-        echo " * can't add package yet : $(basename $req) not pure python"
-    else
-        echo " * adding pure-python pip package : $(basename $req)"
-        cp -ru $req ${ORIGIN}/assets/packages/
-    fi
+    echo " * adding python pip package : $(basename $req)"
+    cp -ru $req ${ORIGIN}/assets/packages/
+    rm $(find ${ORIGIN}/assets/packages/|grep so$)
 done
+
+
+# copy all sysconfig for prebuilt
+cp ${APKUSR}/lib/python${PYMAJOR}.${PYMINOR}/_sysconfig*py ${ORIGIN}/assets/python${PYMAJOR}.${PYMINOR}/
+
 
 cat > ${BUILD_PREFIX}-${ABI_NAME}/pip_lib.py  <<END
 import os
@@ -130,6 +138,7 @@ if 0:
             break
 else:
     SUFFIX= ".so"
+
 print(f"SUFFIX = {SUFFIX}")
 
 for libpath in FOUND:
