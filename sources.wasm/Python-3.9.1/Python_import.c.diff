@@ -1,0 +1,31 @@
+--- Python-3.9.1/Python/import.c	2020-12-07 15:02:38.000000000 +0100
++++ Python-3.9.1-wasm/Python/import.c	2020-12-08 08:51:14.130211363 +0100
+@@ -2104,6 +2104,20 @@
+     list = PyList_New(0);
+     if (list == NULL)
+         return NULL;
++
++#ifdef __EMSCRIPTEN__
++        PyObject *item = PyUnicode_FromString( ".cpython-38-em.wasm");
++        if (item == NULL) {
++            Py_DECREF(list);
++            return NULL;
++        }
++        if (PyList_Append(list, item) < 0) {
++            Py_DECREF(list);
++            Py_DECREF(item);
++            return NULL;
++        }
++        Py_DECREF(item);
++#else
+ #ifdef HAVE_DYNAMIC_LOADING
+     const char *suffix;
+     unsigned int index = 0;
+@@ -2123,6 +2137,7 @@
+         index += 1;
+     }
+ #endif
++#endif
+     return list;
+ }
+ 

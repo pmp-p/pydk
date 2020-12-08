@@ -60,9 +60,10 @@ python-box
 pyjnius
 plyer
 pyglet
+git+https://github.com/pmp-p/pygame@pydk
 END
 
-#git+https://github.com/pmp-p/pygame@pydk
+#
 
 # prevent eggs https://stackoverflow.com/questions/6301003/stopping-setup-py-from-installing-as-egg
 # setup.py install --single-version-externally-managed --root=/

@@ -1,0 +1,52 @@
+--- Python-3.9.1/Modules/posixmodule.c	2020-12-07 15:02:38.000000000 +0100
++++ Python-3.9.1-wasm/Modules/posixmodule.c	2020-12-08 08:51:14.062213791 +0100
+@@ -283,6 +283,12 @@
+ #  endif
+ #endif /* MS_WINDOWS */
+ 
++#if GOSH_MOVE_THEM
++    #pragma message "XXX Gosh I wish these were all moved into pyconfig.h"
++    #ifdef HAVE_FORKPTY
++    #undef HAVE_FORKPTY
++    #endif
++#else
+ /* Various compilers have only certain posix functions */
+ /* XXX Gosh I wish these were all moved into pyconfig.h */
+ #if defined(__WATCOMC__) && !defined(__QNX__)           /* Watcom compiler */
+@@ -326,6 +332,8 @@
+ #  endif  /* _MSC_VER */
+ #endif  /* ! __WATCOMC__ || __QNX__ */
+ 
++#endif // my GOSH
++
+ _Py_IDENTIFIER(__fspath__);
+ 
+ /*[clinic input]
+@@ -5805,9 +5813,13 @@
+ 
+    if (setsigmask) {
+         sigset_t set;
++		#if __EMSCRIPTEN__
++			#pragma message "HAVE_SIGSET_T // _Py_Sigset_Converter ?"
++		#else
+         if (!_Py_Sigset_Converter(setsigmask, &set)) {
+             goto fail;
+         }
++		#endif
+         errno = posix_spawnattr_setsigmask(attrp, &set);
+         if (errno) {
+             posix_error();
+@@ -5818,9 +5830,13 @@
+ 
+     if (setsigdef) {
+         sigset_t set;
++		#if __EMSCRIPTEN__
++			#pragma message "HAVE_SIGSET_T // _Py_Sigset_Converter ?"
++		#else
+         if (!_Py_Sigset_Converter(setsigdef, &set)) {
+             goto fail;
+         }
++		#endif
+         errno = posix_spawnattr_setsigdefault(attrp, &set);
+         if (errno) {
+             posix_error();

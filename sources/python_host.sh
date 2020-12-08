@@ -9,6 +9,7 @@ case "${PYVER}" in
     "3.7.9" ) export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH MD5=389d3ed26b4d97c741d9e5423da1f43b"};;
     "3.8.5" ) export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH MD5=35b5a3d0254c1c59be9736373d429db7"};;
     "3.9.0" ) export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH MD5=6ebfe157f6e88d9eabfbaf3fa92129f6"};;
+    "3.9.1" ) export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH MD5=61981498e75ac8f00adcb908281fadb6"};;
 esac
 
 export PYOPTS="--without-pymalloc --without-pydebug\

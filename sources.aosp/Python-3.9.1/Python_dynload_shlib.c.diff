@@ -1,0 +1,20 @@
+--- Python-3.9.1/Python/dynload_shlib.c	2020-12-07 15:02:38.000000000 +0100
++++ Python-3.9.1-aosp/Python/dynload_shlib.c	2020-12-08 08:46:41.895891506 +0100
+@@ -35,6 +35,9 @@
+ */
+ 
+ const char *_PyImport_DynLoadFiletab[] = {
++#if __ANDROID__
++    "." SOABI ".so",
++#else
+ #ifdef __CYGWIN__
+     ".dll",
+ #else  /* !__CYGWIN__ */
+@@ -45,6 +48,7 @@
+     ".abi" PYTHON_ABI_STRING ".so",
+     ".so",
+ #endif  /* __CYGWIN__ */
++#endif  /* __ANDROID__ */
+     NULL,
+ };
+ 

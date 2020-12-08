@@ -1,0 +1,30 @@
+--- Python-3.9.1/Modules/_posixsubprocess.c	2020-12-07 15:02:38.000000000 +0100
++++ Python-3.9.1-wasm/Modules/_posixsubprocess.c	2020-12-08 08:51:14.070213505 +0100
+@@ -608,7 +608,7 @@
+     }
+ }
+ 
+-
++#ifdef HAVE_FORK
+ static PyObject *
+ subprocess_fork_exec(PyObject* self, PyObject *args)
+ {
+@@ -923,7 +923,7 @@
+     Py_XDECREF(gc_module);
+     return NULL;
+ }
+-
++#endif
+ 
+ PyDoc_STRVAR(subprocess_fork_exec_doc,
+ "fork_exec(args, executable_list, close_fds, pass_fds, cwd, env,\n\
+@@ -960,7 +960,9 @@
+ 
+ 
+ static PyMethodDef module_methods[] = {
++#ifdef HAVE_FORK
+     {"fork_exec", subprocess_fork_exec, METH_VARARGS, subprocess_fork_exec_doc},
++#endif
+     {NULL, NULL}  /* sentinel */
+ };
+ 

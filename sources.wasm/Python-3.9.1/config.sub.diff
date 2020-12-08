@@ -1,0 +1,29 @@
+--- Python-3.9.1/config.sub	2020-12-07 15:02:38.000000000 +0100
++++ Python-3.9.1-wasm/config.sub	2020-12-08 08:51:13.974216933 +0100
+@@ -118,7 +118,8 @@
+   linux-musl* | linux-uclibc* | uclinux-uclibc* | uclinux-gnu* | kfreebsd*-gnu* | \
+   knetbsd*-gnu* | netbsd*-gnu* | netbsd*-eabi* | \
+   kopensolaris*-gnu* | cloudabi*-eabi* | \
+-  storm-chaos* | os2-emx* | rtmk-nova*)
++  storm-chaos* | os2-emx* | rtmk-nova* | \
++  emscripten)
+     os=-$maybe_os
+     basic_machine=`echo "$1" | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\1/'`
+     ;;
+@@ -250,6 +251,7 @@
+ 	| am33_2.0 \
+ 	| arc | arceb \
+ 	| arm | arm[bl]e | arme[lb] | armv[2-8] | armv[3-8][lb] | armv6m | armv[78][arm] \
++	| wasm \
+ 	| avr | avr32 \
+ 	| ba \
+ 	| be32 | be64 \
+@@ -1522,6 +1524,8 @@
+ 			;;
+ 		esac
+ 		;;
++	-emscripten)
++		;;
+ 	-nacl*)
+ 		;;
+ 	-ios)

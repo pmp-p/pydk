@@ -1,0 +1,20 @@
+--- Python-3.9.1/Python/fileutils.c	2020-12-07 15:02:38.000000000 +0100
++++ Python-3.9.1-wasm/Python/fileutils.c	2020-12-08 08:51:14.118211791 +0100
+@@ -1091,6 +1091,9 @@
+ static int
+ set_inheritable(int fd, int inheritable, int raise, int *atomic_flag_works)
+ {
++#ifdef __EMSCRIPTEN__
++    return 0;
++#else
+ #ifdef MS_WINDOWS
+     HANDLE handle;
+     DWORD flags;
+@@ -1214,6 +1217,7 @@
+     }
+     return 0;
+ #endif
++#endif
+ }
+ 
+ /* Make the file descriptor non-inheritable.

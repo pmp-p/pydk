@@ -1,0 +1,25 @@
+--- Python-3.9.1/Python/fileutils.c	2020-12-07 15:02:38.000000000 +0100
++++ Python-3.9.1-aosp/Python/fileutils.c	2020-12-08 08:46:41.899891366 +0100
+@@ -51,6 +51,16 @@
+ }
+ 
+ 
++//PMPP API<21
++#ifdef __ANDROID__
++    #if __ANDROID_API__ < 21
++        #ifndef CRYSTAX
++            #define NO_LOCALECONV 1
++        #endif
++    #endif
++#endif
++//PMPP API<21
++
+ PyObject *
+ _Py_device_encoding(int fd)
+ {
+@@ -2102,3 +2112,5 @@
+ 
+ #undef GET_LOCALE_STRING
+ }
++
++

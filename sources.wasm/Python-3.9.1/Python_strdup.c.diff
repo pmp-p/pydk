@@ -1,0 +1,9 @@
+--- Python-3.9.1/Python/strdup.c	2020-12-07 15:02:38.000000000 +0100
++++ Python-3.9.1-wasm/Python/strdup.c	2020-12-08 08:51:14.146210792 +0100
+@@ -1,4 +1,6 @@
+ /* strdup() replacement (from stdwin, if you must know) */
++#include <stdlib.h>
++#include <string.h>
+ 
+ char *
+ strdup(const char *str)

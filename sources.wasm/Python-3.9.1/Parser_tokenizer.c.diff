@@ -1,0 +1,11 @@
+--- Python-3.9.1/Parser/tokenizer.c	2020-12-07 15:02:38.000000000 +0100
++++ Python-3.9.1-wasm/Parser/tokenizer.c	2020-12-08 08:51:14.110212077 +0100
+@@ -849,7 +849,7 @@
+             return Py_CHARMASK(*tok->cur++);
+         }
+         if (tok->prompt != NULL) {
+-            char *newtok = PyOS_Readline(stdin, stdout, tok->prompt);
++            char *newtok = PyOS_Readline(tok->fp? tok->fp : stdin, stdout, tok->prompt);
+             if (newtok != NULL) {
+                 char *translated = translate_newlines(newtok, 0, tok);
+                 PyMem_FREE(newtok);

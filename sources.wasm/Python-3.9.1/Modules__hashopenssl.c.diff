@@ -1,0 +1,14 @@
+--- Python-3.9.1/Modules/_hashopenssl.c	2020-12-07 15:02:38.000000000 +0100
++++ Python-3.9.1-wasm/Modules/_hashopenssl.c	2020-12-08 08:51:14.050214220 +0100
+@@ -29,8 +29,11 @@
+ #include <openssl/crypto.h>       // FIPS_mode()
+ 
+ #ifndef OPENSSL_THREADS
++#if __EMSCRIPTEN__
++#else
+ #  error "OPENSSL_THREADS is not defined, Python requires thread-safe OpenSSL"
+ #endif
++#endif
+ 
+ #if (OPENSSL_VERSION_NUMBER < 0x10100000L) || defined(LIBRESSL_VERSION_NUMBER)
+ /* OpenSSL < 1.1.0 */
