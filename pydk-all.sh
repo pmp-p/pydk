@@ -23,7 +23,7 @@ then
 else
 # python 3.8.x / 3.9.x
     #export PYVER=${PYMAJOR}.${PYMINOR}.5
-    export PYVER=${PYMAJOR}.${PYMINOR}.0
+    export PYVER=${PYMAJOR}.${PYMINOR}.1
     export OPENSSL_VERSION="1.1.1h"
 fi
 
