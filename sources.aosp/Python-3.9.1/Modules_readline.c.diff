@@ -1,5 +1,5 @@
 --- Python-3.9.1/Modules/readline.c	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-aosp/Modules/readline.c	2020-12-08 08:46:41.871892361 +0100
++++ python3-aosp/Modules/readline.c	2020-12-08 18:29:02.615759109 +0100
 @@ -1186,7 +1186,9 @@
          int has_input = 0, err = 0;
  

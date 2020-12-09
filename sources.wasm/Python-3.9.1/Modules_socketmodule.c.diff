@@ -1,5 +1,5 @@
 --- Python-3.9.1/Modules/socketmodule.c	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-wasm/Modules/socketmodule.c	2020-12-08 08:51:14.086212934 +0100
++++ python3-wasm/Modules/socketmodule.c	2020-12-08 20:41:07.472565777 +0100
 @@ -1387,6 +1387,10 @@
         }
  #endif /* AF_QIPCRTR */

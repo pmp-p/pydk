@@ -1,5 +1,5 @@
 --- Python-3.9.1/Makefile.pre.in	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-aosp/Makefile.pre.in	2020-12-08 08:46:41.827893925 +0100
++++ python3-aosp/Makefile.pre.in	2020-12-09 08:45:11.236785473 +0100
 @@ -233,7 +233,7 @@
  PY3LIBRARY=     @PY3LIBRARY@
  DLLLIBRARY=	@DLLLIBRARY@
@@ -9,3 +9,11 @@
  
  
  LIBS=		@LIBS@
+@@ -299,6 +299,7 @@
+ ##########################################################################
+ 
+ LIBFFI_INCLUDEDIR=	@LIBFFI_INCLUDEDIR@
++LIBFFI_LIBDIR=		@LIBFFI_LIBDIR@
+ 
+ ##########################################################################
+ # Parser

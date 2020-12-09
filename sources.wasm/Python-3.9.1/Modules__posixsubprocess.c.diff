@@ -1,5 +1,5 @@
 --- Python-3.9.1/Modules/_posixsubprocess.c	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-wasm/Modules/_posixsubprocess.c	2020-12-08 08:51:14.070213505 +0100
++++ python3-wasm/Modules/_posixsubprocess.c	2020-12-08 20:41:07.467565837 +0100
 @@ -608,7 +608,7 @@
      }
  }

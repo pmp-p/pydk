@@ -1,5 +1,5 @@
 --- Python-3.9.1/Python/formatter_unicode.c	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-aosp/Python/formatter_unicode.c	2020-12-08 08:46:41.907891081 +0100
++++ python3-aosp/Python/formatter_unicode.c	2020-12-08 18:29:02.626758967 +0100
 @@ -692,6 +692,7 @@
  
  static const char no_grouping[1] = {CHAR_MAX};

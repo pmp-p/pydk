@@ -1,5 +1,5 @@
 --- Python-3.9.1/Parser/tokenizer.c	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-wasm/Parser/tokenizer.c	2020-12-08 08:51:14.110212077 +0100
++++ python3-wasm/Parser/tokenizer.c	2020-12-08 20:41:07.481565670 +0100
 @@ -849,7 +849,7 @@
              return Py_CHARMASK(*tok->cur++);
          }

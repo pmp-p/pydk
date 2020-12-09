@@ -1,5 +1,5 @@
 --- Python-3.9.1/Modules/posixmodule.c	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-aosp/Modules/posixmodule.c	2020-12-08 08:46:41.863892645 +0100
++++ python3-aosp/Modules/posixmodule.c	2020-12-08 18:29:02.610759173 +0100
 @@ -169,7 +169,6 @@
  disguised Unix interface).  Refer to the library manual and\n\
  corresponding Unix manual entries for more information on calls.");

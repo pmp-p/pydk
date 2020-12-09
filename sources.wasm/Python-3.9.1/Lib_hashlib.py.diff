@@ -1,5 +1,5 @@
 --- Python-3.9.1/Lib/hashlib.py	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-wasm/Lib/hashlib.py	2020-12-08 08:51:14.006215791 +0100
++++ python3-wasm/Lib/hashlib.py	2020-12-08 20:41:07.450566040 +0100
 @@ -55,10 +55,14 @@
  
  # This tuple and __get_builtin_constructor() must be modified if a new

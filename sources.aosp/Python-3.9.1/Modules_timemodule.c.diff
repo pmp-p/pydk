@@ -1,5 +1,5 @@
 --- Python-3.9.1/Modules/timemodule.c	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-aosp/Modules/timemodule.c	2020-12-08 08:46:41.883891934 +0100
++++ python3-aosp/Modules/timemodule.c	2020-12-08 18:29:02.619759058 +0100
 @@ -488,6 +488,7 @@
  }
  

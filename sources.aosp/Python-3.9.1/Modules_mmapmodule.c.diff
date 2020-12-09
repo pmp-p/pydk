@@ -1,5 +1,5 @@
 --- Python-3.9.1/Modules/mmapmodule.c	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-aosp/Modules/mmapmodule.c	2020-12-08 08:46:41.851893071 +0100
++++ python3-aosp/Modules/mmapmodule.c	2020-12-08 18:29:02.607759212 +0100
 @@ -79,6 +79,12 @@
  #  define MAP_ANONYMOUS MAP_ANON
  #endif

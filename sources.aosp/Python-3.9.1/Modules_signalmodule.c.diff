@@ -1,5 +1,5 @@
 --- Python-3.9.1/Modules/signalmodule.c	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-aosp/Modules/signalmodule.c	2020-12-08 08:46:41.875892218 +0100
++++ python3-aosp/Modules/signalmodule.c	2020-12-08 18:29:02.617759083 +0100
 @@ -49,6 +49,13 @@
  #define SIG_ERR ((PyOS_sighandler_t)(-1))
  #endif

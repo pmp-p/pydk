@@ -1,5 +1,5 @@
 --- Python-3.9.1/Lib/locale.py	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-aosp/Lib/locale.py	2020-12-08 08:46:41.787895346 +0100
++++ python3-aosp/Lib/locale.py	2020-12-08 18:29:02.591759418 +0100
 @@ -46,6 +46,10 @@
  
      from _locale import *

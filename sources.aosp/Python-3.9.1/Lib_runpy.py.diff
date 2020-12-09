@@ -1,5 +1,5 @@
 --- Python-3.9.1/Lib/runpy.py	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-aosp/Lib/runpy.py	2020-12-08 08:46:41.815894351 +0100
++++ python3-aosp/Lib/runpy.py	2020-12-08 18:29:02.598759328 +0100
 @@ -138,7 +138,7 @@
                      f"'{mod_name}' as the module name.")
          raise error(msg.format(mod_name, type(ex).__name__, ex)) from ex

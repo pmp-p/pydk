@@ -1,5 +1,5 @@
 --- Python-3.9.1/Include/pyport.h	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-wasm/Include/pyport.h	2020-12-08 08:51:13.998216076 +0100
++++ python3-wasm/Include/pyport.h	2020-12-08 20:41:07.449566052 +0100
 @@ -738,7 +738,11 @@
   * rather than waiting for integer multiplication to trigger bogus
   * overflows.

@@ -1,5 +1,5 @@
 --- Python-3.9.1/Modules/_decimal/libmpdec/io.c	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-aosp/Modules/_decimal/libmpdec/io.c	2020-12-08 08:46:41.835893640 +0100
++++ python3-aosp/Modules/_decimal/libmpdec/io.c	2020-12-08 18:29:02.603759264 +0100
 @@ -887,9 +887,15 @@
          if (*spec->sep) {
              return 0;

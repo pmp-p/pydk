@@ -1,5 +1,5 @@
 --- Python-3.9.1/Modules/_localemodule.c	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-aosp/Modules/_localemodule.c	2020-12-08 08:46:41.839893497 +0100
++++ python3-aosp/Modules/_localemodule.c	2020-12-08 18:29:02.605759238 +0100
 @@ -108,6 +108,10 @@
                          "invalid locale category");
          return NULL;

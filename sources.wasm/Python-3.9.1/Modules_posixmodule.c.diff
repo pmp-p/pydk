@@ -1,5 +1,5 @@
 --- Python-3.9.1/Modules/posixmodule.c	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-wasm/Modules/posixmodule.c	2020-12-08 08:51:14.062213791 +0100
++++ python3-wasm/Modules/posixmodule.c	2020-12-08 20:41:07.464565873 +0100
 @@ -283,6 +283,12 @@
  #  endif
  #endif /* MS_WINDOWS */

@@ -1,5 +1,5 @@
 --- Python-3.9.1/Lib/platform.py	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-aosp/Lib/platform.py	2020-12-08 08:46:41.807894633 +0100
++++ python3-aosp/Lib/platform.py	2020-12-08 18:29:02.596759354 +0100
 @@ -174,7 +174,10 @@
          The file is read and scanned in chunks of chunksize bytes.
  

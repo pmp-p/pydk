@@ -1,6 +1,14 @@
 --- Python-3.9.1/configure	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-wasm/configure	2020-12-08 08:51:13.990216362 +0100
-@@ -3301,6 +3301,9 @@
++++ python3-wasm/configure	2020-12-09 08:46:15.047907497 +0100
+@@ -655,6 +655,7 @@
+ DTRACE
+ TCLTK_LIBS
+ TCLTK_INCLUDES
++LIBFFI_LIBDIR
+ LIBFFI_INCLUDEDIR
+ PKG_CONFIG_LIBDIR
+ PKG_CONFIG_PATH
+@@ -3301,6 +3302,9 @@
  	*-*-cygwin*)
  		ac_sys_system=Cygwin
  		;;
@@ -10,7 +18,7 @@
  	*-*-vxworks*)
  	    ac_sys_system=VxWorks
  	    ;;
-@@ -3354,6 +3357,9 @@
+@@ -3354,6 +3358,9 @@
  	*-*-vxworks*)
  		_host_cpu=$host_cpu
  		;;
@@ -20,7 +28,7 @@
  	*)
  		# for now, limit cross builds to known configurations
  		MACHDEP="unknown"
-@@ -9438,8 +9444,9 @@
+@@ -9438,8 +9445,9 @@
  # -- usually .so, .sl on HP-UX, .dll on Cygwin
  { $as_echo "$as_me:${as_lineno-$LINENO}: checking the extension of shared libraries" >&5
  $as_echo_n "checking the extension of shared libraries... " >&6; }
@@ -31,7 +39,7 @@
  	hp*|HP*)
  		case `uname -m` in
  			ia64) SHLIB_SUFFIX=.so;;
-@@ -9450,6 +9457,12 @@
+@@ -9450,6 +9458,12 @@
  	*)	   SHLIB_SUFFIX=.so;;
  	esac
  fi
@@ -44,7 +52,22 @@
  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $SHLIB_SUFFIX" >&5
  $as_echo "$SHLIB_SUFFIX" >&6; }
  
-@@ -10968,7 +10981,7 @@
+@@ -10572,11 +10586,14 @@
+ 
+ if test "$with_system_ffi" = "yes" && test -n "$PKG_CONFIG"; then
+     LIBFFI_INCLUDEDIR="`"$PKG_CONFIG" libffi --cflags-only-I 2>/dev/null | sed -e 's/^-I//;s/ *$//'`"
++    LIBFFI_LIBDIR="`"$PKG_CONFIG" libffi --libs-only-L 2>/dev/null | sed -e 's/^-L//;s/ *$//'`"
+ else
+     LIBFFI_INCLUDEDIR=""
++    LIBFFI_LIBDIR=""
+ fi
+ 
+ 
++
+ # Check for use of the system libmpdec library
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for --with-system-libmpdec" >&5
+ $as_echo_n "checking for --with-system-libmpdec... " >&6; }
+@@ -10968,7 +10985,7 @@
  
  else
  
@@ -53,7 +76,7 @@
  
  fi
  
-@@ -11921,6 +11934,9 @@
+@@ -11921,6 +11938,9 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  #include <sys/epoll.h>
@@ -63,7 +86,7 @@
  int
  main ()
  {
-@@ -11946,6 +11962,9 @@
+@@ -11946,6 +11966,9 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */
  #include <sys/epoll.h>
@@ -73,7 +96,7 @@
  int
  main ()
  {
-@@ -12653,7 +12672,9 @@
+@@ -12653,7 +12676,9 @@
  #ifdef HAVE_GRP_H
  #include <grp.h>
  #endif
@@ -84,7 +107,7 @@
  int
  main ()
  {
-@@ -13304,7 +13325,9 @@
+@@ -13304,7 +13329,9 @@
  #else
  #include <sys/types.h>
  #endif
@@ -95,7 +118,7 @@
  int
  main ()
  {
-@@ -15386,6 +15409,10 @@
+@@ -15386,6 +15413,10 @@
  case $ac_sys_system in
      Linux*|GNU*|Darwin|VxWorks)
  	EXT_SUFFIX=.${SOABI}${SHLIB_SUFFIX};;

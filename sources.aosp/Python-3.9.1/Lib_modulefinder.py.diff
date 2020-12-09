@@ -1,5 +1,5 @@
 --- Python-3.9.1/Lib/modulefinder.py	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-aosp/Lib/modulefinder.py	2020-12-08 08:46:41.795895061 +0100
++++ python3-aosp/Lib/modulefinder.py	2020-12-08 18:29:02.593759392 +0100
 @@ -237,8 +237,8 @@
              if q:
                  self.msgout(4, "find_head_package ->", (q, tail))

@@ -1,6 +1,12 @@
 #!/bin/bash
 ROOT=$(pwd)
 
+if [ -f $PREFIX/lib/libSDL2_mixer.so ]
+then
+    echo " * SDL2 already built"
+else
+    echo " * building SDL2"
+
 DL="$PYDK/src/SDL2"
 
 mkdir -p "$DL"
@@ -91,22 +97,7 @@ cp -vf $BUILD/libs/${APP_ABI}/libSDL2_mixer.so  $PREFIX/lib/
 cp -vf $BUILD/libs/${APP_ABI}/libmpg123.so  $PREFIX/lib/
 cp -vf ${TARGET}/*.h $PREFIX/include/SDL2/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+fi
 
 
 

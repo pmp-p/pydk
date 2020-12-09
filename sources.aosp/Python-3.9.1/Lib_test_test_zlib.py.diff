@@ -1,5 +1,5 @@
 --- Python-3.9.1/Lib/test/test_zlib.py	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-aosp/Lib/test/test_zlib.py	2020-12-08 08:46:41.819894208 +0100
++++ python3-aosp/Lib/test/test_zlib.py	2020-12-08 18:29:02.599759315 +0100
 @@ -437,7 +437,14 @@
          sync_opt = ['Z_NO_FLUSH', 'Z_SYNC_FLUSH', 'Z_FULL_FLUSH',
                      'Z_PARTIAL_FLUSH']

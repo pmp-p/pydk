@@ -1,5 +1,5 @@
 --- Python-3.9.1/configure.ac	2020-12-07 15:02:38.000000000 +0100
-+++ Python-3.9.1-wasm/configure.ac	2020-12-08 08:51:13.978216791 +0100
++++ python3-wasm/configure.ac	2020-12-09 08:46:09.192987807 +0100
 @@ -391,6 +391,9 @@
  	*-*-cygwin*)
  		ac_sys_system=Cygwin
@@ -62,7 +62,21 @@
  AC_MSG_RESULT($SHLIB_SUFFIX)
  
  # LDSHARED is the ld *command* used to create shared library
-@@ -4786,6 +4811,10 @@
+@@ -3099,10 +3124,13 @@
+ 
+ if test "$with_system_ffi" = "yes" && test -n "$PKG_CONFIG"; then
+     LIBFFI_INCLUDEDIR="`"$PKG_CONFIG" libffi --cflags-only-I 2>/dev/null | sed -e 's/^-I//;s/ *$//'`"
++    LIBFFI_LIBDIR="`"$PKG_CONFIG" libffi --libs-only-L 2>/dev/null | sed -e 's/^-L//;s/ *$//'`"
+ else
+     LIBFFI_INCLUDEDIR=""
++    LIBFFI_LIBDIR=""
+ fi
+ AC_SUBST(LIBFFI_INCLUDEDIR)
++AC_SUBST(LIBFFI_LIBDIR)
+ 
+ # Check for use of the system libmpdec library
+ AC_MSG_CHECKING(for --with-system-libmpdec)
+@@ -4786,6 +4814,10 @@
  case $ac_sys_system in
      Linux*|GNU*|Darwin|VxWorks)
  	EXT_SUFFIX=.${SOABI}${SHLIB_SUFFIX};;
