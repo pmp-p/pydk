@@ -47,8 +47,6 @@ import struct
 import copy
 import re
 
-__EMSCRIPTEN__ = sys.platform in ("emscripten", "wasm")
-
 try:
     import pwd
 except ImportError:
