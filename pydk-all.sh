@@ -336,7 +336,9 @@ END
             exit 1
         fi
     fi
+
     echo "  -> host tools now in CMAKE_INSTALL_PREFIX=${HOST}"
+
     echo "  -> upgrading host build pip"
     #FIXME PYPA "${HOST}/bin/python3" -m pip install --upgrade pip
     "${HOST}/bin/python3" -m pip install pip==20.3.1
@@ -387,9 +389,6 @@ em_make () {
         exit 1
     fi
 }
-
-
-#$HOST/bin/python3 -m pip install --upgrade pip
 
 echo
 echo "ARCHITECTURES=[$ARCHITECTURES]"
