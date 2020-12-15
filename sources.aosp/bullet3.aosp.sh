@@ -3,7 +3,7 @@
 # https://github.com/bulletphysics/bullet3
 
 # valid
-export BULLET_URL=${BULLET_URL:-"URL https://github.com/bulletphysics/bullet3/archive/2.89.tar.gz"}
+#export BULLET_URL=${BULLET_URL:-"URL https://github.com/bulletphysics/bullet3/archive/2.89.tar.gz"}
 #export BULLET_HASH=${BULLET_HASH:-"URL_HASH MD5=d239b4800ec30513879834be6fcdc376"}
 
 # testing
