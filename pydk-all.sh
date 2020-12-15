@@ -338,7 +338,8 @@ END
     fi
     echo "  -> host tools now in CMAKE_INSTALL_PREFIX=${HOST}"
     echo "  -> upgrading host build pip"
-    "${HOST}/bin/python3" -m pip install --upgrade pip
+    #FIXME PYPA "${HOST}/bin/python3" -m pip install --upgrade pip
+    "${HOST}/bin/python3" -m pip install pip==20.3.1
 fi
 
 # small fix for panda3d cmake
@@ -388,7 +389,7 @@ em_make () {
 }
 
 
-$HOST/bin/python3 -m pip install --upgrade pip
+#$HOST/bin/python3 -m pip install --upgrade pip
 
 echo
 echo "ARCHITECTURES=[$ARCHITECTURES]"
@@ -621,6 +622,8 @@ set(OGG_FOUND YES)
 
 set(CMAKE_CONFIGURATION_TYPES "Release")
 set(CMAKE_BUILD_TYPE "Release")
+set(LINK_OPTIONS -s)
+
 END
 
 

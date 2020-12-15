@@ -11,9 +11,11 @@
 #https://github.com/panda3d/panda3d/archive/v1.10.7.tar.gz"}
 #b189313c4e9548e20b0facb0c078636e39467b149000919b80a7dd90b35a1939"}
 
+# valid
 export PANDA3D_URL=${PANDA3D_URL:-"URL https://github.com/panda3d/panda3d/archive/eb367430f7d4aad7d01e5b9212534b066e5a21f6.zip"}
-export PANDA3D_HASH=${PANDA3D_HASH:-"URL_HASH MD5=d436c406883488923d38f1093001d1aa"}
+#export PANDA3D_HASH=${PANDA3D_HASH:-"URL_HASH MD5=d436c406883488923d38f1093001d1aa"}
 
+export PANDA3D_URL=${PANDA3D_URL:-"https://github.com/panda3d/panda3d/archive/webgl-port.zip"}
 
 export PANDA3D_CMAKE_ARGS_COMMON="-DHAVE_PYTHON=YES \
 -DHAVE_EGG=YES -DHAVE_THREADS=NO -DHAVE_SSE2=NO -DHAVE_GTK2=No"

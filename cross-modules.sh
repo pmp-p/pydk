@@ -113,6 +113,8 @@ done
 # copy all sysconfig for prebuilt
 cp ${APKUSR}/lib/python${PYMAJOR}.${PYMINOR}/_sysconfig*py ${ORIGIN}/assets/python${PYMAJOR}.${PYMINOR}/
 
+LLVM_STRIP=$(find $ANDROID_NDK_HOME/|grep llvm-strip$)
+
 
 cat > ${BUILD_PREFIX}-${ABI_NAME}/pip_lib.py  <<END
 import os
@@ -199,6 +201,8 @@ target_link_libraries(jnilink
 """,file=file)
 
 END
+
+$LLVM_STRIP ${ORIGIN}/pydk-min/prebuilt/arm*/lib*.so ${ORIGIN}/pydk-min/prebuilt/x86*/lib*.so
 
 ${HOST}/bin/python3 -u -B ${BUILD_PREFIX}-${ABI_NAME}/pip_lib.py
 

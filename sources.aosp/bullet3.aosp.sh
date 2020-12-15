@@ -2,12 +2,12 @@
 # https://github.com/viromedia/ViroBullet
 # https://github.com/bulletphysics/bullet3
 
-#"GIT_REPOSITORY https://github.com/bulletphysics/bullet3.git"}
-#-}
-
+# valid
 export BULLET_URL=${BULLET_URL:-"URL https://github.com/bulletphysics/bullet3/archive/2.89.tar.gz"}
-export BULLET_HASH=${BULLET_HASH:-"URL_HASH MD5=d239b4800ec30513879834be6fcdc376"}
+#export BULLET_HASH=${BULLET_HASH:-"URL_HASH MD5=d239b4800ec30513879834be6fcdc376"}
 
+# testing
+export BULLET_URL=${BULLET_URL:-"GIT_REPOSITORY https://github.com/bulletphysics/bullet3.git"}
 
 bullet3_host_cmake () {
     cat >> CMakeLists.txt <<END

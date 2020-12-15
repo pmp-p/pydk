@@ -94,15 +94,16 @@ echo  >> ${BUILD_SRC}/build.log
 # DO NOT USE  -m pip what would not use venv
 # --no-warn-script-location
 export PIP3="pip3 install --upgrade"
+export PIP3_install="pip3 install"
 
 if $CI
 then
     echo CI - FORCING pip upgrade
-    pip3 install --upgrade pip
+    $PIP3_install pip==20.3.1
     export QUIET="1>/dev/null"
 else
-    $PIP3 pip
-    $PIP3 setuptools
+    $PIP3_install pip==20.3.1
+    $PIP3_install setuptools==51.0.0
     $PIP3 Cython
 fi
 
