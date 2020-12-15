@@ -1,5 +1,5 @@
 #export PANDA3D_URL=${PANDA3D_URL:-"URL https://github.com/pmp-p/panda3d/archive/mobile-sandbox.zip"}
-export PANDA3D_URL=${PANDA3D_URL:-"https://github.com/panda3d/panda3d/archive/webgl-port.zip"}
+export PANDA3D_URL=${PANDA3D_URL:-"URL https://github.com/panda3d/panda3d/archive/webgl-port.zip"}
 
 
 export PANDA3D_CMAKE_ARGS_COMMON="-DHAVE_PYTHON=YES\
