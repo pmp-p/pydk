@@ -10,7 +10,7 @@ case "${PYVER}" in
     "3.8.5" ) export HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=35b5a3d0254c1c59be9736373d429db7"};;
     "3.9.0" ) export HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=6ebfe157f6e88d9eabfbaf3fa92129f6"};;
     "3.9.1" ) export HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=61981498e75ac8f00adcb908281fadb6"};;
-    "3.9.2" ) export HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=    f0dc9000312abeb16de4eccce9a870ab"};;
+    "3.9.2" ) export HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=f0dc9000312abeb16de4eccce9a870ab"};;
 esac
 
 export PYOPTS="--without-pymalloc --without-pydebug\
@@ -23,22 +23,22 @@ export PYTARGET="${BUILD_SRC}/python3-${ENV}"
 
 export PYTHONDONTWRITEBYTECODE=1
 
+#restrict $PYMINOR for env so host pip can work for populating android projects
+for py in ${PYMINOR} 8 7 6 5
+do
+    if command -v python3.${py}
+    then
+        export PYTHON=$(command -v python3.${py})
+        break
+    fi
+done
+
+
 if echo $CI|grep -q true
 then
     JOBS=4
-    export PYTHON=${PYTHON_FOR_CI:-$(command -v python3.6)}
+    export PYTHON=${PYTHON_FOR_CI:-$PYTHON}
     echo "CI-force-test $PYTHON, ncpu=$JOBS"
-
-else
-    #restrict $PYMINOR for env so host pip can work for populating android projects
-    for py in ${PYMINOR} 8 7 6 5
-    do
-        if command -v python3.${py}
-        then
-            export PYTHON=$(command -v python3.${py})
-            break
-        fi
-    done
 fi
 
 if echo $PYTHON |grep -q python3.6
