@@ -1,8 +1,8 @@
 
 #BAD https://github.com/tamaskenez/harfbuzz-cmake.git
 
-export HARFBUZZ_URL=${HARFBUZZ_URL:-"GIT_REPOSITORY https://github.com/harfbuzz/harfbuzz.git"}
-export HARFBUZZ_HASH=${HARFBUZZ_HASH:-}
+export URL_HARFBUZZ=${URL_HARFBUZZ:-"GIT_REPOSITORY https://github.com/harfbuzz/harfbuzz.git"}
+export HASH_HARFBUZZ=${HASH_HARFBUZZ:-}
 
 
 harfbuzz_host_cmake () {
@@ -12,8 +12,8 @@ if(1)
     message(" processing unit : ${unit}")
 ExternalProject_Add(
     harfbuzz
-    ${HARFBUZZ_URL}
-    ${HARFBUZZ_HASH}
+    ${URL_HARFBUZZ}
+    ${HASH_HARFBUZZ}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 

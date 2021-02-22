@@ -1,16 +1,16 @@
-export URL_SQLITE3=${URL_SQLITE3:-"GIT_REPOSITORY https://github.com/azadkuh/sqlite-amalgamation.git"}
-export HASH_SQLITE3=${HASH_SQLITE3:-}
+export URL_JPEGTURBO=${URL_JPEGTURBO:-"GIT_REPOSITORY https://github.com/libjpeg-turbo/libjpeg-turbo.git"}
+export HASH_JPEGTURBO=${HASH_JPEGTURBO:-"GIT_TAG 3e9e7c70559d820d874fb2abea1ebcdd63c118b2"}
 
-sqlite3_host_cmake () {
+
+jpegturbo_host_cmake () {
     cat >> CMakeLists.txt <<END
+#${unit}
 
 if(1)
-    message("")
-    message(" processing unit : ${unit}")
 ExternalProject_Add(
-    sqlite3
-    ${URL_SQLITE3}
-    ${HASH_SQLITE3}
+    ${unit}
+    ${URL_JPEGTURBO}
+    ${HASH_JPEGTURBO}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
@@ -27,23 +27,20 @@ endif()
 END
 }
 
-sqlite3_patch () {
+jpegturbo_patch () {
     echo
 }
 
-sqlite3_build () {
+jpegturbo_build () {
     echo
 }
 
-sqlite3_crosscompile () {
-    if [ -f  ${APKUSR}/lib/libsqlite3.a ]
+jpegturbo_crosscompile () {
+    if [ -f  ${APKUSR}/lib/libturbojpeg.so ]
     then
-        echo "    -> sqlite3 already built for $ABI_NAME"
+        echo "    -> libjpeg-turbo already built for $ABI_NAME"
     else
         PrepareBuild ${unit}
         $ACMAKE ${BUILD_SRC}/${unit}-prefix/src/${unit} && make -s install
     fi
 }
-
-
-

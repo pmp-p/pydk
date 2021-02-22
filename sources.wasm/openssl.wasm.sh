@@ -1,6 +1,6 @@
 
-export OPENSSL_URL=${OPENSSL_URL:-"URL https://ftp.openssl.org/source/openssl-1.1.1f.tar.gz"}
-export OPENSSL_HASH="URL_HASH SHA256=186c6bfe6ecfba7a5b48c47f8a1673d0f3b0e5ba2e25602dd23b629975da3f35"
+export URL_OPENSSL=${URL_OPENSSL:-"URL https://ftp.openssl.org/source/openssl-1.1.1f.tar.gz"}
+export HASH_OPENSSL="URL_HASH SHA256=186c6bfe6ecfba7a5b48c47f8a1673d0f3b0e5ba2e25602dd23b629975da3f35"
 
 
 openssl_host_cmake () {

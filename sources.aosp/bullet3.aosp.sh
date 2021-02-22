@@ -3,11 +3,11 @@
 # https://github.com/bulletphysics/bullet3
 
 # valid
-#export BULLET_URL=${BULLET_URL:-"URL https://github.com/bulletphysics/bullet3/archive/2.89.tar.gz"}
-#export BULLET_HASH=${BULLET_HASH:-"URL_HASH MD5=d239b4800ec30513879834be6fcdc376"}
+#export URL_BULLET=${URL_BULLET:-"URL https://github.com/bulletphysics/bullet3/archive/2.89.tar.gz"}
+#export HASH_BULLET=${HASH_BULLET:-"URL_HASH MD5=d239b4800ec30513879834be6fcdc376"}
 
 # testing
-export BULLET_URL=${BULLET_URL:-"GIT_REPOSITORY https://github.com/bulletphysics/bullet3.git"}
+export URL_BULLET=${URL_BULLET:-"GIT_REPOSITORY https://github.com/bulletphysics/bullet3.git"}
 
 bullet3_host_cmake () {
     cat >> CMakeLists.txt <<END
@@ -18,8 +18,8 @@ if(1)
 ExternalProject_Add(
     bullet3
 
-    ${BULLET_URL}
-    ${BULLET_HASH}
+    ${URL_BULLET}
+    ${HASH_BULLET}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 

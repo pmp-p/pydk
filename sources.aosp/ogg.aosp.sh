@@ -1,5 +1,5 @@
-export OGG_URL=${ogg_URL:-"URL http://downloads.xiph.org/releases/ogg/libogg-1.3.4.tar.xz"}
-export OGG_HASH=${ogg_HASH:-"URL_HASH SHA256=c163bc12bc300c401b6aa35907ac682671ea376f13ae0969a220f7ddf71893fe"}
+export URL_OGG=${URL_OGG:-"URL http://downloads.xiph.org/releases/ogg/libogg-1.3.4.tar.xz"}
+export HASH_OGG=${HASH_OGG:-"URL_HASH SHA256=c163bc12bc300c401b6aa35907ac682671ea376f13ae0969a220f7ddf71893fe"}
 
 
 ogg_host_cmake () {
@@ -9,8 +9,8 @@ ogg_host_cmake () {
 if(1)
 ExternalProject_Add(
     ${unit}
-    ${OGG_URL}
-    ${OGG_HASH}
+    ${URL_OGG}
+    ${HASH_OGG}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 

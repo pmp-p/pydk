@@ -1,4 +1,4 @@
-export PANDA3D_URL=${PANDA3D_URL:-"URL https://github.com/pmp-p/panda3d/archive/mobile-sandbox.zip"}
+export URL_PANDA3D=${URL_PANDA3D:-"URL https://github.com/pmp-p/panda3d/archive/mobile-sandbox.zip"}
 
 export PANDA3D_CMAKE_ARGS_COMMON="-DHAVE_PYTHON=YES\
 -DHAVE_EGG=YES -DHAVE_SSE2=NO -DHAVE_THREADS=YES"
@@ -39,7 +39,7 @@ panda3dffi_crosscompile () {
         then
             echo using existing archive
         else
-            wget -c ${PANDA3D_URL}
+            wget -c ${URL_PANDA3D}
             mkdir -p ${BUILD_SRC}/${unit}-prefix/src
             unzip -q -o *.zip && rm *.zip && mv panda3d-* ${BUILD_SRC}/${unit}-prefix/src/panda3d-webgl-port && rmdir *
         fi

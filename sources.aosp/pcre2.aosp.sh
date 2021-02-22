@@ -1,20 +1,20 @@
-export URL_UNIT=${URL_UNIT:-"GIT_REPOSITORY https://github.com/pmp-p/pydk.git"}
-export HASH_UNIT=${HASH_UNIT:-}
+export URL_PCRE2=${URL_PCRE2:-"URL https://ftp.pcre.org/pub/pcre/pcre2-10.36.tar.gz"}
+export HASH_PCRE2=${HASH_PCRE2:-"URL_HASH MD5=a5d9aa7d18b61b0226696510e60c9582"}
 
-
-unit_host_cmake () {
+pcre2_host_cmake () {
     cat >> CMakeLists.txt <<END
-#${unit}
 
-if(0)
+if(1)
+    message("")
+    message(" processing unit : ${unit}")
 ExternalProject_Add(
-    ${unit}
-    ${URL_UNIT}
-    ${HASH_UNIT}
+    pcre2
+    ${URL_PCRE2}
+    ${HASH_PCRE2}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
-    CONFIGURE_COMMAND sh -c "echo 1>&1;echo external.configure ${unit} 1>&2"
+    CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
 )
@@ -27,17 +27,15 @@ endif()
 END
 }
 
-unit_patch () {
+pcre2_patch () {
     echo
 }
 
-unit_build () {
+pcre2_build () {
     echo
 }
 
-unit_crosscompile () {
+pcre2_crosscompile () {
     echo
 }
-
-
 

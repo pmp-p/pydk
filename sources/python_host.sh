@@ -3,13 +3,14 @@
 # JFLAGS :  make options
 # CNF : configure options
 
-export PYTHON3_URL=${PYTHON3_URL:-"URL https://www.python.org/ftp/python/${PYVER}/Python-${PYVER}.tar.xz"}
+export URL_PYTHON3=${URL_PYTHON3:-"URL https://www.python.org/ftp/python/${PYVER}/Python-${PYVER}.tar.xz"}
 
 case "${PYVER}" in
-    "3.7.9" ) export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH MD5=389d3ed26b4d97c741d9e5423da1f43b"};;
-    "3.8.5" ) export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH MD5=35b5a3d0254c1c59be9736373d429db7"};;
-    "3.9.0" ) export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH MD5=6ebfe157f6e88d9eabfbaf3fa92129f6"};;
-    "3.9.1" ) export PYTHON3_HASH=${PYTHON3_HASH:-"URL_HASH MD5=61981498e75ac8f00adcb908281fadb6"};;
+    "3.7.9" ) export HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=389d3ed26b4d97c741d9e5423da1f43b"};;
+    "3.8.5" ) export HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=35b5a3d0254c1c59be9736373d429db7"};;
+    "3.9.0" ) export HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=6ebfe157f6e88d9eabfbaf3fa92129f6"};;
+    "3.9.1" ) export HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=61981498e75ac8f00adcb908281fadb6"};;
+    "3.9.2" ) export HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=    f0dc9000312abeb16de4eccce9a870ab"};;
 esac
 
 export PYOPTS="--without-pymalloc --without-pydebug\
@@ -99,11 +100,14 @@ export PIP3_install="pip3 install"
 if $CI
 then
     echo CI - FORCING pip upgrade
-    $PIP3_install pip==20.3.1
+    #$PIP3_install pip==20.3.1
+    $PIP3 pip
     export QUIET="1>/dev/null"
 else
-    $PIP3_install pip==20.3.1
-    $PIP3_install setuptools==51.0.0
+    #$PIP3_install pip==20.3.1
+    $PIP3 pip
+    #$PIP3_install setuptools==51.0.0
+    $PIP3 setuptools
     $PIP3 Cython
 fi
 

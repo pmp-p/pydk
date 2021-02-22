@@ -2,8 +2,8 @@
 #403d67aabf1c05157855ea2b1d9950263fb6316536c8c333f5b9ab1eb2f20ecf"}
 
 #URL http://sourceware.org/pub/libffi/libffi-3.3.tar.gz"}
-export LIBFFI_URL=${LIBFFI_URL:-"URL https://github.com/libffi/libffi/releases/download/v3.3/libffi-3.3.tar.gz"}
-export LIBFFI_HASH=${LIBFFI_HASH:-"URL_HASH SHA256=72fba7922703ddfa7a028d513ac15a85c8d54c8d67f55fa5a4802885dc652056"}
+export URL_LIBFFI=${URL_LIBFFI:-"URL https://github.com/libffi/libffi/releases/download/v3.3/libffi-3.3.tar.gz"}
+export HASH_LIBFFI=${HASH_LIBFFI:-"URL_HASH SHA256=72fba7922703ddfa7a028d513ac15a85c8d54c8d67f55fa5a4802885dc652056"}
 
 
 
@@ -15,8 +15,8 @@ if(1)
     message(" processing unit : ${unit}")
 ExternalProject_Add(
     libffi
-    ${LIBFFI_URL}
-    ${LIBFFI_HASH}
+    ${URL_LIBFFI}
+    ${HASH_LIBFFI}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 

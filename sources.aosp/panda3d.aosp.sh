@@ -1,6 +1,6 @@
 
 # Thanks CFSworks for cmake !
-#export PANDA3D_URL=${PANDA3D_URL:-"URL https://github.com/panda3d/panda3d/archive/cmake.zip"}
+#export URL_PANDA3D=${URL_PANDA3D:-"URL https://github.com/panda3d/panda3d/archive/cmake.zip"}
 
 # last build ok most recent first
 # eb367430f7d4aad7d01e5b9212534b066e5a21f6 d436c406883488923d38f1093001d1aa
@@ -12,11 +12,14 @@
 #b189313c4e9548e20b0facb0c078636e39467b149000919b80a7dd90b35a1939"}
 
 # valid
-#export PANDA3D_URL=${PANDA3D_URL:-"URL https://github.com/panda3d/panda3d/archive/eb367430f7d4aad7d01e5b9212534b066e5a21f6.zip"}
-#export PANDA3D_HASH=${PANDA3D_HASH:-"URL_HASH MD5=d436c406883488923d38f1093001d1aa"}
+#export URL_PANDA3D=${URL_PANDA3D:-"URL https://github.com/panda3d/panda3d/archive/eb367430f7d4aad7d01e5b9212534b066e5a21f6.zip"}
+#export HASH_PANDA3D=${HASH_PANDA3D:-"URL_HASH MD5=d436c406883488923d38f1093001d1aa"}
 
-#export PANDA3D_URL=${PANDA3D_URL:-"URL https://github.com/panda3d/panda3d/archive/webgl-port.zip"}
-export PANDA3D_URL=${PANDA3D_URL:-"GIT_REPOSITORY https://github.com/panda3d/panda3d.git"}
+#export URL_PANDA3D=${URL_PANDA3D:-"URL https://github.com/panda3d/panda3d/archive/webgl-port.zip"}
+export URL_PANDA3D=${URL_PANDA3D:-"GIT_REPOSITORY https://github.com/panda3d/panda3d.git"}
+
+#export URL_PANDA3D=${URL_PANDA3D:-"GIT_REPOSITORY https://github.com/pmp-p/panda3d"}
+#export EXTRA_PANDA3D="GIT_TAG origin/patch-2"
 
 export PANDA3D_CMAKE_ARGS_COMMON="-DHAVE_PYTHON=YES \
 -DHAVE_EGG=YES -DHAVE_THREADS=NO -DHAVE_SSE2=NO -DHAVE_GTK2=No"
@@ -43,8 +46,9 @@ ExternalProject_Add(
     DEPENDS vorbis
     DEPENDS openssl
 
-    ${PANDA3D_URL}
-    ${PANDA3D_HASH}
+    ${URL_PANDA3D}
+    ${HASH_PANDA3D}
+    ${EXTRA_PANDA3D}
 
     PATCH_COMMAND patch -p1 < ${SUPPORT}/panda3d/all
 

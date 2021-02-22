@@ -21,8 +21,8 @@ cross_pip_host_cmake () {
 if(0)
 ExternalProject_Add(
     ${unit}
-    ${cross_pip_URL}
-    ${cross_pip_HASH}
+    ${URL_cross_pip}
+    ${HASH_cross_pip}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
@@ -53,13 +53,17 @@ cross_pip_crosscompile () {
 
 export _PYTHON_HOST_PLATFORM=$HOST_PLATFORM
 
+export PREFIX="${APKUSR}"
 
 export PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig
 
 export PS1="[PyDK:$ABI_NAME] \w \$ "
 
 export PYTHONPYCACHEPREFIX=${PYTHONPYCACHEPREFIX}
-export HOME=${PYTHONPYCACHEPREFIX}
+export HOME="${APKUSR}"
+
+rm "${APKUSR}/.local"
+ln -s "${APKUSR}" "${APKUSR}/.local"
 
 cat >$PYTHONPYCACHEPREFIX/.numpy-site.cfg <<NUMPY
 [DEFAULT]

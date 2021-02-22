@@ -2,8 +2,8 @@
 # https://github.com/roxlu
 # https://gist.github.com/roxlu/0108d45308a0434e27d4320396399153
 
-#export FREETYPE2_URL=${FREETYPE2_URL:-"URL https://download.savannah.gnu.org/releases/freetype/freetype-2.10.0.tar.bz2"}
-#export FREETYPE2_HASH=${FREETYPE2_HASH:-"URL_HASH SHA256=fccc62928c65192fff6c98847233b28eb7ce05f12d2fea3f6cc90e8b4e5fbe06"}
+#export URL_FREETYPE2=${URL_FREETYPE2:-"URL https://download.savannah.gnu.org/releases/freetype/freetype-2.10.0.tar.bz2"}
+#export HASH_FREETYPE2=${HASH_FREETYPE2:-"URL_HASH SHA256=fccc62928c65192fff6c98847233b28eb7ce05f12d2fea3f6cc90e8b4e5fbe06"}
 
 
 

@@ -38,6 +38,8 @@ export CMAKE_VERSION=3.13.0
 
 
 export ORIGIN=$(pwd)
+export PYDK=$(pwd)
+
 export HOST="${ORIGIN}/host"
 export BUILD_SRC=${ORIGIN}/src
 
@@ -59,12 +61,14 @@ ROOT="${ORIGIN}/${ENV}"
 BUILD_PREFIX="${ROOT}/build"
 
 # sdk tools https://developer.android.com/studio/releases/platform-tools
+export ANDROID_HOME="${ANDROID_HOME:-$(pwd)/android-sdk}"
+# 28.0.3 at time of ndk 21/22
+export BUILD_TOOLS="${ANDROID_HOME}/build-tools/28.0.3"
 
 # ndk https://developer.android.com/ndk/downloads
-
-export ANDROID_HOME=${ANDROID_HOME:-$(pwd)/android-sdk}
 export NDK_HOME=${NDK_HOME:-${ANDROID_HOME}/ndk-bundle}
 export ANDROID_NDK_HOME=${NDK_HOME}
+
 
 
 # above are the defaults, can be overridden via CONFIG
@@ -76,16 +80,16 @@ pwd
 fi
 
 #tested
-PATCHELF_URL="URL https://github.com/NixOS/patchelf/archive/0.12.tar.gz"
-PATCHELF_HASH="URL_HASH SHA256=3dca33fb862213b3541350e1da262249959595903f559eae0fbc68966e9c3f56"
+URL_PATCHELF="URL https://github.com/NixOS/patchelf/archive/0.12.tar.gz"
+HASH_PATCHELF="URL_HASH SHA256=3dca33fb862213b3541350e1da262249959595903f559eae0fbc68966e9c3f56"
 
 
-ADBFS_URL="GIT_REPOSITORY https://github.com/spion/adbfs-rootless.git"
+URL_ADBFS="GIT_REPOSITORY https://github.com/spion/adbfs-rootless.git"
 #tested
-ADBFS_HASH="GIT_TAG ba64c22dbd373499eea9c9a9d2a9dd1cd25c33e1 # 14 july 2019"
+HASH_ADBFS="GIT_TAG ba64c22dbd373499eea9c9a9d2a9dd1cd25c33e1 # 14 july 2019"
 
 #new
-ADBFS_HASH="GIT_TAG 5b091a50cd2419e1cebe42aa1d0e1ad1f90fdfad # 29 feb 2020"
+HASH_ADBFS="GIT_TAG 5b091a50cd2419e1cebe42aa1d0e1ad1f90fdfad # 29 feb 2020"
 
 # optionnal urls for sources packages
 if [ -f "CACHE_URL" ]
@@ -97,7 +101,7 @@ fi
 UNITS="unit bzip2 lzma libffi sqlite3 openssl python3"
 
 #extra
-UNITS="$UNITS freetype2 harfbuzz ft2_hb bullet3 openal ogg vorbis panda3d sdl2"
+UNITS="$UNITS freetype2 harfbuzz ft2_hb bullet3 openal ogg vorbis panda3d sdl2 pcre2"
 
 
 
@@ -199,7 +203,7 @@ cd "${ROOT}"
 
 # because libpython is shared
 export LD_LIBRARY_PATH="${HOST}/lib64:${HOST}/lib:$LD_LIBRARY_PATH"
-export BASEPATH="${HOST}/bin:$NDK_HOME:${ROOT}/bin:/bin:/usr/bin:/usr/local/bin"
+export BASEPATH="${HOST}/bin:$NDK_HOME:${ROOT}/bin:${PYTHONPYCACHEPREFIX}/bin:/bin:/usr/bin:/usr/local/bin"
 
 # prevent system path interference in build tools
 export PATH="$BASEPATH"
@@ -227,7 +231,9 @@ export PATH="$BASEPATH"
 
 export PYDK="${ORIGIN}"
 
+export CMAKE_INSTALL_PREFIX=${APKUSR}
 export PREFIX="${APKUSR}"
+
 
 export PYTHONPATH=${HOST}/lib/python$PYVER:${HOST}/lib/python${PYMAJOR}.${PYMINOR}/site-packages
 
@@ -286,8 +292,8 @@ set(_downloadOptions SHOW_PROGRESS)
 
 ExternalProject_Add(
     patchelf
-    ${PATCHELF_URL}
-    ${PATCHELF_HASH}
+    ${URL_PATCHELF}
+    ${HASH_PATCHELF}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
@@ -301,8 +307,8 @@ ExternalProject_Add(
 
 ExternalProject_Add(
     adbfs
-    ${ADBFS_URL}
-    ${ADBFS_HASH}
+    ${URL_ADBFS}
+    ${HASH_ADBFS}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
@@ -340,8 +346,9 @@ END
     echo "  -> host tools now in CMAKE_INSTALL_PREFIX=${HOST}"
 
     echo "  -> upgrading host build pip"
-    #FIXME PYPA "${HOST}/bin/python3" -m pip install --upgrade pip
-    "${HOST}/bin/python3" -m pip install pip==20.3.1
+    #FIXME PYPA
+    "${HOST}/bin/python3" -m pip install --upgrade pip
+    #"${HOST}/bin/python3" -m pip install pip==20.3.1
 fi
 
 # small fix for panda3d cmake
@@ -503,9 +510,22 @@ do
 
 export PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig
 
+export CMAKE_INSTALL_PREFIX=${APKUSR}
+export PREFIX=${APKUSR}
+
 export PS1="[PyDK:$ABI_NAME] \w \$ "
 
 export PYDK="${ORIGIN}"
+
+ndk_build () {
+    ndk-build \
+ APP_PLATFORM=\${APP_PLATFORM} APP_ABI=\${APP_ABI} \
+ NDK_PROJECT_PATH=. \
+ APP_BUILD_SCRIPT=Android.mk \
+ APP_ALLOW_MISSING_DEPS=true \
+ PREFIX=${PREFIX} \
+ CFLAGS=-fPIC \$@
+}
 
 acmake () {
         reset
@@ -639,11 +659,11 @@ export CC=$CC
 export RANLIB=$RANLIB
 
 #ndk-build
-export PREFIX="${APKUSR}"
+export APP_PREFIX="${APKUSR}"
 export APP_ABI=$ABI_NAME
 export APP_PLATFORM=android-$API
 
-export PATH=$BASEPATH
+export PATH=${NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin:${BUILD_TOOLS}:$BASEPATH
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH
 
 END
@@ -669,12 +689,12 @@ done
 # if CI does not use bash
 if $NOBASH
 then
-    unset ENV ROOT BUILD_PREFIX SUPPORT APKUSR PKG_CONFIG_PATH TOOLCHAIN UNITS PYTHON3_URL PYTHON3_HASH
+    unset ENV ROOT BUILD_PREFIX SUPPORT APKUSR PKG_CONFIG_PATH TOOLCHAIN UNITS URL_PYTHON3 HASH_PYTHON3
 fi
 
 # until webgl is merged into master
-unset PANDA3D_URL
-unset PANDA3D_HASH
+unset URL_PANDA3D
+unset HASH_PANDA3D
 
 if echo $ABI_NAME|grep -q wasm
 then
@@ -714,7 +734,7 @@ export WCMAKE="emcmake $CMAKE -Wno-dev -DCMAKE_INSTALL_PREFIX=${APKUSR}"
 cat > ${HOST}/${ABI_NAME}.sh <<END
 #!/bin/sh
 
-export PATH=${HOST}/bin:${ROOT}/bin:/bin:/usr/bin:/usr/local/bin
+export PATH=${HOST}/bin:${ROOT}/bin:${PYTHONPYCACHEPREFIX}/bin:/bin:/usr/bin:/usr/local/bin
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOST}/lib64:${HOST}/lib
 
 . ${TOOLCHAIN}
@@ -751,6 +771,19 @@ export PS1="[PyDK:$ABI_NAME] \w \$ "
 
 export PYDK="${ORIGIN}"
 
+export CMAKE_INSTALL_PREFIX=${APKUSR}
+export PREFIX="${APKUSR}"
+
+# gather \$HOME/.local/bin
+
+export HOME="${PYTHONPYCACHEPREFIX}"
+rm "${PYTHONPYCACHEPREFIX}/.local"
+ln -s "${PYTHONPYCACHEPREFIX}" "${PYTHONPYCACHEPREFIX}/.local"
+
+
+wconfigure () {
+    CC=emcc CXX=em++ ./configure --prefix=${APKUSR} \$@
+}
 
 wcmake () {
         reset
@@ -766,7 +799,7 @@ fi
 
 END
 
-export UNITS="openssl libffi python3 vorbis panda3d panda3dffi"
+export UNITS="openssl libffi python3 vorbis panda3d panda3dffi pcre2"
 
 if [ -f "${SUPPORT}/cross_pip.wasm.sh" ]
 then

@@ -1,0 +1,12 @@
+--- panda3d/pandatool/src/deploy-stub/CMakeLists.txt	2021-02-21 05:28:57.622856093 +0100
++++ panda3d-pmpp/pandatool/src/deploy-stub/CMakeLists.txt	2021-02-21 05:28:31.280191836 +0100
+@@ -2,6 +2,9 @@
+   return()
+ endif()
+ 
++INSTALL()
++return()
++
+ add_executable(deploy-stub deploy-stub.c)
+ 
+ if(IS_OSX)

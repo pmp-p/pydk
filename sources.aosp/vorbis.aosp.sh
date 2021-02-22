@@ -2,13 +2,13 @@
 #30c490373b740f357d219c9e9672698d739f11f3
 # broken at https://github.com/xiph/vorbis/commit/ffcd784bca8b02606014f2bb43d43a6d5dcfc8ae
 
-export VORBIS_URL=${VORBIS_URL:-"GIT_REPOSITORY https://github.com/xiph/vorbis.git"}
-export VORBIS_HASH=${VORBIS_HASH:-}
+export URL_VORBIS=${URL_VORBIS:-"GIT_REPOSITORY https://github.com/xiph/vorbis.git"}
+export HASH_VORBIS=${HASH_VORBIS:-}
 
 
 
-#export VORBIS_URL=${VORBIS_URL:-"URL https://github.com/xiph/vorbis/archive/30c490373b740f357d219c9e9672698d739f11f3.zip"}
-#export VORBIS_HAS=${VORBIS_HASH:-"URL_HASH SHA256=17f034a73d208bd230dd70f13ba3c600a9eed169aac38e3d38cd0e42dd759d7c"}
+#export URL_VORBIS=${URL_VORBIS:-"URL https://github.com/xiph/vorbis/archive/30c490373b740f357d219c9e9672698d739f11f3.zip"}
+#export VORBIS_HAS=${HASH_VORBIS:-"URL_HASH SHA256=17f034a73d208bd230dd70f13ba3c600a9eed169aac38e3d38cd0e42dd759d7c"}
 
 
 vorbis_host_cmake () {
@@ -19,8 +19,8 @@ if(1)
     message(" processing unit : ${unit}")
 ExternalProject_Add(
     ${unit}
-    ${VORBIS_URL}
-    ${VORBIS_HASH}
+    ${URL_VORBIS}
+    ${HASH_VORBIS}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 

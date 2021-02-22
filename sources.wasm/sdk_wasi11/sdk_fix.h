@@ -11,7 +11,7 @@ static int wasi_clock_gettime(clockid_t clockid, struct timespec *ts) {
     sched_yield();
     ts->tv_sec = wa_tv.tv_sec;
     ts->tv_nsec = wa_ts_nsec;
-fprintf(stderr,"[\"clock_gettime\", %d, %d, %lu, %u]\n", (int)clockid, (int)&ts, ts->tv_nsec, wa_ts_nsec);
+//fprintf(stderr,"[\"clock_gettime\", %d, %d, %lu, %u]\n", (int)clockid, (int)&ts, ts->tv_nsec, wa_ts_nsec);
     return 0;
 }
 
@@ -21,7 +21,7 @@ static int wasi_gettimeofday(struct timeval *tv) {
     tv->tv_sec = wa_tv.tv_sec;
     tv->tv_usec = wa_tv.tv_usec;
 
-fprintf(stderr,"[\"gettimeofday\",%d , %lld, %lld, %u ]\n", (int)&tv, tv->tv_sec, tv->tv_usec, wa_ts_nsec);
+//fprintf(stderr,"[\"gettimeofday\",%d , %lld, %lld, %u ]\n", (int)&tv, tv->tv_sec, tv->tv_usec, wa_ts_nsec);
     return 0;
 }
 

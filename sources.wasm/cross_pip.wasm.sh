@@ -14,8 +14,8 @@ cross_pip_host_cmake () {
 if(0)
 ExternalProject_Add(
     ${unit}
-    ${cross_pip_URL}
-    ${cross_pip_HASH}
+    ${URL_cross_pip}
+    ${HASH_cross_pip}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 

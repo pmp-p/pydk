@@ -1,5 +1,5 @@
 
-export LZMA_URL=${LZMA_URL:-"URL https://tukaani.org/xz/xz-5.2.4.tar.bz2"}
+export URL_LZMA=${URL_LZMA:-"URL https://tukaani.org/xz/xz-5.2.4.tar.bz2"}
 export LZMA_HASH=${LZMA_HASH:-"URL_HASH SHA256=3313fd2a95f43d88e44264e6b015e7d03053e681860b0d5d3f9baca79c57b7bf"}
 
 
@@ -9,7 +9,7 @@ lzma_host_cmake () {
 #${unit}
 ExternalProject_Add(
     lzma
-    ${LZMA_URL}
+    ${URL_LZMA}
     ${LZMA_HASH}
 
     DOWNLOAD_NO_PROGRESS ${CI}

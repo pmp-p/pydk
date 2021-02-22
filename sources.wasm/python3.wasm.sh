@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# defined in python_host : PYTHON3_URL PYOPTS PYTARGET
+# defined in python_host : URL_PYTHON3 PYOPTS PYTARGET
 
 
 #for arm: ac_cv_mixed_endian_double=yes
@@ -182,8 +182,8 @@ ExternalProject_Add(
     DEPENDS bz2
     DEPENDS lzma
     DEPENDS sqlite3
-    ${PYTHON3_URL}
-    ${PYTHON3_HASH}
+    ${URL_PYTHON3}
+    ${HASH_PYTHON3}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 

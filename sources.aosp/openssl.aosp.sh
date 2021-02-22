@@ -1,11 +1,11 @@
 #  PARALLEL BUILD WILL BREAK : always use -j1 !
 
-export OPENSSL_URL=${OPENSSL_URL:-"URL https://ftp.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"}
+export URL_OPENSSL=${URL_OPENSSL:-"URL https://ftp.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"}
 
 case "$OPENSSL_VERSION" in
-    "1.0.2t" ) OPENSSL_HASH="URL_HASH SHA256=14cb464efe7ac6b54799b34456bd69558a749a4931ecfd9cf9f71d7881cac7bc";;
-    "1.1.1f" ) OPENSSL_HASH="URL_HASH SHA256=186c6bfe6ecfba7a5b48c47f8a1673d0f3b0e5ba2e25602dd23b629975da3f35";;
-    "1.1.1h" ) OPENSSL_HASH="URL_HASH SHA256=5c9ca8774bd7b03e5784f26ae9e9e6d749c9da2438545077e6b3d755a06595d9";;
+    "1.0.2t" ) HASH_OPENSSL="URL_HASH SHA256=14cb464efe7ac6b54799b34456bd69558a749a4931ecfd9cf9f71d7881cac7bc";;
+    "1.1.1f" ) HASH_OPENSSL="URL_HASH SHA256=186c6bfe6ecfba7a5b48c47f8a1673d0f3b0e5ba2e25602dd23b629975da3f35";;
+    "1.1.1h" ) HASH_OPENSSL="URL_HASH SHA256=5c9ca8774bd7b03e5784f26ae9e9e6d749c9da2438545077e6b3d755a06595d9";;
 esac
 
 openssl_host_cmake () {
@@ -17,8 +17,8 @@ if(1)
 ExternalProject_Add(
     openssl
     DEPENDS patchelf
-    ${OPENSSL_URL}
-    ${OPENSSL_HASH}
+    ${URL_OPENSSL}
+    ${HASH_OPENSSL}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
