@@ -6,11 +6,14 @@
 export URL_PYTHON3=${URL_PYTHON3:-"URL https://www.python.org/ftp/python/${PYVER}/Python-${PYVER}.tar.xz"}
 
 case "${PYVER}" in
-    "3.7.9" ) export HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=389d3ed26b4d97c741d9e5423da1f43b"};;
-    "3.8.5" ) export HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=35b5a3d0254c1c59be9736373d429db7"};;
-    "3.9.0" ) export HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=6ebfe157f6e88d9eabfbaf3fa92129f6"};;
-    "3.9.1" ) export HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=61981498e75ac8f00adcb908281fadb6"};;
-    "3.9.2" ) export HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=f0dc9000312abeb16de4eccce9a870ab"};;
+    "3.7.9" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=389d3ed26b4d97c741d9e5423da1f43b"};;
+    "3.7.10" ) export  HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=9e34914bc804ab2e7d955b49c5e1e391"};;
+    "3.8.5" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=35b5a3d0254c1c59be9736373d429db7"};;
+    "3.8.8" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=23e6b769857233c1ac07b6be7442eff4"};;
+    "3.8.10" ) export  HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=d9eee4b20155553830a2025e4dcaa7b3"};;
+    "3.9.0" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=6ebfe157f6e88d9eabfbaf3fa92129f6"};;
+    "3.9.1" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=61981498e75ac8f00adcb908281fadb6"};;
+    "3.9.2" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=f0dc9000312abeb16de4eccce9a870ab"};;
 esac
 
 export PYOPTS="--without-pymalloc --without-pydebug\
@@ -117,6 +120,13 @@ then
     if $PIP3 scikit-build
     then
         if $PIP3 "cmake==${CMAKE_VERSION}"
+        then
+            echo maybe ok
+        else
+            echo " * NOT BUILDING CMAKE (too buggy), using anything in path"
+        fi
+
+        if command -v cmake |grep -q cmake
         then
             rm new_env
         fi

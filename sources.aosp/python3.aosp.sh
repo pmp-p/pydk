@@ -48,6 +48,16 @@ END
 
 
 python_module_setup_local () {
+    if echo $PYMINOR|grep -q 7
+    then
+        HAVE_MPDEC='#'
+    else
+        HAVE_MPDEC=""
+    fi
+
+    # 3.7 +  _decimal/libmpdec/mpalloc.c
+    # 3.8 -  _decimal/libmpdec/mpalloc.c
+
     cat > $1 <<END
 *static*
 
@@ -75,8 +85,6 @@ _contextvars _contextvarsmodule.c
 
 
 _random _randommodule.c # Random number generator
-
-
 
 _bisect _bisectmodule.c # Bisection algorithms
 _json _json.c
@@ -119,7 +127,7 @@ _ctypes _ctypes/_ctypes.c \
  _ctypes/stgdict.c \
  _ctypes/cfield.c -I${PYTARGET}/Modules/_ctypes -I${APKUSR}/include -L${APKUSR}/lib -lffi # ${APKUSR}/lib/libffi.a
 
-_decimal _decimal/_decimal.c \
+$HAVE_MPDEC _decimal _decimal/_decimal.c \
  _decimal/libmpdec/basearith.c \
  _decimal/libmpdec/constants.c \
  _decimal/libmpdec/context.c \
@@ -129,12 +137,12 @@ _decimal _decimal/_decimal.c \
  _decimal/libmpdec/fnt.c \
  _decimal/libmpdec/fourstep.c \
  _decimal/libmpdec/io.c \
- _decimal/libmpdec/mpalloc.c \
  _decimal/libmpdec/mpdecimal.c \
  _decimal/libmpdec/numbertheory.c \
+ _decimal/libmpdec/memory.c \
  _decimal/libmpdec/sixstep.c \
  _decimal/libmpdec/transpose.c \
- -DCONFIG_${BITS} -DANSI -I${PYTARGET}/Modules/_decimal/libmpdec
+ -DCONFIG_${BITS} -DANSI -I${PYTARGET}/Modules/_decimal/libmpdec -fPIC
 
 END
 }
@@ -244,11 +252,15 @@ python_configure () {
     cp ${HOST}/${ABI_NAME}.sh $1
     cat >> $1 <<END
 
+export PYTHON_FOR_BUILD=${HOST}/bin/python3
 export _PYTHON_PROJECT_SRC=${PYTARGET}
 export _PYTHON_PROJECT_BASE=$(pwd)
 export PYTHONDONTWRITEBYTECODE=1
 export PYTHONPYCACHEPREFIX=${ORIGIN}/pycache
 export APKUSR=${APKUSR}
+export CFLAGS="$CFLAGS"
+export CXXFLAGS="$CFLAGS"
+
 
 $CXX -shared -fPIC -Wl,-soname,libbrokenthings.so -o ${APKUSR}/lib/libbrokenthings.so ${SUPPORT}/ndk_api19/brokenthings.cpp
 

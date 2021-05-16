@@ -1,0 +1,14 @@
+--- cpython-3.8.5/Lib/platform.py	2020-07-20 15:01:32.000000000 +0200
++++ cpython-3.8.5-aosp/Lib/platform.py	2020-08-27 18:54:48.115970555 +0200
+@@ -171,7 +171,10 @@
+         The file is read and scanned in chunks of chunksize bytes.
+ 
+     """
+-    if executable is None:
++
++    if hasattr(sys, 'getandroidapilevel'):
++        return 'libc', f'{sys.getandroidapilevel()}-bionic'
++    elif executable is None:
+         try:
+             ver = os.confstr('CS_GNU_LIBC_VERSION')
+             # parse 'glibc 2.28' as ('glibc', '2.28')

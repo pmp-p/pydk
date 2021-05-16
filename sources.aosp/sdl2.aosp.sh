@@ -39,7 +39,10 @@ sdl2_crosscompile () {
     cd ${BUILD_PREFIX}-${ABI_NAME}/SDL2
     chmod +x $ORIGIN/shell.${ABI_NAME}.sh
     $ORIGIN/shell.${ABI_NAME}.sh $ORIGIN/sources/sdl2_ndk.sh
-    cp -vf ${SUPPORT}/libpng/*.h ${SUPPORT}/libjpeg/*.h ${APKUSR}/include/
+
+    #turbojpeg
+    #cp -vf ${SUPPORT}/libpng/*.h ${SUPPORT}/libjpeg/*.h ${APKUSR}/include/
+
 }
 
 

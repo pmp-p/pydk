@@ -1,0 +1,18 @@
+--- Python-3.7.10/Modules/_ctypes/ctypes.h	2021-02-16 02:29:22.000000000 +0100
++++ python3-wasm/Modules/_ctypes/ctypes.h	2021-05-04 18:24:59.676254547 +0200
+@@ -53,7 +53,15 @@
+     PyObject *b_objects;        /* dictionary of references we need to keep, or Py_None */
+     union value b_value;
+ };
++#if FFI_CLOSURES
++#else
+ 
++    #define ffi_closure void
++    #define ffi_closure_free(writable) ""
++    #define ffi_closure_alloc(size, code) ""
++    #define ffi_prep_closure_loc(...) ""
++
++#endif
+ typedef struct {
+     PyObject_VAR_HEAD
+     ffi_closure *pcl_write; /* the C callable, writeable */

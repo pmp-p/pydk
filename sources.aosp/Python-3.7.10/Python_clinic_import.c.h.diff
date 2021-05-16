@@ -1,0 +1,12 @@
+--- Python-3.7.10/Python/clinic/import.c.h	2021-02-16 02:29:22.000000000 +0100
++++ Python-3.7.10-aosp/Python/clinic/import.c.h	2021-03-04 15:06:27.816069893 +0100
+@@ -286,6 +286,9 @@
+         &spec, &file)) {
+         goto exit;
+     }
++#if __ANDROID__
++    printf("290: _imp_create_dynamic: %s\n",PyUnicode_AsUTF8(PyObject_GetAttrString(spec, "name")));
++#endif
+     return_value = _imp_create_dynamic_impl(module, spec, file);
+ 
+ exit:

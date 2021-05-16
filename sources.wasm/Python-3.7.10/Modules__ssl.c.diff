@@ -1,0 +1,14 @@
+--- Python-3.7.10/Modules/_ssl.c	2021-02-16 02:29:22.000000000 +0100
++++ python3-wasm/Modules/_ssl.c	2021-05-04 18:24:59.697254331 +0200
+@@ -76,8 +76,11 @@
+ #endif
+ 
+ #ifndef OPENSSL_THREADS
++#if __EMSCRIPTEN__
++#else
+ #  error "OPENSSL_THREADS is not defined, Python requires thread-safe OpenSSL"
+ #endif
++#endif
+ 
+ /* SSL error object */
+ static PyObject *PySSLErrorObject;

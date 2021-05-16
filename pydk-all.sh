@@ -10,25 +10,27 @@ else
     echo "not bash, those previously rising errors are ash/sh/dash/... flavours"
 fi
 
-PYMINOR_DEFAULT=9
+PYMINOR_DEFAULT=8
+PYMICRO=10
+
+PYMINOR_DEFAULT=7
+PYMICRO=10
 
 export PYMAJOR=3
 export PYMINOR=${PYMINOR:-$PYMINOR_DEFAULT}
+export PYVER=${PYMAJOR}.${PYMINOR}.${PYMICRO}
 
-if echo $PYMINOR |grep -q 7
+#echo $PYMINOR |grep -q 7
+if false
 then
-# python 3.7.x
-    export PYVER=${PYMAJOR}.${PYMINOR}.7
+    # python 3.7.x
     export OPENSSL_VERSION="1.0.2t"
 else
-# python 3.8.x / 3.9.x
-    #export PYVER=${PYMAJOR}.${PYMINOR}.5
-    export PYVER=${PYMAJOR}.${PYMINOR}.1
+    # python 3.8.x / 3.9.x
     export OPENSSL_VERSION="1.1.1h"
 fi
 
 export LIBFFI_VERSION=3.3
-
 
 export HOST_TRIPLET=x86_64-linux-gnu
 export HOST_TAG=linux-x86_64
@@ -53,7 +55,6 @@ export HOME=${PYTHONPYCACHEPREFIX}
 
 #UNITS="unit"
 UNITS=""
-
 
 # select a place for android build
 export ENV=aosp
@@ -280,6 +281,9 @@ if [ -f CMakeLists.txt ]
 then
     echo " * using previous CMakeLists.txt in $(pwd)"
 else
+
+# TODO: check wasm/wasi cmake +  CMAKE_CACHE_ARGS "-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true"
+
     cat > CMakeLists.txt <<END
 
 cmake_minimum_required(VERSION 3.13.0)
@@ -729,7 +733,7 @@ export TOOLCHAIN="${ORIGIN}/emsdk/emsdk_env.sh"
 . $TOOLCHAIN
 export PATH="$EMSDK/upstream/emscripten:$BASEPATH"
 
-export WCMAKE="emcmake $CMAKE -Wno-dev -DCMAKE_INSTALL_PREFIX=${APKUSR}"
+export WCMAKE="emcmake $CMAKE -DCMAKE_POSITION_INDEPENDENT_CODE=ON -Wno-dev -DCMAKE_INSTALL_PREFIX=${APKUSR}"
 
 cat > ${HOST}/${ABI_NAME}.sh <<END
 #!/bin/sh
@@ -834,7 +838,7 @@ then
         then
             echo "emsdk libs ready"
         else
-            ALL="struct_info zlib bzip2 freetype harfbuzz ogg vorbis libpng bullet"
+            ALL="struct_info libfetch zlib bzip2 freetype harfbuzz ogg vorbis libpng bullet"
             for one in $ALL
             do
                 embuilder --pic build $one

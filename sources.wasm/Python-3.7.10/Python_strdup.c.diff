@@ -1,0 +1,9 @@
+--- Python-3.7.10/Python/strdup.c	2021-02-16 02:29:22.000000000 +0100
++++ python3-wasm/Python/strdup.c	2021-05-04 18:24:59.713254167 +0200
+@@ -1,4 +1,6 @@
+ /* strdup() replacement (from stdwin, if you must know) */
++#include <stdlib.h>
++#include <string.h>
+ 
+ #include "pgenheaders.h"
+ 

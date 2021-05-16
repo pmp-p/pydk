@@ -1,0 +1,19 @@
+--- Python-3.7.10/Python/dynload_shlib.c	2021-02-16 02:29:22.000000000 +0100
++++ Python-3.7.10-aosp/Python/dynload_shlib.c	2021-03-04 15:06:27.820069757 +0100
+@@ -37,9 +37,13 @@
+ #ifdef __CYGWIN__
+     ".dll",
+ #else  /* !__CYGWIN__ */
+-    "." SOABI ".so",
+-    ".abi" PYTHON_ABI_STRING ".so",
+-    ".so",
++    #if __ANDROID__
++        "." SOABI ".so",
++    #else
++        "." SOABI ".so",
++        ".abi" PYTHON_ABI_STRING ".so",
++        ".so",
++    #endif
+ #endif  /* __CYGWIN__ */
+     NULL,
+ };

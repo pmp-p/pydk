@@ -253,7 +253,7 @@ python_configure () {
     #dropped support for asm.js
     EM_MODE=""
     # nope -s ENVIRONMENT=web
-    EM_FLAGS="-fPIC -O3 -s EXPORT_ALL=1  -s USE_ZLIB=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1"
+    EM_FLAGS="-fPIC -Os -g0"
 
     cat >> $1 <<END
 #======== adding to ${HOST}/${ABI_NAME}.sh
@@ -267,6 +267,7 @@ export APKUSR=${APKUSR}
 # hasardous fix for libatomic
 # export LDFLAGS="-Wl,--shared-memory,--no-check-features"
 
+export LDFLAGS="-s EXPORT_ALL=1 -s USE_ZLIB=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1"
 export CPPFLAGS='$EM_FLAGS'
 export CXXFLAGS='$EM_FLAGS'
 export CFLAGS='$EM_FLAGS'
@@ -280,7 +281,6 @@ PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig\\
  emconfigure \${_PYTHON_PROJECT_SRC}/configure --cache-file=${SUPPORT}/cache.${API}.${PLATFORM_TRIPLET} \\
  --host=${PLATFORM_TRIPLET} --build=${HOST_TRIPLET} --prefix=${APKUSR}\\
  $PYOPTS --without-ensurepip\\
-
 
 # not needed just want lib not exe  --with-libs="-Wl,--shared-memory,--no-check-features -pthread"
 
@@ -349,7 +349,6 @@ else
     echo ================== ${BUILD_SRC}/build.log ===================
     tail -n 30 ${BUILD_SRC}/build.log
     echo "Configuration failed for $PLATFORM_TRIPLET"
-    env
     exit 1
 fi
 END
@@ -467,8 +466,6 @@ python3_crosscompile () {
         fi
 
     fi
-
-
 
 }
 

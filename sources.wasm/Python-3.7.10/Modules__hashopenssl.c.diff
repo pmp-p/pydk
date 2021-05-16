@@ -1,0 +1,14 @@
+--- Python-3.7.10/Modules/_hashopenssl.c	2021-02-16 02:29:22.000000000 +0100
++++ python3-wasm/Modules/_hashopenssl.c	2021-05-04 18:24:59.677254537 +0200
+@@ -33,8 +33,11 @@
+ /*[clinic end generated code: output=da39a3ee5e6b4b0d input=c2b4ff081bac4be1]*/
+ 
+ #ifndef OPENSSL_THREADS
++#if __EMSCRIPTEN__
++#else
+ #  error "OPENSSL_THREADS is not defined, Python requires thread-safe OpenSSL"
+ #endif
++#endif
+ 
+ #define MUNCH_SIZE INT_MAX
+ 

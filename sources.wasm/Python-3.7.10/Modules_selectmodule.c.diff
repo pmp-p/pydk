@@ -1,0 +1,14 @@
+--- Python-3.7.10/Modules/selectmodule.c	2021-02-16 02:29:22.000000000 +0100
++++ python3-wasm/Modules/selectmodule.c	2021-05-04 18:24:59.689254413 +0200
+@@ -266,7 +266,11 @@
+     do {
+         Py_BEGIN_ALLOW_THREADS
+         errno = 0;
++#if defined(__EMSCRIPTEN__)
++        n = select(max, &ifdset, &ofdset, NULL, tvp); // &efdset exceptfds not supported (assert)
++#else
+         n = select(max, &ifdset, &ofdset, &efdset, tvp);
++#endif
+         Py_END_ALLOW_THREADS
+ 
+         if (errno != EINTR)

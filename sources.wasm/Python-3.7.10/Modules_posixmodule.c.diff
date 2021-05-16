@@ -1,0 +1,24 @@
+--- Python-3.7.10/Modules/posixmodule.c	2021-02-16 02:29:22.000000000 +0100
++++ python3-wasm/Modules/posixmodule.c	2021-05-04 18:24:59.679254516 +0200
+@@ -154,6 +154,12 @@
+ #  endif
+ #endif /* MS_WINDOWS */
+ 
++#if GOSH_MOVE_THEM
++    #pragma message "XXX Gosh I wish these were all moved into pyconfig.h"
++    #ifdef HAVE_FORKPTY
++    #undef HAVE_FORKPTY
++    #endif
++#else
+ /* Various compilers have only certain posix functions */
+ /* XXX Gosh I wish these were all moved into pyconfig.h */
+ #if defined(__WATCOMC__) && !defined(__QNX__)           /* Watcom compiler */
+@@ -193,7 +199,7 @@
+ #define HAVE_TTYNAME    1
+ #endif  /* _MSC_VER */
+ #endif  /* ! __WATCOMC__ || __QNX__ */
+-
++#endif // my GOSH
+ 
+ /*[clinic input]
+ # one of the few times we lie about this name!
