@@ -1,0 +1,111 @@
+--- openssl-1.1.1m/Configurations/15-android.conf	2021-12-14 16:45:01.000000000 +0100
++++ openssl.aosp/Configurations/15-android.conf	2022-01-23 15:31:28.814136833 +0100
+@@ -62,15 +62,9 @@
+             } elsif ($is_standalone_toolchain) {
+                 $sysroot = "$ndk/sysroot";
+             } else {
+-                $api = "*";
++                $api = $ENV{API};
++                $arch = $ENV{ARCH};
+ 
+-                # see if user passed -D__ANDROID_API__=N
+-                foreach (@{$useradd{CPPDEFINES}}, @{$user{CPPFLAGS}}) {
+-                    if (m|__ANDROID_API__=([0-9]+)|) {
+-                        $api = $1;
+-                        last;
+-                    }
+-                }
+ 
+                 if (-d "$ndk/platforms") {
+                     # list available platforms (numerically)
+@@ -96,7 +90,7 @@
+                 }
+                 die "Could not get default API Level" if ($api eq "*");
+             }
+-            die "no sysroot=$sysroot" if (length $sysroot && !-d $sysroot);
++            warn "no sysroot=$sysroot" if (length $sysroot && !-d $sysroot);
+ 
+             my $triarch = $triplet{$arch};
+             my $cflags;
+@@ -139,10 +133,13 @@
+                 die "no NDK clang on \$PATH";
+             } else {
+                 if (which("$triarch-gcc") !~ m|^$ndk/.*/prebuilt/([^/]+)/|) {
+-                    die "no NDK $triarch-gcc on \$PATH";
++                    warn "no NDK $triarch-gcc on \$PATH";
++                    # $cflags .= " -mandroid";
++                    $user{CROSS_COMPILE} = "";
++                } else {
++                    $cflags .= " -mandroid";
++                    $user{CROSS_COMPILE} = "$triarch-";
+                 }
+-                $cflags .= " -mandroid";
+-                $user{CROSS_COMPILE} = "$triarch-";
+             }
+ 
+             if (length $sysroot) {
+@@ -159,7 +156,7 @@
+                 $sysroot = " --sysroot=\$($ndk_var)/$sysroot";
+             }
+             $android_ndk = {
+-                cflags   => $cflags . $sysroot,
++                cflags   => $cflags,
+                 cppflags => $cppflags,
+                 bn_ops   => $arch =~ m/64$/ ? "SIXTY_FOUR_BIT_LONG"
+                                             : "BN_LLONG",
+@@ -191,7 +188,7 @@
+         bin_cflags       => "-pie",
+         enable           => [ ],
+     },
+-    "android-arm" => {
++    "android-armv7a" => {
+         ################################################################
+         # Contemporary Android applications can provide multiple JNI
+         # providers in .apk, targeting multiple architectures. Among
+@@ -208,7 +205,7 @@
+         # just generic eabi would do. But in latter case it would be
+         # appropriate to
+         #
+-        #   ./Configure android-arm -D__ARM_MAX_ARCH__=8
++        #   ./Configure android-armv7a -D__ARM_MAX_ARCH__=8
+         #
+         # in order to build "universal" binary and allow OpenSSL take
+         # advantage of NEON when it's available.
+@@ -222,7 +219,7 @@
+         inherit_from     => [ "android", asm("armv4_asm") ],
+         bn_ops           => add("RC4_CHAR"),
+     },
+-    "android-arm64" => {
++    "android-aarch64" => {
+         inherit_from     => [ "android", asm("aarch64_asm") ],
+         bn_ops           => add("RC4_CHAR"),
+         perlasm_scheme   => "linux64",
+@@ -254,6 +251,12 @@
+         bn_ops           => add("RC4_INT"),
+         perlasm_scheme   => "android",
+     },
++    "android-i686" => {
++        inherit_from     => [ "android", asm("x86_asm") ],
++        CFLAGS           => add(picker(release => "-fomit-frame-pointer")),
++        bn_ops           => add("RC4_INT"),
++        perlasm_scheme   => "android",
++    },
+     "android-x86_64" => {
+         inherit_from     => [ "android", asm("x86_64_asm") ],
+         bn_ops           => add("RC4_INT"),
+@@ -264,13 +267,13 @@
+     # Backward compatible targets, (might) require $CROSS_SYSROOT
+     #
+     "android-armeabi" => {
+-        inherit_from     => [ "android-arm" ],
++        inherit_from     => [ "android-armv7a" ],
+     },
+     "android64" => {
+         inherit_from     => [ "android" ],
+     },
+     "android64-aarch64" => {
+-        inherit_from     => [ "android-arm64" ],
++        inherit_from     => [ "android-aarch64" ],
+     },
+     "android64-x86_64" => {
+         inherit_from     => [ "android-x86_64" ],

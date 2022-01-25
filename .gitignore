@@ -144,9 +144,7 @@ docs/screenshots
 
 #alpha project for extension cross compilation
 repo
-cross-modules.sh
-sources.aosp/cross_pip.aosp.sh
-sources.aosp/Python-3.7.5/hold
 pydk-applications
-briefcase-android-gradle-template
-
+ATTIC
+X11
+testing

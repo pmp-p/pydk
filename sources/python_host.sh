@@ -3,7 +3,9 @@
 # JFLAGS :  make options
 # CNF : configure options
 
-export URL_PYTHON3=${URL_PYTHON3:-"URL https://www.python.org/ftp/python/${PYVER}/Python-${PYVER}.tar.xz"}
+#export URL_PYTHON3=${URL_PYTHON3:-"URL https://www.python.org/ftp/python/${PYVER}/Python-${PYVER}.tar.xz"}
+
+export URL_PYTHON3=${URL_PYTHON3:-"URL https://www.python.org/ftp/python/3.11.0/Python-3.11.0a4.tar.xz"}
 
 case "${PYVER}" in
     "3.7.9" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=389d3ed26b4d97c741d9e5423da1f43b"};;
@@ -14,6 +16,7 @@ case "${PYVER}" in
     "3.9.0" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=6ebfe157f6e88d9eabfbaf3fa92129f6"};;
     "3.9.1" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=61981498e75ac8f00adcb908281fadb6"};;
     "3.9.2" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=f0dc9000312abeb16de4eccce9a870ab"};;
+    "3.11.0a4" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=9de26ba99545171666206d7e19a1bacf"};;
 esac
 
 export PYOPTS="--without-pymalloc --without-pydebug\
@@ -27,7 +30,7 @@ export PYTARGET="${BUILD_SRC}/python3-${ENV}"
 export PYTHONDONTWRITEBYTECODE=1
 
 #restrict $PYMINOR for env so host pip can work for populating android projects
-for py in ${PYMINOR} 8 7 6 5
+for py in ${PYMINOR} 11 10 9 8 7 6 5
 do
     if command -v python3.${py}
     then
@@ -61,7 +64,6 @@ then
         echo " * using previous build dir ${ROOT} (CI)"
     else
         echo " * create venv ${ROOT} (CI)"
-        #pclinuxos 3.6.5 --without-pip  ?
         $PYTHON -m venv --prompt pydk-${ENV} ${ENV}
         touch ${ENV}/new_env
     fi

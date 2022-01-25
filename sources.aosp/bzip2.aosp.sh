@@ -37,23 +37,28 @@ bzip2_build () {
 }
 
 bzip2_crosscompile () {
+    unset CFLAGS
+
     if [ -f ${APKUSR}/lib/libbz2.so ]
     then
         echo "    -> libbz2 already built for $ABI_NAME"
     else
         Building bz2
-
-        unset CFLAGS
-        make ${JFLAGS} CC=$CC AR=$AR RANLIB=$RANLIB PREFIX=${APKUSR} bzip2 install
-        ${CC} -shared -Wl,-soname -Wl,libbz2.so -o ${APKUSR}/lib/libbz2.so blocksort.o \
+        if make ${JFLAGS} CC=$CC AR=$AR RANLIB=$RANLIB PREFIX=${APKUSR} bzip2 install
+        then
+            echo "   -> great bzip2 can finally build"
+        else
+            echo "   -> bzip2 build failed, trying to link objects into a shared lib anyway"
+            cp -vf bzlib.h ${APKUSR}/include/
+            # armv7a-linux-androideabi19-clang
+            ${CC} -shared -Wl,-soname -Wl,libbz2.so -o ${APKUSR}/lib/libbz2.so blocksort.o \
   huffman.o    \
   crctable.o   \
   randtable.o  \
   compress.o   \
   decompress.o \
   bzlib.o
-        unset CFLAGS
-
+        fi
     fi
 }
 

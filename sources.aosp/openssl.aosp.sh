@@ -6,6 +6,7 @@ case "$OPENSSL_VERSION" in
     "1.0.2t" ) HASH_OPENSSL="URL_HASH SHA256=14cb464efe7ac6b54799b34456bd69558a749a4931ecfd9cf9f71d7881cac7bc";;
     "1.1.1f" ) HASH_OPENSSL="URL_HASH SHA256=186c6bfe6ecfba7a5b48c47f8a1673d0f3b0e5ba2e25602dd23b629975da3f35";;
     "1.1.1h" ) HASH_OPENSSL="URL_HASH SHA256=5c9ca8774bd7b03e5784f26ae9e9e6d749c9da2438545077e6b3d755a06595d9";;
+    "1.1.1m" ) HASH_OPENSSL="URL_HASH SHA256=f89199be8b23ca45fc7cb9f1d8d3ee67312318286ad030f5316aca6462db6c96";;
 esac
 
 openssl_host_cmake () {
@@ -63,13 +64,15 @@ openssl_crosscompile () {
             "1.1.1d" ) V11=true;;
             "1.1.1f" ) V11=true;;
             "1.1.1h" ) V11=true;;
+            "1.1.1m" ) V11=true;;
         esac
 
         # no-ssl2 no-ssl3 no-comp
 
         if $V11
         then
-            CROSS_COMPILE="" ARCH=${ARCH} API=${API} ./Configure -D__ANDROID_API__=${API} shared no-hw --prefix=${APKUSR} android-${ARCH}\
+            # -D__ANDROID_API__=${API}
+            CROSS_COMPILE="" ARCH=${ARCH} API=${API} ./Configure  shared no-hw --prefix=${APKUSR} android-${ARCH}\
  >/dev/null && CROSS_COMPILE="" make -s -j1 depend >/dev/null && CROSS_COMPILE="" make -s -j1 install >/dev/null
             SOVER="1.1"
         else

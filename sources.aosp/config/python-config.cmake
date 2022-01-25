@@ -1,12 +1,26 @@
-
+set(Python_ROOT_DIR "${CMAKE_INSTALL_PREFIX}")
 set(Python_VERSION "${PYMAJOR}.${PYMINOR}")
 set(PYTHON_VERSION_STRING "${PYMAJOR}.${PYMINOR}")
 set(PYTHON_EXTENSION_SUFFIX ".so")
-set(PYTHON_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include/python${PYMAJOR}.${PYMINOR}")
-set(PYTHON_LIBRARY_DIRS "${CMAKE_INSTALL_PREFIX}/lib")
+
+#TODO set(Python_SOABI
+# Python_SOABI    New in version 3.17. Extension suffix for modules.
+#   Information returned by distutils.sysconfig.get_config_var('SOABI')
+# or computed from distutils.sysconfig.get_config_var('EXT_SUFFIX') or python-config --extension-suffix.
+#  If package distutils.sysconfig is not available, sysconfig.get_config_var('SOABI') or sysconfig.get_config_var('EXT_SUFFIX') are used.
+
+set(Python_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include/python${PYMAJOR}.${PYMINOR}")
+set(Python_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include/python${PYMAJOR}.${PYMINOR}")
+
+set(Python_LIBRARY "${CMAKE_INSTALL_PREFIX}/lib")
+set(Python_LIBRARY_DIRS "${CMAKE_INSTALL_PREFIX}/lib")
+set(Python_STDLIB "${CMAKE_INSTALL_PREFIX}/lib/python${Python_VERSION}")
+set(Python_SITELIB "${CMAKE_INSTALL_PREFIX}/lib/python${Python_VERSION}/site-packages")
+set(Python_FOUND YES)
+
 set(PYTHON_ARCH_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib/python${Python_VERSION}")
 set(PYTHON_LIB_INSTALL_DIR "${ASSETS}/python${Python_VERSION}")
-set(PYTHON_FOUND YES)
+
 
 message(">>>>>>>>>>>>>> python ${PYTHON_VERSION_STRING} <<<<<<<<<<<<<<<<<<<<<<<")
 message(">>> CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} <<<")

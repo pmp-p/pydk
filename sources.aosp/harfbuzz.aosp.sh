@@ -12,6 +12,7 @@ if(1)
     message(" processing unit : ${unit}")
 ExternalProject_Add(
     harfbuzz
+    GIT_TAG main
     ${URL_HARFBUZZ}
     ${HASH_HARFBUZZ}
 

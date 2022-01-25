@@ -1,9 +1,0 @@
---- LUI/source/luiInputHandler.I	2019-01-16 21:27:45.096507118 +0100
-+++ LUI-android/source/luiInputHandler.I	2018-02-22 09:06:11.011895474 +0100
-@@ -19,5 +19,5 @@
- }
- 
- INLINE wstring LUIInputHandler::get_mouse_button_name(size_t index) const {
--  return wstring(L"mouse-") + std::to_wstring(static_cast<long long>(index));
-+  return wstring(L"mouse-0"); // + std::to_wstring(static_cast<long long>(index));
- }

@@ -1,9 +1,0 @@
---- panda3d-webgl-port/dtool/src/parser-inc/cmath	2019-01-06 14:15:01.000000000 +0100
-+++ panda3d-webgl-port.em/dtool/src/parser-inc/cmath	2019-01-25 06:21:18.818059250 +0100
-@@ -1,4 +1,4 @@
- #pragma once
- 
--typedef float float_t;
--typedef double double_t;
-+typedef long double float_t;
-+typedef long double double_t;

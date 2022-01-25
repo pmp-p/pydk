@@ -10,25 +10,18 @@ else
     echo "not bash, those previously rising errors are ash/sh/dash/... flavours"
 fi
 
-PYMINOR_DEFAULT=8
-PYMICRO=10
-
-PYMINOR_DEFAULT=7
-PYMICRO=10
+PYMINOR_DEFAULT="11"
+PYMICRO="0a4"
 
 export PYMAJOR=3
 export PYMINOR=${PYMINOR:-$PYMINOR_DEFAULT}
 export PYVER=${PYMAJOR}.${PYMINOR}.${PYMICRO}
 
-#echo $PYMINOR |grep -q 7
-if false
-then
-    # python 3.7.x
-    export OPENSSL_VERSION="1.0.2t"
-else
-    # python 3.8.x / 3.9.x
-    export OPENSSL_VERSION="1.1.1h"
-fi
+# python 3.7.x
+# export OPENSSL_VERSION="1.0.2t"
+
+# python 3.8 +
+export OPENSSL_VERSION="1.1.1m"
 
 export LIBFFI_VERSION=3.3
 
@@ -36,7 +29,10 @@ export HOST_TRIPLET=x86_64-linux-gnu
 export HOST_TAG=linux-x86_64
 
 #tested
-export CMAKE_VERSION=3.13.0
+#export CMAKE_VERSION=3.13.0
+
+#untested
+export CMAKE_VERSION=3.22.1
 
 
 export ORIGIN=$(pwd)
@@ -63,7 +59,8 @@ BUILD_PREFIX="${ROOT}/build"
 
 # sdk tools https://developer.android.com/studio/releases/platform-tools
 export ANDROID_HOME="${ANDROID_HOME:-$(pwd)/android-sdk}"
-# 28.0.3 at time of ndk 21/22
+
+# 28.0.3 at time of ndk 21/22/23
 export BUILD_TOOLS="${ANDROID_HOME}/build-tools/28.0.3"
 
 # ndk https://developer.android.com/ndk/downloads
@@ -145,8 +142,10 @@ else
     if grep "^Pkg.Revision = 21" $NDK_HOME/source.properties
     then
         echo NDK 21+ found
+        NDK_BAD=false
     else
         echo "
+        NDK_BAD=true
     WARNING:
 
     Only NDK 21 has been tested and is expected to be found in :
@@ -192,6 +191,15 @@ do_steps () {
         step ${unit} $1 pre
         ${unit}_$1 $QUIET
         step ${unit} $1 post
+
+        if $CI
+        then
+            echo -n
+        else
+            echo "press <enter> to continue ..."
+            read
+        fi
+
     done
 }
 
@@ -355,7 +363,8 @@ END
     #"${HOST}/bin/python3" -m pip install pip==20.3.1
 fi
 
-# small fix for panda3d cmake
+# small fix for panda3d and cmake 3.13
+mkdir -p "${HOST}/lib/python${PYMAJOR}.${PYMINOR}/site-packages/panda3d"
 touch "${HOST}/lib/python${PYMAJOR}.${PYMINOR}/site-packages/panda3d/__init__.py"
 
 
@@ -597,12 +606,25 @@ END
         NDK_PREFIX=$PLATFORM_TRIPLET
     fi
 
-    export LD=$TOOLCHAIN/bin/${NDK_PREFIX}-ld
-    export READELF=$TOOLCHAIN/bin/${NDK_PREFIX}-readelf
-    export AR=$TOOLCHAIN/bin/${NDK_PREFIX}-ar
-    export AS=$TOOLCHAIN/bin/${NDK_PREFIX}-as
-    export RANLIB=$TOOLCHAIN/bin/${NDK_PREFIX}-ranlib
-    export STRIP=$TOOLCHAIN/bin/${NDK_PREFIX}-strip
+    # ndk 23 does not use proper triplet names in toolchain /bin folder
+    if $NDK_BAD
+    then
+        export LD=$TOOLCHAIN/bin/ld
+        export READELF=$TOOLCHAIN/bin/llvm-readobj
+        export AS=$TOOLCHAIN/bin/llvm-as
+        export AR=$TOOLCHAIN/bin/llvm-ar
+        export RANLIB=$TOOLCHAIN/bin/llvm-ar
+        export STRIP=$TOOLCHAIN/bin/llvm-objcopy
+    else
+        export LD=$TOOLCHAIN/bin/${NDK_PREFIX}-ld
+        export READELF=$TOOLCHAIN/bin/${NDK_PREFIX}-readelf
+        export AR=$TOOLCHAIN/bin/${NDK_PREFIX}-ar
+        export AS=$TOOLCHAIN/bin/${NDK_PREFIX}-as
+        export RANLIB=$TOOLCHAIN/bin/${NDK_PREFIX}-ranlib
+        export STRIP=$TOOLCHAIN/bin/${NDK_PREFIX}-strip
+    fi
+
+
 
     # == eventually restore full PLATFORM_TRIPLET
 
@@ -688,6 +710,7 @@ END
     # == building python
 
     do_steps crosscompile
+
 done
 
 # if CI does not use bash
@@ -850,8 +873,6 @@ then
         echo "bad arch"
         continue
     fi
-
-
 
     do_steps crosscompile
 

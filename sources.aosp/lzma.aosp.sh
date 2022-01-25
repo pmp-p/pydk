@@ -39,7 +39,9 @@ lzma_crosscompile () {
         Building lzma
 
         export CFLAGS="-m${BITS} -fPIC -target ${PLATFORM_TRIPLET}${API} -isysroot $TOOLCHAIN/sysroot -isystem $TOOLCHAIN/sysroot/usr/include"
-        if ./configure ${CNF} --target=${PLATFORM_TRIPLET} --host=${PLATFORM_TRIPLET} --build=${HOST_TRIPLET} --prefix=${APKUSR}
+        if ./configure ${CNF} \
+ --enable-shared=no --enable-static=yes \
+ --target=${PLATFORM_TRIPLET} --host=${PLATFORM_TRIPLET} --build=${HOST_TRIPLET} --prefix=${APKUSR}
         then
             std_make $unit
         else

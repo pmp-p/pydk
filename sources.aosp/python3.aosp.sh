@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# TODO: _sqlite3 for 3.11
+
 # defined in python_host : URL_PYTHON3 PYOPTS PYTARGET
 
 
@@ -41,10 +43,13 @@ ac_cv_search_crypt_r=no
 ac_cv_func_getpid=yes
 
 ac_cv_func_readlink=yes
+
+ac_cv_prog_ac_ct_AR=llvm-ar
+ac_cv_prog_ac_ct_AS=llvm-as
+
 END
 
 }
-
 
 
 python_module_setup_local () {
@@ -63,9 +68,11 @@ python_module_setup_local () {
 
 _struct _struct.c   # binary structure packing/unpacking
 _queue _queuemodule.c
-parser parsermodule.c
 
-math mathmodule.c _math.c # -lm # math library functions, e.g. sin()
+#3.11- parser parsermodule.c
+
+#3.11- math mathmodule.c _math.c # -lm # math library functions, e.g. sin()
+math mathmodule.c
 cmath cmathmodule.c  # -lm # complex math library functions
 
 #_weakref _weakref.c
@@ -127,7 +134,7 @@ _ctypes _ctypes/_ctypes.c \
  _ctypes/stgdict.c \
  _ctypes/cfield.c -I${PYTARGET}/Modules/_ctypes -I${APKUSR}/include -L${APKUSR}/lib -lffi # ${APKUSR}/lib/libffi.a
 
-$HAVE_MPDEC _decimal _decimal/_decimal.c \
+#3.11- $HAVE_MPDEC _decimal _decimal/_decimal.c \
  _decimal/libmpdec/basearith.c \
  _decimal/libmpdec/constants.c \
  _decimal/libmpdec/context.c \
@@ -271,7 +278,8 @@ PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig \\
 PLATFORM_TRIPLET=${HOST_PLATFORM} \\
 CONFIG_SITE=config.site \\
  CFLAGS="$CFLAGS" \\
- \${_PYTHON_PROJECT_SRC}/configure --enable-shared --with-decimal-contextvar --without-ensurepip \\
+ \${_PYTHON_PROJECT_SRC}/configure --with-build-python=${PYTHON} \\
+ --enable-shared --with-decimal-contextvar --without-ensurepip \\
  --cache-file=${SUPPORT}/cache.${API}.${PLATFORM_TRIPLET}\\
  --with-libs='-L${APKUSR}/lib -lbrokenthings -lstdc++ -lz -lm' \\
  --with-openssl=${APKUSR} --host=${PLATFORM_TRIPLET} --build=${HOST_TRIPLET} --prefix=${APKUSR} \\

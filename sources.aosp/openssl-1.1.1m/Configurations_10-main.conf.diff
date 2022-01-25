@@ -1,0 +1,16 @@
+--- openssl-1.1.1m/Configurations/10-main.conf	2021-12-14 16:45:01.000000000 +0100
++++ openssl.aosp/Configurations/10-main.conf	2022-01-23 15:25:37.513342734 +0100
+@@ -642,10 +642,10 @@
+         CXXFLAGS         => picker(default => "-Wall",
+                                    debug   => "-O0 -g",
+                                    release => "-O3"),
+-        cflags           => threads("-pthread"),
+-        cxxflags         => combine("-std=c++11", threads("-pthread")),
++        cflags           => "",
++        cxxflags         => combine("-std=c++11"),
+         lib_cppflags     => "-DOPENSSL_USE_NODELETE",
+-        ex_libs          => add("-ldl", threads("-pthread")),
++        ex_libs          => add("-ldl"),
+         bn_ops           => "BN_LLONG RC4_CHAR",
+         thread_scheme    => "pthreads",
+         dso_scheme       => "dlfcn",
