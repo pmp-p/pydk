@@ -68,6 +68,7 @@ export NDK_HOME=${NDK_HOME:-${ANDROID_HOME}/ndk-bundle}
 export ANDROID_NDK_HOME=${NDK_HOME}
 
 
+export STEP=${STEP:-false}
 
 # above are the defaults, can be overridden via CONFIG
 
@@ -138,15 +139,17 @@ fi
 if $CI
 then
     echo " * using ndk from CI"
+    NDK_BAD=false
 else
     if grep "^Pkg.Revision = 21" $NDK_HOME/source.properties
     then
         echo NDK 21+ found
         NDK_BAD=false
     else
-        echo "
         NDK_BAD=true
-    WARNING:
+        echo "
+
+    WARNING: NDK_BAD=$NDK_BAD
 
     Only NDK 21 has been tested and is expected to be found in :
        NDK_HOME=$NDK_HOME or ANDROID_HOME=${ANDROID_HOME} + ndk-bundle
@@ -176,7 +179,7 @@ step () {
         echo
         echo "== CI $1: now in $3-$2 =="
     else
-        if echo  $STEP|grep -q rue
+        if $STEP
         then
             echo "$1: paused in $3-$2  press <enter> to continue"
             read cont
@@ -191,15 +194,6 @@ do_steps () {
         step ${unit} $1 pre
         ${unit}_$1 $QUIET
         step ${unit} $1 post
-
-        if $CI
-        then
-            echo -n
-        else
-            echo "press <enter> to continue ..."
-            read
-        fi
-
     done
 }
 
