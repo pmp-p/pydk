@@ -1,0 +1,13 @@
+--- webgl-port.git/dtool/src/prc/notify.cxx	2022-02-07 20:43:57.146532726 +0100
++++ webgl-port/dtool/src/prc/notify.cxx	2022-02-08 18:50:37.363996390 +0100
+@@ -500,8 +500,8 @@
+        "The filename to which to write all the output of notify");
+ 
+     // We use this to ensure that only one thread can initialize the output.
+-    static patomic_flag initialized = ATOMIC_FLAG_INIT;
+-
++//    static patomic_flag initialized = ATOMIC_FLAG_INIT;
++    std::atomic_flag initialized = ATOMIC_FLAG_INIT;
+     std::string value = notify_output.get_value();
+     if (!value.empty() && !initialized.test_and_set()) {
+       Notify *ptr = Notify::ptr();

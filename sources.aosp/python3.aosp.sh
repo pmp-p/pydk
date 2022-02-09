@@ -73,6 +73,7 @@ _queue _queuemodule.c
 
 #3.11- math mathmodule.c _math.c # -lm # math library functions, e.g. sin()
 math mathmodule.c
+
 cmath cmathmodule.c  # -lm # complex math library functions
 
 #_weakref _weakref.c
@@ -174,7 +175,7 @@ ExternalProject_Add(
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
-    PATCH_COMMAND sh -c "/bin/cp -aRfxp ${PYSRC} ${PYTARGET}"
+    PATCH_COMMAND sh -c "patch -p1 < ${SUPPORT}/Python-3.11.0a5/all && /bin/cp -aRfxp ${PYSRC} ${PYTARGET}"
 
     CONFIGURE_COMMAND sh -c "cd ${PYSRC} && CC=clang ./configure --prefix=${HOST} --with-cxx-main=clang $PYOPTS --enable-shared  --with-ensurepip  >/dev/null"
 
@@ -199,7 +200,7 @@ python3_patch () {
 
     if [ -f Patched ]
     then
-        echo " * Python-${PYVER} tree already patched"
+        echo " * Python-${PYVER} from ${PYTARGET} tree already patched"
     else
         for PATCH in ${SUPPORT}/Python-${PYVER}/*.diff
         do
@@ -216,37 +217,43 @@ python3_patch () {
         rm -f ./Python/importlib.h ./Python/importlib_external.h
     fi
 
-    # without regen importlib is a binary blob ! Use the host python build process to regen the target one then clean up
-    # make regen-importlib
-    if [ -f ./Python/importlib_external.h ]
+    if [ -f okblob ]
     then
-        echo
-        echo "  ***********************************************************************"
-        echo "  **    warning : re-using binary blobs found in python source tree    **"
-        echo "  ***********************************************************************"
-        echo
+        echo "  **  warning : re-using locally generated binary blobs found in python source tree  **"
     else
-        echo " - regenerating importlib binary blobs -"
-
-        #make it closer to target parameters
-        python_ac_cv_patch config.site
-        echo "CONFIG_SITE=config.site CC=clang ./configure --prefix=${HOST} --with-cxx-main=clang $PYOPTS --enable-shared  --without-ensurepip" > build.sh
-        chmod +x build.sh
-
-        if ./build.sh >/dev/null
+        # without regen importlib is a binary blob ! Use the host python build process to regen the target one then clean up
+        # make regen-importlib
+        if [ -f ./Python/importlib_external.h ]
         then
-        cat >> pyconfig.h << END
-#ifdef HAVE_CRYPT_H
-#undef HAVE_CRYPT_H
-#endif
-END
-            if $CI
+            echo
+            echo "  ***********************************************************************"
+            echo "  **    warning : re-using binary blobs found in python source tree    **"
+            echo "  ***********************************************************************"
+            echo
+        else
+            echo " - regenerating importlib binary blobs -"
+
+            #make it closer to target parameters
+            python_ac_cv_patch config.site
+            echo "CONFIG_SITE=config.site CC=clang ./configure --prefix=${HOST} --with-cxx-main=clang $PYOPTS --enable-shared  --without-ensurepip" > build.sh
+            chmod +x build.sh
+
+            if ./build.sh >/dev/null
             then
-                make ${JFLAGS} regen-importlib
-                make ${JFLAGS} clean
-            else
-                make ${JFLAGS} regen-importlib >/dev/null
-                make ${JFLAGS} clean >/dev/null
+            cat >> pyconfig.h << END
+    #ifdef HAVE_CRYPT_H
+    #undef HAVE_CRYPT_H
+    #endif
+END
+                if $CI
+                then
+                    make ${JFLAGS} regen-importlib
+                    make ${JFLAGS} clean
+                else
+                    make ${JFLAGS} regen-importlib >/dev/null
+                    make ${JFLAGS} clean >/dev/null
+                fi
+                touch okblob
             fi
         fi
     fi

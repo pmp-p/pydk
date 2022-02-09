@@ -1,12 +1,8 @@
---- panda3d-00305bccae3643dda6f469f9cfe0cc46b7e5d74b/panda/src/glstuff/CMakeLists.txt	2020-04-13 15:10:29.000000000 +0200
-+++ panda3d-android/panda/src/glstuff/CMakeLists.txt	2020-07-01 06:58:10.027126658 +0200
-@@ -1,6 +1,9 @@
-+if(ANDROID)
-+else()
- if(NOT HAVE_GL)
+--- webgl-port.git/panda/src/glstuff/CMakeLists.txt	2022-01-25 14:21:23.688621640 +0100
++++ webgl-port/panda/src/glstuff/CMakeLists.txt	2022-02-08 17:22:24.254634919 +0100
+@@ -1,4 +1,4 @@
+-if(NOT HAVE_GL)
++if(NOT HAVE_GL AND NOT ANDROID)
    return()
  endif()
-+endif()
  
- set(P3GLSTUFF_HEADERS
-   glGeomContext_src.I

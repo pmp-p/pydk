@@ -1,0 +1,188 @@
+diff --git a/Include/Python.h b/Include/Python.h
+index 5416b04e4bfb3..5bc8cc656af0d 100644
+--- a/Include/Python.h
++++ b/Include/Python.h
+@@ -39,6 +39,7 @@
+ #include "pymacro.h"
+ #include "pymath.h"
+ #include "pymem.h"
++#include "pybuffer.h"
+ #include "object.h"
+ #include "objimpl.h"
+ #include "typeslots.h"
+@@ -50,7 +51,6 @@
+ #include "longobject.h"
+ #include "cpython/longintrepr.h"
+ #include "boolobject.h"
+-#include "buffer.h"
+ #include "floatobject.h"
+ #include "complexobject.h"
+ #include "rangeobject.h"
+diff --git a/Include/cpython/object.h b/Include/cpython/object.h
+index 1554ac8aef1c4..1d1787b75caa5 100644
+--- a/Include/cpython/object.h
++++ b/Include/cpython/object.h
+@@ -2,8 +2,6 @@
+ #  error "this header file must not be included directly"
+ #endif
+ 
+-#include "buffer.h" // for Py_buffer, included after PyObject has been defined
+-
+ PyAPI_FUNC(void) _Py_NewReference(PyObject *op);
+ 
+ #ifdef Py_TRACE_REFS
+diff --git a/Include/buffer.h b/Include/pybuffer.h
+similarity index 96%
+rename from Include/buffer.h
+rename to Include/pybuffer.h
+index 6893505e66e3e..31795b780710f 100644
+--- a/Include/buffer.h
++++ b/Include/pybuffer.h
+@@ -17,6 +17,10 @@ extern "C" {
+  *
+  */
+ 
++// Forward declaration to be able to include pybuffer.h before object.h:
++// pybuffer.h uses PyObject and object.h uses Py_buffer.
++typedef struct _object PyObject;
++
+ typedef struct {
+     void *buf;
+     PyObject *obj;        /* owned reference */
+diff --git a/Makefile.pre.in b/Makefile.pre.in
+index 4dcedd684aa6d..8b2ca11112385 100644
+--- a/Makefile.pre.in
++++ b/Makefile.pre.in
+@@ -1439,7 +1439,6 @@ PYTHON_HEADERS= \
+ 		$(srcdir)/Include/abstract.h \
+ 		$(srcdir)/Include/bltinmodule.h \
+ 		$(srcdir)/Include/boolobject.h \
+-		$(srcdir)/Include/buffer.h \
+ 		$(srcdir)/Include/bytearrayobject.h \
+ 		$(srcdir)/Include/bytesobject.h \
+ 		$(srcdir)/Include/ceval.h \
+@@ -1472,6 +1471,7 @@ PYTHON_HEADERS= \
+ 		$(srcdir)/Include/osdefs.h \
+ 		$(srcdir)/Include/osmodule.h \
+ 		$(srcdir)/Include/patchlevel.h \
++		$(srcdir)/Include/pybuffer.h \
+ 		$(srcdir)/Include/pycapsule.h \
+ 		$(srcdir)/Include/pydtrace.h \
+ 		$(srcdir)/Include/pyerrors.h \
+diff --git a/Misc/NEWS.d/next/C API/2022-02-07-18-47-00.bpo-45459.0FCWM8.rst b/Misc/NEWS.d/next/C API/2022-02-07-18-47-00.bpo-45459.0FCWM8.rst
+new file mode 100644
+index 0000000000000..711c107746d64
+--- /dev/null
++++ b/Misc/NEWS.d/next/C API/2022-02-07-18-47-00.bpo-45459.0FCWM8.rst	
+@@ -0,0 +1,3 @@
++Rename ``Include/buffer.h`` header file to ``Include/pybuffer.h`` to avoid
++conflits with projects having an existing ``buffer.h`` header file. Patch by
++Victor Stinner.
+--- Python-3.9.1/Modules/posixmodule.c	2020-12-07 15:02:38.000000000 +0100
++++ python3-aosp/Modules/posixmodule.c	2020-12-08 18:29:02.610759173 +0100
+@@ -169,7 +169,6 @@
+ disguised Unix interface).  Refer to the library manual and\n\
+ corresponding Unix manual entries for more information on calls.");
+ 
+-
+ #ifdef HAVE_SYS_UIO_H
+ #  include <sys/uio.h>
+ #endif
+@@ -605,6 +604,11 @@
+ #endif
+ }
+ 
++//PMPP API<21
++#if __ANDROID_API__ < 21
++    //extern ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);
++#endif
++//PMPP API<21
+ 
+ #ifdef MS_WINDOWS
+ /* defined in fileutils.c */
+@@ -7094,6 +7098,51 @@
+ for both the master and slave ends.
+ [clinic start generated code]*/
+ 
++#ifdef __ANDROID__
++    static PyObject *
++    os_openpty_impl(PyObject *module)
++    {
++        int master_fd = -1, slave_fd = -1;
++        char * slave_name;
++        PyOS_sighandler_t sig_saved;
++
++        master_fd = open("/dev/ptmx", O_RDWR | O_NONBLOCK | O_NOCTTY); /* open master */
++        if (master_fd < 0)
++            goto posix_error;
++
++        sig_saved = PyOS_setsig(SIGCHLD, SIG_DFL);
++
++        if (unlockpt(master_fd) < 0) {
++            PyOS_setsig(SIGCHLD, sig_saved);
++            goto posix_error;
++        }
++
++        PyOS_setsig(SIGCHLD, sig_saved);
++
++        slave_name = ptsname(master_fd); /* get name of slave */
++        if (slave_name == NULL)
++            goto posix_error;
++
++        slave_fd = _Py_open(slave_name, O_RDWR | O_NOCTTY); /* open slave */
++        if (slave_fd == -1)
++            goto error;
++
++        if (_Py_set_inheritable(master_fd, 0, NULL) < 0)
++            goto posix_error;
++
++        return Py_BuildValue("(ii)", master_fd, slave_fd);
++
++    posix_error:
++        posix_error();
++    error:
++        if (master_fd != -1)
++            close(master_fd);
++        if (slave_fd != -1)
++            close(slave_fd);
++        return NULL;
++    }
++#else
++
+ static PyObject *
+ os_openpty_impl(PyObject *module)
+ /*[clinic end generated code: output=98841ce5ec9cef3c input=f3d99fd99e762907]*/
+@@ -7182,7 +7231,7 @@
+     return NULL;
+ }
+ #endif /* defined(HAVE_OPENPTY) || defined(HAVE__GETPTY) || defined(HAVE_DEV_PTMX) */
+-
++#endif
+ 
+ #ifdef HAVE_FORKPTY
+ /*[clinic input]
+@@ -10591,7 +10640,11 @@
+             errno = result;
+     }
+ #else
++    #if __ANDROID_API__ < 21
++        result = ftruncate(path->narrow, length);
++    #else
+     result = truncate(path->narrow, length);
++    #endif
+ #endif
+     _Py_END_SUPPRESS_IPH
+     Py_END_ALLOW_THREADS
+--- Python-3.11.0a4/Modules/readline.c	2022-01-13 20:38:15.000000000 +0100
++++ Python-3.11.0a4.patch/Modules/readline.c	2022-01-20 08:40:17.654275099 +0100
+@@ -1326,7 +1326,9 @@
+         int has_input = 0, err = 0;
+ 
+         while (!has_input)
+-        {               struct timeval timeout = {0, 100000}; /* 0.1 seconds */
++        {
++
++            struct timeval timeout = {0, 10000}; /* 0.01 seconds */
+ 
+             /* [Bug #1552726] Only limit the pause if an input hook has been
+                defined.  */

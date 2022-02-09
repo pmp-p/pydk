@@ -12,8 +12,33 @@ python_ac_cv_patch () {
 ax_cv_c_float_words_bigendian=no
 ac_cv_little_endian_double=yes
 
+ac_cv_func_epoll_create=no
+ac_cv_func_epoll_create1=no
+ac_cv_header_linux_vm_sockets_h=no
+
+ac_cv_func_socketpair=no
+ac_cv_func_utimensat=no
+ac_cv_buggy_getaddrinfo=no
+
+
+# Syscalls that resulted in a segfault
+ac_cv_func_utimensat=no
+ac_cv_header_sys_ioctl_h=no
+
+# Syscalls not implemented in emscripten
+ac_cv_func_preadv2=no
+ac_cv_func_preadv=no
+ac_cv_func_pwritev2=no
+ac_cv_func_pwritev=no
+ac_cv_func_pipe2=no
+ac_cv_func_nice=no
+
+# aborts with bad ioctl
+ac_cv_func_openpty=no
+ac_cv_func_forkpty=no
 ac_cv_file__dev_ptmx=no
 ac_cv_file__dev_ptc=no
+
 ac_cv_func_plock=no
 ac_cv_func_getentropy=no
 ac_cv_have_chflags=no
@@ -30,6 +55,7 @@ ac_cv_func_seteuid=no
 ac_cv_func_setresuid=no
 ac_cv_func_setreuid=no
 ac_cv_func_setuid=no
+
 
 ac_cv_func_wcsftime=no
 ac_cv_func_sigaction=no
@@ -54,14 +80,21 @@ ac_cv_func_dlopen=yes
 
 ac_cv_func_posix_spawn=no
 ac_cv_func_posix_spawnp=no
+ac_cv_func_eventfd=no
+ac_cv_func_memfd_create=no
+ac_cv_func_prlimit=no
 
 ac_cv_pthread_is_default=yes
 ac_cv_pthread=no
 ac_cv_kthread=no
 
+ac_cv_func_clock_nanosleep=no
+ac_cv_lib_rt_clock_nanosleep=no
 ac_cv_func_clock_gettime=yes
 
 ac_cv_header_uuid_uuid_h=yes
+
+ac_cv_prog_ac_ct_READELF=true
 END
 
 }
@@ -69,14 +102,25 @@ END
 
 
 python_module_setup_local () {
+    # or link Modules/_decimal/libmpdec/libmpdec.a Modules/expat/libexpat.a at final stage
     cat > $1 <<END
+*disabled*
+_decimal
+_elementtree
+pyexpat
+END
+
+cat > /dev/null << END
 *static*
 
 _struct _struct.c   # binary structure packing/unpacking
 _queue _queuemodule.c
-parser parsermodule.c
 
-math mathmodule.c _math.c # -lm # math library functions, e.g. sin()
+#3.11- parser parsermodule.c
+
+#3.11- math mathmodule.c _math.c # -lm # math library functions, e.g. sin()
+math mathmodule.c
+
 cmath cmathmodule.c  # -lm # complex math library functions
 
 #_weakref _weakref.c
@@ -144,28 +188,19 @@ _ctypes _ctypes/_ctypes.c \
  _ctypes/cfield.c -I${PYTARGET}/Modules/_ctypes -I${APKUSR}/include\
  -L${APKUSR}/lib -lffi ${APKUSR}/lib/libffi.a
 
-
 # $(pkg-config libffi --libs-only-L --cflags-only-I)
 
-#_decimal _decimal/_decimal.c \
-# _decimal/libmpdec/basearith.c \
-# _decimal/libmpdec/constants.c \
-# _decimal/libmpdec/context.c \
-# _decimal/libmpdec/convolute.c \
-# _decimal/libmpdec/crt.c \
-# _decimal/libmpdec/difradix2.c \
-# _decimal/libmpdec/fnt.c \
-# _decimal/libmpdec/fourstep.c \
-# _decimal/libmpdec/io.c \
-# _decimal/libmpdec/memory.c \
-# _decimal/libmpdec/mpdecimal.c \
-# _decimal/libmpdec/numbertheory.c \
-# _decimal/libmpdec/sixstep.c \
-# _decimal/libmpdec/transpose.c \
-# -DCONFIG_${BITS} -DANSI -I${PYTARGET}/Modules/_decimal/libmpdec
+# _decimal/libmpdec/memory.c
+
+_decimal _decimal/_decimal.c -DCONFIG_${BITS} -DANSI -I${PYTARGET}/Modules/_decimal/libmpdec
+
+# -DCONFIG_${BITS} -DANSI -I${PYTARGET}/Modules/_decimal/libmpdec ${_PYTHON_PROJECT_BASE}/Modules/_decimal/libmpdec/libmpdec.a
+
+#
 
 END
 }
+
 
 
 python3_host_cmake () {
@@ -240,7 +275,6 @@ python3_patch () {
         echo
     else
         echo " - not regenerating importlib binary blobs for $PLATFORM_TRIPLET-"
-        exit 1
     fi
 }
 
@@ -267,7 +301,8 @@ export APKUSR=${APKUSR}
 # hasardous fix for libatomic
 # export LDFLAGS="-Wl,--shared-memory,--no-check-features"
 
-export LDFLAGS="-s EXPORT_ALL=1 -s USE_ZLIB=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1"
+# -s EXPORT_ALL=1
+export LDFLAGS="-s USE_ZLIB=1 -s SOCKET_WEBRTC=0 -s SOCKET_DEBUG=1"
 export CPPFLAGS='$EM_FLAGS'
 export CXXFLAGS='$EM_FLAGS'
 export CFLAGS='$EM_FLAGS'
@@ -276,10 +311,11 @@ export CFLAGS='$EM_FLAGS'
 
 PKG_CONFIG_PATH=${APKUSR}/lib/pkgconfig\\
  PLATFORM_TRIPLET=${HOST_PLATFORM} \\
- CONFIG_SITE=config.site\\
- READELF=true\\
- emconfigure \${_PYTHON_PROJECT_SRC}/configure --cache-file=${SUPPORT}/cache.${API}.${PLATFORM_TRIPLET} \\
- --host=${PLATFORM_TRIPLET} --build=${HOST_TRIPLET} --prefix=${APKUSR}\\
+ CONFIG_SITE=config.site READELF=true\\
+ emconfigure \${_PYTHON_PROJECT_SRC}/configure \\
+ --with-build-python=${HOST}/bin/python3 --with-emscripten-target=browser \\
+ --cache-file=${SUPPORT}/cache.${API}.${PLATFORM_TRIPLET} \\
+ --host=wasm${BITS}-unknown-emscripten --build=${HOST_TRIPLET} --prefix=${APKUSR}\\
  $PYOPTS --without-ensurepip\\
 
 # not needed just want lib not exe  --with-libs="-Wl,--shared-memory,--no-check-features -pthread"
@@ -345,6 +381,7 @@ DEF
     emmake make inclinstall
     emmake make libinstall
     emmake make install
+    EMCC_CFLAGS="-I${APKUSR}/include" emmake make install
 else
     echo ================== ${BUILD_SRC}/build.log ===================
     tail -n 30 ${BUILD_SRC}/build.log
@@ -387,7 +424,10 @@ python3_crosscompile () {
 
         python_ac_cv_patch config.site
 
+
         mkdir -p Modules
+
+
 
         python_module_setup_local Modules/Setup.local
 
@@ -402,6 +442,8 @@ python3_crosscompile () {
         export PYASSETS=${ORIGIN}/assets/python${PYMAJOR}.${PYMINOR}
 
         mkdir -p ${PYASSETS}
+
+
 
         # == prepare the cross configure + build file for cpython
         if [ -f ${PYTARGET}/configure ]

@@ -1,13 +1,12 @@
---- panda3d-00305bccae3643dda6f469f9cfe0cc46b7e5d74b/panda/CMakeLists.txt	2020-04-13 15:10:29.000000000 +0200
-+++ panda3d-android/panda/CMakeLists.txt	2020-07-01 06:58:10.019126758 +0200
-@@ -59,6 +59,10 @@
+--- webgl-port.git/panda/CMakeLists.txt	2022-01-25 14:21:21.520698052 +0100
++++ webgl-port/panda/CMakeLists.txt	2022-02-08 17:22:24.226635882 +0100
+@@ -59,6 +59,9 @@
  add_subdirectory(src/wgldisplay)
  add_subdirectory(src/windisplay)
  add_subdirectory(src/x11display)
 +if (ANDROID AND NOT HAVE_EGL)
-+    add_subdirectory(src/androiddisplay)
++  add_subdirectory(src/androiddisplay)
 +endif()
-+
  
  # For other components
  # bullet

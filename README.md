@@ -116,5 +116,12 @@ demo :  https://pmp-p.github.io/panda3d-next/py3/
 
 
 
+
+ref:
+
+https://pythondev.readthedocs.io/android.html
+
+https://pythondev.readthedocs.io/wasm.html
+
 --
 

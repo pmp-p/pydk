@@ -11,7 +11,7 @@ else
 fi
 
 PYMINOR_DEFAULT="11"
-PYMICRO="0a4"
+PYMICRO="0a5"
 
 export PYMAJOR=3
 export PYMINOR=${PYMINOR:-$PYMINOR_DEFAULT}
@@ -334,7 +334,7 @@ END
     then
         if $CMAKE . >/dev/null && make ${JFLAGS} >/dev/null
         then
-            echo
+            $PYTHON/bin/python3 -m pip install --upgrade pip
         else
             echo "ERROR : cmake externals in ${BUILD_SRC} from $(pwd)"
             exit 1
@@ -471,8 +471,8 @@ do
             BITS=64
             ;;
         wasm)
-            PLATFORM_TRIPLET=wasm-unknown-emscripten
-            ARCH=wasm
+            PLATFORM_TRIPLET=wasm32-unknown-emscripten
+            ARCH=wasm32
             API=1
             ABI=emscripten
             LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.a
@@ -606,7 +606,8 @@ END
         export LD=$TOOLCHAIN/bin/ld
         export READELF=$TOOLCHAIN/bin/llvm-readobj
         export AS=$TOOLCHAIN/bin/llvm-as
-        export AR=$TOOLCHAIN/bin/llvm-ar
+        #export AR=$TOOLCHAIN/bin/llvm-ar
+        export AR=/usr/bin/ar
         export RANLIB=$TOOLCHAIN/bin/llvm-ar
         export STRIP=$TOOLCHAIN/bin/llvm-objcopy
     else
@@ -617,7 +618,6 @@ END
         export RANLIB=$TOOLCHAIN/bin/${NDK_PREFIX}-ranlib
         export STRIP=$TOOLCHAIN/bin/${NDK_PREFIX}-strip
     fi
-
 
 
     # == eventually restore full PLATFORM_TRIPLET
@@ -730,6 +730,7 @@ echo " * adding wasm build"
 
 # select a place for wasm build
 export ENV="wasm"
+export BITS=32
 export ROOT="${ORIGIN}/${ENV}"
 export BUILD_PREFIX="${ROOT}/build"
 export CMAKE=${ROOT}/bin/cmake

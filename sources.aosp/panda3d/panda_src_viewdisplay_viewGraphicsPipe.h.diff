@@ -1,6 +1,101 @@
---- panda3d-980c6bb38961c13e0890990651d05df3550cf30a/panda/src/viewdisplay/viewGraphicsPipe.h	2020-04-13 05:43:16.709728110 +0200
-+++ panda3d-android/panda/src/viewdisplay/viewGraphicsPipe.h	2020-04-13 03:26:24.900320771 +0200
-@@ -0,0 +1,95 @@
+--- webgl-port.git/panda/src/viewdisplay/viewGraphicsPipe.h	2022-02-07 10:52:42.697876520 +0100
++++ webgl-port/panda/src/viewdisplay/viewGraphicsPipe.h	2022-02-08 17:22:24.282633953 +0100
+@@ -0,0 +1,190 @@
++/**
++ * PANDA 3D SOFTWARE
++ * Copyright (c) Carnegie Mellon University.  All rights reserved.
++ *
++ * All use of this software is subject to the terms of the revised BSD
++ * license.  You should have received a copy of this license along
++ * with this source code in a file named "LICENSE."
++ *
++ * @file viewGraphicsPipe.h
++ * @author pmp-p
++ * @date 2020-04-07
++ */
++
++#ifndef VIEWGRAPHICSPIPE_H
++#define VIEWGRAPHICSPIPE_H
++
++#include "pandabase.h"
++#include "graphicsWindow.h"
++#include "graphicsPipe.h"
++
++#ifdef OPENGLES_2
++    #include "gles2gsg.h"
++    #include <EGL/egl.h>
++    #define NativeDisplayType EGLNativeDisplayType
++    #define NativePixmapType EGLNativePixmapType
++    #define NativeWindowType EGLNativeWindowType
++#else
++    #error GLES1 dropped
++  #include "glesgsg.h"
++  #include <GLES/egl.h>
++#endif
++
++
++
++class FrameBufferProperties;
++
++class ViewGraphicsBuffer;
++class ViewGraphicsPixmap;
++class ViewGraphicsWindow;
++
++/**
++ * This graphics pipe represents the interface for reusing an OpenGL ES graphic surface described by a single pointer
++ */
++
++class ViewGraphicsPipe : public GraphicsPipe {
++public:
++  ViewGraphicsPipe();
++  virtual ~ViewGraphicsPipe();
++
++  virtual std::string get_interface_name() const;
++  static PT(GraphicsPipe) pipe_constructor();
++
++public:
++  virtual PreferredWindowThread get_preferred_window_thread() const;
++
++protected:
++  virtual PT(GraphicsOutput) make_output(const std::string &name,
++                                         const FrameBufferProperties &fb_prop,
++                                         const WindowProperties &win_prop,
++                                         int flags,
++                                         GraphicsEngine *engine,
++                                         GraphicsStateGuardian *gsg,
++                                         GraphicsOutput *host,
++                                         int retry,
++                                         bool &precertify);
++
++private:
++  EGLDisplay _egl_display;
++  GraphicsWindow *_window;
++
++public:
++  static TypeHandle get_class_type() {
++    return _type_handle;
++  }
++  static void init_type() {
++    GraphicsPipe::init_type();
++    register_type(_type_handle, "ViewGraphicsPipe",
++                  GraphicsPipe::get_class_type());
++  }
++  virtual TypeHandle get_type() const {
++    return get_class_type();
++  }
++  virtual TypeHandle force_init_type() {init_type(); return get_class_type();}
++
++private:
++  static TypeHandle _type_handle;
++
++  friend class ViewGraphicsBuffer;
++  friend class ViewGraphicsPixmap;
++  friend class ViewGraphicsWindow;
++};
++
++#include "viewGraphicsPipe.I"
++
++#endif
 +/**
 + * PANDA 3D SOFTWARE
 + * Copyright (c) Carnegie Mellon University.  All rights reserved.

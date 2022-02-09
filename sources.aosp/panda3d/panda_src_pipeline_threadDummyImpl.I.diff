@@ -1,5 +1,5 @@
---- panda3d-00305bccae3643dda6f469f9cfe0cc46b7e5d74b/panda/src/pipeline/threadDummyImpl.I	2020-04-13 15:10:29.000000000 +0200
-+++ panda3d-android/panda/src/pipeline/threadDummyImpl.I	2020-07-01 06:58:10.027126658 +0200
+--- webgl-port.git/panda/src/pipeline/threadDummyImpl.I	2022-01-25 14:21:26.064537897 +0100
++++ webgl-port/panda/src/pipeline/threadDummyImpl.I	2022-02-08 17:22:24.262634642 +0100
 @@ -124,3 +124,13 @@
  INLINE void ThreadDummyImpl::
  consider_yield() {

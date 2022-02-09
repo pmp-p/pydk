@@ -15,8 +15,8 @@
 #export URL_PANDA3D=${URL_PANDA3D:-"URL https://github.com/panda3d/panda3d/archive/eb367430f7d4aad7d01e5b9212534b066e5a21f6.zip"}
 #export HASH_PANDA3D=${HASH_PANDA3D:-"URL_HASH MD5=d436c406883488923d38f1093001d1aa"}
 
-#export URL_PANDA3D=${URL_PANDA3D:-"URL https://github.com/panda3d/panda3d/archive/webgl-port.zip"}
-export URL_PANDA3D=${URL_PANDA3D:-"GIT_REPOSITORY https://github.com/panda3d/panda3d.git"}
+export URL_PANDA3D=${URL_PANDA3D:-"URL https://github.com/panda3d/panda3d/archive/webgl-port.zip"}
+#export URL_PANDA3D=${URL_PANDA3D:-"GIT_REPOSITORY https://github.com/panda3d/panda3d.git"}
 
 #export URL_PANDA3D=${URL_PANDA3D:-"GIT_REPOSITORY https://github.com/pmp-p/panda3d"}
 #export EXTRA_PANDA3D="GIT_TAG origin/patch-2"

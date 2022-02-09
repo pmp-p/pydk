@@ -5,7 +5,7 @@
 
 #export URL_PYTHON3=${URL_PYTHON3:-"URL https://www.python.org/ftp/python/${PYVER}/Python-${PYVER}.tar.xz"}
 
-export URL_PYTHON3=${URL_PYTHON3:-"URL https://www.python.org/ftp/python/3.11.0/Python-3.11.0a4.tar.xz"}
+export URL_PYTHON3=${URL_PYTHON3:-"URL https://www.python.org/ftp/python/3.11.0/Python-3.11.0a5.tar.xz"}
 
 case "${PYVER}" in
     "3.7.9" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=389d3ed26b4d97c741d9e5423da1f43b"};;
@@ -17,6 +17,7 @@ case "${PYVER}" in
     "3.9.1" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=61981498e75ac8f00adcb908281fadb6"};;
     "3.9.2" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=f0dc9000312abeb16de4eccce9a870ab"};;
     "3.11.0a4" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=9de26ba99545171666206d7e19a1bacf"};;
+    "3.11.0a5" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=6bc7aafdec900b4b00ab6b5b64619dd4"};;   
 esac
 
 export PYOPTS="--without-pymalloc --without-pydebug\

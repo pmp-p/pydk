@@ -1,5 +1,5 @@
 #export URL_PANDA3D=${URL_PANDA3D:-"URL https://github.com/pmp-p/panda3d/archive/mobile-sandbox.zip"}
-export URL_PANDA3D=${URL_PANDA3D:-"URL https://github.com/panda3d/panda3d/archive/webgl-port.zip"}
+#export URL_PANDA3D=${URL_PANDA3D:-"URL https://github.com/panda3d/panda3d/archive/webgl-port.zip"}
 
 
 export PANDA3D_CMAKE_ARGS_COMMON="-DHAVE_PYTHON=YES\
@@ -39,7 +39,7 @@ panda3d_crosscompile () {
     then
         echo "    -> ${unit} already built for $ABI_NAME"
     else
-        if [ -f ${BUILD_SRC}/${unit}-prefix/src/panda3d-webgl-port/CMakeLists.txt ]
+        if [ -f ${BUILD_SRC}/${unit}-prefix/src/panda3d/CMakeLists.txt ]
         then
             echo using existing archive
         else
@@ -98,13 +98,13 @@ then
     TP_ALL="${TP_FT2} ${TP_HB} ${TP_OA} ${TP_VB} ${TP_BUL} ${TP_PY}"
 
     # build it
-    cd ${BUILD_SRC}/${unit}-prefix/src/panda3d-webgl-port
+    cd ${BUILD_SRC}/${unit}-prefix/src/panda3d
 
     # nope
     # -fPIC
     cat > build.sh <<END
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH\
- CXXFLAGS="-std=c++11 -fno-exceptions $EM_FLAGS $EM_LIBS"\
+ CXXFLAGS="-std=c++11 -fno-exceptions $EM_FLAGS $EM_LIBS" EMCC_FLAGS="-s USE_ZLIB=1 -s USE_BZ2=1"\
  MAKEPANDA_THIRDPARTY="$BUILD_DEST/thirdparty"\
  PATH="$HOST/bin:$EMSDK/upstream/emscripten:$BASEPATH"\
  python3 makepanda/makepanda.py $OPT_COMMON $OPT_TARGET $TP_ALL --verbose --outputdir $BUILD_DEST
@@ -112,7 +112,8 @@ END
     env -i bash build.sh
 
 cd "$BUILD_DEST"
-
+    echo 115-PANDA3D
+    read
 else
     # dreamer !
     # $WCMAKE ${BUILD_SRC}/${unit}-prefix/src/panda3d-webgl-port
