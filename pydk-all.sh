@@ -97,7 +97,7 @@ then
 fi
 
 #base python
-UNITS="unit bzip2 lzma libffi sqlite3 openssl python3"
+UNITS="unit bz2 lzma libffi sqlite3 openssl python3"
 
 #extra
 UNITS="$UNITS freetype2 harfbuzz ft2_hb bullet3 openal ogg vorbis panda3d sdl2 pcre2"
