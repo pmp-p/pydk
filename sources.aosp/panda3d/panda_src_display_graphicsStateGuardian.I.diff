@@ -1,5 +1,5 @@
 --- webgl-port.git/panda/src/display/graphicsStateGuardian.I	2022-01-25 14:21:22.456665063 +0100
-+++ webgl-port/panda/src/display/graphicsStateGuardian.I	2022-02-08 17:22:24.250635055 +0100
++++ mobile-sandbox/panda/src/display/graphicsStateGuardian.I	2022-02-09 21:41:17.911574148 +0100
 @@ -78,6 +78,9 @@
   */
  INLINE void GraphicsStateGuardian::

@@ -1,14 +1,14 @@
 --- webgl-port.git/panda/metalibs/pandagles2/CMakeLists.txt	2022-01-25 14:21:21.552696924 +0100
-+++ webgl-port/panda/metalibs/pandagles2/CMakeLists.txt	2022-02-08 17:22:24.230635746 +0100
++++ mobile-sandbox/panda/metalibs/pandagles2/CMakeLists.txt	2022-02-10 17:24:14.315981456 +0100
 @@ -1,3 +1,24 @@
 +if(ANDROID AND NOT HAVE_EGL)
 +  if(HAVE_GLES2)
 +    set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "OpenGLES2Devel")
 +    add_metalib(pandagles2 ${MODULE_TYPE}
-+    INCLUDE androidGraphicsPipe.h
++    INCLUDE viewGraphicsPipe.h
 +    INIT init_libpandagles2 pandagles2.h
-+    EXPORT int get_pipe_type_pandagles2 "AndroidGraphicsPipe::get_class_type().get_index()"
-+    COMPONENTS p3androiddisplay_gles2 p3glstuff p3gles2gsg)
++    EXPORT int get_pipe_type_pandagles2 "ViewGraphicsPipe::get_class_type().get_index()"
++    COMPONENTS p3viewdisplay_gles2 p3glstuff p3gles2gsg)
 +    unset(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME)
 +    install(TARGETS pandagles2
 +    EXPORT OpenGLES2 COMPONENT OpenGLES2

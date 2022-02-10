@@ -1,5 +1,5 @@
 --- webgl-port.git/panda/src/viewdisplay/p3viewdisplay_composite1.cxx	2022-02-07 10:52:42.697876520 +0100
-+++ webgl-port/panda/src/viewdisplay/p3viewdisplay_composite1.cxx	2022-02-08 17:22:24.274634229 +0100
++++ mobile-sandbox/panda/src/viewdisplay/p3viewdisplay_composite1.cxx	2022-02-09 21:41:17.912574140 +0100
 @@ -0,0 +1,12 @@
 +#include "config_viewdisplay.cxx"
 +//#include "viewGraphicsBuffer.cxx"

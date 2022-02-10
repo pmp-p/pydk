@@ -1,6 +1,22 @@
 --- webgl-port.git/dtool/src/prc/notify.cxx	2022-02-07 20:43:57.146532726 +0100
-+++ webgl-port/dtool/src/prc/notify.cxx	2022-02-08 18:50:37.363996390 +0100
-@@ -500,8 +500,8 @@
++++ mobile-sandbox/dtool/src/prc/notify.cxx	2022-02-10 17:53:35.976216315 +0100
+@@ -467,14 +467,8 @@
+   // type of stream that redirects it to Android's log system.
+ 
+   Notify *ptr = Notify::ptr();
++  ptr->set_ostream_ptr(new AndroidLogStream(ANDROID_LOG_INFO), true);
+ 
+-  for (int i = 0; i <= NS_fatal; ++i) {
+-    int priority = ANDROID_LOG_UNKNOWN;
+-    if (severity != NS_unspecified) {
+-      priority = i + 1;
+-    }
+-    ptr->_log_streams[i] = new AndroidLogStream(priority);
+-  }
+ 
+ #elif defined(__EMSCRIPTEN__)
+   // We have no writable filesystem in JavaScript.  Instead, we set up a
+@@ -500,8 +494,8 @@
         "The filename to which to write all the output of notify");
  
      // We use this to ensure that only one thread can initialize the output.

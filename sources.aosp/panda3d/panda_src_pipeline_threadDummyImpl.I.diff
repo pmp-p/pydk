@@ -1,5 +1,5 @@
 --- webgl-port.git/panda/src/pipeline/threadDummyImpl.I	2022-01-25 14:21:26.064537897 +0100
-+++ webgl-port/panda/src/pipeline/threadDummyImpl.I	2022-02-08 17:22:24.262634642 +0100
++++ mobile-sandbox/panda/src/pipeline/threadDummyImpl.I	2022-02-09 21:41:17.912574140 +0100
 @@ -124,3 +124,13 @@
  INLINE void ThreadDummyImpl::
  consider_yield() {

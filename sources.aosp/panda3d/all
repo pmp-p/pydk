@@ -1,5 +1,5 @@
 --- webgl-port.git/cmake/macros/Python.cmake	2022-01-25 14:21:19.028785884 +0100
-+++ webgl-port/cmake/macros/Python.cmake	2022-02-08 17:22:24.222636020 +0100
++++ mobile-sandbox/cmake/macros/Python.cmake	2022-02-09 21:41:17.907574181 +0100
 @@ -48,7 +48,12 @@
    string(REPLACE "." "/" slash_namespace "${namespace}")
  
@@ -15,8 +15,24 @@
    if(BUILD_SHARED_LIBS)
      set(_outdir "${PANDA_OUTPUT_DIR}/${slash_namespace}")
 --- webgl-port.git/dtool/src/prc/notify.cxx	2022-02-07 20:43:57.146532726 +0100
-+++ webgl-port/dtool/src/prc/notify.cxx	2022-02-08 18:50:37.363996390 +0100
-@@ -500,8 +500,8 @@
++++ mobile-sandbox/dtool/src/prc/notify.cxx	2022-02-10 17:53:35.976216315 +0100
+@@ -467,14 +467,8 @@
+   // type of stream that redirects it to Android's log system.
+ 
+   Notify *ptr = Notify::ptr();
++  ptr->set_ostream_ptr(new AndroidLogStream(ANDROID_LOG_INFO), true);
+ 
+-  for (int i = 0; i <= NS_fatal; ++i) {
+-    int priority = ANDROID_LOG_UNKNOWN;
+-    if (severity != NS_unspecified) {
+-      priority = i + 1;
+-    }
+-    ptr->_log_streams[i] = new AndroidLogStream(priority);
+-  }
+ 
+ #elif defined(__EMSCRIPTEN__)
+   // We have no writable filesystem in JavaScript.  Instead, we set up a
+@@ -500,8 +494,8 @@
         "The filename to which to write all the output of notify");
  
      // We use this to ensure that only one thread can initialize the output.
@@ -28,19 +44,20 @@
      if (!value.empty() && !initialized.test_and_set()) {
        Notify *ptr = Notify::ptr();
 --- webgl-port.git/panda/CMakeLists.txt	2022-01-25 14:21:21.520698052 +0100
-+++ webgl-port/panda/CMakeLists.txt	2022-02-08 17:22:24.226635882 +0100
-@@ -59,6 +59,9 @@
++++ mobile-sandbox/panda/CMakeLists.txt	2022-02-10 17:22:56.478774711 +0100
+@@ -59,6 +59,10 @@
  add_subdirectory(src/wgldisplay)
  add_subdirectory(src/windisplay)
  add_subdirectory(src/x11display)
 +if (ANDROID AND NOT HAVE_EGL)
-+  add_subdirectory(src/androiddisplay)
++  #add_subdirectory(src/androiddisplay)
++  add_subdirectory(src/viewdisplay)
 +endif()
  
  # For other components
  # bullet
 --- webgl-port.git/panda/metalibs/pandagl/CMakeLists.txt	2022-01-25 14:21:21.544697206 +0100
-+++ webgl-port/panda/metalibs/pandagl/CMakeLists.txt	2022-02-08 17:22:24.230635746 +0100
++++ mobile-sandbox/panda/metalibs/pandagl/CMakeLists.txt	2022-02-09 21:41:17.908574173 +0100
 @@ -1,3 +1,10 @@
 +if(ANDROID)
 +  set(PANDAGL_PIPE_TYPE "viewGraphicsPipe")
@@ -53,16 +70,16 @@
    return()
  endif()
 --- webgl-port.git/panda/metalibs/pandagles2/CMakeLists.txt	2022-01-25 14:21:21.552696924 +0100
-+++ webgl-port/panda/metalibs/pandagles2/CMakeLists.txt	2022-02-08 17:22:24.230635746 +0100
++++ mobile-sandbox/panda/metalibs/pandagles2/CMakeLists.txt	2022-02-10 17:24:14.315981456 +0100
 @@ -1,3 +1,24 @@
 +if(ANDROID AND NOT HAVE_EGL)
 +  if(HAVE_GLES2)
 +    set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "OpenGLES2Devel")
 +    add_metalib(pandagles2 ${MODULE_TYPE}
-+    INCLUDE androidGraphicsPipe.h
++    INCLUDE viewGraphicsPipe.h
 +    INIT init_libpandagles2 pandagles2.h
-+    EXPORT int get_pipe_type_pandagles2 "AndroidGraphicsPipe::get_class_type().get_index()"
-+    COMPONENTS p3androiddisplay_gles2 p3glstuff p3gles2gsg)
++    EXPORT int get_pipe_type_pandagles2 "ViewGraphicsPipe::get_class_type().get_index()"
++    COMPONENTS p3viewdisplay_gles2 p3glstuff p3gles2gsg)
 +    unset(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME)
 +    install(TARGETS pandagles2
 +    EXPORT OpenGLES2 COMPONENT OpenGLES2
@@ -80,7 +97,7 @@
    return()
  endif()
 --- webgl-port.git/panda/metalibs/pandagles2/pandagles2.cxx	2022-01-25 14:21:21.556696784 +0100
-+++ webgl-port/panda/metalibs/pandagles2/pandagles2.cxx	2022-02-08 17:22:24.234635606 +0100
++++ mobile-sandbox/panda/metalibs/pandagles2/pandagles2.cxx	2022-02-09 21:41:17.908574173 +0100
 @@ -3,7 +3,7 @@
   * @author rdb
   * @date 2009-06-08
@@ -131,7 +148,7 @@
 +
 +#endif
 --- webgl-port.git/panda/src/androiddisplay/androidGraphicsStateGuardian.cxx	2022-01-25 14:21:21.600695232 +0100
-+++ webgl-port/panda/src/androiddisplay/androidGraphicsStateGuardian.cxx	2022-02-08 17:22:24.238635469 +0100
++++ mobile-sandbox/panda/src/androiddisplay/androidGraphicsStateGuardian.cxx	2022-02-09 21:41:17.908574173 +0100
 @@ -17,6 +17,14 @@
  
  #include <dlfcn.h>
@@ -168,7 +185,7 @@
    _format = 0;
  
 --- webgl-port.git/panda/src/androiddisplay/androidGraphicsWindow.cxx	2022-01-25 14:21:21.604695092 +0100
-+++ webgl-port/panda/src/androiddisplay/androidGraphicsWindow.cxx	2022-02-08 17:22:24.242635332 +0100
++++ mobile-sandbox/panda/src/androiddisplay/androidGraphicsWindow.cxx	2022-02-09 21:41:17.909574165 +0100
 @@ -8,7 +8,7 @@
   *
   * @file androidGraphicsWindow.cxx
@@ -679,7 +696,7 @@
  }
  
 --- webgl-port.git/panda/src/androiddisplay/config_androiddisplay.cxx	2022-01-25 14:21:21.608694951 +0100
-+++ webgl-port/panda/src/androiddisplay/config_androiddisplay.cxx	2022-02-08 17:22:24.242635332 +0100
++++ mobile-sandbox/panda/src/androiddisplay/config_androiddisplay.cxx	2022-02-09 21:41:17.910574156 +0100
 @@ -21,10 +21,17 @@
  
  #include "config_display.h"
@@ -708,7 +725,7 @@
      return;
    }
 --- webgl-port.git/panda/src/display/graphicsOutput.cxx	2022-01-25 14:21:22.444665485 +0100
-+++ webgl-port/panda/src/display/graphicsOutput.cxx	2022-02-08 17:22:24.246635193 +0100
++++ mobile-sandbox/panda/src/display/graphicsOutput.cxx	2022-02-09 21:41:17.910574156 +0100
 @@ -416,6 +416,10 @@
   */
  bool GraphicsOutput::
@@ -721,7 +738,7 @@
      return false;
    }
 --- webgl-port.git/panda/src/display/graphicsStateGuardian.I	2022-01-25 14:21:22.456665063 +0100
-+++ webgl-port/panda/src/display/graphicsStateGuardian.I	2022-02-08 17:22:24.250635055 +0100
++++ mobile-sandbox/panda/src/display/graphicsStateGuardian.I	2022-02-09 21:41:17.911574148 +0100
 @@ -78,6 +78,9 @@
   */
  INLINE void GraphicsStateGuardian::
@@ -733,7 +750,7 @@
  }
  
 --- webgl-port.git/panda/src/glstuff/CMakeLists.txt	2022-01-25 14:21:23.688621640 +0100
-+++ webgl-port/panda/src/glstuff/CMakeLists.txt	2022-02-08 17:22:24.254634919 +0100
++++ mobile-sandbox/panda/src/glstuff/CMakeLists.txt	2022-02-09 21:41:17.911574148 +0100
 @@ -1,4 +1,4 @@
 -if(NOT HAVE_GL)
 +if(NOT HAVE_GL AND NOT ANDROID)
@@ -741,7 +758,7 @@
  endif()
  
 --- webgl-port.git/panda/src/physics/physicalNode.cxx	2022-02-07 20:43:57.194531078 +0100
-+++ webgl-port/panda/src/physics/physicalNode.cxx	2022-02-09 18:34:05.785039390 +0100
++++ mobile-sandbox/panda/src/physics/physicalNode.cxx	2022-02-09 21:41:17.911574148 +0100
 @@ -16,7 +16,7 @@
  #include "patomic.h"
  
@@ -752,7 +769,7 @@
  TypeHandle PhysicalNode::_type_handle;
  
 --- webgl-port.git/panda/src/pipeline/threadDummyImpl.cxx	2022-01-25 14:21:26.064537897 +0100
-+++ webgl-port/panda/src/pipeline/threadDummyImpl.cxx	2022-02-08 17:22:24.258634779 +0100
++++ mobile-sandbox/panda/src/pipeline/threadDummyImpl.cxx	2022-02-09 21:41:17.911574148 +0100
 @@ -25,6 +25,13 @@
  #include <windows.h>
  #endif
@@ -768,7 +785,7 @@
   *
   */
 --- webgl-port.git/panda/src/pipeline/threadDummyImpl.h	2022-01-25 14:21:26.064537897 +0100
-+++ webgl-port/panda/src/pipeline/threadDummyImpl.h	2022-02-08 17:22:24.262634642 +0100
++++ mobile-sandbox/panda/src/pipeline/threadDummyImpl.h	2022-02-09 21:41:17.911574148 +0100
 @@ -31,6 +31,10 @@
  #include <windows.h>  // For Sleep().
  #endif
@@ -795,7 +812,7 @@
  
  #include "threadDummyImpl.I"
 --- webgl-port.git/panda/src/pipeline/threadDummyImpl.I	2022-01-25 14:21:26.064537897 +0100
-+++ webgl-port/panda/src/pipeline/threadDummyImpl.I	2022-02-08 17:22:24.262634642 +0100
++++ mobile-sandbox/panda/src/pipeline/threadDummyImpl.I	2022-02-09 21:41:17.912574140 +0100
 @@ -124,3 +124,13 @@
  INLINE void ThreadDummyImpl::
  consider_yield() {
@@ -811,7 +828,7 @@
 +}
 +#endif
 --- webgl-port.git/panda/src/viewdisplay/CMakeLists.txt	2022-02-07 10:52:42.693876655 +0100
-+++ webgl-port/panda/src/viewdisplay/CMakeLists.txt	2022-02-08 17:22:24.266634505 +0100
++++ mobile-sandbox/panda/src/viewdisplay/CMakeLists.txt	2022-02-10 17:25:06.637445650 +0100
 @@ -0,0 +1,116 @@
 +set(P3VIEWDISPLAY_HEADERS
 +  config_viewdisplay.h
@@ -908,9 +925,9 @@
 +endif()
 +
 +if(HAVE_GLES2)
-+    add_component_library(p3viewdisplay_gles2 SYMBOL BUILDING_PANDAGLES2
-+        INIT init_libviewdisplay config_viewdisplay.h
-+        ${P3VIEWDISPLAY_HEADERS} ${P3VIEWDISPLAY_SOURCES})
++#    add_component_library(p3viewdisplay_gles2 SYMBOL BUILDING_PANDAGLES2
++#        INIT init_libviewdisplay config_viewdisplay.h
++#        ${P3VIEWDISPLAY_HEADERS} ${P3VIEWDISPLAY_SOURCES})
 +    target_compile_definitions(p3viewdisplay_gles2 PUBLIC OPENGLES_2)
 +    # panda from p3x11display ?
 +    target_link_libraries(p3viewdisplay_gles2 p3gles2gsg EGL PKG::GLES2)
@@ -930,7 +947,7 @@
 +
 +
 --- webgl-port.git/panda/src/viewdisplay/config_viewdisplay.cxx	2022-02-07 10:52:42.693876655 +0100
-+++ webgl-port/panda/src/viewdisplay/config_viewdisplay.cxx	2022-02-08 17:22:24.270634366 +0100
++++ mobile-sandbox/panda/src/viewdisplay/config_viewdisplay.cxx	2022-02-09 21:41:17.912574140 +0100
 @@ -0,0 +1,192 @@
 +/**
 + * PANDA 3D SOFTWARE
@@ -1125,7 +1142,7 @@
 +  }
 +}
 --- webgl-port.git/panda/src/viewdisplay/config_viewdisplay.h	2022-02-07 10:52:42.697876520 +0100
-+++ webgl-port/panda/src/viewdisplay/config_viewdisplay.h	2022-02-08 17:22:24.274634229 +0100
++++ mobile-sandbox/panda/src/viewdisplay/config_viewdisplay.h	2022-02-09 21:41:17.912574140 +0100
 @@ -0,0 +1,92 @@
 +/**
 + * PANDA 3D SOFTWARE
@@ -1220,7 +1237,7 @@
 +
 +#endif
 --- webgl-port.git/panda/src/viewdisplay/p3viewdisplay_composite1.cxx	2022-02-07 10:52:42.697876520 +0100
-+++ webgl-port/panda/src/viewdisplay/p3viewdisplay_composite1.cxx	2022-02-08 17:22:24.274634229 +0100
++++ mobile-sandbox/panda/src/viewdisplay/p3viewdisplay_composite1.cxx	2022-02-09 21:41:17.912574140 +0100
 @@ -0,0 +1,12 @@
 +#include "config_viewdisplay.cxx"
 +//#include "viewGraphicsBuffer.cxx"
@@ -1235,7 +1252,7 @@
 +#include "viewGraphicsStateGuardian.cxx"
 +#include "viewGraphicsWindow.cxx"
 --- webgl-port.git/panda/src/viewdisplay/viewGraphicsPipe.cxx	2022-02-07 10:52:42.697876520 +0100
-+++ webgl-port/panda/src/viewdisplay/viewGraphicsPipe.cxx	2022-02-08 17:22:24.278634092 +0100
++++ mobile-sandbox/panda/src/viewdisplay/viewGraphicsPipe.cxx	2022-02-09 21:41:17.912574140 +0100
 @@ -0,0 +1,474 @@
 +/**
 + * PANDA 3D SOFTWARE
@@ -1712,7 +1729,7 @@
 +  return nullptr;
 +}
 --- webgl-port.git/panda/src/viewdisplay/viewGraphicsPipe.h	2022-02-07 10:52:42.697876520 +0100
-+++ webgl-port/panda/src/viewdisplay/viewGraphicsPipe.h	2022-02-08 17:22:24.282633953 +0100
++++ mobile-sandbox/panda/src/viewdisplay/viewGraphicsPipe.h	2022-02-09 21:41:17.913574132 +0100
 @@ -0,0 +1,190 @@
 +/**
 + * PANDA 3D SOFTWARE
@@ -1905,7 +1922,7 @@
 +
 +#endif
 --- webgl-port.git/panda/src/viewdisplay/viewGraphicsPipe.I	2022-02-07 10:52:42.697876520 +0100
-+++ webgl-port/panda/src/viewdisplay/viewGraphicsPipe.I	2022-02-08 17:22:24.286633815 +0100
++++ mobile-sandbox/panda/src/viewdisplay/viewGraphicsPipe.I	2022-02-09 21:41:17.913574132 +0100
 @@ -0,0 +1,24 @@
 +/**
 + * PANDA 3D SOFTWARE
@@ -1932,7 +1949,7 @@
 + * @date 2020-04-07
 + */
 --- webgl-port.git/panda/src/viewdisplay/viewGraphicsStateGuardian.cxx	2022-02-07 10:52:42.697876520 +0100
-+++ webgl-port/panda/src/viewdisplay/viewGraphicsStateGuardian.cxx	2022-02-08 17:22:24.286633815 +0100
++++ mobile-sandbox/panda/src/viewdisplay/viewGraphicsStateGuardian.cxx	2022-02-09 21:41:17.913574132 +0100
 @@ -0,0 +1,794 @@
 +/**
 + * PANDA 3D SOFTWARE
@@ -2729,7 +2746,7 @@
 +  return (void *)eglGetProcAddress(name);
 +}
 --- webgl-port.git/panda/src/viewdisplay/viewGraphicsStateGuardian.h	2022-02-07 10:52:42.701876383 +0100
-+++ webgl-port/panda/src/viewdisplay/viewGraphicsStateGuardian.h	2022-02-08 17:22:24.290633679 +0100
++++ mobile-sandbox/panda/src/viewdisplay/viewGraphicsStateGuardian.h	2022-02-09 21:41:17.913574132 +0100
 @@ -0,0 +1,198 @@
 +/**
 + * PANDA 3D SOFTWARE
@@ -2930,7 +2947,7 @@
 +
 +#endif
 --- webgl-port.git/panda/src/viewdisplay/viewGraphicsStateGuardian.I	2022-02-07 10:52:42.701876383 +0100
-+++ webgl-port/panda/src/viewdisplay/viewGraphicsStateGuardian.I	2022-02-08 17:22:24.294633539 +0100
++++ mobile-sandbox/panda/src/viewdisplay/viewGraphicsStateGuardian.I	2022-02-09 21:41:17.913574132 +0100
 @@ -0,0 +1,42 @@
 +/**
 + * PANDA 3D SOFTWARE
@@ -2975,7 +2992,7 @@
 +  return _fbprops;
 +}
 --- webgl-port.git/panda/src/viewdisplay/viewGraphicsWindow.cxx	2022-02-07 10:52:42.701876383 +0100
-+++ webgl-port/panda/src/viewdisplay/viewGraphicsWindow.cxx	2022-02-08 17:22:24.298633402 +0100
++++ mobile-sandbox/panda/src/viewdisplay/viewGraphicsWindow.cxx	2022-02-09 21:41:17.914574123 +0100
 @@ -0,0 +1,1976 @@
 +/**
 + * PANDA 3D SOFTWARE
@@ -4954,7 +4971,7 @@
 +  return ButtonHandle::none();
 +}
 --- webgl-port.git/panda/src/viewdisplay/viewGraphicsWindow.h	2022-02-07 10:52:42.701876383 +0100
-+++ webgl-port/panda/src/viewdisplay/viewGraphicsWindow.h	2022-02-08 17:22:24.306633126 +0100
++++ mobile-sandbox/panda/src/viewdisplay/viewGraphicsWindow.h	2022-02-09 21:41:17.914574123 +0100
 @@ -0,0 +1,196 @@
 +/**
 + * PANDA 3D SOFTWARE
@@ -5153,7 +5170,7 @@
 +
 +#endif
 --- webgl-port.git/panda/src/viewdisplay/viewGraphicsWindow.I	2022-02-07 10:52:42.701876383 +0100
-+++ webgl-port/panda/src/viewdisplay/viewGraphicsWindow.I	2022-02-08 17:22:24.306633126 +0100
++++ mobile-sandbox/panda/src/viewdisplay/viewGraphicsWindow.I	2022-02-09 21:41:17.915574115 +0100
 @@ -0,0 +1,24 @@
 +/**
 + * PANDA 3D SOFTWARE
@@ -5180,7 +5197,7 @@
 + * @date 2020-04-07
 + */
 --- webgl-port.git/pandatool/src/deploy-stub/CMakeLists.txt	2022-01-25 14:21:27.084501946 +0100
-+++ webgl-port/pandatool/src/deploy-stub/CMakeLists.txt	2022-02-08 17:22:24.310632988 +0100
++++ mobile-sandbox/pandatool/src/deploy-stub/CMakeLists.txt	2022-02-09 21:41:17.915574115 +0100
 @@ -2,6 +2,11 @@
    return()
  endif()

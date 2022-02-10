@@ -1,5 +1,5 @@
 --- webgl-port.git/panda/src/viewdisplay/CMakeLists.txt	2022-02-07 10:52:42.693876655 +0100
-+++ webgl-port/panda/src/viewdisplay/CMakeLists.txt	2022-02-08 17:22:24.266634505 +0100
++++ mobile-sandbox/panda/src/viewdisplay/CMakeLists.txt	2022-02-10 17:25:06.637445650 +0100
 @@ -0,0 +1,116 @@
 +set(P3VIEWDISPLAY_HEADERS
 +  config_viewdisplay.h
@@ -96,9 +96,9 @@
 +endif()
 +
 +if(HAVE_GLES2)
-+    add_component_library(p3viewdisplay_gles2 SYMBOL BUILDING_PANDAGLES2
-+        INIT init_libviewdisplay config_viewdisplay.h
-+        ${P3VIEWDISPLAY_HEADERS} ${P3VIEWDISPLAY_SOURCES})
++#    add_component_library(p3viewdisplay_gles2 SYMBOL BUILDING_PANDAGLES2
++#        INIT init_libviewdisplay config_viewdisplay.h
++#        ${P3VIEWDISPLAY_HEADERS} ${P3VIEWDISPLAY_SOURCES})
 +    target_compile_definitions(p3viewdisplay_gles2 PUBLIC OPENGLES_2)
 +    # panda from p3x11display ?
 +    target_link_libraries(p3viewdisplay_gles2 p3gles2gsg EGL PKG::GLES2)

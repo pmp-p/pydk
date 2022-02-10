@@ -1,5 +1,5 @@
 --- webgl-port.git/panda/metalibs/pandagles2/pandagles2.cxx	2022-01-25 14:21:21.556696784 +0100
-+++ webgl-port/panda/metalibs/pandagles2/pandagles2.cxx	2022-02-08 17:22:24.234635606 +0100
++++ mobile-sandbox/panda/metalibs/pandagles2/pandagles2.cxx	2022-02-09 21:41:17.908574173 +0100
 @@ -3,7 +3,7 @@
   * @author rdb
   * @date 2009-06-08

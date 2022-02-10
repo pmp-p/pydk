@@ -1,5 +1,5 @@
 --- webgl-port.git/pandatool/src/deploy-stub/CMakeLists.txt	2022-01-25 14:21:27.084501946 +0100
-+++ webgl-port/pandatool/src/deploy-stub/CMakeLists.txt	2022-02-08 17:22:24.310632988 +0100
++++ mobile-sandbox/pandatool/src/deploy-stub/CMakeLists.txt	2022-02-09 21:41:17.915574115 +0100
 @@ -2,6 +2,11 @@
    return()
  endif()

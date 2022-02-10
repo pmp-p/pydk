@@ -1,5 +1,5 @@
 --- webgl-port.git/panda/src/viewdisplay/config_viewdisplay.cxx	2022-02-07 10:52:42.693876655 +0100
-+++ webgl-port/panda/src/viewdisplay/config_viewdisplay.cxx	2022-02-08 17:22:24.270634366 +0100
++++ mobile-sandbox/panda/src/viewdisplay/config_viewdisplay.cxx	2022-02-09 21:41:17.912574140 +0100
 @@ -0,0 +1,192 @@
 +/**
 + * PANDA 3D SOFTWARE

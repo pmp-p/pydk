@@ -1,5 +1,5 @@
 --- webgl-port.git/cmake/macros/Python.cmake	2022-01-25 14:21:19.028785884 +0100
-+++ webgl-port/cmake/macros/Python.cmake	2022-02-08 17:22:24.222636020 +0100
++++ mobile-sandbox/cmake/macros/Python.cmake	2022-02-09 21:41:17.907574181 +0100
 @@ -48,7 +48,12 @@
    string(REPLACE "." "/" slash_namespace "${namespace}")
  

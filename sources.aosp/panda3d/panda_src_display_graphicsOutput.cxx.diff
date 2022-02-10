@@ -1,5 +1,5 @@
 --- webgl-port.git/panda/src/display/graphicsOutput.cxx	2022-01-25 14:21:22.444665485 +0100
-+++ webgl-port/panda/src/display/graphicsOutput.cxx	2022-02-08 17:22:24.246635193 +0100
++++ mobile-sandbox/panda/src/display/graphicsOutput.cxx	2022-02-09 21:41:17.910574156 +0100
 @@ -416,6 +416,10 @@
   */
  bool GraphicsOutput::

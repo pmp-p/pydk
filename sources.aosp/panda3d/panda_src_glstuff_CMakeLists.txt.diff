@@ -1,5 +1,5 @@
 --- webgl-port.git/panda/src/glstuff/CMakeLists.txt	2022-01-25 14:21:23.688621640 +0100
-+++ webgl-port/panda/src/glstuff/CMakeLists.txt	2022-02-08 17:22:24.254634919 +0100
++++ mobile-sandbox/panda/src/glstuff/CMakeLists.txt	2022-02-09 21:41:17.911574148 +0100
 @@ -1,4 +1,4 @@
 -if(NOT HAVE_GL)
 +if(NOT HAVE_GL AND NOT ANDROID)
