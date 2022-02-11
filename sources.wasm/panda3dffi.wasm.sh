@@ -35,7 +35,8 @@ panda3dffi_crosscompile () {
     then
         echo "    -> ${unit} already built for $ABI_NAME"
     else
-        if [ -f ${BUILD_SRC}/${unit}-prefix/src/panda3d-webgl-port/CMakeLists.txt ]
+        #if [ -f ${BUILD_SRC}/${unit}-prefix/src/panda3d-webgl-port/CMakeLists.txt ]
+        if [ -f ${BUILD_SRC}/panda3d-prefix/src/panda3d/CMakeLists.txt ]
         then
             echo using existing archive
         else
@@ -106,7 +107,8 @@ fi
 TP_ALL="${TP_FT2} ${TP_HB} ${TP_OA} ${TP_VB} ${TP_BUL} ${TP_PY}"
 
 # build it
-cd ${BUILD_SRC}/${unit}-prefix/src/panda3d-webgl-port
+#cd ${BUILD_SRC}/${unit}-prefix/src/panda3d-webgl-port
+cd ${BUILD_SRC}/${unit}-prefix/src/panda3d
 
 # nope
 # -fPIC

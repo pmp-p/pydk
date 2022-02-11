@@ -78,9 +78,53 @@ index 0000000000000..711c107746d64
 +Rename ``Include/buffer.h`` header file to ``Include/pybuffer.h`` to avoid
 +conflits with projects having an existing ``buffer.h`` header file. Patch by
 +Victor Stinner.
---- Python-3.9.1/Modules/posixmodule.c	2020-12-07 15:02:38.000000000 +0100
-+++ python3-aosp/Modules/posixmodule.c	2020-12-08 18:29:02.610759173 +0100
-@@ -169,7 +169,6 @@
+diff --git a/PCbuild/pythoncore.vcxproj b/PCbuild/pythoncore.vcxproj
+index 8f9c4fe63b8dc..c2f1a016bc111 100644
+--- a/PCbuild/pythoncore.vcxproj
++++ b/PCbuild/pythoncore.vcxproj
+@@ -263,6 +263,7 @@
+     <ClInclude Include="..\Include\osmodule.h" />
+     <ClInclude Include="..\Include\patchlevel.h" />
+     <ClInclude Include="..\Include\py_curses.h" />
++    <ClInclude Include="..\Include\pybuffer.h" />
+     <ClInclude Include="..\Include\pycapsule.h" />
+     <ClInclude Include="..\Include\pyerrors.h" />
+     <ClInclude Include="..\Include\pyexpat.h" />
+diff --git a/PCbuild/pythoncore.vcxproj.filters b/PCbuild/pythoncore.vcxproj.filters
+index dc3b554779486..b300103bbb420 100644
+--- a/PCbuild/pythoncore.vcxproj.filters
++++ b/PCbuild/pythoncore.vcxproj.filters
+@@ -147,6 +147,9 @@
+     <ClInclude Include="..\Include\py_curses.h">
+       <Filter>Include</Filter>
+     </ClInclude>
++    <ClInclude Include="..\Include\pybuffer.h">
++      <Filter>Include</Filter>
++    </ClInclude>
+     <ClInclude Include="..\Include\pycapsule.h">
+       <Filter>Include</Filter>
+     </ClInclude>
+--- Python-3.11.0a5/Makefile.pre.in	2022-02-03 19:37:08.000000000 +0100
++++ Python-3.11.0a5.pydk/Makefile.pre.in	2022-02-11 09:51:06.167857864 +0100
+@@ -1439,7 +1439,6 @@
+ 		$(srcdir)/Include/abstract.h \
+ 		$(srcdir)/Include/bltinmodule.h \
+ 		$(srcdir)/Include/boolobject.h \
+-		$(srcdir)/Include/buffer.h \
+ 		$(srcdir)/Include/bytearrayobject.h \
+ 		$(srcdir)/Include/bytesobject.h \
+ 		$(srcdir)/Include/ceval.h \
+@@ -1472,6 +1471,7 @@
+ 		$(srcdir)/Include/osdefs.h \
+ 		$(srcdir)/Include/osmodule.h \
+ 		$(srcdir)/Include/patchlevel.h \
++		$(srcdir)/Include/pybuffer.h \
+ 		$(srcdir)/Include/pycapsule.h \
+ 		$(srcdir)/Include/pydtrace.h \
+ 		$(srcdir)/Include/pyerrors.h \
+--- Python-3.11.0a5/Modules/posixmodule.c	2022-02-03 19:37:08.000000000 +0100
++++ Python-3.11.0a5.pydk/Modules/posixmodule.c	2022-02-11 14:31:13.570128209 +0100
+@@ -186,7 +186,6 @@
  disguised Unix interface).  Refer to the library manual and\n\
  corresponding Unix manual entries for more information on calls.");
  
@@ -88,7 +132,7 @@ index 0000000000000..711c107746d64
  #ifdef HAVE_SYS_UIO_H
  #  include <sys/uio.h>
  #endif
-@@ -605,6 +604,11 @@
+@@ -637,6 +636,11 @@
  #endif
  }
  
@@ -100,7 +144,16 @@ index 0000000000000..711c107746d64
  
  #ifdef MS_WINDOWS
  /* defined in fileutils.c */
-@@ -7094,6 +7098,51 @@
+@@ -881,7 +885,7 @@
+ #define _PyLong_FromDev PyLong_FromLongLong
+ 
+ 
+-#if defined(HAVE_MKNOD) && defined(HAVE_MAKEDEV)
++#if ( defined(HAVE_MKNOD) && defined(HAVE_MAKEDEV) ) || __EMSCRIPTEN__
+ static int
+ _Py_Dev_Converter(PyObject *obj, void *p)
+ {
+@@ -7289,6 +7293,51 @@
  for both the master and slave ends.
  [clinic start generated code]*/
  
@@ -152,7 +205,7 @@ index 0000000000000..711c107746d64
  static PyObject *
  os_openpty_impl(PyObject *module)
  /*[clinic end generated code: output=98841ce5ec9cef3c input=f3d99fd99e762907]*/
-@@ -7182,7 +7231,7 @@
+@@ -7377,7 +7426,7 @@
      return NULL;
  }
  #endif /* defined(HAVE_OPENPTY) || defined(HAVE__GETPTY) || defined(HAVE_DEV_PTMX) */
@@ -161,7 +214,7 @@ index 0000000000000..711c107746d64
  
  #ifdef HAVE_FORKPTY
  /*[clinic input]
-@@ -10591,7 +10640,11 @@
+@@ -10813,7 +10862,11 @@
              errno = result;
      }
  #else
@@ -173,8 +226,8 @@ index 0000000000000..711c107746d64
  #endif
      _Py_END_SUPPRESS_IPH
      Py_END_ALLOW_THREADS
---- Python-3.11.0a4/Modules/readline.c	2022-01-13 20:38:15.000000000 +0100
-+++ Python-3.11.0a4.patch/Modules/readline.c	2022-01-20 08:40:17.654275099 +0100
+--- Python-3.11.0a5/Modules/readline.c	2022-02-03 19:37:08.000000000 +0100
++++ Python-3.11.0a5.pydk/Modules/readline.c	2022-02-11 09:51:06.173857799 +0100
 @@ -1326,7 +1326,9 @@
          int has_input = 0, err = 0;
  

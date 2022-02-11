@@ -103,6 +103,7 @@ then
     # nope
     # -fPIC
     cat > build.sh <<END
+EMCC_CFLAGS="-s USE_ZLIB=1 -s USE_BZIP2=1 -fPIC"\
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH\
  CXXFLAGS="-std=c++11 -fno-exceptions $EM_FLAGS $EM_LIBS" EMCC_FLAGS="-s USE_ZLIB=1 -s USE_BZ2=1"\
  MAKEPANDA_THIRDPARTY="$BUILD_DEST/thirdparty"\
@@ -110,10 +111,6 @@ LD_LIBRARY_PATH=$LD_LIBRARY_PATH\
  python3 makepanda/makepanda.py $OPT_COMMON $OPT_TARGET $TP_ALL --verbose --outputdir $BUILD_DEST
 END
     env -i bash build.sh
-
-cd "$BUILD_DEST"
-    echo 115-PANDA3D
-    read
 else
     # dreamer !
     # $WCMAKE ${BUILD_SRC}/${unit}-prefix/src/panda3d-webgl-port
