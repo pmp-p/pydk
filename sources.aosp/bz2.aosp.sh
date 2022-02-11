@@ -43,7 +43,7 @@ bz2_crosscompile () {
     then
         echo "    -> libbz2 already built for $ABI_NAME"
     else
-        PrepareBuild ${unit}
+        Building ${unit}
         cp -vf bzlib.h ${APKUSR}/include/                
         if make ${JFLAGS} CC=$CC AR=$AR RANLIB=$RANLIB PREFIX=${APKUSR}  install
         then
@@ -52,10 +52,7 @@ bz2_crosscompile () {
             patchelf --set-soname libbz2.so libbz2.so.1.0.8
             cp -vf libbz2.so.1.0.8 ${APKUSR}/lib/libbz2.so                    
         else
-            echo "   -> bzip2 build failed, trying to link objects into a shared lib anyway"
-            pwd
-            read
-            # armv7a-linux-androideabi19-clang
+            echo "   -> bzip2 build failed, trying to link objects directly into libbz2.so"
             ${CC} -shared -Wl,-soname -Wl,libbz2.so -o ${APKUSR}/lib/libbz2.so blocksort.o \
   huffman.o    \
   crctable.o   \
