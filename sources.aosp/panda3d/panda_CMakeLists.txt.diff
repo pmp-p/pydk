@@ -1,12 +1,15 @@
 --- webgl-port.git/panda/CMakeLists.txt	2022-01-25 14:21:21.520698052 +0100
-+++ mobile-sandbox/panda/CMakeLists.txt	2022-02-10 17:22:56.478774711 +0100
-@@ -59,6 +59,10 @@
++++ mobile-sandbox/panda/CMakeLists.txt	2022-02-11 09:36:16.960628828 +0100
+@@ -59,6 +59,13 @@
  add_subdirectory(src/wgldisplay)
  add_subdirectory(src/windisplay)
  add_subdirectory(src/x11display)
 +if (ANDROID AND NOT HAVE_EGL)
-+  #add_subdirectory(src/androiddisplay)
-+  add_subdirectory(src/viewdisplay)
++  if (ANDROID_VIEW)
++    add_subdirectory(src/viewdisplay)
++  else()
++    add_subdirectory(src/androiddisplay)
++  endif()
 +endif()
  
  # For other components
