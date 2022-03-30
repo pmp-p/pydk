@@ -1,5 +1,5 @@
---- Python-3.7.10/Parser/myreadline.c	2021-02-16 02:29:22.000000000 +0100
-+++ python3-wasm/Parser/myreadline.c	2021-05-04 18:24:59.703254269 +0200
+--- Python-3.7.12/Parser/myreadline.c	2021-09-04 05:49:21.000000000 +0200
++++ python3-wasm/Parser/myreadline.c	2022-03-30 18:15:01.229391821 +0200
 @@ -30,9 +30,6 @@
  static int
  my_fgets(char *buf, int len, FILE *fp)

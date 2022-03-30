@@ -1,5 +1,5 @@
---- Python-3.7.10/configure	2021-02-16 02:29:22.000000000 +0100
-+++ python3-wasm/configure	2021-05-04 18:24:59.663254680 +0200
+--- Python-3.7.12/configure	2021-09-04 05:49:21.000000000 +0200
++++ python3-wasm/configure	2022-03-30 18:15:01.096392617 +0200
 @@ -3257,6 +3257,12 @@
  	*-*-linux*)
  		ac_sys_system=Linux
@@ -49,16 +49,16 @@
 +
  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $SHLIB_SUFFIX" >&5
  $as_echo "$SHLIB_SUFFIX" >&6; }
-
+ 
 @@ -10785,7 +10804,7 @@
-
+ 
  else
-
+ 
 -    as_fn_error $? "could not find pthreads on your system" "$LINENO" 5
 +    echo 'as_fn_error $? "could not find pthreads on your system" "$LINENO" 5'
-
+ 
  fi
-
+ 
 @@ -11707,6 +11726,9 @@
  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
  /* end confdefs.h.  */

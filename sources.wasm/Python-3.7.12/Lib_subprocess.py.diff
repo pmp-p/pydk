@@ -1,5 +1,5 @@
---- Python-3.7.10/Lib/subprocess.py	2021-02-16 02:29:22.000000000 +0100
-+++ python3-wasm/Lib/subprocess.py	2021-05-04 18:24:59.670254608 +0200
+--- Python-3.7.12/Lib/subprocess.py	2021-09-04 05:49:21.000000000 +0200
++++ python3-wasm/Lib/subprocess.py	2022-03-30 18:15:01.117392491 +0200
 @@ -149,7 +149,10 @@
                                 lpAttributeList=attr_list)
  

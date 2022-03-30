@@ -1,5 +1,5 @@
---- Python-3.7.10/Modules/posixmodule.c	2021-02-16 02:29:22.000000000 +0100
-+++ python3-wasm/Modules/posixmodule.c	2021-05-04 18:24:59.679254516 +0200
+--- Python-3.7.12/Modules/posixmodule.c	2021-09-04 05:49:21.000000000 +0200
++++ python3-wasm/Modules/posixmodule.c	2022-03-30 18:22:07.137833833 +0200
 @@ -154,6 +154,12 @@
  #  endif
  #endif /* MS_WINDOWS */
@@ -22,3 +22,12 @@
  
  /*[clinic input]
  # one of the few times we lie about this name!
+@@ -736,7 +742,7 @@
+ #define _PyLong_FromDev PyLong_FromLongLong
+ 
+ 
+-#if defined(HAVE_MKNOD) && defined(HAVE_MAKEDEV)
++#if (defined(HAVE_MKNOD) && defined(HAVE_MAKEDEV)) || defined(__EMSCRIPTEN__)
+ static int
+ _Py_Dev_Converter(PyObject *obj, void *p)
+ {

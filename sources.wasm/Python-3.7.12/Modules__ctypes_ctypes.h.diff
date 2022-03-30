@@ -1,5 +1,5 @@
---- Python-3.7.10/Modules/_ctypes/ctypes.h	2021-02-16 02:29:22.000000000 +0100
-+++ python3-wasm/Modules/_ctypes/ctypes.h	2021-05-04 18:24:59.676254547 +0200
+--- Python-3.7.12/Modules/_ctypes/ctypes.h	2021-09-04 05:49:21.000000000 +0200
++++ python3-wasm/Modules/_ctypes/ctypes.h	2022-03-30 18:15:01.142392342 +0200
 @@ -53,7 +53,15 @@
      PyObject *b_objects;        /* dictionary of references we need to keep, or Py_None */
      union value b_value;

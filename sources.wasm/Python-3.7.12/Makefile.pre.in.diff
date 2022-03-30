@@ -1,5 +1,5 @@
---- Python-3.7.10/Makefile.pre.in	2021-02-16 02:29:22.000000000 +0100
-+++ python3-wasm/Makefile.pre.in	2021-05-04 18:24:59.674254567 +0200
+--- Python-3.7.12/Makefile.pre.in	2021-09-04 05:49:21.000000000 +0200
++++ python3-wasm/Makefile.pre.in	2022-03-30 18:15:01.133392395 +0200
 @@ -226,7 +226,7 @@
  PY3LIBRARY=     @PY3LIBRARY@
  DLLLIBRARY=	@DLLLIBRARY@

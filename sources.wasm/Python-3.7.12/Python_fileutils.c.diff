@@ -1,5 +1,5 @@
---- Python-3.7.10/Python/fileutils.c	2021-02-16 02:29:22.000000000 +0100
-+++ python3-wasm/Python/fileutils.c	2021-05-04 18:24:59.706254238 +0200
+--- Python-3.7.12/Python/fileutils.c	2021-09-04 05:49:21.000000000 +0200
++++ python3-wasm/Python/fileutils.c	2022-03-30 18:15:01.233391798 +0200
 @@ -994,6 +994,9 @@
  static int
  set_inheritable(int fd, int inheritable, int raise, int *atomic_flag_works)
