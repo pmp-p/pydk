@@ -104,7 +104,7 @@ then
     # -fPIC
     cat > build.sh <<END
 EMCC_CFLAGS="-s USE_ZLIB=1 -s USE_BZIP2=1 -fPIC"\
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH\
+ LD_LIBRARY_PATH="$LD_LIBRARY_PATH"\
  CXXFLAGS="-std=c++11 -fno-exceptions $EM_FLAGS $EM_LIBS" EMCC_FLAGS="-s USE_ZLIB=1 -s USE_BZ2=1"\
  MAKEPANDA_THIRDPARTY="$BUILD_DEST/thirdparty"\
  PATH="$HOST/bin:$EMSDK/upstream/emscripten:$BASEPATH"\

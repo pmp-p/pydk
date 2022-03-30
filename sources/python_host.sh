@@ -3,21 +3,17 @@
 # JFLAGS :  make options
 # CNF : configure options
 
-#export URL_PYTHON3=${URL_PYTHON3:-"URL https://www.python.org/ftp/python/${PYVER}/Python-${PYVER}.tar.xz"}
 
-export URL_PYTHON3=${URL_PYTHON3:-"URL https://www.python.org/ftp/python/3.11.0/Python-3.11.0a5.tar.xz"}
+#export URL_PYTHON3=${URL_PYTHON3:-"URL https://www.python.org/ftp/python/3.11.0/Python-3.11.0a6.tar.xz"}
+
+export URL_PYTHON3=${URL_PYTHON3:-"URL https://www.python.org/ftp/python/${PYVER}/Python-${PYVER}.tar.xz"}
+
 
 case "${PYVER}" in
-    "3.7.9" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=389d3ed26b4d97c741d9e5423da1f43b"};;
-    "3.7.10" ) export  HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=9e34914bc804ab2e7d955b49c5e1e391"};;
-    "3.8.5" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=35b5a3d0254c1c59be9736373d429db7"};;
-    "3.8.8" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=23e6b769857233c1ac07b6be7442eff4"};;
-    "3.8.10" ) export  HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=d9eee4b20155553830a2025e4dcaa7b3"};;
-    "3.9.0" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=6ebfe157f6e88d9eabfbaf3fa92129f6"};;
-    "3.9.1" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=61981498e75ac8f00adcb908281fadb6"};;
-    "3.9.2" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=f0dc9000312abeb16de4eccce9a870ab"};;
-    "3.11.0a4" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=9de26ba99545171666206d7e19a1bacf"};;
-    "3.11.0a5" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=6bc7aafdec900b4b00ab6b5b64619dd4"};;   
+    "3.7.12" ) export  HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=352ea082224121a8b7bc4d6d06e5de39"};;
+    "3.8.12" ) export  HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=9dd8f82e586b776383c82e27923f8795"};;
+    "3.9.10" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=e754c4b2276750fd5b4785a1b443683a"};;
+    "3.11.0a5" ) export   HASH_PYTHON3=${HASH_PYTHON3:-"URL_HASH MD5=6bc7aafdec900b4b00ab6b5b64619dd4"};;
 esac
 
 export PYOPTS="--without-pymalloc --without-pydebug\
@@ -31,6 +27,7 @@ export PYTARGET="${BUILD_SRC}/python3-${ENV}"
 export PYTHONDONTWRITEBYTECODE=1
 
 #restrict $PYMINOR for env so host pip can work for populating android projects
+# if not avail take the higher one
 for py in ${PYMINOR} 11 10 9 8 7 6 5
 do
     if command -v python3.${py}

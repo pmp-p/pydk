@@ -53,15 +53,29 @@ END
 
 
 python_module_setup_local () {
-    if echo $PYMINOR|grep -q 7
-    then
-        HAVE_MPDEC='#'
-    else
-        HAVE_MPDEC=""
-    fi
 
     # 3.7 +  _decimal/libmpdec/mpalloc.c
+    if echo $PYMINOR|grep -q 7
+    then
+        SPECIFIC="
+parser parsermodule.c
+math mathmodule.c _math.c
+"
+        HAVE_MPDEC="#"
+    else
+        HAVE_MPDEC=""
     # 3.8 -  _decimal/libmpdec/mpalloc.c
+    SPECIFIC="
+#3.11-
+# <3.11 parser parsermodule.c
+parser parsermodule.c
+
+# <3.11- math mathmodule.c _math.c # -lm # math library functions, e.g. sin()
+#>=3.11- math mathmodule.c
+math mathmodule.c _math.c
+"
+    fi
+
 
     cat > $1 <<END
 *static*
@@ -69,10 +83,7 @@ python_module_setup_local () {
 _struct _struct.c   # binary structure packing/unpacking
 _queue _queuemodule.c
 
-#3.11- parser parsermodule.c
-
-#3.11- math mathmodule.c _math.c # -lm # math library functions, e.g. sin()
-math mathmodule.c
+$SPECIFIC
 
 cmath cmathmodule.c  # -lm # complex math library functions
 
@@ -135,7 +146,7 @@ _ctypes _ctypes/_ctypes.c \
  _ctypes/stgdict.c \
  _ctypes/cfield.c -I${PYTARGET}/Modules/_ctypes -I${APKUSR}/include -L${APKUSR}/lib -lffi # ${APKUSR}/lib/libffi.a
 
-#3.11- $HAVE_MPDEC _decimal _decimal/_decimal.c \
+ $HAVE_MPDEC _decimal _decimal/_decimal.c \
  _decimal/libmpdec/basearith.c \
  _decimal/libmpdec/constants.c \
  _decimal/libmpdec/context.c \
@@ -158,6 +169,8 @@ END
 
 python3_host_cmake () {
 
+# PATCH_COMMAND sh -c "patch -p1 < ${SUPPORT}/Python.all/all && /bin/cp -aRfxp ${PYSRC} ${PYTARGET}"
+
 cat >> CMakeLists.txt <<END
 
 if(1)
@@ -175,7 +188,7 @@ ExternalProject_Add(
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
-    PATCH_COMMAND sh -c "patch -p1 < ${SUPPORT}/Python-3.11.0a5/all && /bin/cp -aRfxp ${PYSRC} ${PYTARGET}"
+    PATCH_COMMAND sh -c "/bin/cp -aRfxp ${PYSRC} ${PYTARGET}"
 
     CONFIGURE_COMMAND sh -c "cd ${PYSRC} && CC=clang ./configure --prefix=${HOST} --with-cxx-main=clang $PYOPTS --enable-shared  --with-ensurepip  >/dev/null"
 

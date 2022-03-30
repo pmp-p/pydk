@@ -10,11 +10,10 @@ else
     echo "not bash, those previously rising errors are ash/sh/dash/... flavours"
 fi
 
-PYMINOR_DEFAULT="11"
-PYMICRO="0a5"
-
 export PYMAJOR=3
-export PYMINOR=${PYMINOR:-$PYMINOR_DEFAULT}
+export PYMINOR=${PYMINOR:-7}
+export PYMICRO=${PYMICRO:-12}
+
 export PYVER=${PYMAJOR}.${PYMINOR}.${PYMICRO}
 
 # python 3.7.x
@@ -30,9 +29,9 @@ export HOST_TAG=linux-x86_64
 
 #tested
 #export CMAKE_VERSION=3.13.0
-
-#untested
 export CMAKE_VERSION=3.22.1
+
+
 
 
 export ORIGIN=$(pwd)
@@ -47,7 +46,6 @@ export ARCHITECTURES=${ARCHITECTURES:-"armeabi-v7a arm64-v8a x86 x86_64 wasm"}
 
 export PYTHONPYCACHEPREFIX=${ORIGIN}/pycache
 export HOME=${PYTHONPYCACHEPREFIX}
-
 
 #UNITS="unit"
 UNITS=""
@@ -756,12 +754,12 @@ export WCMAKE="emcmake $CMAKE -DCMAKE_POSITION_INDEPENDENT_CODE=ON -Wno-dev -DCM
 cat > ${HOST}/${ABI_NAME}.sh <<END
 #!/bin/sh
 
-export PATH=${HOST}/bin:${ROOT}/bin:${PYTHONPYCACHEPREFIX}/bin:/bin:/usr/bin:/usr/local/bin
+export PATH=${HOST}/bin:${ROOT}/bin:${PYTHONPYCACHEPREFIX}/bin::/bin:/usr/bin:/usr/local/bin
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOST}/lib64:${HOST}/lib
 
 . ${TOOLCHAIN}
 
-export PATH="$EMSDK/upstream/emscripten:$BASEPATH"
+export PATH="$EMSDK/upstream/emscripten/system/bin:$EMSDK/upstream/emscripten:$BASEPATH"
 
 export PYDK="${ORIGIN}"
 
@@ -857,6 +855,7 @@ then
             echo "emsdk libs ready"
         else
             ALL="struct_info libfetch zlib bzip2 freetype harfbuzz ogg vorbis libpng bullet"
+            ALL="$ALL libjpeg sdl2_image"
             for one in $ALL
             do
                 embuilder --pic build $one

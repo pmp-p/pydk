@@ -46,14 +46,6 @@ libffi_crosscompile () {
         mkdir -p "${BUILD_PREFIX}-${ABI_NAME}/libffi-${ABI_NAME}"
         cd "${BUILD_PREFIX}-${ABI_NAME}/libffi-${ABI_NAME}"
 
-        # NDK also defines -ffunction-sections -funwind-tables but they result in worse OpenCV performance (Amos Wenger)
-        #export CFLAGS="-m${BITS} -fPIC -target ${PLATFORM_TRIPLET}${API} -isysroot $TOOLCHAIN/sysroot -isystem $TOOLCHAIN/sysroot/usr/include"
-
-        # -s USE_PTHREADS=1
-        export CFLAGS="-O3 -s EXPORT_ALL=1"
-        export CXXFLAGS="$CFLAGS"
-        export EMMAKEN_CFLAGS="-s EXPORT_ALL=1"
-
         CNF="--enable-static --disable-shared --disable-dependency-tracking\
   --disable-builddir --disable-multi-os-directory --disable-raw-api"
 

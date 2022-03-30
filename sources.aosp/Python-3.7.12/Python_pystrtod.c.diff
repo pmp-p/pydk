@@ -1,0 +1,18 @@
+--- Python-3.7.12/Python/pystrtod.c	2021-09-04 05:49:21.000000000 +0200
++++ Python-3.7.12-pydk/Python/pystrtod.c	2022-03-16 12:55:46.753040032 +0100
+@@ -177,8 +177,14 @@
+ 
+     fail_pos = NULL;
+ 
+-    locale_data = localeconv();
++#if __ANDROID__ && (__ANDROID_API__ < 21)
++    locale_data = broken_localeconv();
+     decimal_point = locale_data->decimal_point;
++#else
++    locale_data = localeconv(); //PATCHED
++    decimal_point = locale_data->decimal_point;
++#endif // __ANDROID_API__
++
+     decimal_point_len = strlen(decimal_point);
+ 
+     assert(decimal_point_len != 0);

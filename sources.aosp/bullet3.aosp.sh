@@ -6,8 +6,12 @@
 #export URL_BULLET=${URL_BULLET:-"URL https://github.com/bulletphysics/bullet3/archive/2.89.tar.gz"}
 #export HASH_BULLET=${HASH_BULLET:-"URL_HASH MD5=d239b4800ec30513879834be6fcdc376"}
 
-# testing
-export URL_BULLET=${URL_BULLET:-"GIT_REPOSITORY https://github.com/bulletphysics/bullet3.git"}
+# mars 2022 , broken
+# export URL_BULLET=${URL_BULLET:-"GIT_REPOSITORY https://github.com/bulletphysics/bullet3.git"}
+
+export URL_BULLET=${URL_BULLET:-"GIT_REPOSITORY https://github.com/pmp-p/bullet3"}
+export TAG_BULLET="GIT_TAG patch-1"
+
 
 bullet3_host_cmake () {
     cat >> CMakeLists.txt <<END
@@ -20,6 +24,7 @@ ExternalProject_Add(
 
     ${URL_BULLET}
     ${HASH_BULLET}
+    ${TAG_BULLET}
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
