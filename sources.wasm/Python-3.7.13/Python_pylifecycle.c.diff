@@ -1,0 +1,29 @@
+--- Python-3.7.12/Python/pylifecycle.c	2021-09-04 05:49:21.000000000 +0200
++++ python3-wasm/Python/pylifecycle.c	2022-03-30 18:15:01.241391750 +0200
+@@ -70,7 +70,7 @@
+ extern void _PyFaulthandler_Fini(void);
+ extern void _PyHash_Fini(void);
+ extern int _PyTraceMalloc_Init(int enable);
+-extern int _PyTraceMalloc_Fini(void);
++extern void _PyTraceMalloc_Fini(void);
+ extern void _Py_ReadyTypes(void);
+ 
+ extern void _PyGILState_Init(PyInterpreterState *, PyThreadState *);
+@@ -2362,6 +2362,8 @@
+     if (sigaction(sig, NULL, &context) == -1)
+         return SIG_ERR;
+     return context.sa_handler;
++#elif defined(__EMSCRIPTEN__)
++    return SIG_ERR;
+ #else
+     PyOS_sighandler_t handler;
+ /* Special signal handling for the secure CRT in Visual Studio 2005 */
+@@ -2408,6 +2410,8 @@
+     if (sigaction(sig, &context, &ocontext) == -1)
+         return SIG_ERR;
+     return ocontext.sa_handler;
++#elif defined(__EMSCRIPTEN__)
++    return SIG_ERR;
+ #else
+     PyOS_sighandler_t oldhandler;
+     oldhandler = signal(sig, handler);

@@ -1,0 +1,31 @@
+--- Python-3.7.12/Python/import.c	2021-09-04 05:49:21.000000000 +0200
++++ python3-wasm/Python/import.c	2022-03-30 18:15:01.237391774 +0200
+@@ -1985,6 +1985,20 @@
+     list = PyList_New(0);
+     if (list == NULL)
+         return NULL;
++
++#ifdef __EMSCRIPTEN__
++        PyObject *item = PyUnicode_FromString( ".cpython-38-em.wasm");
++        if (item == NULL) {
++            Py_DECREF(list);
++            return NULL;
++        }
++        if (PyList_Append(list, item) < 0) {
++            Py_DECREF(list);
++            Py_DECREF(item);
++            return NULL;
++        }
++        Py_DECREF(item);
++#else
+ #ifdef HAVE_DYNAMIC_LOADING
+     while ((suffix = _PyImport_DynLoadFiletab[index])) {
+         PyObject *item = PyUnicode_FromString(suffix);
+@@ -2001,6 +2015,7 @@
+         index += 1;
+     }
+ #endif
++#endif
+     return list;
+ }
+ 

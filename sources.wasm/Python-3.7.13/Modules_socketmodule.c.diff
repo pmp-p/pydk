@@ -1,0 +1,13 @@
+--- Python-3.7.12/Modules/socketmodule.c	2021-09-04 05:49:21.000000000 +0200
++++ python3-wasm/Modules/socketmodule.c	2022-03-30 18:15:01.185392085 +0200
+@@ -1312,6 +1312,10 @@
+        }
+ #endif /* AF_NETLINK */
+ 
++#if defined(__EMSCRIPTEN__) && defined(AF_VSOCK)
++    #undef AF_VSOCK
++#endif
++
+ #if defined(AF_VSOCK)
+        case AF_VSOCK:
+        {

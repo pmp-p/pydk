@@ -1,0 +1,14 @@
+--- Python-3.7.12/Lib/subprocess.py	2021-09-04 05:49:21.000000000 +0200
++++ python3-wasm/Lib/subprocess.py	2022-03-30 18:15:01.117392491 +0200
+@@ -149,7 +149,10 @@
+                                lpAttributeList=attr_list)
+ 
+ else:
+-    import _posixsubprocess
++    try:
++        import _posixsubprocess
++    except:
++        print(__file__,"no _posixsubprocess",file=sys.stderr)
+     import select
+     import selectors
+     import threading
