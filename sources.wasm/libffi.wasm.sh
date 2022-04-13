@@ -47,7 +47,7 @@ libffi_crosscompile () {
         cd "${BUILD_PREFIX}-${ABI_NAME}/libffi-${ABI_NAME}"
 
         CNF="--enable-static --disable-shared --disable-dependency-tracking\
-  --disable-builddir --disable-multi-os-directory --disable-raw-api"
+  --disable-builddir --disable-raw-api"
 
   #  --build=${HOST_TRIPLET} --target=wasm32-unknown-linux\
 

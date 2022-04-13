@@ -1,0 +1,18 @@
+--- cpython-3.8.5/Modules/timemodule.c	2020-07-20 15:01:32.000000000 +0200
++++ cpython-3.8.5-aosp/Modules/timemodule.c	2020-08-27 18:54:48.139970271 +0200
+@@ -461,6 +461,7 @@
+ }
+ 
+ #ifndef HAVE_TIMEGM
++#ifndef CRYSTAX
+ static time_t
+ timegm(struct tm *p)
+ {
+@@ -472,6 +473,7 @@
+         ((p->tm_year-1)/100)*86400 + ((p->tm_year+299)/400)*86400;
+ }
+ #endif
++#endif
+ 
+ PyDoc_STRVAR(gmtime_doc,
+ "gmtime([seconds]) -> (tm_year, tm_mon, tm_mday, tm_hour, tm_min,\n\

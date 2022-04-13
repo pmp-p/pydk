@@ -1,0 +1,13 @@
+--- Python-3.7.12/Modules/readline.c	2021-09-04 05:49:21.000000000 +0200
++++ Python-3.7.12-pydk/Modules/readline.c	2022-03-14 11:27:39.494339928 +0100
+@@ -1188,7 +1188,9 @@
+         int has_input = 0, err = 0;
+ 
+         while (!has_input)
+-        {               struct timeval timeout = {0, 100000}; /* 0.1 seconds */
++        {
++
++            struct timeval timeout = {0, 10000}; /* 0.01 seconds */
+ 
+             /* [Bug #1552726] Only limit the pause if an input hook has been
+                defined.  */

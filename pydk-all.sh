@@ -11,8 +11,8 @@ else
 fi
 
 export PYMAJOR=3
-export PYMINOR=${PYMINOR:-7}
-export PYMICRO=${PYMICRO:-12}
+export PYMINOR=${PYMINOR:-8}
+export PYMICRO=${PYMICRO:-13}
 
 export PYVER=${PYMAJOR}.${PYMINOR}.${PYMICRO}
 
