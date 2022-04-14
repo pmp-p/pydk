@@ -1,0 +1,10 @@
+--- Python-3.9.12/Python/formatter_unicode.c	2022-03-23 22:12:08.000000000 +0100
++++ python3-aosp/Python/formatter_unicode.c	2022-04-14 08:05:00.526004652 +0200
+@@ -692,6 +692,7 @@
+ 
+ static const char no_grouping[1] = {CHAR_MAX};
+ 
++
+ /* Find the decimal point character(s?), thousands_separator(s?), and
+    grouping description, either for the current locale if type is
+    LT_CURRENT_LOCALE, a hard-coded locale if LT_DEFAULT_LOCALE or

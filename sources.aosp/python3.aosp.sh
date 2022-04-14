@@ -54,7 +54,10 @@ END
 
 python_module_setup_local () {
 
-    # 3.7 +  _decimal/libmpdec/mpalloc.c
+    # 3.7 + 3.8  _decimal/libmpdec/memory.c
+
+    MPDEC_VERSION="_decimal/libmpdec/memory.c"
+
     if echo $PYMINOR|grep -q 7
     then
         SPECIFIC="
@@ -64,8 +67,7 @@ math mathmodule.c _math.c
         HAVE_MPDEC="#"
     else
         HAVE_MPDEC=""
-    # 3.8 -  _decimal/libmpdec/mpalloc.c
-    SPECIFIC="
+        SPECIFIC="
 #3.11-
 # <3.11 parser parsermodule.c
 parser parsermodule.c
@@ -76,6 +78,11 @@ math mathmodule.c _math.c
 "
     fi
 
+
+    if echo " 9 10 11" |grep -q " $PYMINOR"
+    then
+        MPDEC_VERSION="_decimal/libmpdec/mpalloc.c"
+    fi
 
     cat > $1 <<END
 *static*
@@ -158,7 +165,7 @@ _ctypes _ctypes/_ctypes.c \
  _decimal/libmpdec/io.c \
  _decimal/libmpdec/mpdecimal.c \
  _decimal/libmpdec/numbertheory.c \
- _decimal/libmpdec/memory.c \
+ $MPDEC_VERSION \
  _decimal/libmpdec/sixstep.c \
  _decimal/libmpdec/transpose.c \
  -DCONFIG_${BITS} -DANSI -I${PYTARGET}/Modules/_decimal/libmpdec -fPIC

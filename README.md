@@ -42,16 +42,22 @@ Requirements:
 
 ```
 
-clone this repo and go into folder pydk
+Clone this repo and go into folder pydk
 
-add sdk as "android-sdk" and ndk as "android-sdk/ndk-bundle" (ndk21 or 23) in the folder
+add sdk as "android-sdk" and ndk as "android-sdk/ndk-bundle" (ndk21 or 23) in the folder, symlink is ok too
 
-launch
+
+Tehen launch :
+
 
 ARCHITECTURES="armeabi-v7a arm64-v8a x86 x86_64" ./pydk-all.sh
 
 use PYMINOR/PYMICRO to pick the CPython version ( look in sources.* for what's available as i'm often dragging behind )
+
+
 To launch step by step use instead for eg CPython 3.7.13 :
+
+
 STEP=true ARCHITECTURES="armeabi-v7a arm64-v8a x86 x86_64" PYMINOR=7 PYMICRO=13 ./pydk-all.sh
 
 ```

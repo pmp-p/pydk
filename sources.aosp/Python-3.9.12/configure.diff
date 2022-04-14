@@ -1,0 +1,25 @@
+--- Python-3.9.12/configure	2022-03-23 22:12:08.000000000 +0100
++++ python3-aosp/configure	2022-04-14 08:05:00.481004860 +0200
+@@ -655,6 +655,7 @@
+ DTRACE
+ TCLTK_LIBS
+ TCLTK_INCLUDES
++LIBFFI_LIBDIR
+ LIBFFI_INCLUDEDIR
+ PKG_CONFIG_LIBDIR
+ PKG_CONFIG_PATH
+@@ -10654,11 +10655,14 @@
+ 
+ if test "$with_system_ffi" = "yes" && test -n "$PKG_CONFIG"; then
+     LIBFFI_INCLUDEDIR="`"$PKG_CONFIG" libffi --cflags-only-I 2>/dev/null | sed -e 's/^-I//;s/ *$//'`"
++    LIBFFI_LIBDIR="`"$PKG_CONFIG" libffi --libs-only-L 2>/dev/null | sed -e 's/^-L//;s/ *$//'`"
+ else
+     LIBFFI_INCLUDEDIR=""
++    LIBFFI_LIBDIR=""
+ fi
+ 
+ 
++
+ # Check for use of the system libmpdec library
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for --with-system-libmpdec" >&5
+ $as_echo_n "checking for --with-system-libmpdec... " >&6; }

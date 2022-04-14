@@ -1,0 +1,19 @@
+--- Python-3.9.12/Modules/_decimal/libmpdec/io.c	2022-03-23 22:12:08.000000000 +0100
++++ python3-aosp/Modules/_decimal/libmpdec/io.c	2022-04-14 08:05:00.502004763 +0200
+@@ -887,9 +887,15 @@
+         if (*spec->sep) {
+             return 0;
+         }
++
+         spec->type = *cp++;
+         spec->type = (spec->type == 'N') ? 'G' : 'g';
+-        lc = localeconv();
++#if __ANDROID__ && (__ANDROID_API__ < 21)
++        #warning "====================================== broken_localeconv ================================"
++        lc = broken_localeconv();
++#else
++        lc = localeconv(); //PATCHED
++#endif
+         spec->dot = lc->decimal_point;
+         spec->sep = lc->thousands_sep;
+         spec->grouping = lc->grouping;
