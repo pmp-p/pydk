@@ -1,0 +1,16 @@
+--- Python-3.10.4/Modules/signalmodule.c	2022-03-23 21:12:04.000000000 +0100
++++ python3-aosp/Modules/signalmodule.c	2022-04-15 04:49:01.845512084 +0200
+@@ -26,6 +26,13 @@
+ #  endif
+ #endif
+ 
++//PMPP API<21
++#if __ANDROID_API__ < 21
++    #define SIGRTMIN 32
++    #define SIGRTMAX _NSIG
++#endif
++//PMPP API<21
++
+ #ifdef HAVE_SIGNAL_H
+ #  include <signal.h>
+ #endif

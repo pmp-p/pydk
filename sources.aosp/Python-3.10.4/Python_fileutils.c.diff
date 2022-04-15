@@ -1,0 +1,25 @@
+--- Python-3.10.4/Python/fileutils.c	2022-03-23 21:12:04.000000000 +0100
++++ python3-aosp/Python/fileutils.c	2022-04-15 04:43:20.127954190 +0200
+@@ -63,6 +63,16 @@
+ }
+ 
+ 
++//PMPP API<21
++#ifdef __ANDROID__
++    #if __ANDROID_API__ < 21
++        #ifndef CRYSTAX
++            #define NO_LOCALECONV 1
++        #endif
++    #endif
++#endif
++//PMPP API<21
++
+ PyObject *
+ _Py_device_encoding(int fd)
+ {
+@@ -2426,3 +2436,5 @@
+ #endif /* USE_FDWALK */
+     _Py_END_SUPPRESS_IPH
+ }
++
++

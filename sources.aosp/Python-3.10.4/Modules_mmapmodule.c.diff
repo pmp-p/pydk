@@ -1,0 +1,15 @@
+--- Python-3.10.4/Modules/mmapmodule.c	2022-03-23 21:12:04.000000000 +0100
++++ python3-aosp/Modules/mmapmodule.c	2022-04-15 04:43:20.123954206 +0200
+@@ -80,6 +80,12 @@
+ #  define MAP_ANONYMOUS MAP_ANON
+ #endif
+ 
++//PMPP API<21
++#if __ANDROID_API__ < 21
++    extern void *mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset);
++#endif
++//PMPP API<21
++
+ typedef enum
+ {
+     ACCESS_DEFAULT,

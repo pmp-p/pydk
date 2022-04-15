@@ -11,8 +11,8 @@ else
 fi
 
 export PYMAJOR=3
-export PYMINOR=${PYMINOR:-9}
-export PYMICRO=${PYMICRO:-12}
+export PYMINOR=${PYMINOR:-10}
+export PYMICRO=${PYMICRO:-4}
 
 export PYVER=${PYMAJOR}.${PYMINOR}.${PYMICRO}
 
@@ -42,7 +42,7 @@ export BUILD_SRC=${ORIGIN}/src
 
 export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.so
 
-export ARCHITECTURES=${ARCHITECTURES:-"armeabi-v7a arm64-v8a x86 x86_64 wasm"}
+export ARCHITECTURES=${ARCHITECTURES:-"armeabi-v7a arm64-v8a x86 x86_64"}
 
 export PYTHONPYCACHEPREFIX=${ORIGIN}/pycache
 export HOME=${PYTHONPYCACHEPREFIX}

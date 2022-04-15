@@ -1,0 +1,19 @@
+--- Python-3.10.4/Makefile.pre.in	2022-03-23 21:12:04.000000000 +0100
++++ python3-aosp/Makefile.pre.in	2022-04-15 04:45:27.802421923 +0200
+@@ -238,7 +238,7 @@
+ PY3LIBRARY=     @PY3LIBRARY@
+ DLLLIBRARY=	@DLLLIBRARY@
+ LDLIBRARYDIR=   @LDLIBRARYDIR@
+-INSTSONAME=	@INSTSONAME@
++INSTSONAME=	libpython$(LDVERSION).so
+ LIBRARY_DEPS=	@LIBRARY_DEPS@
+ PY_ENABLE_SHARED=	@PY_ENABLE_SHARED@
+ STATIC_LIBPYTHON=	@STATIC_LIBPYTHON@
+@@ -307,6 +307,7 @@
+ ##########################################################################
+ 
+ LIBFFI_INCLUDEDIR=	@LIBFFI_INCLUDEDIR@
++LIBFFI_LIBDIR=		@LIBFFI_LIBDIR@
+ 
+ ##########################################################################
+ # Parser

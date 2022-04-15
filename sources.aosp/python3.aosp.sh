@@ -58,26 +58,29 @@ python_module_setup_local () {
 
     MPDEC_VERSION="_decimal/libmpdec/memory.c"
 
+
     if echo $PYMINOR|grep -q 7
     then
         SPECIFIC="
-parser parsermodule.c
 math mathmodule.c _math.c
 "
         HAVE_MPDEC="#"
+
     else
         HAVE_MPDEC=""
         SPECIFIC="
-#3.11-
-# <3.11 parser parsermodule.c
-parser parsermodule.c
-
 # <3.11- math mathmodule.c _math.c # -lm # math library functions, e.g. sin()
 #>=3.11- math mathmodule.c
 math mathmodule.c _math.c
 "
     fi
 
+    if echo " 10 11" |grep -q " $PYMINOR"
+    then
+        HAVE_PARSER="#"
+    else
+        HAVE_PARSER=""
+    fi
 
     if echo " 9 10 11" |grep -q " $PYMINOR"
     then
@@ -91,6 +94,8 @@ _struct _struct.c   # binary structure packing/unpacking
 _queue _queuemodule.c
 
 $SPECIFIC
+
+$HAVE_PARSER parser parsermodule.c
 
 cmath cmathmodule.c  # -lm # complex math library functions
 
