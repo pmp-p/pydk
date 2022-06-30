@@ -4,6 +4,7 @@
 export URL_PCRE2=${URL_PCRE2:-"URL https://ftp.exim.org/pub/pcre/pcre2-10.37.tar.gz"}
 export HASH_PCRE2=${HASH_PCRE2:-"URL_HASH MD5=a0b59d89828f62d2e1caac04f7c51e0b"}
 
+# https://github.com/PCRE2Project/pcre2
 
 pcre2_host_cmake () {
     cat >> CMakeLists.txt <<END

@@ -1,0 +1,33 @@
+--- Python-3.9.1/setup.py	2020-12-07 15:02:38.000000000 +0100
++++ python3-wasm/setup.py	2020-12-09 08:46:32.334670664 +0100
+@@ -2167,10 +2167,17 @@
+             if not os.path.exists(ffi_h):
+                 ffi_inc = None
+                 print('Header file {} does not exist'.format(ffi_h))
++
++        ffi_libdir = [sysconfig.get_config_var("LIBFFI_LIBDIR")]
++        ffi_libdir = [d for d in ffi_libdir if os.path.isdir(d)]
++
+         if ffi_lib is None and ffi_inc:
+             for lib_name in ('ffi', 'ffi_pic'):
+-                if (self.compiler.find_library_file(self.lib_dirs, lib_name)):
++#                if (self.compiler.find_library_file(self.lib_dirs, lib_name)):
++                fullpath = self.compiler.find_library_file(self.lib_dirs + ffi_libdir, lib_name)
++                if fullpath:
+                     ffi_lib = lib_name
++                    ffi_libdir = os.path.normpath(os.path.dirname(fullpath))
+                     break
+ 
+         if ffi_inc and ffi_lib:
+@@ -2184,8 +2191,11 @@
+ 
+             ext.include_dirs.append(ffi_inc)
+             ext.libraries.append(ffi_lib)
++            if ffi_libdir not in self.lib_dirs:
++                ext.library_dirs.append(ffi_libdir)
+             self.use_system_libffi = True
+ 
++
+         if sysconfig.get_config_var('HAVE_LIBDL'):
+             # for dlopen, see bpo-32647
+             ext.libraries.append('dl')

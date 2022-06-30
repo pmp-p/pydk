@@ -1,0 +1,14 @@
+--- Python-3.9.1/Python/getplatform.c	2020-12-07 15:02:38.000000000 +0100
++++ python3-wasm/Python/getplatform.c	2020-12-08 20:41:07.486565610 +0100
+@@ -5,6 +5,11 @@
+ #define PLATFORM "unknown"
+ #endif
+ 
++#ifdef __EMSCRIPTEN__
++    #undef PLATFORM
++    #define PLATFORM "wasm"
++#endif
++
+ const char *
+ Py_GetPlatform(void)
+ {

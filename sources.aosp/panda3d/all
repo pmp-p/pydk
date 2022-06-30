@@ -1,5 +1,5 @@
---- webgl-port.git/cmake/macros/Python.cmake	2022-01-25 14:21:19.028785884 +0100
-+++ mobile-sandbox/cmake/macros/Python.cmake	2022-02-09 21:41:17.907574181 +0100
+--- panda3d-webgl-port/cmake/macros/Python.cmake	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/cmake/macros/Python.cmake	2022-06-13 04:42:28.012707726 +0200
 @@ -48,7 +48,12 @@
    string(REPLACE "." "/" slash_namespace "${namespace}")
  
@@ -14,8 +14,8 @@
  
    if(BUILD_SHARED_LIBS)
      set(_outdir "${PANDA_OUTPUT_DIR}/${slash_namespace}")
---- webgl-port.git/dtool/src/prc/notify.cxx	2022-02-07 20:43:57.146532726 +0100
-+++ mobile-sandbox/dtool/src/prc/notify.cxx	2022-02-10 17:53:35.976216315 +0100
+--- panda3d-webgl-port/dtool/src/prc/notify.cxx	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/dtool/src/prc/notify.cxx	2022-06-13 04:42:28.013707717 +0200
 @@ -467,14 +467,8 @@
    // type of stream that redirects it to Android's log system.
  
@@ -43,8 +43,8 @@
      std::string value = notify_output.get_value();
      if (!value.empty() && !initialized.test_and_set()) {
        Notify *ptr = Notify::ptr();
---- webgl-port.git/panda/CMakeLists.txt	2022-01-25 14:21:21.520698052 +0100
-+++ mobile-sandbox/panda/CMakeLists.txt	2022-02-11 09:36:16.960628828 +0100
+--- panda3d-webgl-port/panda/CMakeLists.txt	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/panda/CMakeLists.txt	2022-06-13 04:42:28.013707717 +0200
 @@ -59,6 +59,13 @@
  add_subdirectory(src/wgldisplay)
  add_subdirectory(src/windisplay)
@@ -59,8 +59,8 @@
  
  # For other components
  # bullet
---- webgl-port.git/panda/metalibs/pandagl/CMakeLists.txt	2022-01-25 14:21:21.544697206 +0100
-+++ mobile-sandbox/panda/metalibs/pandagl/CMakeLists.txt	2022-02-11 09:34:02.283133386 +0100
+--- panda3d-webgl-port/panda/metalibs/pandagl/CMakeLists.txt	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/panda/metalibs/pandagl/CMakeLists.txt	2022-06-13 04:42:28.013707717 +0200
 @@ -1,3 +1,16 @@
 +if(ANDROID)
 +  if (ANDROID_VIEW)
@@ -78,8 +78,8 @@
  if(NOT HAVE_GL)
    return()
  endif()
---- webgl-port.git/panda/metalibs/pandagles2/CMakeLists.txt	2022-01-25 14:21:21.552696924 +0100
-+++ mobile-sandbox/panda/metalibs/pandagles2/CMakeLists.txt	2022-02-11 09:35:23.618224827 +0100
+--- panda3d-webgl-port/panda/metalibs/pandagles2/CMakeLists.txt	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/panda/metalibs/pandagles2/CMakeLists.txt	2022-06-13 04:42:28.013707717 +0200
 @@ -1,3 +1,39 @@
 +if(ANDROID AND NOT HAVE_EGL)
 +  if(HAVE_GLES2)
@@ -120,8 +120,8 @@
  if(NOT HAVE_GLES2 OR NOT HAVE_EGL)
    return()
  endif()
---- webgl-port.git/panda/metalibs/pandagles2/pandagles2.cxx	2022-01-25 14:21:21.556696784 +0100
-+++ mobile-sandbox/panda/metalibs/pandagles2/pandagles2.cxx	2022-02-09 21:41:17.908574173 +0100
+--- panda3d-webgl-port/panda/metalibs/pandagles2/pandagles2.cxx	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/panda/metalibs/pandagles2/pandagles2.cxx	2022-06-13 04:42:28.014707708 +0200
 @@ -3,7 +3,7 @@
   * @author rdb
   * @date 2009-06-08
@@ -171,8 +171,8 @@
 +
 +
 +#endif
---- webgl-port.git/panda/src/androiddisplay/androidGraphicsStateGuardian.cxx	2022-01-25 14:21:21.600695232 +0100
-+++ mobile-sandbox/panda/src/androiddisplay/androidGraphicsStateGuardian.cxx	2022-02-09 21:41:17.908574173 +0100
+--- panda3d-webgl-port/panda/src/androiddisplay/androidGraphicsStateGuardian.cxx	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/panda/src/androiddisplay/androidGraphicsStateGuardian.cxx	2022-06-13 04:42:28.014707708 +0200
 @@ -17,6 +17,14 @@
  
  #include <dlfcn.h>
@@ -208,8 +208,8 @@
    _fbconfig = 0;
    _format = 0;
  
---- webgl-port.git/panda/src/androiddisplay/androidGraphicsWindow.cxx	2022-01-25 14:21:21.604695092 +0100
-+++ mobile-sandbox/panda/src/androiddisplay/androidGraphicsWindow.cxx	2022-02-09 21:41:17.909574165 +0100
+--- panda3d-webgl-port/panda/src/androiddisplay/androidGraphicsWindow.cxx	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/panda/src/androiddisplay/androidGraphicsWindow.cxx	2022-06-13 04:42:28.014707708 +0200
 @@ -8,7 +8,7 @@
   *
   * @file androidGraphicsWindow.cxx
@@ -780,8 +780,8 @@
 +endif()
 +
 +
---- webgl-port.git/panda/src/androiddisplay/config_androiddisplay.cxx	2022-01-25 14:21:21.608694951 +0100
-+++ mobile-sandbox/panda/src/androiddisplay/config_androiddisplay.cxx	2022-02-09 21:41:17.910574156 +0100
+--- panda3d-webgl-port/panda/src/androiddisplay/config_androiddisplay.cxx	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/panda/src/androiddisplay/config_androiddisplay.cxx	2022-06-13 04:42:28.015707699 +0200
 @@ -21,10 +21,17 @@
  
  #include "config_display.h"
@@ -809,8 +809,8 @@
    if (initialized) {
      return;
    }
---- webgl-port.git/panda/src/display/graphicsOutput.cxx	2022-01-25 14:21:22.444665485 +0100
-+++ mobile-sandbox/panda/src/display/graphicsOutput.cxx	2022-02-09 21:41:17.910574156 +0100
+--- panda3d-webgl-port/panda/src/display/graphicsOutput.cxx	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/panda/src/display/graphicsOutput.cxx	2022-06-13 04:42:28.015707699 +0200
 @@ -416,6 +416,10 @@
   */
  bool GraphicsOutput::
@@ -822,8 +822,8 @@
    if (!is_valid()) {
      return false;
    }
---- webgl-port.git/panda/src/display/graphicsStateGuardian.I	2022-01-25 14:21:22.456665063 +0100
-+++ mobile-sandbox/panda/src/display/graphicsStateGuardian.I	2022-02-09 21:41:17.911574148 +0100
+--- panda3d-webgl-port/panda/src/display/graphicsStateGuardian.I	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/panda/src/display/graphicsStateGuardian.I	2022-06-13 04:42:28.016707690 +0200
 @@ -78,6 +78,9 @@
   */
  INLINE void GraphicsStateGuardian::
@@ -834,16 +834,16 @@
    _active = active;
  }
  
---- webgl-port.git/panda/src/glstuff/CMakeLists.txt	2022-01-25 14:21:23.688621640 +0100
-+++ mobile-sandbox/panda/src/glstuff/CMakeLists.txt	2022-02-09 21:41:17.911574148 +0100
+--- panda3d-webgl-port/panda/src/glstuff/CMakeLists.txt	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/panda/src/glstuff/CMakeLists.txt	2022-06-13 04:42:28.016707690 +0200
 @@ -1,4 +1,4 @@
 -if(NOT HAVE_GL)
 +if(NOT HAVE_GL AND NOT ANDROID)
    return()
  endif()
  
---- webgl-port.git/panda/src/physics/physicalNode.cxx	2022-02-07 20:43:57.194531078 +0100
-+++ mobile-sandbox/panda/src/physics/physicalNode.cxx	2022-02-09 21:41:17.911574148 +0100
+--- panda3d-webgl-port/panda/src/physics/physicalNode.cxx	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/panda/src/physics/physicalNode.cxx	2022-06-13 04:42:28.016707690 +0200
 @@ -16,7 +16,7 @@
  #include "patomic.h"
  
@@ -853,8 +853,8 @@
  
  TypeHandle PhysicalNode::_type_handle;
  
---- webgl-port.git/panda/src/pipeline/threadDummyImpl.cxx	2022-01-25 14:21:26.064537897 +0100
-+++ mobile-sandbox/panda/src/pipeline/threadDummyImpl.cxx	2022-02-09 21:41:17.911574148 +0100
+--- panda3d-webgl-port/panda/src/pipeline/threadDummyImpl.cxx	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/panda/src/pipeline/threadDummyImpl.cxx	2022-06-13 04:42:28.017707682 +0200
 @@ -25,6 +25,13 @@
  #include <windows.h>
  #endif
@@ -869,38 +869,26 @@
  /**
   *
   */
---- webgl-port.git/panda/src/pipeline/threadDummyImpl.h	2022-01-25 14:21:26.064537897 +0100
-+++ mobile-sandbox/panda/src/pipeline/threadDummyImpl.h	2022-02-09 21:41:17.911574148 +0100
-@@ -31,6 +31,10 @@
+--- panda3d-webgl-port/panda/src/pipeline/threadDummyImpl.h	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/panda/src/pipeline/threadDummyImpl.h	2022-06-13 04:49:06.305389154 +0200
+@@ -31,6 +31,12 @@
  #include <windows.h>  // For Sleep().
  #endif
  
 +#ifdef ANDROID
 +typedef struct _JNIEnv JNIEnv;
++bool attach_java_vm();
++static void bind_java_thread();
 +#endif
 +
  /**
   * A fake thread implementation for single-threaded applications.  This simply
   * fails whenever you try to start a thread.
-@@ -57,6 +61,13 @@
-   INLINE static void sleep(double seconds);
-   INLINE static void yield();
-   INLINE static void consider_yield();
-+
-+#ifdef ANDROID
-+  INLINE JNIEnv *get_jni_env() const;
-+  bool attach_java_vm();
-+  static void bind_java_thread();
-+#endif
-+
- };
- 
- #include "threadDummyImpl.I"
---- webgl-port.git/panda/src/pipeline/threadDummyImpl.I	2022-01-25 14:21:26.064537897 +0100
-+++ mobile-sandbox/panda/src/pipeline/threadDummyImpl.I	2022-02-09 21:41:17.912574140 +0100
-@@ -124,3 +124,13 @@
- INLINE void ThreadDummyImpl::
- consider_yield() {
+--- panda3d-webgl-port/panda/src/pipeline/threadDummyImpl.I	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/panda/src/pipeline/threadDummyImpl.I	2022-06-13 04:42:28.017707682 +0200
+@@ -132,3 +132,13 @@
+ get_context_switches(size_t &, size_t &) {
+   return false;
  }
 +
 +#ifdef ANDROID
@@ -5229,8 +5217,8 @@
 + * @author pmp-p
 + * @date 2020-04-07
 + */
---- webgl-port.git/pandatool/src/deploy-stub/CMakeLists.txt	2022-01-25 14:21:27.084501946 +0100
-+++ mobile-sandbox/pandatool/src/deploy-stub/CMakeLists.txt	2022-02-09 21:41:17.915574115 +0100
+--- panda3d-webgl-port/pandatool/src/deploy-stub/CMakeLists.txt	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/pandatool/src/deploy-stub/CMakeLists.txt	2022-06-13 04:42:28.020707656 +0200
 @@ -2,6 +2,11 @@
    return()
  endif()

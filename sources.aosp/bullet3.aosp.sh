@@ -7,11 +7,11 @@
 #export HASH_BULLET=${HASH_BULLET:-"URL_HASH MD5=d239b4800ec30513879834be6fcdc376"}
 
 # mars 2022 , broken
-# export URL_BULLET=${URL_BULLET:-"GIT_REPOSITORY https://github.com/bulletphysics/bullet3.git"}
+# 19 avril 2022 solved https://github.com/bulletphysics/bullet3/pull/4209
+#export URL_BULLET=${URL_BULLET:-"GIT_REPOSITORY https://github.com/pmp-p/bullet3"}
+#export TAG_BULLET="GIT_TAG patch-1"
 
-export URL_BULLET=${URL_BULLET:-"GIT_REPOSITORY https://github.com/pmp-p/bullet3"}
-export TAG_BULLET="GIT_TAG patch-1"
-
+export URL_BULLET=${URL_BULLET:-"GIT_REPOSITORY https://github.com/bulletphysics/bullet3.git"}
 
 bullet3_host_cmake () {
     cat >> CMakeLists.txt <<END

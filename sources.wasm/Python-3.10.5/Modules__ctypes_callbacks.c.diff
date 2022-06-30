@@ -1,0 +1,11 @@
+--- Python-3.9.1/Modules/_ctypes/callbacks.c	2020-12-07 15:02:38.000000000 +0100
++++ python3-wasm/Modules/_ctypes/callbacks.c	2020-12-09 08:06:15.821387844 +0100
+@@ -434,7 +434,7 @@
+         #pragma GCC diagnostic push
+         #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+ #endif
+-        result = ffi_prep_closure(p->pcl_write, &p->cif, closure_fcn, p);
++        result = ffi_prep_closure_loc(p->pcl_write, &p->cif, closure_fcn, p);
+ 
+ #if defined(__clang__) || defined(MACOSX)
+         #pragma clang diagnostic pop

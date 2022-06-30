@@ -1,5 +1,5 @@
---- webgl-port.git/panda/src/androiddisplay/config_androiddisplay.cxx	2022-01-25 14:21:21.608694951 +0100
-+++ mobile-sandbox/panda/src/androiddisplay/config_androiddisplay.cxx	2022-02-09 21:41:17.910574156 +0100
+--- panda3d-webgl-port/panda/src/androiddisplay/config_androiddisplay.cxx	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/panda/src/androiddisplay/config_androiddisplay.cxx	2022-06-13 04:42:28.015707699 +0200
 @@ -21,10 +21,17 @@
  
  #include "config_display.h"

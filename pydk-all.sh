@@ -12,7 +12,7 @@ fi
 
 export PYMAJOR=3
 export PYMINOR=${PYMINOR:-10}
-export PYMICRO=${PYMICRO:-4}
+export PYMICRO=${PYMICRO:-5}
 
 export PYVER=${PYMAJOR}.${PYMINOR}.${PYMICRO}
 
@@ -42,7 +42,13 @@ export BUILD_SRC=${ORIGIN}/src
 
 export LIBPYTHON=libpython${PYMAJOR}.${PYMINOR}.so
 
-export ARCHITECTURES=${ARCHITECTURES:-"armeabi-v7a arm64-v8a x86 x86_64"}
+if echo " 11" | grep -q " $PYMINOR"
+then
+    export ARCHITECTURES=${ARCHITECTURES:-"armeabi-v7a arm64-v8a x86 x86_64 wasm"}
+else
+    export ARCHITECTURES=${ARCHITECTURES:-"armeabi-v7a arm64-v8a x86 x86_64"}
+fi
+
 
 export PYTHONPYCACHEPREFIX=${ORIGIN}/pycache
 export HOME=${PYTHONPYCACHEPREFIX}
@@ -401,6 +407,11 @@ em_make () {
         exit 1
     fi
 }
+
+echo "
+    * cross compilation begins
+"
+
 
 echo
 echo "ARCHITECTURES=[$ARCHITECTURES]"

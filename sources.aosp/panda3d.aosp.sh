@@ -1,25 +1,8 @@
 
-# Thanks CFSworks for cmake !
-#export URL_PANDA3D=${URL_PANDA3D:-"URL https://github.com/panda3d/panda3d/archive/cmake.zip"}
-
-# last build ok most recent first
-# eb367430f7d4aad7d01e5b9212534b066e5a21f6 d436c406883488923d38f1093001d1aa
-
-# webglport
-# https://github.com/panda3d/panda3d/archive/e72bd7f5c62919d76cfa3d5f4b05712f5dfaac48.zip 86e7569dd02b350826f74c0d69bf958dc4474b53deffc7f8bb48d667e2fe6fd5
-
-#https://github.com/panda3d/panda3d/archive/v1.10.7.tar.gz"}
-#b189313c4e9548e20b0facb0c078636e39467b149000919b80a7dd90b35a1939"}
-
-# valid
-#export URL_PANDA3D=${URL_PANDA3D:-"URL https://github.com/panda3d/panda3d/archive/eb367430f7d4aad7d01e5b9212534b066e5a21f6.zip"}
-#export HASH_PANDA3D=${HASH_PANDA3D:-"URL_HASH MD5=d436c406883488923d38f1093001d1aa"}
 
 export URL_PANDA3D=${URL_PANDA3D:-"URL https://github.com/panda3d/panda3d/archive/webgl-port.zip"}
 #export URL_PANDA3D=${URL_PANDA3D:-"GIT_REPOSITORY https://github.com/panda3d/panda3d.git"}
 
-#export URL_PANDA3D=${URL_PANDA3D:-"GIT_REPOSITORY https://github.com/pmp-p/panda3d"}
-#export EXTRA_PANDA3D="GIT_TAG origin/patch-2"
 
 export PANDA3D_CMAKE_ARGS_COMMON="-DHAVE_PYTHON=YES \
 -DHAVE_EGG=YES -DHAVE_THREADS=NO -DHAVE_SSE2=NO -DHAVE_GTK3=No"
@@ -89,6 +72,9 @@ panda3d_crosscompile () {
     then
         echo "    -> ${unit} already built for $ABI_NAME"
     else
+
+        touch ${HOST}/bin/pzip
+        chmod +x ${HOST}/bin/pzip
 
         echo " * building Panda3D for target ${ANDROID_ABI}"
 

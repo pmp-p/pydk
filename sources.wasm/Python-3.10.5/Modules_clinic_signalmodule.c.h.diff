@@ -1,0 +1,16 @@
+--- Python-3.9.1/Modules/clinic/signalmodule.c.h	2020-12-07 15:02:38.000000000 +0100
++++ python3-wasm/Modules/clinic/signalmodule.c.h	2020-12-08 20:41:07.457565957 +0100
+@@ -396,9 +396,13 @@
+     if (how == -1 && PyErr_Occurred()) {
+         goto exit;
+     }
++	#if __EMSCRIPTEN__
++		#pragma message "HAVE_SIGSET_T // _Py_Sigset_Converter ?"
++	#else
+     if (!_Py_Sigset_Converter(args[1], &mask)) {
+         goto exit;
+     }
++	#endif
+     return_value = signal_pthread_sigmask_impl(module, how, mask);
+ 
+ exit:

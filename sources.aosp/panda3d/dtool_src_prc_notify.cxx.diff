@@ -1,5 +1,5 @@
---- webgl-port.git/dtool/src/prc/notify.cxx	2022-02-07 20:43:57.146532726 +0100
-+++ mobile-sandbox/dtool/src/prc/notify.cxx	2022-02-10 17:53:35.976216315 +0100
+--- panda3d-webgl-port/dtool/src/prc/notify.cxx	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/dtool/src/prc/notify.cxx	2022-06-13 04:42:28.013707717 +0200
 @@ -467,14 +467,8 @@
    // type of stream that redirects it to Android's log system.
  

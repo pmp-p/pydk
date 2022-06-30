@@ -1,5 +1,5 @@
---- webgl-port.git/panda/src/androiddisplay/androidGraphicsWindow.cxx	2022-01-25 14:21:21.604695092 +0100
-+++ mobile-sandbox/panda/src/androiddisplay/androidGraphicsWindow.cxx	2022-02-09 21:41:17.909574165 +0100
+--- panda3d-webgl-port/panda/src/androiddisplay/androidGraphicsWindow.cxx	2022-05-10 16:33:18.000000000 +0200
++++ panda3d/panda/src/androiddisplay/androidGraphicsWindow.cxx	2022-06-13 04:42:28.014707708 +0200
 @@ -8,7 +8,7 @@
   *
   * @file androidGraphicsWindow.cxx
