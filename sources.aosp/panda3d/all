@@ -853,53 +853,6 @@
  
  TypeHandle PhysicalNode::_type_handle;
  
---- panda3d-webgl-port/panda/src/pipeline/threadDummyImpl.cxx	2022-05-10 16:33:18.000000000 +0200
-+++ panda3d/panda/src/pipeline/threadDummyImpl.cxx	2022-06-13 04:42:28.017707682 +0200
-@@ -25,6 +25,13 @@
- #include <windows.h>
- #endif
- 
-+#ifdef ANDROID
-+#include "config_express.h"
-+#include <jni.h>
-+
-+static JavaVM *java_vm = nullptr;
-+#endif
-+
- /**
-  *
-  */
---- panda3d-webgl-port/panda/src/pipeline/threadDummyImpl.h	2022-05-10 16:33:18.000000000 +0200
-+++ panda3d/panda/src/pipeline/threadDummyImpl.h	2022-06-13 04:49:06.305389154 +0200
-@@ -31,6 +31,12 @@
- #include <windows.h>  // For Sleep().
- #endif
- 
-+#ifdef ANDROID
-+typedef struct _JNIEnv JNIEnv;
-+bool attach_java_vm();
-+static void bind_java_thread();
-+#endif
-+
- /**
-  * A fake thread implementation for single-threaded applications.  This simply
-  * fails whenever you try to start a thread.
---- panda3d-webgl-port/panda/src/pipeline/threadDummyImpl.I	2022-05-10 16:33:18.000000000 +0200
-+++ panda3d/panda/src/pipeline/threadDummyImpl.I	2022-06-13 04:42:28.017707682 +0200
-@@ -132,3 +132,13 @@
- get_context_switches(size_t &, size_t &) {
-   return false;
- }
-+
-+#ifdef ANDROID
-+/**
-+ * Returns the JNIEnv object for the current thread.
-+ */
-+INLINE JNIEnv *ThreadDummyImpl::
-+get_jni_env() const {
-+  return nullptr;
-+}
-+#endif
 --- webgl-port.git/panda/src/viewdisplay/CMakeLists.txt	2022-02-07 10:52:42.693876655 +0100
 +++ mobile-sandbox/panda/src/viewdisplay/CMakeLists.txt	2022-02-11 09:18:33.087736799 +0100
 @@ -0,0 +1,64 @@
