@@ -151,6 +151,34 @@ else
         NDK_BAD=false
     else
         NDK_BAD=true
+    fi
+
+    if grep "^Pkg.Revision = 23" $NDK_HOME/source.properties
+    then
+        echo NDK 23+ found
+        NDK_BAD=false
+        cat > /tmp/arm-linux-androideabi-ar <<END
+if llvm-ar "\$@" 2>&1 /dev/null
+then
+echo -n
+else
+    echo "---------------------------------------------------"
+    echo "PATCHED llvm-ar \$@"
+    echo "---------------------------------------------------"
+fi
+exit 0
+END
+        chmod +X
+        sudo mv /tmp/arm-linux-androideabi-ar \
+            ${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ar
+
+    else
+        NDK_BAD=true
+    fi
+
+
+    if $NDK_BAD
+    then
         echo "
 
     WARNING: NDK_BAD=$NDK_BAD
@@ -617,7 +645,7 @@ END
         export AS=$TOOLCHAIN/bin/llvm-as
         #export AR=$TOOLCHAIN/bin/llvm-ar
         export AR=/usr/bin/ar
-        export RANLIB=$TOOLCHAIN/bin/llvm-ar
+        #export RANLIB=$TOOLCHAIN/bin/llvm-ar
         export STRIP=$TOOLCHAIN/bin/llvm-objcopy
     else
         export LD=$TOOLCHAIN/bin/${NDK_PREFIX}-ld
