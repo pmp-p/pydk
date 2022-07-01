@@ -142,7 +142,7 @@ fi
 
 
 
-# FIX NDK
+#FIXME: NDK
 
 NDK_BAD=true
 
@@ -157,7 +157,7 @@ then
         echo NDK 23+ found
         cat > /tmp/arm-linux-androideabi <<END
 #!/bin/bash
-if llvm-ar "\$@" 2>&1 /dev/null
+if llvm-ar "\$@" 2>&1 >/dev/null
 then
 echo -n
 else
@@ -167,14 +167,18 @@ else
 fi
 exit 0
 END
-    sudo chmod go+x /tmp/arm-linux-androideabi
+    cat > /tmp/fix-ndk <<END
+#!/bin/bash
 
-    sudo cp /tmp/arm-linux-androideabi \
-        ${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ar
+chmod gou+x /tmp/arm-linux-androideabi
+cp -a /tmp/arm-linux-androideabi \
+    ${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ar
 
-
-    sudo mv /tmp/arm-linux-androideabi \
-        ${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ranlib
+mv /tmp/arm-linux-androideabi \
+    ${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ranlib
+END
+    chmod +x /tmp/fix-ndk
+    sudo /tmp/fix-ndk
 
 else
     NDK_BAD=true

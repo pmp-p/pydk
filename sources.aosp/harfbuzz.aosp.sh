@@ -54,23 +54,40 @@ list(APPEND CMAKE_PREFIX_PATH "${APKUSR}/lib")
 list(APPEND CMAKE_PREFIX_PATH "${APKUSR}/lib/cmake")
 list(APPEND CMAKE_PREFIX_PATH "${APKUSR}/lib/cmake/freetype")
 
+set(THREADS_PREFER_PTHREAD_FLAG OFF)
+
+#FIXME: that block seems useless
 set(FREETYPE_DIR ${APKUSR})
-set(FREETYPE_INCLUDE_DIRS "${APKUSR}/include")
-set(FREETYPE_LIBRARY "${APKUSR}/lib/libfreetype.a" "${APKUSR}/lib/libbz2.a" "z")
+set(FREETYPE_INCLUDE_DIRS "${APKUSR}/include/freetype2")
+set(FREETYPE_LIBRARY "${APKUSR}/lib/libfreetype.a")
 set(FREETYPE_LIBRARIES "${APKUSR}/lib/libfreetype.a" "${APKUSR}/lib/libbz2.a" "z")
 set(FREETYPE_FOUND YES)
 include_directories("${APKUSR}/include/freetype2")
 
+
+add_library(bz2 STATIC IMPORTED)
+set_target_properties(bz2 PROPERTIES IMPORTED_LOCATION ${APKUSR}/lib/libbz2.a)
+set_target_properties(bz2 PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${APKUSR}/include)
+
+target_link_libraries(harfbuzz bz2)
+
 END
 
-
-        HARFBUZZ_CMAKE_ARGS="-DBUILD_SHARED_LIBS=YES -DHB_HAVE_FREETYPE=ON -DHB_BUILD_TESTS=NO"
-
-        HARFBUZZ_ACMAKE="$CMAKE -DANDROID_ABI=${ABI_NAME}\
- -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ABI_NAME}/${unit}.toolchain.cmake\
- -DCMAKE_INSTALL_PREFIX=${APKUSR}"
-
-        if $HARFBUZZ_ACMAKE $HARFBUZZ_CMAKE_ARGS ${BUILD_SRC}/${unit}-prefix/src/${unit} >/dev/null
+        cat > ${BUILD_PREFIX}-${ABI_NAME}/${unit}.sh <<END
+#!/bin/bash
+$CMAKE -DANDROID_ABI=${ABI_NAME}\\
+ -DBUILD_SHARED_LIBS=YES \\
+ -DHB_HAVE_FREETYPE=ON \\
+ -DHB_BUILD_TESTS=NO \\
+ -DCMAKE_TOOLCHAIN_FILE=${BUILD_PREFIX}-${ABI_NAME}/${unit}.toolchain.cmake \\
+ -DCMAKE_INSTALL_PREFIX=${APKUSR} \\
+ -DFREETYPE_LIBRARY=${APKUSR}/lib/libfreetype.a \\
+ -DTHIRD_PARTY_LIBS='bz2 -L${APKUSR}/lib -lz' \\
+ -DFREETYPE_INCLUDE_DIRS=${APKUSR}/include/freetype2 \\
+ ${BUILD_SRC}/${unit}-prefix/src/${unit}
+END
+        chmod gou+x ${BUILD_PREFIX}-${ABI_NAME}/${unit}.sh
+        if ${BUILD_PREFIX}-${ABI_NAME}/${unit}.sh >/dev/null
         then
             std_make ${unit}
         else
