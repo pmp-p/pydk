@@ -49,6 +49,11 @@ harfbuzz_crosscompile () {
         cat ${BUILD_PREFIX}-${ABI_NAME}/toolchain.cmake > ${BUILD_PREFIX}-${ABI_NAME}/${unit}.toolchain.cmake
         cat >> ${BUILD_PREFIX}-${ABI_NAME}/${unit}.toolchain.cmake <<END
 
+list(APPEND CMAKE_PREFIX_PATH "${APKUSR}")
+list(APPEND CMAKE_PREFIX_PATH "${APKUSR}/lib")
+list(APPEND CMAKE_PREFIX_PATH "${APKUSR}/lib/cmake")
+list(APPEND CMAKE_PREFIX_PATH "${APKUSR}/lib/cmake/freetype")
+
 set(FREETYPE_DIR ${APKUSR})
 set(FREETYPE_INCLUDE_DIRS "${APKUSR}/include")
 set(FREETYPE_LIBRARY "${APKUSR}/lib/libfreetype.a" "${APKUSR}/lib/libbz2.a" "z")

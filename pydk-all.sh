@@ -140,24 +140,23 @@ fi
 
 . sources/python_host.sh
 
-if $CI
-then
-    echo " * using ndk from CI"
-    NDK_BAD=false
-else
-    if grep "^Pkg.Revision = 21" $NDK_HOME/source.properties
-    then
-        echo NDK 21+ found
-        NDK_BAD=false
-    else
-        NDK_BAD=true
-    fi
 
-    if grep "^Pkg.Revision = 23" $NDK_HOME/source.properties
-    then
+
+# FIX NDK
+
+NDK_BAD=true
+
+if grep "^Pkg.Revision = 21" $NDK_HOME/source.properties
+then
+    echo NDK 21+ found
+    NDK_BAD=false
+fi
+
+if grep "^Pkg.Revision = 23" $NDK_HOME/source.properties
+then
         echo NDK 23+ found
-        NDK_BAD=false
-        cat > /tmp/arm-linux-androideabi-ar <<END
+        cat > /tmp/arm-linux-androideabi <<END
+#!/bin/bash
 if llvm-ar "\$@" 2>&1 /dev/null
 then
 echo -n
@@ -168,33 +167,36 @@ else
 fi
 exit 0
 END
-        chmod +X
-        sudo cp /tmp/arm-linux-androideabi-ar \
-            ${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ar
-        sudo mv /tmp/arm-linux-androideabi-ar \
-            ${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ranlib
+    sudo chmod go+x /tmp/arm-linux-androideabi
 
-    else
-        NDK_BAD=true
-    fi
+    sudo cp /tmp/arm-linux-androideabi \
+        ${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ar
 
 
-    if $NDK_BAD
-    then
-        echo "
+    sudo mv /tmp/arm-linux-androideabi \
+        ${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ranlib
 
-    WARNING: NDK_BAD=$NDK_BAD
-
-    Only NDK 21 has been tested and is expected to be found in :
-       NDK_HOME=$NDK_HOME or ANDROID_HOME=${ANDROID_HOME} + ndk-bundle
-
-        Found $(grep Revision $NDK_HOME/source.properties)
-
-    press <enter> to continue anyway
-    "
-        read cont
-    fi
+else
+    NDK_BAD=true
 fi
+
+
+if $NDK_BAD
+then
+    echo "
+
+WARNING: NDK_BAD=$NDK_BAD
+
+Only NDK 21 has been tested and is expected to be found in :
+   NDK_HOME=$NDK_HOME or ANDROID_HOME=${ANDROID_HOME} + ndk-bundle
+
+    Found $(grep Revision $NDK_HOME/source.properties)
+
+press <enter> to continue anyway
+"
+    read cont
+fi
+
 
 
 # build order
@@ -597,6 +599,12 @@ END
 
     mkdir -p ${BUILD_PREFIX}-${ABI_NAME}
 
+    #FIXME: NDK
+
+    cp ${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk-bundle/build/cmake/android-legacy.toolchain.cmake \
+        ${BUILD_PREFIX}-${ABI_NAME}/
+
+
     if cd ${BUILD_PREFIX}-${ABI_NAME}
     then
         echo "
@@ -675,6 +683,8 @@ set(CMAKE_FIND_LIBRARY_SUFFIXES .so)
 
 #unset(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES)
 #unset(CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES)
+list(APPEND CMAKE_PREFIX_PATH "${APKUSR}")
+
 
 set(BZIP2_LIBRARIES "${APKUSR}/lib/libbz2.a")
 set(BZIP2_INCLUDE_DIR "${APKUSR}/include")
