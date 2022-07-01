@@ -169,8 +169,10 @@ fi
 exit 0
 END
         chmod +X
-        sudo mv /tmp/arm-linux-androideabi-ar \
+        sudo cp /tmp/arm-linux-androideabi-ar \
             ${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ar
+        sudo mv /tmp/arm-linux-androideabi-ar \
+            ${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ranlib
 
     else
         NDK_BAD=true
@@ -638,23 +640,17 @@ END
     fi
 
     # ndk 23 does not use proper triplet names in toolchain /bin folder
-    if $NDK_BAD
-    then
-        export LD=$TOOLCHAIN/bin/ld
-        export READELF=$TOOLCHAIN/bin/llvm-readobj
-        export AS=$TOOLCHAIN/bin/llvm-as
-        #export AR=$TOOLCHAIN/bin/llvm-ar
-        export AR=/usr/bin/ar
-        #export RANLIB=$TOOLCHAIN/bin/llvm-ar
-        export STRIP=$TOOLCHAIN/bin/llvm-objcopy
-    else
-        export LD=$TOOLCHAIN/bin/${NDK_PREFIX}-ld
-        export READELF=$TOOLCHAIN/bin/${NDK_PREFIX}-readelf
-        export AR=$TOOLCHAIN/bin/${NDK_PREFIX}-ar
-        export AS=$TOOLCHAIN/bin/${NDK_PREFIX}-as
-        export RANLIB=$TOOLCHAIN/bin/${NDK_PREFIX}-ranlib
-        export STRIP=$TOOLCHAIN/bin/${NDK_PREFIX}-strip
-    fi
+    # for
+    # export AR=$TOOLCHAIN/bin/${NDK_PREFIX}-ar
+    # export RANLIB=$TOOLCHAIN/bin/${NDK_PREFIX}-ranlib
+
+    export LD=$TOOLCHAIN/bin/${NDK_PREFIX}-ld
+    export READELF=$TOOLCHAIN/bin/${NDK_PREFIX}-readelf
+    export AR=$TOOLCHAIN/bin/${NDK_PREFIX}-ar
+    export AS=$TOOLCHAIN/bin/${NDK_PREFIX}-as
+    export RANLIB=$TOOLCHAIN/bin/${NDK_PREFIX}-ranlib
+    export STRIP=$TOOLCHAIN/bin/${NDK_PREFIX}-strip
+
 
 
     # == eventually restore full PLATFORM_TRIPLET
