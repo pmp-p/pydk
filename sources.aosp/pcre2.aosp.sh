@@ -9,7 +9,7 @@ export HASH_PCRE2=${HASH_PCRE2:-"URL_HASH MD5=a0b59d89828f62d2e1caac04f7c51e0b"}
 pcre2_host_cmake () {
     cat >> CMakeLists.txt <<END
 
-if(1)
+if(0)
     message("")
     message(" processing unit : ${unit}")
 ExternalProject_Add(
@@ -19,9 +19,9 @@ ExternalProject_Add(
 
     DOWNLOAD_NO_PROGRESS ${CI}
 
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
+    CONFIGURE_COMMAND "/bin/true"
+    BUILD_COMMAND "/bin/true"
+    INSTALL_COMMAND "/bin/true"
 )
 else()
     message(" ********************************************************************")

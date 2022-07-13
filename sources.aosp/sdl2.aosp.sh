@@ -34,7 +34,9 @@ sdl2_build () {
 }
 
 sdl2_crosscompile () {
-    echo
+
+if false
+then
     mkdir -p ${BUILD_PREFIX}-${ABI_NAME}/SDL2
     cd ${BUILD_PREFIX}-${ABI_NAME}/SDL2
     chmod +x $ORIGIN/shell.${ABI_NAME}.sh
@@ -42,6 +44,7 @@ sdl2_crosscompile () {
 
     #turbojpeg
     #cp -vf ${SUPPORT}/libpng/*.h ${SUPPORT}/libjpeg/*.h ${APKUSR}/include/
+fi
 
 }
 
