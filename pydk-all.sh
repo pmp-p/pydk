@@ -29,7 +29,9 @@ export HOST_TAG=linux-x86_64
 
 #tested
 #export CMAKE_VERSION=3.13.0
-export CMAKE_VERSION=3.22.1
+
+#testing
+export CMAKE_VERSION=3.22.5
 
 
 
@@ -150,14 +152,15 @@ if grep "^Pkg.Revision = 21" $NDK_HOME/source.properties
 then
     echo NDK 21+ found
     NDK_BAD=false
-fi
+else
 
-if grep "^Pkg.Revision = 23" $NDK_HOME/source.properties
-then
+    if grep "^Pkg.Revision = 23" $NDK_HOME/source.properties
+    then
         echo NDK 23+ found
+
         cat > /tmp/arm-linux-androideabi <<END
 #!/bin/bash
-if llvm-ar "\$@" 2>&1 >/dev/null
+if ${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-ar "\$@" 2>&1 >/dev/null
 then
 echo -n
 else
@@ -167,7 +170,7 @@ else
 fi
 exit 0
 END
-    cat > /tmp/fix-ndk <<END
+        cat > /tmp/fix-ndk <<END
 #!/bin/bash
 
 chmod gou+x /tmp/arm-linux-androideabi
@@ -177,11 +180,12 @@ cp -a /tmp/arm-linux-androideabi \
 mv /tmp/arm-linux-androideabi \
     ${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ranlib
 END
-    chmod +x /tmp/fix-ndk
-    sudo /tmp/fix-ndk
+        chmod +x /tmp/fix-ndk
+        sudo /tmp/fix-ndk
 
-else
-    NDK_BAD=true
+    else
+        NDK_BAD=true
+    fi
 fi
 
 
@@ -372,7 +376,7 @@ END
 
     if $CI
     then
-        if $CMAKE . >/dev/null && make ${JFLAGS} >/dev/null
+        if $CMAKE . >/dev/null && make ${JFLAGS} install >/dev/null
         then
             $PYTHON/bin/python3 -m pip install --upgrade pip
         else
@@ -380,7 +384,7 @@ END
             exit 1
         fi
     else
-        if $CMAKE . && make ${JFLAGS}
+        if $CMAKE . && make ${JFLAGS} install
         then
             echo
         else
@@ -392,8 +396,9 @@ END
     echo "  -> host tools now in CMAKE_INSTALL_PREFIX=${HOST}"
 
     echo "  -> upgrading host build pip"
-    #FIXME PYPA
     "${HOST}/bin/python3" -m pip install --upgrade pip
+
+    #FIXME PYPA
     #"${HOST}/bin/python3" -m pip install pip==20.3.1
 fi
 
@@ -605,8 +610,8 @@ END
 
     #FIXME: NDK
 
-    cp ${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk-bundle/build/cmake/android-legacy.toolchain.cmake \
-        ${BUILD_PREFIX}-${ABI_NAME}/
+    cp ${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk-bundle/build/cmake/android.toolchain.cmake \
+        ${BUILD_PREFIX}-${ABI_NAME}/android-legacy.toolchain.cmake
 
 
     if cd ${BUILD_PREFIX}-${ABI_NAME}

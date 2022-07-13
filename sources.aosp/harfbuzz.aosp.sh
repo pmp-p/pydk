@@ -69,7 +69,7 @@ add_library(bz2 STATIC IMPORTED)
 set_target_properties(bz2 PROPERTIES IMPORTED_LOCATION ${APKUSR}/lib/libbz2.a)
 set_target_properties(bz2 PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${APKUSR}/include)
 
-target_link_libraries(harfbuzz bz2)
+#target_link_libraries(harfbuzz bz2)
 
 END
 
