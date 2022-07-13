@@ -11,8 +11,8 @@ else
 fi
 
 export PYMAJOR=3
-export PYMINOR=${PYMINOR:-10}
-export PYMICRO=${PYMICRO:-5}
+export PYMINOR=${PYMINOR:-8}
+export PYMICRO=${PYMICRO:-13}
 
 export PYVER=${PYMAJOR}.${PYMINOR}.${PYMICRO}
 
@@ -376,7 +376,7 @@ END
 
     if $CI
     then
-        if $CMAKE . >/dev/null && make ${JFLAGS} install >/dev/null
+        if $CMAKE . >/dev/null && make ${JFLAGS}  >/dev/null
         then
             $PYTHON/bin/python3 -m pip install --upgrade pip
         else
@@ -384,7 +384,7 @@ END
             exit 1
         fi
     else
-        if $CMAKE . && make ${JFLAGS} install
+        if $CMAKE . && make ${JFLAGS}
         then
             echo
         else
